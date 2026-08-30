@@ -3,10 +3,12 @@ import { reactive, watch, computed } from 'vue'
 import { TASKS, DIFF, CATS } from './data/tasks'
 import { dateStr } from './data/season'
 
-// ———— 小芽情绪总线：任何动作都可以让小芽有反应 ————
-export const buddyBus = reactive({ mood: 'idle', at: 0 })
-export function buddyMoment(mood, ms = 1500) {
+// ———— 小芽情绪总线：任何动作都可以让小芽有反应（含气泡台词） ————
+export const BUDDY_NAME = '芽芽'
+export const buddyBus = reactive({ mood: 'idle', at: 0, text: '' })
+export function buddyMoment(mood, ms = 1500, text = '') {
   buddyBus.mood = mood
+  buddyBus.text = text
   buddyBus.at = Date.now() + ms
 }
 
@@ -78,7 +80,7 @@ export function canAccept(task) {
 }
 export function accept(task) {
   state.active.push({ qid: task.id, start: today(), logs: [], shields: 2 })
-  buddyMoment('excited', 1300)
+  buddyMoment('excited', 1300, '新任务，冲！')
 }
 
 // ———— 进度 ————
@@ -100,7 +102,7 @@ export function checkedToday(a) {
 export function checkIn(a) {
   if (!checkedToday(a)) {
     a.logs.push({ d: today() })
-    buddyMoment('excited', 900)
+    buddyMoment('excited', 900, '打卡 ✓')
   }
 }
 export function logUnits(a, v) {
@@ -119,12 +121,12 @@ export function complete(a, review = '') {
   }
   state.done.push({ qid: t.id, xp: DIFF[t.diff].xp, at: today(), review, units })
   state.active = state.active.filter((x) => x !== a)
-  buddyMoment('celebrate', 2000)
+  buddyMoment('celebrate', 2000, '又变强了一点！')
 }
 export function abandon(a, reason = '') {
   state.abandoned.push({ qid: a.qid, reason, at: today() })
   state.active = state.active.filter((x) => x !== a)
-  buddyMoment('sad', 2400)
+  buddyMoment('sad', 2400, '没关系……下次再来')
 }
 
 // ———— 生涯统计 ————

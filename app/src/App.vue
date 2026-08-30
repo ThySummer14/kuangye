@@ -9,7 +9,8 @@ import ChainsView from './components/ChainsView.vue'
 import Panel from './components/Panel.vue'
 import CompleteModal from './components/CompleteModal.vue'
 import AbandonModal from './components/AbandonModal.vue'
-import SproutBuddy from './components/SproutBuddy.vue'
+import RoamingBuddy from './components/RoamingBuddy.vue'
+import { BUDDY_NAME } from './store'
 
 const tab = ref('board')
 const toastMsg = ref('')
@@ -57,8 +58,8 @@ const seasonLine = computed(() => {
         </button>
       </nav>
       <div class="side-foot">
-        <SproutBuddy :size="68" ambient />
         <div class="side-foot-txt">{{ seasonLine }}</div>
+        <div class="side-foot-sub">「{{ BUDDY_NAME }}」正在屏幕上溜达，可以拖它</div>
       </div>
     </aside>
 
@@ -102,6 +103,8 @@ const seasonLine = computed(() => {
 
   <CompleteModal v-if="completing" :active="completing" @close="completing = null" @done="toast($event)" />
   <AbandonModal v-if="abandoning" :active="abandoning" @close="abandoning = null" @done="toast($event)" />
+
+  <RoamingBuddy />
 
   <Transition name="toast">
     <div v-if="toastMsg" class="toast">{{ toastMsg }}</div>

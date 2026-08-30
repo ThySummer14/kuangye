@@ -141,6 +141,9 @@ function poke() {
   jump.v = -130
   queueBlink(performance.now())
 }
+function hop(v = -70) {
+  jump.v = v
+}
 
 watch(
   () => props.mood,
@@ -160,7 +163,7 @@ onBeforeUnmount(() => {
   clearTimeout(moodTimer)
 })
 
-defineExpose({ poke })
+defineExpose({ poke, hop })
 </script>
 
 <template>

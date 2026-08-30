@@ -2,7 +2,6 @@
 import { computed } from 'vue'
 import { state, acceptState } from '../store'
 import ActiveQuestCard from './ActiveQuestCard.vue'
-import SproutBuddy from './SproutBuddy.vue'
 
 const emit = defineEmits(['complete', 'abandon'])
 const counts = computed(() => acceptState())
@@ -25,7 +24,7 @@ const counts = computed(() => acceptState())
     />
   </div>
   <div v-else class="empty">
-    <SproutBuddy :size="72" ambient />
+    <div class="big">🌱</div>
     <p style="margin-top: 6px">还没有进行中的支线。<br />去任务板接一个——别贪多，先接一个。</p>
   </div>
 </template>

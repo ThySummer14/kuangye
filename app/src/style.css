@@ -483,6 +483,34 @@ details.mor[open] summary::before { content: '▾ '; }
 .ns-row { display: flex; align-items: center; gap: 9px; }
 .ns-title { flex: 1; font-size: 13.5px; font-weight: 600; min-width: 0; }
 
+/* ———— 漫游小芽「芽芽」———— */
+body { overflow-x: hidden; }
+.roaming-buddy {
+  position: fixed; left: 0; top: 0; z-index: 45;
+  width: 64px; height: 64px;
+  cursor: grab; touch-action: none;
+  will-change: transform;
+  -webkit-tap-highlight-color: transparent;
+}
+.roaming-buddy.dragging { cursor: grabbing; }
+.roaming-buddy :deep(.buddy) { pointer-events: none; } /* 点击/拖拽统一由外壳处理 */
+.rb-flipper { transform-origin: 50% 80%; }
+.rb-bubble {
+  position: absolute; bottom: calc(100% + 8px); left: 50%;
+  background: #fff; border: 1px solid var(--line); color: var(--ink);
+  font-size: 11px; padding: 4px 11px; border-radius: 999px;
+  box-shadow: var(--shadow); white-space: nowrap; pointer-events: none; z-index: 2;
+}
+.rb-bubble::after {
+  content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+  border: 5px solid transparent; border-top-color: #fff;
+}
+.bubble-enter-active { transition: transform 0.18s var(--ease-out), opacity 0.18s ease-out; }
+.bubble-leave-active { transition: opacity 0.15s ease; }
+.bubble-enter-from { opacity: 0; transform: translateX(-50%) translateY(5px); }
+.bubble-leave-to { opacity: 0; }
+.side-foot-sub { font-size: 10px; color: var(--ink-3); opacity: 0.8; margin-top: 2px; }
+
 /* ———— 减少动效偏好 ———— */
 @media (prefers-reduced-motion: reduce) {
   main > *, .app-header, .season-banner, .modal, .overlay, .result-hero, .result-hero .xp { animation-duration: 0.01ms !important; animation-delay: 0s !important; }

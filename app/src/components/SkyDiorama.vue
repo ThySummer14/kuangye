@@ -8,8 +8,11 @@ const host = ref(null)
 
 let renderer, scene, camera, raf = 0
 let island, sprout, leafL, leafR, cloudA, cloudB
+let eyeMeshL, eyeMeshR
 let observer = null
 let last = performance.now()
+let blinkStart = -1
+let nextBlink = 2200
 
 const state = { yaw: 0.55, pitch: 0, targetYaw: 0.55, dragging: false, lastX: 0, lastY: 0, moved: 0, lastInteract: 0, t: 0 }
 const jump = { x: 0, v: 0 }
@@ -85,10 +88,10 @@ function init() {
   belly.scale.set(1, 0.55, 0.5)
   belly.position.set(0, 0.3, 0.31)
   const eyeMat = new THREE.MeshStandardMaterial({ color: 0x2c3a2a, roughness: 0.4 })
-  const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.055, 12, 8), eyeMat)
-  eyeL.position.set(-0.17, 0.58, 0.42)
-  const eyeR = eyeL.clone()
-  eyeR.position.x = 0.17
+  eyeMeshL = new THREE.Mesh(new THREE.SphereGeometry(0.055, 12, 8), eyeMat)
+  eyeMeshL.position.set(-0.17, 0.58, 0.42)
+  eyeMeshR = eyeMeshL.clone()
+  eyeMeshR.position.x = 0.17
   const blushMat = new THREE.MeshStandardMaterial({ color: 0xf0a18e, roughness: 1, transparent: true, opacity: 0.65 })
   const blushL = new THREE.Mesh(new THREE.SphereGeometry(0.045, 10, 8), blushMat)
   blushL.scale.set(1, 0.6, 0.5)
@@ -109,7 +112,7 @@ function init() {
   leafR.position.x = 0.2
   leafR.rotation.z = -0.55
 
-  sprout.add(body, belly, eyeL, eyeR, blushL, blushR, stem, leafL, leafR)
+  sprout.add(body, belly, eyeMeshL, eyeMeshR, blushL, blushR, stem, leafL, leafR)
   sprout.position.y = 0.5
 
   island.add(grass, dirt, blades, sprout)
@@ -196,6 +199,15 @@ function frame(now) {
   leafR.rotation.z = -0.55 - Math.sin(state.t * 2.1 + 0.4) * 0.09 * m
   cloudA.position.x = 2.1 + Math.sin(state.t * 0.22) * 0.4 * m
   cloudB.position.x = -2.3 + Math.sin(state.t * 0.16 + 2) * 0.35 * m
+
+  // 3D 小芽也会眨眼
+  if (!reduce) {
+    if (state.t * 1000 > nextBlink) { blinkStart = state.t * 1000; nextBlink = state.t * 1000 + 2600 + Math.random() * 3200 }
+    const p = (state.t * 1000 - blinkStart) / 170
+    const lid = p >= 0 && p < 1 ? 1 - Math.sin(p * Math.PI) * 0.92 : 1
+    eyeMeshL.scale.y = lid
+    eyeMeshR.scale.y = lid
+  }
 
   renderer.render(scene, camera)
 }

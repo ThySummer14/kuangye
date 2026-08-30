@@ -1,8 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
-import { TASKS, CATS } from '../data/tasks'
-import { canAccept, accept } from '../store'
-import { SEASON } from '../data/season'
+import { TASKS, CATS, DIFF, CHAINS } from '../data/tasks'
+import { canAccept, accept, chainUnlocked } from '../store'
 import TaskCard from './TaskCard.vue'
 
 const props = defineProps({ phase: Object, toast: Function })
@@ -10,14 +9,17 @@ const emit = defineEmits(['go-journey'])
 
 const filter = ref('all')
 const catIds = Object.keys(CATS)
+const DIFF_ORDER = ['E', 'D', 'C', 'B', 'A', 'S']
 
-const seasonTasks = computed(() =>
-  TASKS.filter((t) => t.tier === 'season' && (filter.value === 'all' || t.cat === filter.value))
-)
-const chapterTasks = computed(() =>
-  TASKS.filter(
-    (t) => t.tier === 'chapter' && t.chapter === props.phase.chapter && (filter.value === 'all' || t.cat === filter.value)
-  )
+// 按难度分区；未解锁的成长线阶段不上板（不占位）
+const groups = computed(() =>
+  DIFF_ORDER.map((d) => ({
+    diff: d,
+    meta: DIFF[d],
+    list: TASKS.filter(
+      (t) => t.diff === d && chainUnlocked(t) && (filter.value === 'all' || t.cat === filter.value)
+    ),
+  })).filter((g) => g.list.length)
 )
 
 function acceptTask(task) {
@@ -39,24 +41,19 @@ function acceptTask(task) {
       @click="filter = c"
     >{{ CATS[c].name }}</button>
   </div>
+  <div class="board-note">同时进行 ≤3 · 赛季级 ≤2 · 本章 ≤2 · 完成一阶段解锁下一阶段</div>
 
-  <div class="section-h">
-    <span class="t">本章 · {{ SEASON.chapters[phase.chapter].name }}</span>
-    <span class="s">当章有效 · 最多同时 2 个</span>
-    <span class="line" />
-  </div>
-  <div class="card-grid">
-    <TaskCard v-for="t in chapterTasks" :key="t.id" :task="t" @accept="acceptTask" @go="emit('go-journey')" />
-  </div>
-
-  <div class="section-h">
-    <span class="t">常驻区</span>
-    <span class="s">赛季级任务 · 全季有效 · 最多同时 2 个</span>
-    <span class="line" />
-  </div>
-  <div class="card-grid">
-    <TaskCard v-for="t in seasonTasks" :key="t.id" :task="t" @accept="acceptTask" @go="emit('go-journey')" />
-  </div>
+  <template v-for="g in groups" :key="g.diff">
+    <div class="section-h">
+      <span class="diff-badge" :class="`diff-${g.diff}`">{{ g.diff }}</span>
+      <span class="t">{{ g.meta.name }}级</span>
+      <span class="s">{{ g.list.length }} 条可接</span>
+      <span class="line" />
+    </div>
+    <div class="card-grid">
+      <TaskCard v-for="t in g.list" :key="t.id" :task="t" @accept="acceptTask" @go="emit('go-journey')" />
+    </div>
+  </template>
 
   <div style="height: 8px"></div>
 </template>

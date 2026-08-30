@@ -5,6 +5,7 @@ import { seasonPhase, SEASON } from './data/season'
 import SeasonBanner from './components/SeasonBanner.vue'
 import TaskBoard from './components/TaskBoard.vue'
 import Journey from './components/Journey.vue'
+import ChainsView from './components/ChainsView.vue'
 import Panel from './components/Panel.vue'
 import CompleteModal from './components/CompleteModal.vue'
 import AbandonModal from './components/AbandonModal.vue'
@@ -48,12 +49,15 @@ const seasonLine = computed(() => {
           <span class="ic">⚔️</span>进行中
           <span v-if="state.active.length" class="side-badge">{{ state.active.length }}</span>
         </button>
+        <button class="side-link" :class="{ on: tab === 'chains' }" @click="tab = 'chains'">
+          <span class="ic">🌱</span>成长线
+        </button>
         <button class="side-link" :class="{ on: tab === 'panel' }" @click="tab = 'panel'">
           <span class="ic">🏔️</span>生涯面板
         </button>
       </nav>
       <div class="side-foot">
-        <SproutBuddy :size="68" />
+        <SproutBuddy :size="68" ambient />
         <div class="side-foot-txt">{{ seasonLine }}</div>
       </div>
     </aside>
@@ -73,6 +77,7 @@ const seasonLine = computed(() => {
       <main :key="tab">
         <TaskBoard v-if="tab === 'board'" :phase="phase" :toast="toast" @go-journey="tab = 'quest'" />
         <Journey v-else-if="tab === 'quest'" @complete="completing = $event" @abandon="abandoning = $event" />
+        <ChainsView v-else-if="tab === 'chains'" :toast="toast" />
         <Panel v-else :toast="toast" />
       </main>
     </div>
@@ -85,6 +90,9 @@ const seasonLine = computed(() => {
       <button class="tab-item" :class="{ on: tab === 'quest' }" @click="tab = 'quest'">
         <span class="ic">⚔️</span>进行中
         <span v-if="state.active.length" class="tab-badge">{{ state.active.length }}</span>
+      </button>
+      <button class="tab-item" :class="{ on: tab === 'chains' }" @click="tab = 'chains'">
+        <span class="ic">🌱</span>成长线
       </button>
       <button class="tab-item" :class="{ on: tab === 'panel' }" @click="tab = 'panel'">
         <span class="ic">🏔️</span>面板

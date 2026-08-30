@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-import { CATS, DIFF, TYPES, TYPE_ICONS } from '../data/tasks'
+import { CATS, DIFF, TYPES, TYPE_ICONS, CHAINS } from '../data/tasks'
 import { canAccept, activeOf, state } from '../store'
 
 const props = defineProps({ task: Object })
@@ -11,6 +11,9 @@ const diff = computed(() => DIFF[props.task.diff])
 const act = computed(() => activeOf(props.task.id))
 const archived = computed(() => state.done.some((d) => d.qid === props.task.id))
 const cap = computed(() => canAccept(props.task))
+const chainTag = computed(() =>
+  props.task.chain ? `${CHAINS[props.task.chain].name} · 阶段 ${props.task.stage}` : null
+)
 
 const typeLabel = computed(() => {
   const base = `${TYPE_ICONS[props.task.type]} ${TYPES[props.task.type]}`
@@ -24,6 +27,8 @@ const typeLabel = computed(() => {
     <div class="tc-head">
       <span class="diff-badge" :class="`diff-${task.diff}`">{{ task.diff }}</span>
       <span class="tc-title">{{ task.title }}</span>
+      <span v-if="task.tier === 'chapter'" class="mini-tag">本章</span>
+      <span v-if="chainTag" class="mini-tag chain-mini">{{ chainTag }}</span>
       <span class="cat-tag">{{ cat.name }}</span>
     </div>
     <div class="tc-desc">{{ task.desc }}</div>

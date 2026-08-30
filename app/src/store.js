@@ -3,6 +3,13 @@ import { reactive, watch, computed } from 'vue'
 import { TASKS, DIFF, CATS } from './data/tasks'
 import { dateStr } from './data/season'
 
+// ———— 小芽情绪总线：任何动作都可以让小芽有反应 ————
+export const buddyBus = reactive({ mood: 'idle', at: 0 })
+export function buddyMoment(mood, ms = 1500) {
+  buddyBus.mood = mood
+  buddyBus.at = Date.now() + ms
+}
+
 const KEY = 'kuangye.v1'
 const load = () => {
   try {
@@ -34,6 +41,25 @@ export function today() {
   return dateStr(now())
 }
 
+// ———— 任务链：由易到难，完成前一阶段才解锁后一阶段 ————
+export const chainStages = {}
+for (const t of TASKS) {
+  if (t.chain) (chainStages[t.chain] ||= []).push(t)
+}
+for (const k in chainStages) chainStages[k].sort((a, b) => (a.stage || 1) - (b.stage || 1))
+
+export function chainUnlocked(task) {
+  if (!task.chain) return true
+  const list = chainStages[task.chain]
+  const idx = list.indexOf(task)
+  return list.slice(0, idx).every((prev) => state.done.some((d) => d.qid === prev.id))
+}
+export function nextChainStage(task) {
+  if (!task.chain) return null
+  const list = chainStages[task.chain]
+  return list[list.indexOf(task) + 1] || null
+}
+
 // ———— 接取 ————
 export function acceptState() {
   const season = state.active.filter((a) => taskById[a.qid]?.tier === 'season').length
@@ -42,6 +68,8 @@ export function acceptState() {
 }
 export function canAccept(task) {
   if (activeOf(task.id)) return { ok: false, why: '已在进行中' }
+  if (state.done.some((d) => d.qid === task.id && !task.repeatable)) return { ok: false, why: '已完成过这条支线' }
+  if (!chainUnlocked(task)) return { ok: false, why: '先完成这条成长线的上一阶段' }
   const l = acceptState()
   if (l.total >= 3) return { ok: false, why: '同时进行最多 3 个——贪多是第一死因' }
   if (task.tier === 'season' && l.season >= 2) return { ok: false, why: '赛季级任务最多同时 2 个' }
@@ -50,6 +78,7 @@ export function canAccept(task) {
 }
 export function accept(task) {
   state.active.push({ qid: task.id, start: today(), logs: [], shields: 2 })
+  buddyMoment('excited', 1300)
 }
 
 // ———— 进度 ————
@@ -69,7 +98,10 @@ export function checkedToday(a) {
   return a.logs.some((l) => l.d === t)
 }
 export function checkIn(a) {
-  if (!checkedToday(a)) a.logs.push({ d: today() })
+  if (!checkedToday(a)) {
+    a.logs.push({ d: today() })
+    buddyMoment('excited', 900)
+  }
 }
 export function logUnits(a, v) {
   a.logs.push({ d: today(), v: Number(v) || 0 })
@@ -87,10 +119,12 @@ export function complete(a, review = '') {
   }
   state.done.push({ qid: t.id, xp: DIFF[t.diff].xp, at: today(), review, units })
   state.active = state.active.filter((x) => x !== a)
+  buddyMoment('celebrate', 2000)
 }
 export function abandon(a, reason = '') {
   state.abandoned.push({ qid: a.qid, reason, at: today() })
   state.active = state.active.filter((x) => x !== a)
+  buddyMoment('sad', 2400)
 }
 
 // ———— 生涯统计 ————

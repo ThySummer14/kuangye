@@ -35,11 +35,23 @@ export const METRICS = {
   paintings: { label: '画过的小画', unit: '张', icon: '🎨' },
 }
 
+// 成长线：由易到难的任务链。stage>1 的任务需先完成同链前序阶段才解锁（不上任务板）。
+export const CHAINS = {
+  run: { name: '跑步', icon: '🏃', desc: '从 2 公里到 10 公里' },
+  swim: { name: '游泳', icon: '🏊', desc: '从怕水到畅游 200 米' },
+  read: { name: '阅读', icon: '📖', desc: '从每天 10 分钟到一年 12 本' },
+  meditate: { name: '冥想', icon: '🧘', desc: '从 3 次尝试到 30 天不间断' },
+  cook: { name: '厨艺', icon: '🍳', desc: '从番茄炒蛋到宴请朋友' },
+}
+
 export const TASKS = [
   // ———— 身体（赛季级） ————
-  { id: 'run5k', cat: 'body', diff: 'C', type: 'once', tier: 'season', title: '连续跑完 5 公里不停歇', desc: '中途可以慢，但不能停。', metric: 'km', mv: 5 },
+  { id: 'run-s1', cat: 'body', diff: 'D', type: 'once', tier: 'season', chain: 'run', stage: 1, title: '完成第一次 2 公里慢跑', desc: '不用快，跑完就算。', metric: 'km', mv: 2 },
+  { id: 'run5k', cat: 'body', diff: 'C', type: 'once', tier: 'season', chain: 'run', stage: 2, title: '连续跑完 5 公里不停歇', desc: '中途可以慢，但不能停。', metric: 'km', mv: 5 },
   { id: 'fitgood', cat: 'body', diff: 'C', type: 'once', tier: 'season', title: '体测冲到「良好」以上', desc: '本学年体测成绩达成，才算。' },
-  { id: 'swim200', cat: 'body', diff: 'B', type: 'once', tier: 'season', title: '学会游泳，连续游 200 米', desc: '不怕水的那一刻，就赢了一半。' },
+  { id: 'swim-s1', cat: 'body', diff: 'D', type: 'once', tier: 'season', chain: 'swim', stage: 1, title: '迈出第一步：报个游泳班', desc: '或完成第一次下水。克服怕水，从这一步开始。' },
+  { id: 'swim-s2', cat: 'body', diff: 'C', type: 'once', tier: 'season', chain: 'swim', stage: 2, title: '连续游完 25 米', desc: '第一段不带停的距离。' },
+  { id: 'swim200', cat: 'body', diff: 'B', type: 'once', tier: 'season', chain: 'swim', stage: 3, title: '学会游泳，连续游 200 米', desc: '不怕水的那一刻，就赢了一半。' },
   { id: 'climb', cat: 'body', diff: 'C', type: 'once', tier: 'season', title: '爬一座山，到达山顶', desc: '下山时记得回头看一眼来路。', metric: 'summit', mv: 1 },
   { id: 'cold30', cat: 'body', diff: 'B', type: 'streak', tier: 'season', target: 30, title: '连续 30 天洗冷水澡', desc: '每天早上和本能对抗一次。' },
   { id: 'walk10k', cat: 'body', diff: 'A', type: 'streak', tier: 'season', target: 90, title: '连续 90 天每天走 1 万步', desc: '把屏幕时间换成路上的时间。', metric: 'km', mv: 630 },
@@ -47,14 +59,18 @@ export const TASKS = [
   { id: 'fast24', cat: 'body', diff: 'C', type: 'once', tier: 'season', title: '轻断食 24 小时', desc: '观察自己的饥饿、情绪和念头。' },
   { id: 'martial30', cat: 'body', diff: 'B', type: 'streak', tier: 'season', target: 30, title: '练一项格斗/对抗运动 30 天', desc: '拳击、巴柔、散打，随便哪个。' },
   { id: 'sleep30', cat: 'body', diff: 'A', type: 'streak', tier: 'season', target: 30, title: '连续 30 天 23:30 前睡觉', desc: '熬夜借来的，白天都要还。' },
-  { id: 'run10k', cat: 'body', diff: 'A', type: 'once', tier: 'season', title: '完成一次 10 公里跑', desc: '从 5 公里到 10 公里，中间隔着一个不肯放弃的人。', metric: 'km', mv: 10 },
+  { id: 'run10k', cat: 'body', diff: 'A', type: 'once', tier: 'season', chain: 'run', stage: 3, title: '完成一次 10 公里跑', desc: '从 5 公里到 10 公里，中间隔着一个不肯放弃的人。', metric: 'km', mv: 10 },
   { id: 'earlyclass', cat: 'body', diff: 'B', type: 'once', tier: 'season', title: '一学期早八全勤', desc: '学期末自评：一次都没迟到，才算完成。' },
 
   // ———— 头脑（赛季级） ————
-  { id: 'med30', cat: 'mind', diff: 'C', type: 'streak', tier: 'season', target: 30, title: '连续 30 天冥想 10 分钟', desc: '一天不落。', metric: 'meddays', mv: 30 },
+  { id: 'read-s1', cat: 'mind', diff: 'E', type: 'streak', tier: 'season', chain: 'read', stage: 1, target: 3, title: '连续 3 天，每天读 10 分钟', desc: '先让书出现在每一天里。' },
+  { id: 'read-s2', cat: 'mind', diff: 'D', type: 'streak', tier: 'season', chain: 'read', stage: 2, target: 14, title: '连续 14 天，每天读 20 分钟', desc: '阅读开始成为习惯。' },
+  { id: 'read-s3', cat: 'mind', diff: 'C', type: 'once', tier: 'season', chain: 'read', stage: 3, title: '一个月读完一本书', desc: '写 200 字短评收尾。', metric: 'books', mv: 1 },
+  { id: 'med-s1', cat: 'mind', diff: 'D', type: 'once', tier: 'season', chain: 'meditate', stage: 1, title: '完成 3 次冥想尝试', desc: '每次 10 分钟，走神了就拉回来。' },
+  { id: 'med30', cat: 'mind', diff: 'C', type: 'streak', tier: 'season', chain: 'meditate', stage: 2, target: 30, title: '连续 30 天冥想 10 分钟', desc: '一天不落。', metric: 'meddays', mv: 30 },
   { id: 'journal90', cat: 'mind', diff: 'B', type: 'streak', tier: 'season', target: 90, title: '连续 90 天晨间写日记', desc: '写给自己，不用写得好。' },
   { id: 'nosocial7', cat: 'mind', diff: 'B', type: 'once', tier: 'season', title: '整整一周不用社交网络', desc: '卸载或断网，回来时看看有什么变化。' },
-  { id: 'books12', cat: 'mind', diff: 'S', type: 'total', tier: 'season', target: 12, unit: '本', title: '一年读完 12 本书', desc: '一月一本，每本写 200 字短评。', metric: 'books' },
+  { id: 'books12', cat: 'mind', diff: 'S', type: 'total', tier: 'season', chain: 'read', stage: 4, target: 12, unit: '本', title: '一年读完 12 本书', desc: '一月一本，每本写 200 字短评。', metric: 'books' },
   { id: 'chess100', cat: 'mind', diff: 'B', type: 'total', tier: 'season', target: 100, unit: '盘', title: '学国际象棋/围棋，下完 100 盘', desc: '认真下，每一盘都复盘。' },
   { id: 'research', cat: 'mind', diff: 'B', type: 'once', tier: 'season', title: '深研一个一无所知的领域', desc: '写出一篇 3000 字综述，讲给外行听懂。' },
   { id: 'poems10', cat: 'mind', diff: 'D', type: 'total', tier: 'season', target: 10, unit: '首', title: '背诵 10 首触动你的诗', desc: '留给某个需要它的时刻。', metric: 'poems' },
@@ -65,7 +81,9 @@ export const TASKS = [
   { id: 'words500', cat: 'mind', diff: 'D', type: 'total', tier: 'season', target: 500, unit: '个', title: '30 天背 500 个新单词', desc: '每天 17 个，不多不少。' },
 
   // ———— 创造（赛季级） ————
-  { id: 'cook10', cat: 'create', diff: 'B', type: 'once', tier: 'season', title: '学会 10 道菜，并宴请一次朋友', desc: '从零开始，一道一道学。', metric: 'dishes', mv: 10 },
+  { id: 'cook-s1', cat: 'create', diff: 'E', type: 'once', tier: 'season', chain: 'cook', stage: 1, title: '学会第一道菜：番茄炒蛋', desc: '所有人厨艺的起点。' },
+  { id: 'cook-s2', cat: 'create', diff: 'D', type: 'once', tier: 'season', chain: 'cook', stage: 2, title: '累计学会 3 道菜', desc: '能独立吃上自己做的饭了。', metric: 'dishes', mv: 3 },
+  { id: 'cook10', cat: 'create', diff: 'B', type: 'once', tier: 'season', chain: 'cook', stage: 3, title: '学会 10 道菜，并宴请一次朋友', desc: '从零开始，一道一道学。', metric: 'dishes', mv: 10 },
   { id: 'instrument', cat: 'create', diff: 'B', type: 'once', tier: 'season', title: '用乐器完整演奏一首歌', desc: '录下来，哪怕磕磕绊绊。' },
   { id: 'publish', cat: 'create', diff: 'D', type: 'once', tier: 'season', title: '写点东西，公开发布', desc: '任何人可见，包括陌生人。', metric: 'pieces', mv: 1 },
   { id: 'yearlog', cat: 'create', diff: 'S', type: 'total', tier: 'season', target: 365, unit: '天', title: '整整一年记录生活', desc: '每天一张照片或一段话。' },

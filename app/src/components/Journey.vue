@@ -25,7 +25,7 @@ const counts = computed(() => acceptState())
     />
   </div>
   <div v-else class="empty">
-    <SproutBuddy :size="72" />
+    <SproutBuddy :size="72" ambient />
     <p style="margin-top: 6px">还没有进行中的支线。<br />去任务板接一个——别贪多，先接一个。</p>
   </div>
 </template>

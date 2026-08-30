@@ -45,14 +45,18 @@ function acceptTask(task) {
     <span class="s">当章有效 · 最多同时 2 个</span>
     <span class="line" />
   </div>
-  <TaskCard v-for="t in chapterTasks" :key="t.id" :task="t" @accept="acceptTask" @go="emit('go-journey')" />
+  <div class="card-grid">
+    <TaskCard v-for="t in chapterTasks" :key="t.id" :task="t" @accept="acceptTask" @go="emit('go-journey')" />
+  </div>
 
   <div class="section-h">
     <span class="t">常驻区</span>
     <span class="s">赛季级任务 · 全季有效 · 最多同时 2 个</span>
     <span class="line" />
   </div>
-  <TaskCard v-for="t in seasonTasks" :key="t.id" :task="t" @accept="acceptTask" @go="emit('go-journey')" />
+  <div class="card-grid">
+    <TaskCard v-for="t in seasonTasks" :key="t.id" :task="t" @accept="acceptTask" @go="emit('go-journey')" />
+  </div>
 
   <div style="height: 8px"></div>
 </template>

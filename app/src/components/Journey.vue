@@ -15,7 +15,7 @@ const counts = computed(() => acceptState())
     <span class="line" />
   </div>
 
-  <template v-if="state.active.length">
+  <div v-if="state.active.length" class="card-grid">
     <ActiveQuestCard
       v-for="a in state.active"
       :key="a.qid"
@@ -23,7 +23,7 @@ const counts = computed(() => acceptState())
       @complete="emit('complete', a)"
       @abandon="emit('abandon', a)"
     />
-  </template>
+  </div>
   <div v-else class="empty">
     <SproutBuddy :size="72" />
     <p style="margin-top: 6px">还没有进行中的支线。<br />去任务板接一个——别贪多，先接一个。</p>

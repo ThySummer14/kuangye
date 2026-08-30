@@ -60,53 +60,56 @@ function onReset() {
 </script>
 
 <template>
-  <!-- 小芽的家（3D 场景） -->
-  <div class="hero-card">
-    <SkyDiorama />
-  </div>
+  <!-- 顶部 dashboard：桌面端左（小芽的家 + 角色信息）右（属性 + 累计卡）双栏 -->
+  <div class="panel-cols">
+    <div class="col">
+      <div class="hero-card">
+        <SkyDiorama />
+      </div>
 
-  <!-- 角色信息 -->
-  <div class="char-card">
-    <div class="char-row">
-      <span class="lvl-pill"><span class="lv">Lv</span><span class="n">{{ levelInfo.level }}</span></span>
-      <div>
-        <div class="char-name">{{ levelInfo.name }}</div>
-        <div class="char-title">{{ earnedTitles.length ? earnedTitles.join(' · ') : '尚无称号——先拿下 100 XP 的领域' }}</div>
-        <div class="char-sub">总经验 {{ levelInfo.xp }} · 完成 {{ state.done.length }} 项支线 · 最长连击 {{ maxStreakDays }} 天</div>
+      <div class="char-card">
+        <div class="char-row">
+          <span class="lvl-pill"><span class="lv">Lv</span><span class="n">{{ levelInfo.level }}</span></span>
+          <div>
+            <div class="char-name">{{ levelInfo.name }}</div>
+            <div class="char-title">{{ earnedTitles.length ? earnedTitles.join(' · ') : '尚无称号——先拿下 100 XP 的领域' }}</div>
+            <div class="char-sub">总经验 {{ levelInfo.xp }} · 完成 {{ state.done.length }} 项支线 · 最长连击 {{ maxStreakDays }} 天</div>
+          </div>
+        </div>
+        <div class="xp-line">
+          <div class="qc-progress-line">
+            <span>距 Lv{{ levelInfo.level + 1 }}</span>
+            <span><b>{{ levelInfo.cur }}</b> / {{ levelInfo.need }}</span>
+          </div>
+          <div class="bar"><i :style="{ '--p': xpRatio }" /></div>
+        </div>
       </div>
     </div>
-    <div class="xp-line">
-      <div class="qc-progress-line">
-        <span>距 Lv{{ levelInfo.level + 1 }}</span>
-        <span><b>{{ levelInfo.cur }}</b> / {{ levelInfo.need }}</span>
+
+    <div class="col">
+      <div class="section-h"><span class="t">五维属性</span><span class="s">由各领域 XP 生长</span><span class="line" /></div>
+      <div class="char-card" style="margin-top: 0">
+        <div v-for="(c, key) in CATS" :key="key" class="attr-row">
+          <span class="attr-name">{{ CATS[key].attr }}</span>
+          <span class="attr-bar"><i :style="{ '--p': attrRatio(catXp[key]), background: `linear-gradient(90deg, ${CATS[key].color}88, ${CATS[key].color})` }" /></span>
+          <span class="attr-xp">{{ catXp[key] }}</span>
+        </div>
       </div>
-      <div class="bar"><i :style="{ '--p': xpRatio }" /></div>
-    </div>
-  </div>
 
-  <!-- 五维属性 -->
-  <div class="section-h"><span class="t">五维属性</span><span class="s">由各领域 XP 生长</span><span class="line" /></div>
-  <div class="char-card" style="margin-top: 0">
-    <div v-for="(c, key) in CATS" :key="key" class="attr-row">
-      <span class="attr-name">{{ CATS[key].attr }}</span>
-      <span class="attr-bar"><i :style="{ '--p': attrRatio(catXp[key]), background: `linear-gradient(90deg, ${CATS[key].color}88, ${CATS[key].color})` }" /></span>
-      <span class="attr-xp">{{ catXp[key] }}</span>
-    </div>
-  </div>
-
-  <!-- 人生累计卡 -->
-  <div class="section-h"><span class="t">人生累计卡</span><span class="s">迄今为止的一切</span><span class="line" /></div>
-  <div v-if="metrics.length" class="metric-grid">
-    <div v-for="m in metrics" :key="m.key" class="metric-cell">
-      <span class="ic">{{ m.icon }}</span>
-      <div>
-        <div class="v">{{ m.v }}<small>{{ m.unit }}</small></div>
-        <div class="k">{{ m.label }}</div>
+      <div class="section-h"><span class="t">人生累计卡</span><span class="s">迄今为止的一切</span><span class="line" /></div>
+      <div v-if="metrics.length" class="metric-grid">
+        <div v-for="m in metrics" :key="m.key" class="metric-cell">
+          <span class="ic">{{ m.icon }}</span>
+          <div>
+            <div class="v">{{ m.v }}<small>{{ m.unit }}</small></div>
+            <div class="k">{{ m.label }}</div>
+          </div>
+        </div>
+      </div>
+      <div v-else class="empty" style="padding: 22px 0">
+        还没有累计数据。完成带「量」的任务，这里会慢慢长出你的人生。
       </div>
     </div>
-  </div>
-  <div v-else class="empty" style="padding: 22px 0">
-    还没有累计数据。完成带「量」的任务，这里会慢慢长出你的人生。
   </div>
 
   <!-- 时间轴 -->

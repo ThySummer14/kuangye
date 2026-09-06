@@ -21,27 +21,27 @@ export const DIFF = {
 }
 
 export const TYPES = { once: '一次性', streak: '连击', total: '累积' }
-export const TYPE_ICONS = { once: '⚡', streak: '🔥', total: '📊' }
+export const TYPE_ICONS = { once: '✦', streak: '◌', total: '∑' }
 
 // 人生累计卡：按 metric 汇总
 export const METRICS = {
-  books: { label: '读过的书', unit: '本', icon: '📖' },
-  km: { label: '走过的路', unit: '公里', icon: '🏃' },
-  meddays: { label: '冥想', unit: '天', icon: '🧘' },
-  dishes: { label: '做过的菜', unit: '道', icon: '🍳' },
-  summit: { label: '登顶', unit: '座', icon: '⛰️' },
-  poems: { label: '背过的诗', unit: '首', icon: '📿' },
-  pieces: { label: '发布的作品', unit: '件', icon: '📮' },
-  paintings: { label: '画过的小画', unit: '张', icon: '🎨' },
+  books: { label: '读过的书', unit: '本', icon: '▤' },
+  km: { label: '走过的路', unit: '公里', icon: '↗' },
+  meddays: { label: '冥想', unit: '天', icon: '◒' },
+  dishes: { label: '做过的菜', unit: '道', icon: '◇' },
+  summit: { label: '登顶', unit: '座', icon: '⌃' },
+  poems: { label: '背过的诗', unit: '首', icon: '≋' },
+  pieces: { label: '发布的作品', unit: '件', icon: '□' },
+  paintings: { label: '画过的小画', unit: '张', icon: '▧' },
 }
 
 // 成长线：由易到难的任务链。stage>1 的任务需先完成同链前序阶段才解锁（不上任务板）。
 export const CHAINS = {
-  run: { name: '跑步', icon: '🏃', desc: '从 2 公里到 10 公里' },
-  swim: { name: '游泳', icon: '🏊', desc: '从怕水到畅游 200 米' },
-  read: { name: '阅读', icon: '📖', desc: '从每天 10 分钟到一年 12 本' },
-  meditate: { name: '冥想', icon: '🧘', desc: '从 3 次尝试到 30 天不间断' },
-  cook: { name: '厨艺', icon: '🍳', desc: '从番茄炒蛋到宴请朋友' },
+  run: { name: '跑步', icon: '○', desc: '从 2 公里到 10 公里' },
+  swim: { name: '游泳', icon: '≈', desc: '从怕水到畅游 200 米' },
+  read: { name: '阅读', icon: '▤', desc: '从每天 10 分钟到一年 12 本' },
+  meditate: { name: '冥想', icon: '◒', desc: '从 3 次尝试到 30 天不间断' },
+  cook: { name: '厨艺', icon: '◇', desc: '从番茄炒蛋到宴请朋友' },
 }
 
 export const TASKS = [

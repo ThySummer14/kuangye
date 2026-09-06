@@ -24,7 +24,7 @@ const counts = computed(() => acceptState())
     />
   </div>
   <div v-else class="empty">
-    <div class="big">🌱</div>
+    <div class="big">◌</div>
     <p style="margin-top: 6px">还没有进行中的支线。<br />去任务板接一个——别贪多，先接一个。</p>
   </div>
 </template>

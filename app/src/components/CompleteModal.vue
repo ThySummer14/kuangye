@@ -13,7 +13,7 @@ const review = ref('')
 const result = ref(false)
 
 function confirm() {
-  complete(props.active, review.value.trim())
+  if (!complete(props.active, review.value.trim())) return
   result.value = true
 }
 function close() {
@@ -57,7 +57,7 @@ function acceptNext() {
           <div class="s">{{ review || '已完成，收入生涯档案。' }}</div>
         </div>
         <div v-if="nextTask" class="next-stage">
-          <div class="ns-label">🌟 成长线解锁下一阶段</div>
+          <div class="ns-label">✦ 成长线解锁下一阶段</div>
           <div class="ns-row">
             <span class="diff-badge" :class="`diff-${nextTask.diff}`">{{ nextTask.diff }}</span>
             <span class="ns-title">{{ nextTask.title }}</span>

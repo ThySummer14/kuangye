@@ -1,5 +1,5 @@
 <script setup>
-// 成长线：每条链一架梯子——✓ 已完成 / ● 进行中 / ○ 可接取 / 🔒 待解锁
+// 成长线：每条链一架梯子——✓ 已完成 / ● 进行中 / ○ 可接取 / × 待解锁
 import { CHAINS, DIFF } from '../data/tasks'
 import { chainStages, chainUnlocked, canAccept, accept, activeOf, state } from '../store'
 
@@ -11,7 +11,7 @@ function stageState(t) {
   if (chainUnlocked(t)) return 'open'
   return 'locked'
 }
-const STATE_MARK = { done: '✓', active: '●', open: '○', locked: '🔒' }
+const STATE_MARK = { done: '✓', active: '●', open: '○', locked: '×' }
 const STATE_TXT = { done: '已完成', active: '进行中', open: '可接取', locked: '完成上一阶段解锁' }
 
 function acceptTask(t) {
@@ -24,7 +24,7 @@ function acceptTask(t) {
 
 <template>
   <div class="chains-intro">
-    🌱 由易到难的任务线：完成当前阶段，下一阶段自动解锁。S 级传说任务都藏在这条线的尽头。
+    ✦ 由易到难的任务线：完成当前阶段，下一阶段自动解锁。S 级传说任务都藏在这条线的尽头。
   </div>
 
   <div v-for="(meta, id) in CHAINS" :key="id" class="chain-card">

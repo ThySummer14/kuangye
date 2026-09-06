@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { CATS, DIFF, TYPES, TYPE_ICONS } from '../data/tasks'
-import { progressOf, reached, checkedToday, checkIn, logUnits, taskById, now } from '../store'
+import { progressOf, reached, checkedToday, checkIn, logUnits, canUseShield, useShield, taskById, now } from '../store'
 
 const props = defineProps({ active: Object })
 const emit = defineEmits(['complete', 'abandon'])
@@ -12,7 +12,9 @@ const p = computed(() => progressOf(props.active))
 const done = computed(() => reached(props.active))
 const todayChecked = computed(() => checkedToday(props.active))
 const addV = ref(1)
+const inputError = ref('')
 const ratio = computed(() => Math.min(1, p.value.cur / p.value.target))
+const shieldAvailable = computed(() => canUseShield(props.active))
 
 // 最近 14 天打卡格
 const dots = computed(() => {
@@ -28,8 +30,15 @@ const dots = computed(() => {
 })
 
 function record() {
-  logUnits(props.active, addV.value)
-  addV.value = 1
+  if (logUnits(props.active, addV.value)) {
+    inputError.value = ''
+    addV.value = 1
+  } else {
+    inputError.value = '请输入大于 0 的数字'
+  }
+}
+function saveYesterday() {
+  if (useShield(props.active)) inputError.value = ''
 }
 </script>
 
@@ -61,7 +70,10 @@ function record() {
       </div>
       <div class="bar"><i :style="{ '--p': ratio }" /></div>
       <div class="dots"><i v-for="(on, i) in dots" :key="i" :class="{ on }" /></div>
-      <div class="shield-note">🛡️ 免死金牌 ×{{ props.active.shields }} · 实在断签的那天用它抵一次</div>
+      <div class="shield-note">
+        <span>免死金牌 ×{{ props.active.shields }}</span>
+        <button v-if="shieldAvailable" class="text-action" @click="saveYesterday">补记昨天</button>
+      </div>
       <div class="qc-actions">
         <button v-if="todayChecked" class="btn" disabled>今日已打卡 ✓</button>
         <button v-else class="btn btn-primary breath" @click="checkIn(props.active)">今日打卡</button>
@@ -81,9 +93,10 @@ function record() {
       </div>
       <div class="bar"><i :style="{ '--p': ratio }" /></div>
       <div class="log-row">
-        <input class="num-input" type="number" min="1" v-model.number="addV" />
-        <button class="btn" @click="record">记录{{ task.unit ? ' ' + task.unit : '' }}</button>
+        <input class="num-input" type="number" min="1" step="any" inputmode="decimal" v-model.number="addV" :disabled="done" aria-label="本次记录数量" />
+        <button class="btn" :disabled="done" @click="record">记录{{ task.unit ? ' ' + task.unit : '' }}</button>
       </div>
+      <div v-if="inputError" class="input-error" role="alert">{{ inputError }}</div>
       <div v-if="done" class="qc-actions">
         <button class="btn btn-primary breath" @click="emit('complete')">结算</button>
       </div>

@@ -42,6 +42,8 @@ const focusActive = computed(() => state.active[0] || null)
 const focusTask = computed(() => (focusActive.value ? taskById[focusActive.value.qid] : null))
 const focusProgress = computed(() => (focusActive.value ? progressOf(focusActive.value) : null))
 const completionRate = computed(() => Math.round((state.done.length / Math.max(1, state.done.length + state.active.length)) * 100))
+const suggestedTask = computed(() => starterTasks.value.find((t) => canAccept(t).ok) || availableTasks.value.find((t) => canAccept(t).ok) || null)
+const hasStarted = computed(() => state.done.length > 0 || state.active.length > 0)
 
 function acceptTask(task) {
   const c = canAccept(task)
@@ -64,7 +66,7 @@ function showScope(next) {
       <p v-if="activeCount">你已经在路上。今天只需要把其中一件事往前推一点。</p>
       <p v-else>不等状态变好，先给自己派一件做得到的事。</p>
       <button class="hero-cta" @click="activeCount ? emit('go-journey') : showScope('starter')">
-        <span>{{ activeCount ? '继续我的支线' : '从轻量任务开始' }}</span><span aria-hidden="true">↗</span>
+        <span>{{ activeCount ? '去进行中看看' : '看一眼适合起步' }}</span><span aria-hidden="true">↗</span>
       </button>
     </div>
     <div class="board-hero-mark" aria-hidden="true">
@@ -92,6 +94,40 @@ function showScope(next) {
         </div>
       </div>
       <button class="btn btn-primary btn-sm" @click="emit('go-journey')">打开进行中 <span aria-hidden="true">→</span></button>
+    </div>
+  </section>
+
+  <section v-else-if="suggestedTask" class="daily-pick" :style="{ '--cat-color': CATS[suggestedTask.cat].color }">
+    <div class="daily-pick-top">
+      <div>
+        <div class="daily-pick-kicker"><span class="live-dot" /> 今日只选这一件</div>
+        <h2>给未来的自己留一条证据</h2>
+      </div>
+      <span class="daily-pick-mark" aria-hidden="true">01</span>
+    </div>
+    <div class="daily-pick-task">
+      <span class="diff-badge" :class="`diff-${suggestedTask.diff}`">{{ suggestedTask.diff }}</span>
+      <div class="daily-pick-copy">
+        <strong>{{ suggestedTask.title }}</strong>
+        <span>{{ suggestedTask.desc }}</span>
+      </div>
+      <button class="btn btn-primary btn-sm" :disabled="!canAccept(suggestedTask).ok" @click="acceptTask(suggestedTask)">
+        {{ canAccept(suggestedTask).ok ? '接下这一步' : '先清出一个位置' }}
+      </button>
+    </div>
+    <div class="daily-pick-foot">完成它会获得 +{{ DIFF[suggestedTask.diff].xp }} XP · 之后还能随时换一条路</div>
+  </section>
+
+  <section v-if="!hasStarted" class="start-ritual" aria-label="开始方式">
+    <div class="start-ritual-copy">
+      <div class="eyebrow">第一次来到旷野</div>
+      <h2>不用规划一生，先完成一件事</h2>
+      <p>接取、推进、结算。每一条完成记录，都会变成你以后回头看得见的成长。</p>
+    </div>
+    <div class="start-ritual-steps">
+      <div><b>01</b><span>挑一件</span></div>
+      <div><b>02</b><span>往前推</span></div>
+      <div><b>03</b><span>留下来</span></div>
     </div>
   </section>
 

@@ -62,6 +62,7 @@ const seasonLine = computed(() => {
       <div class="side-foot">
         <div class="side-foot-txt">{{ seasonLine }}</div>
         <div class="side-foot-sub">{{ BUDDY_NAME }}在屏幕上散步 · {{ state.done.length }} 项已完成</div>
+        <div class="side-foot-note">数据只留在这台设备 · 随时可导出</div>
       </div>
     </aside>
 
@@ -89,7 +90,7 @@ const seasonLine = computed(() => {
           @complete="completing = $event"
           @abandon="abandoning = $event"
         />
-        <Journey v-else-if="tab === 'quest'" @complete="completing = $event" @abandon="abandoning = $event" />
+        <Journey v-else-if="tab === 'quest'" @complete="completing = $event" @abandon="abandoning = $event" @go-board="tab = 'board'" />
         <ChainsView v-else-if="tab === 'chains'" :toast="toast" />
         <Panel v-else :toast="toast" />
       </main>

@@ -1,73 +1,98 @@
 <script setup>
-import { ref, computed } from 'vue'
-import { taskById, complete, canAccept, accept, nextChainStage } from '../store'
-import { DIFF } from '../data/tasks'
-import SproutBuddy from './SproutBuddy.vue'
-
-const props = defineProps({ active: Object })
-const emit = defineEmits(['close', 'done'])
-
-const task = computed(() => taskById[props.active.qid])
-const diff = computed(() => DIFF[task.value.diff])
-const review = ref('')
-const result = ref(false)
-
+import { ref, computed } from "vue";
+import {
+  taskById,
+  complete,
+  canAccept,
+  accept,
+  nextChainStage,
+  state,
+} from "../store.js";
+import { DIFF } from "../data/tasks.js";
+import { lumenReward } from "../game/home.js";
+import BuddyFace from "./BuddyFace.vue";
+import ModalFrame from "./ModalFrame.vue";
+const props = defineProps({ active: Object }),
+  emit = defineEmits(["close", "done", "shop"]);
+const task = computed(() => taskById[props.active.qid]),
+  diff = computed(() => DIFF[task.value.diff]),
+  review = ref(""),
+  result = ref(false),
+  glimmer = ref(0);
 function confirm() {
-  if (!complete(props.active, review.value.trim())) return
-  result.value = true
+  const before = state.home.glimmerPaid;
+  if (complete(props.active, review.value.trim())) {
+    glimmer.value = state.home.glimmerPaid - before;
+    result.value = true;
+  }
 }
-function close() {
-  emit('done', `任务完成，+${diff.value.xp} XP`)
-  emit('close')
+const next = computed(() => (result.value ? nextChainStage(task.value) : null));
+function finish() {
+  if (result.value)
+    emit("done", `这件事完成了，收获 ${lumenReward(diff.value.xp)} 光`);
+  emit("close");
 }
-
-// 完成后若解锁了成长线下一阶段，直接在结算页给入口——不占任务板位
-const nextTask = computed(() => (result.value ? nextChainStage(task.value) : null))
-const nextOk = computed(() => (nextTask.value ? canAccept(nextTask.value).ok : false))
-function acceptNext() {
-  if (!nextOk.value) return
-  accept(nextTask.value)
-  emit('done', `已接取下一阶段「${nextTask.value.title}」`)
-  emit('close')
+function nextTask() {
+  if (accept(next.value)) {
+    emit("done", "新的成长线，慢慢来");
+    emit("close");
+  }
 }
 </script>
-
 <template>
-  <div class="overlay" @click.self="!result && emit('close')">
-    <div class="modal">
-      <template v-if="!result">
-        <div class="modal-title">宣布完成</div>
-        <div class="modal-sub">「{{ task.title }}」· +{{ diff.xp }} XP</div>
-        <textarea
-          class="textarea"
-          v-model="review"
-          maxlength="80"
-          placeholder="一句话回顾（可选）：这一趟你经历了什么？"
-        ></textarea>
-        <div class="modal-actions">
-          <button class="btn" @click="emit('close')">再等等</button>
-          <button class="btn btn-primary" @click="confirm">完成，结算！</button>
-        </div>
-      </template>
-      <template v-else>
-        <div class="result-hero">
-          <SproutBuddy :size="92" mood="celebrate" />
-          <div class="xp">+{{ diff.xp }} XP</div>
-          <div class="t serif">「{{ task.title }}」</div>
-          <div class="s">{{ review || '已完成，收入生涯档案。' }}</div>
-        </div>
-        <div v-if="nextTask" class="next-stage">
-          <div class="ns-label">✦ 成长线解锁下一阶段</div>
-          <div class="ns-row">
-            <span class="diff-badge" :class="`diff-${nextTask.diff}`">{{ nextTask.diff }}</span>
-            <span class="ns-title">{{ nextTask.title }}</span>
-            <button class="btn btn-sm btn-primary" :disabled="!nextOk" @click="acceptNext">接取下一阶段</button>
-          </div>
-        </div>
-        <div class="modal-actions">
-          <button class="btn btn-primary" @click="close">好</button>
-        </div>
-      </template>
-    </div>
-  </div>
+  <ModalFrame
+    :label="result ? '完成小事，收获光' : '记录完成的任务'"
+    @close="finish"
+    ><template v-if="!result"
+      ><span class="eyebrow">A LITTLE MOMENT TO REMEMBER</span>
+      <h2>这一件事，你做到了。</h2>
+      <p class="completion-task">{{ task.title }}</p>
+      <label for="quest-review"
+        >给未来的自己留一句话 <small>（可选）</small></label
+      ><textarea
+        id="quest-review"
+        v-model="review"
+        maxlength="160"
+        placeholder="这一趟，发生了什么值得记住的事？"
+        rows="4"
+      />
+      <p class="completion-note">它也会成为你下一件家具上的小小铭牌。</p>
+      <div class="placement-actions">
+        <button class="soft-button" @click="emit('close')">再等等</button
+        ><button class="primary-button" @click="confirm">
+          完成，收下这束光
+        </button>
+      </div></template
+    ><template v-else
+      ><div class="completion-result">
+        <BuddyFace :size="175" mood="celebrate" /><span class="eyebrow"
+          >一点努力，一点光</span
+        >
+        <h2>＋{{ lumenReward(diff.xp) }} <small>光</small></h2>
+        <span class="completion-xp">＋{{ diff.xp }} XP</span>
+        <h3>{{ task.title }}</h3>
+        <p>{{ review || "今天，又为自己完成了一件事。" }}</p>
+        <p v-if="glimmer" class="glimmer-gift">
+          这七天的微光，又凝成了 {{ glimmer }} 点光。
+        </p>
+      </div>
+      <button
+        class="primary-button full-button"
+        @click="
+          emit('shop');
+          emit('close');
+        "
+      >
+        去集市，给小家添一点温暖 ↗</button
+      ><button
+        v-if="next && canAccept(next).ok"
+        class="text-button"
+        @click="nextTask"
+      >
+        接下成长线的下一步</button
+      ><button class="text-button" @click="finish">
+        先把这一刻记下来
+      </button></template
+    ></ModalFrame
+  >
 </template>

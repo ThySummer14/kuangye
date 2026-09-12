@@ -1,35 +1,37 @@
 <script setup>
-import { ref, computed } from 'vue'
-import { taskById, abandon } from '../store'
-
-const props = defineProps({ active: Object })
-const emit = defineEmits(['close', 'done'])
-
-const task = computed(() => taskById[props.active.qid])
-const reason = ref('')
-
+import { ref, computed } from "vue";
+import { taskById, abandon } from "../store.js";
+import BuddyFace from "./BuddyFace.vue";
+import ModalFrame from "./ModalFrame.vue";
+const props = defineProps({ active: Object }),
+  emit = defineEmits(["close", "done"]);
+const reason = ref(""),
+  task = computed(() => taskById[props.active.qid]);
 function confirm() {
-  abandon(props.active, reason.value.trim())
-  emit('done', '已放弃，归入墓志铭')
-  emit('close')
+  if (abandon(props.active, reason.value.trim())) {
+    emit("done", "先放一放，过去的努力不会消失");
+    emit("close");
+  }
 }
 </script>
-
 <template>
-  <div class="overlay" @click.self="emit('close')">
-    <div class="modal">
-      <div class="modal-title">放弃这条支线？</div>
-      <div class="modal-sub">「{{ task.title }}」· 放弃没有惩罚，但要有理由——这是给未来的自己看的。</div>
-      <textarea
-        class="textarea"
-        v-model="reason"
-        maxlength="80"
-        placeholder="为什么放弃？（会记入墓志铭，季末复盘时可见）"
-      ></textarea>
-      <div class="modal-actions">
-        <button class="btn btn-primary" @click="emit('close')">再坚持一下</button>
-        <button class="btn" style="border-color: var(--danger); color: var(--danger)" @click="confirm">确认放弃</button>
-      </div>
+  <ModalFrame label="暂时放下任务" @close="emit('close')"
+    ><div class="completion-result">
+      <BuddyFace :size="125" mood="sad" />
+      <h2>把这件事，先放一放。</h2>
+      <p>{{ task.title }}</p>
     </div>
-  </div>
+    <label for="rest-reason">想留下一句话吗？（可选）</label
+    ><textarea
+      id="rest-reason"
+      v-model="reason"
+      maxlength="160"
+      placeholder="也许现在，有更想做的事。"
+    />
+    <p class="completion-note">不会扣除光或经验。记录会留在成长手记里。</p>
+    <div class="placement-actions">
+      <button class="soft-button" @click="emit('close')">继续做这件事</button
+      ><button class="primary-button" @click="confirm">暂时放下</button>
+    </div></ModalFrame
+  >
 </template>

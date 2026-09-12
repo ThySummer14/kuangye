@@ -1,0 +1,10 @@
+{
+  "name": "kuangye-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "npm --prefix app run build && node scripts/stage-site.mjs",
+    "test": "npm --prefix app test",
+    "dev": "npm --prefix app run dev"
+  }
+}

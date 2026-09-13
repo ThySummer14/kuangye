@@ -2209,3 +2209,97 @@ button:disabled {
 .home-controls .life-speech {
   min-height: 27px;
 }
+.craftsman-card,
+.weather-card {
+  padding: 24px;
+  border: 1px solid #dfdfce;
+  border-radius: 20px;
+  background: #f6f2e6;
+}
+.craftsman-card {
+  text-align: center;
+}
+.craftsman-card small,
+.weather-card small {
+  display: block;
+  font-size: 11px;
+  color: #7d846f;
+  line-height: 1.7;
+  margin-top: 14px;
+}
+.craftsman-card p {
+  line-height: 1.9;
+  color: #79816c;
+}
+.craftsman-portrait {
+  position: relative;
+  width: 90px;
+  height: 112px;
+  margin: 0 auto 16px;
+}
+.craft-face {
+  position: absolute;
+  top: 29px;
+  left: 15px;
+  width: 60px;
+  height: 52px;
+  border-radius: 45%;
+  background: #dbb98c;
+  padding-top: 16px;
+  color: #51422e;
+  font-size: 18px;
+}
+.craft-hat {
+  position: absolute;
+  top: 11px;
+  left: 11px;
+  width: 68px;
+  height: 31px;
+  border-radius: 35px 35px 8px 8px;
+  background: #b89962;
+  z-index: 2;
+  border-bottom: 7px solid #886f4f;
+}
+.craft-apron {
+  position: absolute;
+  bottom: 0;
+  left: 10px;
+  width: 70px;
+  height: 43px;
+  border-radius: 22px 22px 8px 8px;
+  background: #6b8a82;
+  color: #f4e5c8;
+  padding-top: 12px;
+}
+.weather-title {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.weather-title time {
+  font-size: 11px;
+  color: #8b917e;
+}
+.weather-card p {
+  font-size: 13px;
+  line-height: 1.6;
+}
+.weather-card label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 12px 0;
+  gap: 12px;
+}
+.weather-card select {
+  max-width: 75%;
+  padding: 8px;
+  border: 1px solid #d8dcca;
+  border-radius: 8px;
+  background: #fffdf6;
+}
+.weather-card a {
+  display: block;
+  color: #677e67;
+}

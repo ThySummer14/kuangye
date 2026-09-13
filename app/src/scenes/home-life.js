@@ -99,6 +99,15 @@ export function homeLife(engine, getHome, onMoment) {
       path = [];
     }
     buddy.visible = true;
+    const oldPose = {
+      x: buddy.position.x,
+      y: buddy.position.y,
+      z: buddy.position.z,
+      yaw: buddy.rotation.y,
+      roll: buddy.rotation.z,
+      sy: buddy.scale.y,
+    };
+    buddy.rotation.z = buddy.userData.faceRoll || 0;
     buddy.scale.setScalar(1.3);
     effect.visible = !!action && t < action.until;
     if (path.length) {
@@ -149,7 +158,7 @@ export function homeLife(engine, getHome, onMoment) {
           buddy.position.y += Math.abs(Math.sin(t * 0.01)) * 0.25;
           buddy.rotation.z = Math.sin(t * 0.007) * 0.25;
         } else if (["sit", "sleep", "tea", "read"].includes(action.action)) {
-          buddy.scale.y = 1.08;
+          buddy.scale.y = 1.26;
           buddy.rotation.z =
             action.action === "sleep"
               ? 0.25
@@ -188,6 +197,18 @@ export function homeLife(engine, getHome, onMoment) {
     buddy.userData.supportHeight = support;
     if (action?.seat && t - action.started > 650 && action.until - t > 650)
       buddy.userData.supportHeight = support + action.seat.y;
+    // Blend from the pose actually displayed, even when an action is interrupted.
+    const blend = 1 - Math.exp(-dt * 14),
+      angleDelta = Math.atan2(
+        Math.sin(buddy.rotation.y - oldPose.yaw),
+        Math.cos(buddy.rotation.y - oldPose.yaw),
+      );
+    buddy.rotation.y = oldPose.yaw + angleDelta * (1 - Math.exp(-dt * 8));
+    buddy.rotation.z = oldPose.roll + (buddy.rotation.z - oldPose.roll) * blend;
+    buddy.scale.y = oldPose.sy + (buddy.scale.y - oldPose.sy) * blend;
+    buddy.position.x = oldPose.x + (buddy.position.x - oldPose.x) * blend;
+    buddy.position.z = oldPose.z + (buddy.position.z - oldPose.z) * blend;
+    buddy.position.y = oldPose.y + (buddy.position.y - oldPose.y) * blend;
     effect.position.copy(buddy.position);
     if (action?.target && ["water", "light", "sniff"].includes(action.action))
       effect.position.set(action.target.x, action.target.y, action.target.z);

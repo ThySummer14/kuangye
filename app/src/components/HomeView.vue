@@ -17,6 +17,8 @@ import { footprint, placementCheck } from "../game/placement.js";
 import { refundFor } from "../game/home.js";
 import { createWorld } from "../scenes/world.js";
 import { decorateHome, placeModel } from "../scenes/furniture.js";
+import AtmosphereControl from "./AtmosphereControl.vue";
+import { createAtmosphere } from "../scenes/atmosphere.js";
 import FurnitureImage from "./FurnitureImage.vue";
 import BuddyFace from "./BuddyFace.vue";
 import ModalFrame from "./ModalFrame.vue";
@@ -26,7 +28,17 @@ import { INTERACTIONS } from "../game/buddy-walk.js";
 const room = computed(() => roomOf(state.home));
 const expansion = ref(null),
   speech = ref("点点空地，我就蹦过去。拖动画面可以转动小家。");
-let life;
+let life,
+  atmosphere,
+  atmosphereState = { weather: "clear", day: 1, hour: 12 };
+const craftsman = ref(false),
+  ambientDay = ref(1);
+function setAtmosphere(v) {
+  atmosphereState = v;
+  ambientDay.value = v.weather === "moon" ? 0 : v.day;
+  atmosphere?.set(v);
+}
+
 const emit = defineEmits(["shop", "toast", "journal"]);
 const host = ref(null),
   failed = ref(false),
@@ -188,8 +200,11 @@ function boot() {
       },
     });
     engine.setRoomSize(room.value);
-    engine.setLighting(state.home.decor.light);
+
     engine.setHome((api) => decorateHome(api, room.value, state.home.decor));
+    atmosphere = createAtmosphere(engine, room.value);
+    atmosphere.set(atmosphereState);
+    engine.setAtmosphereTick((t) => atmosphere.tick(t));
     life = homeLife(
       engine,
       () => state.home,
@@ -225,7 +240,11 @@ onMounted(() => {
   window.addEventListener("keydown", key);
   if (sleepy.value) buddyMoment("sleepy", 5000, "睡醒就能见到你，真好。");
 });
-watch(() => [state.home.room, state.home.decor], boot, { deep: true });
+watch(
+  () => [state.home.room, state.home.decor.wall, state.home.decor.floor],
+  boot,
+  { deep: true },
+);
 watch(() => state.home.placed, sync, { deep: true });
 watch(() => state.home.inventory, sync, { deep: true });
 watch([editing, item, rotation, cell, check], ghost, { deep: true });
@@ -237,7 +256,18 @@ onBeforeUnmount(() => {
 <template>
   <div class="home-layout">
     <section class="home-main">
-      <div class="home-stage" :class="[{ sleepy }, state.home.decor.light]">
+      <div
+        class="home-stage"
+        :style="{
+          background:
+            ambientDay < 0.2
+              ? '#cbd5d4'
+              : ambientDay < 0.6
+                ? '#f0e3d2'
+                : '#eeefe4',
+        }"
+        :class="[{ sleepy }, state.home.decor.light]"
+      >
         <div class="home-heading">
           <div>
             <span class="eyebrow">A HOME MADE OF LITTLE MOMENTS</span>
@@ -443,6 +473,26 @@ onBeforeUnmount(() => {
           先从背包挑一件家具，<br />再点屋里的空地放下。<br />点击已放好的家具，看看它的回忆。
         </div>
       </section>
+      <section class="craftsman-card">
+        <div class="craftsman-portrait" aria-hidden="true">
+          <span class="craft-hat"></span><span class="craft-face">• ᴗ •</span
+          ><span class="craft-apron">✂</span>
+        </div>
+        <span class="eyebrow">森林里的装修师傅</span>
+        <h3>木木师傅</h3>
+        <p>量一量，敲一敲。<br />把你喜欢的日子，装进小家。</p>
+        <button class="primary-button" @click="craftsman = true">
+          找师傅聊聊装修</button
+        ><small>扩建 · 墙面 · 地板</small>
+      </section>
+      <AtmosphereControl @change="setAtmosphere" />
+    </aside>
+    <ModalFrame
+      v-if="craftsman"
+      label="木木师傅的装修铺"
+      @close="craftsman = false"
+      ><h2>木木师傅的装修铺</h2>
+      <p>“空间慢慢长大，风格随你喜欢。今天想改哪儿？”</p>
       <section class="home-renovation">
         <span class="eyebrow">GROW A LITTLE HOME</span>
         <h3>给生活多一点空间</h3>
@@ -452,22 +502,16 @@ onBeforeUnmount(() => {
           :key="axis"
           class="soft-button"
           :disabled="!expansionOffer(state.home, axis)"
-          @click="expansion = axis"
+          @click="
+            craftsman = false;
+            expansion = axis;
+          "
         >
           {{ axis === "w" ? "向右扩建" : "向前扩建" }} ·
           {{ expansionOffer(state.home, axis)?.price ?? "已达上限" }} 光
         </button>
         <h4>换一种心情 · 免费</h4>
         <label
-          >光线<select
-            :value="state.home.decor.light"
-            @change="changeHomeDecor('light', $event.target.value)"
-          >
-            <option value="day">午后晴光</option>
-            <option value="sunset">日落时分</option>
-            <option value="night">温柔夜晚</option>
-          </select></label
-        ><label
           >墙面<select
             :value="state.home.decor.wall"
             @change="changeHomeDecor('wall', $event.target.value)"
@@ -490,7 +534,7 @@ onBeforeUnmount(() => {
           最近的小发现：{{ state.home.moments[0].text }}
         </p>
       </section>
-    </aside>
+    </ModalFrame>
     <ModalFrame v-if="expansion" label="扩建小家" @close="expansion = null"
       ><h3>让小家再长大一点</h3>
       <p>

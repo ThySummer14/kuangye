@@ -1,4 +1,4 @@
-import { paintEye } from "./face-paint.js";
+import { paintEye, paintMouth, blinkAt } from "./face-paint.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import * as THREE from "three";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
@@ -246,7 +246,7 @@ export function createWorld(
     // Pear-shaped seed: a broad soft base, rounded crown, and continuous surface.
     const radiusAt = (y) => {
       const t = THREE.MathUtils.clamp((y - 0.02) / 0.68, 0, 1);
-      return 0.35 * Math.pow(Math.sin(Math.PI * t), 0.55) * (1.08 - 0.32 * t);
+      return 0.33 * Math.pow(Math.sin(Math.PI * t), 0.52) * (1.04 - 0.12 * t);
     };
     const profile = Array.from({ length: 41 }, (_, i) => {
       const y = 0.02 + (0.68 * i) / 40;
@@ -260,7 +260,7 @@ export function createWorld(
       0,
       g,
     );
-    body.scale.z = 0.84;
+    body.scale.z = 1;
     // Decals follow the seed's curved surface, so the face cannot float or clip into it.
     function skinPatch(w, h, cy) {
       const geo = new THREE.PlaneGeometry(w, h, 32, 24),
@@ -269,12 +269,7 @@ export function createWorld(
         const x = pos.getX(i),
           y = pos.getY(i) + cy,
           r = radiusAt(y);
-        pos.setXYZ(
-          i,
-          x,
-          y,
-          Math.sqrt(Math.max(0.0001, r * r - x * x)) * 0.84 + 0.005,
-        );
+        pos.setXYZ(i, x, y, Math.sqrt(Math.max(0.0001, r * r - x * x)) + 0.005);
       }
       geo.computeVertexNormals();
       return geo;
@@ -355,7 +350,7 @@ export function createWorld(
           vel[i] = 0;
           continue;
         }
-        const step = springStep(values[i], vel[i], goal[i], dt);
+        const step = springStep(values[i], vel[i], goal[i], dt, 12);
         values[i] = step.position;
         vel[i] = step.velocity;
       }
@@ -365,7 +360,7 @@ export function createWorld(
       c.lineWidth = 11;
       c.lineCap = "round";
       c.strokeStyle = "#344938";
-      const blink = !reduced && t % 4800 > 4620 ? 0.1 : 1;
+      const blink = reduced ? 1 : blinkAt(t);
       for (const x of [75, 181]) {
         c.beginPath();
         const gaze = Math.sin(t * 0.0006) * 4;
@@ -387,17 +382,10 @@ export function createWorld(
         c.fill();
         c.fillStyle = "#344938";
       }
-      c.beginPath();
-      if (values[2] > 0.55) {
-        c.ellipse(128, 155, 17, 17 * values[2], 0, 0, Math.PI * 2);
-        c.fill();
-      } else {
-        c.moveTo(112, 151);
-        c.quadraticCurveTo(128, 165 + values[1] * 12, 144, 151);
-        c.stroke();
-      }
+      paintMouth(c, 128, 155, values[2], values[1], 16);
       texture.needsUpdate = true;
-      g.rotation.z = values[3] * 0.3;
+      g.userData.faceRoll = values[3] * 0.3;
+      if (mode !== "home") g.rotation.z = g.userData.faceRoll;
     };
     const leaves = new THREE.Group();
     leaves.position.y = 0.88;
@@ -460,7 +448,8 @@ export function createWorld(
   }
   let buddy, furnitureGroup, floor, ghost;
   let roomSize = { w: 6, d: 6 },
-    homeTick;
+    homeTick,
+    atmosphereTick;
   const cutawayWalls = [];
   const furniturePickables = [];
   if (mode === "map") {
@@ -717,6 +706,7 @@ export function createWorld(
     camera.lookAt(target);
     animated.forEach((g, i) => {
       g.userData.drawFace?.(t);
+      if (mode === "home") return;
       g.position.y =
         0.05 +
         (matchMedia("(prefers-reduced-motion: reduce)").matches
@@ -729,6 +719,7 @@ export function createWorld(
           : Math.sin(t * 0.0005) * 0.18);
     });
     homeTick?.(t, buddy);
+    atmosphereTick?.(t);
     for (const g of animated) {
       const contact = g.userData.contactShadow;
       if (contact) {
@@ -792,6 +783,21 @@ export function createWorld(
     cyl,
     makeBuddy,
     animated,
+    setAtmosphereTick(fn) {
+      atmosphereTick = fn;
+    },
+    setDaylight(day, hour, weather) {
+      const cloudy = ["rain", "cloud", "snow"].includes(weather);
+      sun.color.set(day < 0.6 ? "#ffcca0" : "#fff3db");
+      sun.intensity = (0.35 + day * 2.1) * (cloudy ? 0.65 : 1);
+      sun.position.set(
+        Math.sin(((hour - 6) / 12) * Math.PI) * -6,
+        7 + day * 7,
+        7,
+      );
+      scene.children.find((o) => o.isHemisphereLight).intensity =
+        0.55 + day * 1.5;
+    },
     setLighting(light) {
       sun.color.set(
         light === "night"

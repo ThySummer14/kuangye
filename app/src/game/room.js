@@ -1,3 +1,4 @@
+import { normalizeAtmosphere } from "./atmosphere.js";
 export const BASE_ROOM = Object.freeze({ w: 6, d: 6 });
 export const MAX_ROOM = 12;
 export const WALLS = {
@@ -50,7 +51,7 @@ export function normalizeDecor(raw) {
   return {
     wall: WALLS[raw?.wall] ? raw.wall : "meadow",
     floor: FLOORS[raw?.floor] ? raw.floor : "oak",
-    light: ["day", "sunset", "night"].includes(raw?.light) ? raw.light : "day",
+    ...normalizeAtmosphere(raw || {}),
   };
 }
 export function addHomeMoment(home, kind, text, key = kind) {

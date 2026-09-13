@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 import { buddyBus, buddyMoment } from "../store.js";
-import { paintEye } from "../scenes/face-paint.js";
+import { paintEye, paintMouth, blinkAt } from "../scenes/face-paint.js";
 import { EXPRESSIONS, springStep } from "../game/emotions.js";
 const props = defineProps({
   size: { type: Number, default: 150 },
@@ -65,7 +65,7 @@ function render(t) {
   for (let i = 0; i < 5; i++) {
     if (reduced) params[i] = goal[i];
     else {
-      const step = springStep(params[i], velocity[i], goal[i], dt);
+      const step = springStep(params[i], velocity[i], goal[i], dt, 12);
       velocity[i] = step.velocity;
       params[i] = step.position;
     }
@@ -78,8 +78,11 @@ function render(t) {
   ctx.translate(128, 137 + breath - bounce);
   ctx.rotate(params[3]);
   ctx.translate(-128, -137);
-  ellipse(128, 166, 60, 54, "#93b968");
-  ellipse(128, 199, 40, 18, "#c2d79b");
+  const bodyGradient = ctx.createRadialGradient(109, 143, 5, 128, 164, 65);
+  bodyGradient.addColorStop(0, "#afcf87");
+  bodyGradient.addColorStop(1, "#86aa5e");
+  ellipse(128, 163, 57, 60, bodyGradient);
+  ellipse(128, 198, 32, 15, "#c2d79b");
   stroke(128, 115, 126, 86, 128, 67, "#6f9448", 7);
   ctx.fillStyle = "#7fae54";
   ctx.beginPath();
@@ -94,10 +97,7 @@ function render(t) {
   ctx.bezierCurveTo(146, 40, 129, 55, 128, 78);
   ctx.fill();
   ctx.translate(0, 26);
-  const blink =
-    !reduced && t % 4700 > 4490
-      ? Math.max(0.08, Math.abs((t % 4700) - 4595) / 105)
-      : 1;
+  const blink = reduced ? 1 : blinkAt(t);
   const gx = mood === "idle" || mood === "curious" ? gaze.x : 0,
     gy = mood === "idle" || mood === "curious" ? gaze.y : 0;
   for (const x of [107, 151]) {
@@ -113,10 +113,7 @@ function render(t) {
     );
     ellipse(x + (x < 128 ? -12 : 12), 148, 10, 5, "#dfa99877");
   }
-  if (params[2] > 0.55) {
-    ellipse(129, 153, 9, 8 * params[2], "#72584a");
-    ellipse(129, 157, 5, 3, "#dc9f8b");
-  } else stroke(120, 150, 129, 156 + params[1] * 8, 138, 150, "#536247", 3);
+  paintMouth(ctx, 129, 151, params[2], params[1], 8);
   ctx.restore();
   if (mood === "loved") {
     ctx.fillStyle = "#c68c7f";

@@ -393,7 +393,7 @@ export function expandHome(axis) {
   return result;
 }
 export function changeHomeDecor(key, value) {
-  if (!["wall", "floor", "light"].includes(key)) return;
+  if (!["wall", "floor", "light", "weather"].includes(key)) return;
   state.home.decor = normalizeDecor({ ...state.home.decor, [key]: value });
 }
 export function rememberHomeInteraction(model, text) {

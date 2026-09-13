@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 import { buddyBus, buddyMoment } from "../store.js";
+import { paintEye } from "../scenes/face-paint.js";
 import { EXPRESSIONS, springStep } from "../game/emotions.js";
 const props = defineProps({
   size: { type: Number, default: 150 },
@@ -77,15 +78,22 @@ function render(t) {
   ctx.translate(128, 137 + breath - bounce);
   ctx.rotate(params[3]);
   ctx.translate(-128, -137);
-  ellipse(105, 211, 17, 10, "#cdd4aa");
-  ellipse(150, 211, 17, 10, "#cdd4aa");
-  ellipse(128, 142, 60, 72, "#e7ebcf");
-  ellipse(125, 134, 54, 65, "#f2f3dc");
-  ellipse(72, 163, 13, 22, "#e5e9c9", -0.35 - params[4]);
-  ellipse(184, 163, 13, 22, "#e5e9c9", 0.35 + params[4]);
-  stroke(128, 76, 126, 58, 132, 45, "#6f9652", 7);
-  ellipse(111, 55, 23, 11, "#79a461", 0.4);
-  ellipse(149, 44, 25, 12, "#a2bc79", -0.4);
+  ellipse(128, 166, 60, 54, "#93b968");
+  ellipse(128, 199, 40, 18, "#c2d79b");
+  stroke(128, 115, 126, 86, 128, 67, "#6f9448", 7);
+  ctx.fillStyle = "#7fae54";
+  ctx.beginPath();
+  ctx.moveTo(128, 78);
+  ctx.bezierCurveTo(101, 78, 89, 60, 82, 40);
+  ctx.bezierCurveTo(110, 40, 127, 55, 128, 78);
+  ctx.fill();
+  ctx.fillStyle = "#8fbc60";
+  ctx.beginPath();
+  ctx.moveTo(128, 78);
+  ctx.bezierCurveTo(155, 78, 167, 60, 174, 40);
+  ctx.bezierCurveTo(146, 40, 129, 55, 128, 78);
+  ctx.fill();
+  ctx.translate(0, 26);
   const blink =
     !reduced && t % 4700 > 4490
       ? Math.max(0.08, Math.abs((t % 4700) - 4595) / 105)
@@ -93,12 +101,16 @@ function render(t) {
   const gx = mood === "idle" || mood === "curious" ? gaze.x : 0,
     gy = mood === "idle" || mood === "curious" ? gaze.y : 0;
   for (const x of [107, 151]) {
-    if (params[1] > 0.45) {
-      stroke(x - 7, 132 + gy, x, 123 + gy, x + 7, 132 + gy, "#354e3b", 5);
-    } else {
-      ellipse(x + gx, 130 + gy, 5.3, 8 * params[0] * blink, "#354e3b");
-      ellipse(x + gx - 1, 127 + gy, 1.4, 2, "#ffffffb3");
-    }
+    ctx.fillStyle = "#33291e";
+    paintEye(
+      ctx,
+      x + gx,
+      130 + gy,
+      5.3,
+      8 * params[0] * blink * (x < 128 ? 1 + params[3] : 1 - params[3]),
+      params[1],
+      params[3] * (x < 128 ? -1 : 1),
+    );
     ellipse(x + (x < 128 ? -12 : 12), 148, 10, 5, "#dfa99877");
   }
   if (params[2] > 0.55) {

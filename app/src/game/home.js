@@ -1,4 +1,5 @@
 import { furnitureById } from "../data/furniture.js";
+import { roomOf, normalizeDecor } from "./room.js";
 import { placementCheck } from "./placement.js";
 export const lumenReward = (xp) =>
   Number.isFinite(Number(xp))
@@ -7,6 +8,9 @@ export const lumenReward = (xp) =>
 export const refundFor = (price) =>
   Math.floor(Math.max(0, Number(price) || 0) * 0.7);
 export const emptyHome = () => ({
+  room: { w: 6, d: 6 },
+  decor: normalizeDecor(),
+  moments: [],
   lumens: 0,
   earned: 0,
   spent: 0,
@@ -28,6 +32,17 @@ export function normalizeHome(raw, done = []) {
     h.earned = h.lumens;
     return h;
   }
+  h.room = roomOf(raw);
+  h.decor = normalizeDecor(raw.decor);
+  h.moments = (Array.isArray(raw.moments) ? raw.moments : [])
+    .filter((m) => m && typeof m.key === "string" && typeof m.text === "string")
+    .slice(0, 60)
+    .map((m) => ({
+      key: m.key.slice(0, 100),
+      kind: String(m.kind || "").slice(0, 40),
+      text: m.text.slice(0, 160),
+      at: String(m.at || "").slice(0, 30),
+    }));
   for (const k of ["lumens", "earned", "spent", "refunded", "glimmerPaid"])
     h[k] = number(raw[k]);
   h.glimmerDays = [
@@ -77,7 +92,7 @@ export function normalizeHome(raw, done = []) {
     if (!p || h.placed.some((a) => a.uid === p.uid)) continue;
     const f = furnitureById[h.inventory.find((i) => i.uid === p.uid)?.fid];
     const at = { uid: p.uid, x: p.x, z: p.z, rotation: number(p.rotation) % 4 };
-    if (placementCheck(f, at, h.placed, h.inventory, p.uid).ok)
+    if (placementCheck(f, at, h.placed, h.inventory, p.uid, h.room).ok)
       h.placed.push(at);
   }
   return h;
@@ -126,6 +141,7 @@ export function placeFurniture(home, uid, at) {
     home.placed,
     home.inventory,
     uid,
+    roomOf(home),
   );
   if (!check.ok) return check;
   const old = home.placed.find((p) => p.uid === uid);

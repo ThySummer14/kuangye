@@ -1,3 +1,5 @@
+import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
+import { WALLS, FLOORS } from "../game/room.js";
 import * as THREE from "three";
 import { footprint } from "../game/placement.js";
 export function furnitureModel(f, api) {
@@ -142,6 +144,10 @@ export function furnitureModel(f, api) {
         cy(0.035, 0.035, 0.5, cream, (i - 1) * 0.23, 1.18, 0.1);
       break;
     case "tapestry":
+      for (const x of [-0.9, 0.9]) {
+        b(0.07, 1.8, 0.08, wood, x, 0.9, 0);
+        b(0.16, 0.06, 0.6, dark, x, 0.05, 0);
+      }
       b(1.85, 1.5, 0.1, c, 0, 0.85, 0);
       b(2, 0.08, 0.14, wood, 0, 1.63, 0);
       cy(0, 0.58, 0.72, "#d8d5bb", -0.2, 0.67, 0.1, 3);
@@ -153,35 +159,177 @@ export function furnitureModel(f, api) {
       break;
     }
   }
+  if (["table", "desk"].includes(f.model)) {
+    cy(0.12, 0.1, 0.17, cream, 0.25, 1.14, 0.12, 20);
+    cy(0.09, 0.09, 0.012, "#75624c", 0.25, 1.23, 0.12, 20);
+    b(0.4, 0.045, 0.3, "#8caa99", -0.3, 1.1, -0.1);
+  }
+  if (f.model === "bed")
+    for (let i = 0; i < 8; i++)
+      b(0.025, 0.015, 1.62, "#e6d9c1", -0.7 + i * 0.2, 0.85, 0.43);
+  if (f.model === "sofa")
+    for (const x of [-0.3, 0.3])
+      for (const y of [0.92, 1.12]) s(0.025, "#829477", x, y, -0.495);
+  if (f.model === "desk")
+    for (const y of [0.48, 0.73]) {
+      b(0.48, 0.025, 0.025, dark, 0.9, y, 0.389);
+      s(0.035, cream, 0.9, y + 0.1, 0.4);
+    }
+  if (f.model === "radio") {
+    b(0.5, 0.045, 0.09, dark, 0, 0.8, 0);
+    for (const x of [-0.25, 0.25]) b(0.04, 0.13, 0.09, dark, x, 0.74, 0);
+  }
   return g;
 }
-export function decorateHome(api) {
+export function decorateHome(
+  api,
+  room = { w: 6, d: 6 },
+  decor = { wall: "meadow", floor: "oak" },
+) {
   const { box, world, cyl, ball, makeBuddy } = api;
-  const floor = box(6, 0.15, 6, "#d8be93", 0, -0.08, 0);
-  for (let i = 0; i < 12; i++)
-    box(5.98, 0.015, 0.018, "#c3a881", 0, 0.01, -2.75 + i * 0.5);
-  box(6.15, 2.9, 0.13, "#ede3c9", 0, 1.38, -3.07);
-  box(0.13, 2.9, 6.15, "#dfdebd", -3.07, 1.38, 0);
-  box(6.15, 0.14, 0.2, "#c5b086", 0, 0.15, -2.98);
-  box(0.2, 0.14, 6.15, "#c5b086", -2.98, 0.15, 0);
-  box(2.05, 1.55, 0.05, "#a4c9c5", 0.8, 1.78, -2.98);
-  for (const x of [-0.29, 0.8, 1.89])
-    box(0.1, 1.7, 0.14, "#fff3d9", x, 1.78, -2.9);
-  for (const y of [0.91, 1.78, 2.64])
-    box(2.3, 0.08, 0.18, "#fff3d9", 0.8, y, -2.89);
-  box(2.5, 0.12, 0.52, "#c9af82", 0.8, 0.87, -2.75);
-  const sunpatch = box(1.85, 0.012, 2.2, "#ead4a8", 1.05, 0.025, -1.45);
-  sunpatch.rotation.y = -0.2;
-  // Small notebook is permanent, so the room always has an anchor.
-  box(0.55, 0.1, 0.7, "#819c79", -2.1, 0.08, -2.15);
-  box(0.49, 0.05, 0.65, "#f9eed8", -2.1, 0.1, -2.15);
-  makeBuddy(2.25, 2.3, 1.15);
+  const { w, d } = room,
+    wall = WALLS[decor.wall] || WALLS.meadow,
+    floorStyle = FLOORS[decor.floor] || FLOORS.oak;
+  const floor = box(w, 0.2, d, floorStyle.colors[0], 0, -0.12, 0);
+  box(w + 0.25, 0.3, d + 0.25, "#897359", 0, -0.32, 0);
+  for (let z = 0; z < d * 2; z++)
+    for (let x = 0; x < w / 2; x++)
+      box(
+        1.98,
+        0.025,
+        0.485,
+        floorStyle.colors[(z + x) % 3],
+        -w / 2 + 1 + x * 2,
+        0.005,
+        -d / 2 + 0.25 + z * 0.5,
+      );
+  // Solid lower wall and full-height upper wall. Fixtures belong to the same
+  // cutaway group as their supporting wall, never to the room root.
+  for (const side of [0, 1]) {
+    const length = side ? d : w,
+      base = new THREE.Group(),
+      upper = new THREE.Group();
+    world.add(base);
+    world.add(upper);
+    for (const group of [base, upper]) {
+      if (side) {
+        group.rotation.y = Math.PI / 2;
+        group.position.x = -w / 2;
+      } else group.position.z = -d / 2;
+    }
+    upper.userData.cutaway = true;
+    upper.userData.normal = new THREE.Vector3(side ? -1 : 0, 0, side ? 0 : -1);
+    box(length, 0.9, 0.17, wall.color, 0, 0.45, 0, base);
+    box(length, 0.12, 0.23, wall.trim, 0, 0.1, 0, base);
+    box(length, 0.065, 0.21, wall.trim, 0, 0.91, 0, base);
+    for (let i = 0; i <= length; i++)
+      box(0.038, 0.65, 0.035, wall.trim, -length / 2 + i, 0.49, 0.1, base);
+    if (side) {
+      box(length, 1.95, 0.17, wall.color, 0, 1.925, 0, upper);
+      // Framed botanical print, mounted against the upper wall.
+      box(0.9, 1.1, 0.075, "#b18b60", 0.25, 1.83, 0.13, upper);
+      box(0.76, 0.95, 0.025, "#f4edda", 0.25, 1.83, 0.18, upper);
+      cyl(0.014, 0.014, 0.55, "#7a9660", 0.25, 1.75, 0.21, upper);
+      for (const sign of [-1, 1]) {
+        const leaf = ball(
+          0.13,
+          "#8ca46d",
+          0.25 + sign * 0.11,
+          1.85 + sign * 0.06,
+          0.21,
+          upper,
+        );
+        leaf.scale.set(1, 0.5, 0.08);
+        leaf.rotation.z = sign * 0.5;
+      }
+    } else {
+      const wx = w / 2 - 1.55,
+        left = wx - 1.1,
+        right = wx + 1.1;
+      // Actual window opening built from surrounding wall pieces.
+      box(
+        left + w / 2,
+        1.95,
+        0.17,
+        wall.color,
+        (-w / 2 + left) / 2,
+        1.925,
+        0,
+        upper,
+      );
+      box(
+        w / 2 - right,
+        1.95,
+        0.17,
+        wall.color,
+        (right + w / 2) / 2,
+        1.925,
+        0,
+        upper,
+      );
+      box(2.2, 0.18, 0.17, wall.color, wx, 2.81, 0, upper);
+      for (const x of [left, right])
+        box(0.12, 1.8, 0.22, wall.trim, x, 1.81, 0.03, upper);
+      for (const y of [0.98, 2.69])
+        box(2.35, 0.12, 0.25, wall.trim, wx, y, 0.03, upper);
+      box(0.065, 1.7, 0.12, wall.trim, wx, 1.83, 0.035, upper);
+      box(2.2, 0.065, 0.12, wall.trim, wx, 1.9, 0.035, upper);
+      box(2.55, 0.12, 0.48, "#b18b60", wx, 0.98, 0.12, upper);
+      for (const sign of [-1, 1])
+        for (let i = 0; i < 4; i++)
+          cyl(
+            0.06,
+            0.085,
+            1.5,
+            "#f2e8ce",
+            wx + sign * (0.8 + i * 0.08),
+            1.82,
+            0.13,
+            upper,
+          );
+      cyl(0.14, 0.11, 0.23, "#be8c70", wx, 1.16, 0.15, upper);
+      ball(0.18, "#86a368", wx, 1.42, 0.15, upper);
+      const cord = [];
+      for (let i = 0; i <= 24; i++) {
+        const x = -w / 2 + 0.24 + (i * (w - 0.48)) / 24,
+          y = 2.74 - Math.sin((i / 24) * Math.PI) * 0.35;
+        cord.push(new THREE.Vector3(x, y, 0.17));
+      }
+      api.mesh(
+        new THREE.TubeGeometry(
+          new THREE.CatmullRomCurve3(cord),
+          36,
+          0.012,
+          5,
+          false,
+        ),
+        "#897654",
+        0,
+        0,
+        0,
+        upper,
+      );
+      for (let i = 0; i < 9; i++) {
+        const x = -w / 2 + 0.25 + (i * (w - 0.5)) / 8,
+          y = 2.74 - Math.sin((i / 8) * Math.PI) * 0.35;
+        ball(0.055, "#ffda87", x, y - 0.065, 0.17, upper);
+      }
+    }
+    box(length + 0.12, 0.12, 0.23, wall.trim, 0, 2.91, 0, upper);
+    for (const x of [-length / 2, length / 2])
+      box(0.09, 2, 0.21, wall.trim, x, 1.9, 0.01, upper);
+  }
+  makeBuddy(1, 1, 1.3);
   return floor;
 }
-export function placeModel(f, placed, api, parent) {
+export function placeModel(f, placed, api, parent, room = { w: 6, d: 6 }) {
   const g = furnitureModel(f, api),
     size = footprint(f, placed.rotation);
-  g.position.set(placed.x - 3 + size.w / 2, 0.04, placed.z - 3 + size.d / 2);
+  g.position.set(
+    placed.x - room.w / 2 + size.w / 2,
+    0.04,
+    placed.z - room.d / 2 + size.d / 2,
+  );
   g.rotation.y = (-placed.rotation * Math.PI) / 2;
   g.traverse((o) => {
     if (o.isMesh) o.userData.uid = placed.uid;
@@ -221,7 +369,14 @@ export function furnitureThumbnail(f) {
   };
   const api = {
     box: (w, h, d, c, x, y, z, p) =>
-      mesh(new THREE.BoxGeometry(w, h, d), c, x, y, z, p),
+      mesh(
+        new RoundedBoxGeometry(w, h, d, 2, Math.min(w, h, d) * 0.14),
+        c,
+        x,
+        y,
+        z,
+        p,
+      ),
     ball: (r, c, x, y, z, p) =>
       mesh(new THREE.SphereGeometry(r, 12, 8), c, x, y, z, p),
     cyl: (a, b, h, c, x, y, z, p, n) =>

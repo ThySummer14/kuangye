@@ -1,3 +1,4 @@
+import { expandRoom, addHomeMoment, normalizeDecor } from "./game/room.js";
 import { normalizeState } from "./game/save.js";
 // Reactive API facade. Quest actions stay compatible; home rules and save migration are pure modules.
 import { reactive, watch, computed } from "vue";
@@ -377,3 +378,24 @@ export function recycle(uid) {
   return recycleFurniture(state.home, uid);
 }
 unlockGifts(state.home, levelInfo.value.level, today());
+
+export function expandHome(axis) {
+  const result = expandRoom(state.home, axis);
+  if (result.ok) {
+    addHomeMoment(
+      state.home,
+      "expansion",
+      `小家长大到 ${result.area} 平方米啦。`,
+      `expansion:${result.next.w}x${result.next.d}`,
+    );
+    buddyMoment("celebrate", 3200, "哇，这里又多了一块可以蹦跶的地方。");
+  }
+  return result;
+}
+export function changeHomeDecor(key, value) {
+  if (!["wall", "floor", "light"].includes(key)) return;
+  state.home.decor = normalizeDecor({ ...state.home.decor, [key]: value });
+}
+export function rememberHomeInteraction(model, text) {
+  return addHomeMoment(state.home, "discovery", text, `discovery:${model}`);
+}

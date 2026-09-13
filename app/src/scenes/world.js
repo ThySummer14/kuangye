@@ -1,9 +1,11 @@
+import { paintEye } from "./face-paint.js";
+import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import * as THREE from "three";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import { EXPRESSIONS, springStep } from "../game/emotions.js";
 
 // Batch static meshes while leaving animated characters and picking surfaces independent.
-function mergeStatic(root, keep = [], perPoi = false) {
+export function mergeStatic(root, keep = [], perPoi = false) {
   root.updateMatrixWorld(true);
   const inverse = root.matrixWorld.clone().invert(),
     buckets = new Map(),
@@ -22,13 +24,16 @@ function mergeStatic(root, keep = [], perPoi = false) {
         material: o.material,
         poi: o.userData.poi,
       });
-    buckets
-      .get(key)
-      .geometry.push(
-        o.geometry
-          .clone()
-          .applyMatrix4(inverse.clone().multiply(o.matrixWorld)),
-      );
+    let geometry = o.geometry.clone();
+    // Rounded boxes are non-indexed; spheres and tubes are indexed. Normalize
+    // before batching so one detailed model cannot make a material group vanish.
+    if (geometry.index) {
+      const flat = geometry.toNonIndexed();
+      geometry.dispose();
+      geometry = flat;
+    }
+    geometry.applyMatrix4(inverse.clone().multiply(o.matrixWorld));
+    buckets.get(key).geometry.push(geometry);
     original.push(o);
   });
   for (const o of original) {
@@ -56,6 +61,7 @@ export function createWorld(
     onNavigate,
     onPick,
     onCell,
+    onPet,
     onReady,
     getMood = () => "idle",
     mode = "map",
@@ -67,7 +73,7 @@ export function createWorld(
     Math.min(devicePixelRatio, innerWidth < 700 ? 1.5 : 2),
   );
   renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFShadowMap;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   el.appendChild(renderer.domElement);
   const camera = new THREE.PerspectiveCamera(36, 1, 0.1, 100);
@@ -95,7 +101,14 @@ export function createWorld(
     return m;
   }
   function box(w, h, d, c, x, y, z, p) {
-    return mesh(new THREE.BoxGeometry(w, h, d), c, x, y, z, p);
+    return mesh(
+      new RoundedBoxGeometry(w, h, d, 2, Math.min(w, h, d) * 0.12),
+      c,
+      x,
+      y,
+      z,
+      p,
+    );
   }
   function ball(r, c, x, y, z, p) {
     return mesh(new THREE.SphereGeometry(r, 12, 8), c, x, y, z, p);
@@ -107,9 +120,10 @@ export function createWorld(
   const sun = new THREE.DirectionalLight("#fff0d3", 2.6);
   sun.position.set(-4, 12, 7);
   sun.castShadow = true;
-  sun.shadow.mapSize.set(1024, 1024);
+  sun.shadow.mapSize.set(2048, 2048);
   Object.assign(sun.shadow.camera, { left: -8, right: 8, top: 8, bottom: -8 });
-  sun.shadow.bias = -0.001;
+  sun.shadow.bias = -0.0003;
+  sun.shadow.normalBias = 0.025;
   scene.add(sun);
   const pois = [],
     interactables = [],
@@ -229,10 +243,86 @@ export function createWorld(
     g.scale.setScalar(scale);
     g.userData.dynamic = true;
     world.add(g);
-    ball(0.31, "#f1f1d3", 0, 0.4, 0, g).scale.set(1, 1.08, 0.85);
-    ball(0.09, "#d9ddbb", -0.14, 0.1, 0.08, g);
-    ball(0.09, "#d9ddbb", 0.14, 0.1, 0.08, g);
-    for (const a of [-1, 1]) ball(0.075, "#e8e8c9", a * 0.31, 0.34, 0, g);
+    // Pear-shaped seed: a broad soft base, rounded crown, and continuous surface.
+    const radiusAt = (y) => {
+      const t = THREE.MathUtils.clamp((y - 0.02) / 0.68, 0, 1);
+      return 0.35 * Math.pow(Math.sin(Math.PI * t), 0.55) * (1.08 - 0.32 * t);
+    };
+    const profile = Array.from({ length: 41 }, (_, i) => {
+      const y = 0.02 + (0.68 * i) / 40;
+      return new THREE.Vector2(radiusAt(y), y);
+    });
+    const body = mesh(
+      new THREE.LatheGeometry(profile, 48),
+      "#93b968",
+      0,
+      0,
+      0,
+      g,
+    );
+    body.scale.z = 0.84;
+    // Decals follow the seed's curved surface, so the face cannot float or clip into it.
+    function skinPatch(w, h, cy) {
+      const geo = new THREE.PlaneGeometry(w, h, 32, 24),
+        pos = geo.attributes.position;
+      for (let i = 0; i < pos.count; i++) {
+        const x = pos.getX(i),
+          y = pos.getY(i) + cy,
+          r = radiusAt(y);
+        pos.setXYZ(
+          i,
+          x,
+          y,
+          Math.sqrt(Math.max(0.0001, r * r - x * x)) * 0.84 + 0.005,
+        );
+      }
+      geo.computeVertexNormals();
+      return geo;
+    }
+    const bellyCanvas = document.createElement("canvas");
+    bellyCanvas.width = 256;
+    bellyCanvas.height = 128;
+    const bc = bellyCanvas.getContext("2d");
+    bc.fillStyle = "#c2d79b";
+    bc.beginPath();
+    bc.ellipse(128, 64, 124, 58, 0, 0, Math.PI * 2);
+    bc.fill();
+    const bellyTexture = new THREE.CanvasTexture(bellyCanvas);
+    bellyTexture.colorSpace = THREE.SRGBColorSpace;
+    const belly = new THREE.Mesh(
+      skinPatch(0.43, 0.15, 0.16),
+      new THREE.MeshStandardMaterial({
+        map: bellyTexture,
+        transparent: true,
+        depthWrite: false,
+        roughness: 1,
+      }),
+    );
+    g.add(belly);
+    const shadowCanvas = document.createElement("canvas");
+    shadowCanvas.width = 128;
+    shadowCanvas.height = 128;
+    const sc = shadowCanvas.getContext("2d"),
+      gradient = sc.createRadialGradient(64, 64, 5, 64, 64, 63);
+    gradient.addColorStop(0, "rgba(52,59,36,.48)");
+    gradient.addColorStop(0.45, "rgba(52,59,36,.22)");
+    gradient.addColorStop(1, "rgba(52,59,36,0)");
+    sc.fillStyle = gradient;
+    sc.fillRect(0, 0, 128, 128);
+    const contact = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.15, 1.15),
+      new THREE.MeshBasicMaterial({
+        map: new THREE.CanvasTexture(shadowCanvas),
+        transparent: true,
+        depthWrite: false,
+        opacity: 0.75,
+      }),
+    );
+    contact.rotation.x = -Math.PI / 2;
+    contact.userData.dynamic = true;
+    contact.renderOrder = 2;
+    world.add(contact);
+    g.userData.contactShadow = contact;
     const faceCanvas = document.createElement("canvas");
     faceCanvas.width = 256;
     faceCanvas.height = 256;
@@ -240,20 +330,21 @@ export function createWorld(
       texture = new THREE.CanvasTexture(faceCanvas);
     texture.colorSpace = THREE.SRGBColorSpace;
     const face = new THREE.Mesh(
-      new THREE.PlaneGeometry(0.48, 0.39),
+      skinPatch(0.48, 0.36, 0.4),
       new THREE.MeshBasicMaterial({
         map: texture,
         transparent: true,
         depthWrite: false,
       }),
     );
-    face.position.set(0, 0.43, 0.279);
+    face.renderOrder = 1;
     g.add(face);
     const values = [...EXPRESSIONS.idle],
       vel = [0, 0, 0, 0, 0];
     let previous = 0;
     g.userData.drawFace = (t) => {
-      const mood = getMood(),
+      const mood =
+          g.userData.moodUntil > Date.now() ? g.userData.mood : getMood(),
         goal = EXPRESSIONS[mood] || EXPRESSIONS.idle,
         dt = Math.min((t - previous) / 1000 || 0.016, 0.04);
       previous = t;
@@ -277,22 +368,19 @@ export function createWorld(
       const blink = !reduced && t % 4800 > 4620 ? 0.1 : 1;
       for (const x of [75, 181]) {
         c.beginPath();
-        if (values[1] > 0.5) {
-          c.moveTo(x - 13, 112);
-          c.quadraticCurveTo(x, 94, x + 13, 112);
-          c.stroke();
-        } else {
-          c.ellipse(
-            x,
-            110,
-            11,
-            Math.max(1, 19 * values[0] * blink),
-            0,
-            0,
-            Math.PI * 2,
-          );
-          c.fill();
-        }
+        const gaze = Math.sin(t * 0.0006) * 4;
+        paintEye(
+          c,
+          x + gaze,
+          110,
+          11,
+          Math.max(
+            1,
+            19 * values[0] * blink * (x < 128 ? 1 + values[3] : 1 - values[3]),
+          ),
+          values[1],
+          values[3] * (x < 128 ? -1 : 1),
+        );
         c.fillStyle = "#da9e8c88";
         c.beginPath();
         c.ellipse(x + (x < 128 ? -17 : 17), 150, 22, 9, 0, 0, Math.PI * 2);
@@ -311,17 +399,69 @@ export function createWorld(
       texture.needsUpdate = true;
       g.rotation.z = values[3] * 0.3;
     };
-    const leaf = ball(0.18, "#76aa60", -0.13, 0.84, 0, g);
-    leaf.scale.set(1.1, 0.42, 0.65);
-    leaf.rotation.z = -0.4;
-    const leaf2 = ball(0.18, "#94bb72", 0.13, 0.87, 0, g);
-    leaf2.scale.set(1.1, 0.42, 0.65);
-    leaf2.rotation.z = 0.4;
-    cyl(0.026, 0.035, 0.23, "#7c985c", 0, 0.75, 0, g, 6);
+    const leaves = new THREE.Group();
+    leaves.position.y = 0.88;
+    g.add(leaves);
+    const leafShape = new THREE.Shape();
+    leafShape.moveTo(0, 0);
+    leafShape.bezierCurveTo(0.05, 0.2, 0.23, 0.22, 0.36, 0.23);
+    leafShape.bezierCurveTo(0.3, 0.03, 0.13, -0.04, 0, 0);
+    for (const side of [-1, 1]) {
+      const leaf = mesh(
+        new THREE.ExtrudeGeometry(leafShape, {
+          depth: 0.025,
+          bevelEnabled: true,
+          bevelSegments: 2,
+          steps: 1,
+          bevelSize: 0.015,
+          bevelThickness: 0.015,
+          curveSegments: 10,
+        }),
+        side < 0 ? "#7fae54" : "#8fbc60",
+        0,
+        0,
+        0,
+        leaves,
+      );
+      leaf.scale.x = side;
+    }
+    const stemCurve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(0, 0.65, 0),
+      new THREE.Vector3(-0.018, 0.77, 0),
+      new THREE.Vector3(0, 0.91, 0),
+    ]);
+    mesh(
+      new THREE.TubeGeometry(stemCurve, 16, 0.019, 8, false),
+      "#6f9448",
+      0,
+      0,
+      0,
+      g,
+    );
+    for (const side of [-1, 1]) {
+      const vein = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(0, 0.01, 0.04),
+        new THREE.Vector3(side * 0.14, 0.095, 0.045),
+        new THREE.Vector3(side * 0.29, 0.19, 0.04),
+      ]);
+      mesh(
+        new THREE.TubeGeometry(vein, 10, 0.007, 5, false),
+        "#a5c982",
+        0,
+        0,
+        0,
+        leaves,
+      );
+    }
+    g.userData.leaves = leaves;
     animated.push(g);
+    if (mode === "home") buddy = g;
     return g;
   }
   let buddy, furnitureGroup, floor, ghost;
+  let roomSize = { w: 6, d: 6 },
+    homeTick;
+  const cutawayWalls = [];
   const furniturePickables = [];
   if (mode === "map") {
     cyl(5.6, 4.8, 0.65, "#bfac83", 0, -0.48, 0, world, 48);
@@ -424,14 +564,47 @@ export function createWorld(
     );
     ray.setFromCamera(pointer, camera);
   }
+  const touches = new Map();
+  let pinch = null;
   function pointerDown(e) {
-    down = { x: e.clientX, y: e.clientY, a: angle };
+    if (e.pointerType === "touch") {
+      touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (touches.size === 2) {
+        const [a, b] = [...touches.values()];
+        pinch = { span: Math.hypot(a.x - b.x, a.y - b.y), distance };
+        dragged = true;
+        return;
+      }
+    }
+    down = { x: e.clientX, y: e.clientY, a: angle, elevation };
     dragged = false;
   }
   function pointerMove(e) {
-    if (down && mode === "map") {
-      if (Math.abs(e.clientX - down.x) > 5) dragged = true;
-      angle = down.a - (e.clientX - down.x) * 0.006;
+    if (touches.has(e.pointerId)) {
+      touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (pinch && touches.size === 2) {
+        const [a, b] = [...touches.values()];
+        distance = Math.max(
+          5,
+          Math.min(
+            30,
+            (pinch.distance * pinch.span) /
+              Math.max(1, Math.hypot(a.x - b.x, a.y - b.y)),
+          ),
+        );
+        dragged = true;
+        return;
+      }
+    }
+    if (down) {
+      if (Math.hypot(e.clientX - down.x, e.clientY - down.y) > 5)
+        dragged = true;
+      angle = down.a - (e.clientX - down.x) * 0.008;
+      if (mode === "home")
+        elevation = Math.max(
+          3,
+          Math.min(22, down.elevation + (e.clientY - down.y) * 0.045),
+        );
     }
     if (mode === "home") {
       const bounds = renderer.domElement.getBoundingClientRect();
@@ -446,18 +619,32 @@ export function createWorld(
       const hit = floor && ray.intersectObject(floor)[0];
       if (hit)
         onCell?.(
-          { x: Math.floor(hit.point.x + 3), z: Math.floor(hit.point.z + 3) },
+          {
+            x: Math.floor(hit.point.x + roomSize.w / 2),
+            z: Math.floor(hit.point.z + roomSize.d / 2),
+          },
           false,
         );
     }
   }
   function pointerUp(e) {
+    touches.delete(e.pointerId);
+    if (pinch) {
+      if (!touches.size) pinch = null;
+      down = null;
+      return;
+    }
     if (down && !dragged) {
       updateRay(e);
       if (mode === "map") {
         const h = ray.intersectObjects(interactables)[0];
         if (h) flyTo(h.object.userData.poi);
       } else {
+        if (buddy && ray.intersectObject(buddy, true).length) {
+          onPet?.();
+          down = null;
+          return;
+        }
         const h = ray.intersectObjects(furniturePickables, false)[0];
         if (h && onPick?.(h.object.userData.uid)) {
           down = null;
@@ -466,7 +653,10 @@ export function createWorld(
         const f = floor && ray.intersectObject(floor)[0];
         if (f)
           onCell?.(
-            { x: Math.floor(f.point.x + 3), z: Math.floor(f.point.z + 3) },
+            {
+              x: Math.floor(f.point.x + roomSize.w / 2),
+              z: Math.floor(f.point.z + roomSize.d / 2),
+            },
             true,
           );
       }
@@ -475,7 +665,10 @@ export function createWorld(
   }
   function wheel(e) {
     e.preventDefault();
-    distance = Math.max(13, Math.min(23, distance + e.deltaY * 0.012));
+    distance = Math.max(
+      mode === "home" ? 5 : 13,
+      Math.min(30, distance + e.deltaY * 0.012),
+    );
   }
   renderer.domElement.addEventListener("pointerdown", pointerDown);
   window.addEventListener("pointermove", pointerMove);
@@ -535,6 +728,41 @@ export function createWorld(
           ? 0
           : Math.sin(t * 0.0005) * 0.18);
     });
+    homeTick?.(t, buddy);
+    for (const g of animated) {
+      const contact = g.userData.contactShadow;
+      if (contact) {
+        const ground = g.userData.supportHeight || 0.028,
+          h = Math.max(0, g.position.y - ground);
+        contact.position.set(g.position.x, ground + 0.009, g.position.z);
+        contact.scale.setScalar(1 + h * 0.6);
+        contact.material.opacity = 0.8 / (1 + h * 2.4);
+        contact.visible = g.visible;
+      }
+      if (g.userData.leaves)
+        g.userData.leaves.rotation.z = matchMedia(
+          "(prefers-reduced-motion: reduce)",
+        ).matches
+          ? 0
+          : Math.sin(t * 0.004) * 0.07 + g.rotation.z * 0.15;
+    }
+    for (const wall of cutawayWalls) {
+      const facing = camera.position
+        .clone()
+        .sub(target)
+        .normalize()
+        .dot(wall.userData.normal);
+      const opacityTarget = facing > -0.06 ? 0 : 1;
+      wall.userData.opacity += (opacityTarget - wall.userData.opacity) * 0.13;
+      wall.visible = wall.userData.opacity > 0.01;
+      wall.traverse((o) => {
+        if (o.isMesh) {
+          o.material.opacity = wall.userData.opacity;
+          o.material.depthWrite = wall.userData.opacity > 0.98;
+          o.castShadow = opacityTarget === 1;
+        }
+      });
+    }
     renderer.render(scene, camera);
     for (const p of pois) {
       const v = p.point.clone().project(camera);
@@ -564,14 +792,59 @@ export function createWorld(
     cyl,
     makeBuddy,
     animated,
+    setLighting(light) {
+      sun.color.set(
+        light === "night"
+          ? "#ffd291"
+          : light === "sunset"
+            ? "#ffc88b"
+            : "#fff0d3",
+      );
+      sun.intensity = light === "night" ? 0.9 : light === "sunset" ? 2.1 : 2.6;
+      scene.children.find((o) => o.isHemisphereLight).intensity =
+        light === "night" ? 0.75 : 2.1;
+    },
+    setHomeTick(fn) {
+      homeTick = fn;
+    },
+    setRoomSize(size) {
+      roomSize = size;
+    },
+    turn(delta) {
+      angle += delta;
+    },
+    overhead() {
+      elevation = 20;
+      distance = 3;
+    },
     setHome(build) {
       furnitureGroup = new THREE.Group();
       world.add(furnitureGroup);
       floor = build({ world, box, ball, cyl, mesh, mat, makeBuddy });
+      world.traverse((g) => {
+        if (g.userData.cutaway) cutawayWalls.push(g);
+      });
+      for (const g of cutawayWalls) {
+        mergeStatic(g);
+        const cloned = new Map();
+        g.traverse((o) => {
+          if (o.isMesh) {
+            if (!cloned.has(o.material)) {
+              const m = o.material.clone();
+              m.transparent = true;
+              cloned.set(o.material, m);
+            }
+            o.material = cloned.get(o.material);
+          }
+        });
+        g.userData.dynamic = true;
+        g.userData.opacity = 1;
+      }
       mergeStatic(world, [floor]);
       angle = 0.72;
-      distance = innerWidth < 600 ? 13 : 12;
-      elevation = 10;
+      distance =
+        Math.max(roomSize.w, roomSize.d) * (innerWidth < 600 ? 2.2 : 2);
+      elevation = Math.max(roomSize.w, roomSize.d) * 1.65;
       target.set(0, 0.5, 0);
     },
     setFurniture(build) {
@@ -625,12 +898,17 @@ export function createWorld(
     zoom(delta) {
       distance = Math.max(
         mode === "home" ? 8 : 13,
-        Math.min(23, distance + delta),
+        Math.min(40, distance + delta),
       );
     },
     reset() {
       angle = 0.73;
-      distance = mode === "home" ? 12 : 18;
+      elevation =
+        mode === "home" ? Math.max(roomSize.w, roomSize.d) * 1.65 : 11;
+      distance =
+        mode === "home"
+          ? Math.max(roomSize.w, roomSize.d) * (innerWidth < 600 ? 2.2 : 2)
+          : 18;
     },
     dispose() {
       stopped = true;
@@ -655,6 +933,7 @@ export function createWorld(
           }
         }
       });
+      sun.shadow.dispose();
       renderer.dispose();
       renderer.forceContextLoss();
       renderer.domElement.remove();

@@ -95,9 +95,7 @@ function report() {
       >
       <h2>Lv.{{ levelInfo.level }} {{ levelInfo.name }}</h2>
       <p>
-        {{ state.done.length }} 件小事，{{
-          state.home.inventory.length
-        }}
+        {{ state.done.length }} 件小事，{{ state.home.inventory.length }}
         件家的收藏
       </p>
       <div class="task-progress">
@@ -134,6 +132,13 @@ function report() {
       </div>
     </aside>
     <section class="journal-pages">
+      <section v-if="state.home.moments.length" class="home-renovation">
+        <span class="eyebrow">小家也在慢慢长大</span>
+        <h3>和小芽一起的小发现</h3>
+        <p v-for="m in state.home.moments.slice(0, 6)" :key="m.key">
+          <small>{{ m.at.slice(0, 10) }}</small> · {{ m.text }}
+        </p>
+      </section>
       <div class="journal-header">
         <div>
           <span class="eyebrow">XIAO YA'S NOTEBOOK</span>

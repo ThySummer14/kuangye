@@ -2125,3 +2125,87 @@ button:disabled {
 .world-stage {
   isolation: isolate;
 }
+
+.home-controls,
+.home-renovation {
+  padding: 22px;
+  background: #f6f2e6;
+  border: 1px solid #dfdfce;
+  border-radius: 18px;
+  margin-top: 16px;
+}
+.home-controls .placement-actions {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.life-speech {
+  color: #526647;
+  margin: 0 0 14px;
+  line-height: 1.7;
+}
+.home-controls small {
+  display: block;
+  margin-top: 12px;
+  color: #79816c;
+}
+.home-renovation > button {
+  width: 100%;
+  margin: 5px 0;
+}
+.home-renovation label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 12px 0;
+  gap: 12px;
+}
+.home-renovation select {
+  border: 1px solid #d7dacb;
+  background: #fffdf4;
+  padding: 8px;
+  border-radius: 8px;
+  max-width: 70%;
+}
+.home-canvas canvas {
+  touch-action: none;
+}
+.home-stage {
+  min-height: 590px;
+}
+.home-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.home-controls button {
+  min-height: 40px;
+}
+@media (max-width: 600px) {
+  .home-stage {
+    min-height: 480px;
+  }
+  .home-controls {
+    padding: 16px;
+  }
+  .home-controls .placement-actions {
+    gap: 6px;
+  }
+  .home-controls button {
+    padding: 8px 10px;
+  }
+  .home-renovation {
+    margin-top: 0;
+  }
+}
+.home-stage.sunset {
+  background: #f2e4d2;
+}
+.home-stage.night {
+  background: #d9ded6;
+}
+.home-renovation h4 {
+  margin-top: 24px;
+}
+.home-controls .life-speech {
+  min-height: 27px;
+}

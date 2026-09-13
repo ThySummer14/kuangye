@@ -3,6 +3,9 @@ import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import * as THREE from "three";
 import {
   state,
+  expandHome,
+  changeHomeDecor,
+  rememberHomeInteraction,
   place,
   recycle,
   taskById,
@@ -17,6 +20,13 @@ import { decorateHome, placeModel } from "../scenes/furniture.js";
 import FurnitureImage from "./FurnitureImage.vue";
 import BuddyFace from "./BuddyFace.vue";
 import ModalFrame from "./ModalFrame.vue";
+import { roomOf, expansionOffer, WALLS, FLOORS } from "../game/room.js";
+import { homeLife } from "../scenes/home-life.js";
+import { INTERACTIONS } from "../game/buddy-walk.js";
+const room = computed(() => roomOf(state.home));
+const expansion = ref(null),
+  speech = ref("点点空地，我就蹦过去。拖动画面可以转动小家。");
+let life;
 const emit = defineEmits(["shop", "toast", "journal"]);
 const host = ref(null),
   failed = ref(false),
@@ -43,6 +53,7 @@ const check = computed(() =>
     state.home.placed,
     state.home.inventory,
     selected.value,
+    room.value,
   ),
 );
 const recentActivity = computed(() =>
@@ -71,7 +82,7 @@ function sync() {
     for (const p of state.home.placed) {
       const f =
         furnitureById[state.home.inventory.find((i) => i.uid === p.uid)?.fid];
-      if (f) placeModel(f, p, engine, parent);
+      if (f) placeModel(f, p, engine, parent, room.value);
     }
   });
 }
@@ -89,9 +100,9 @@ function ghost() {
       }),
     );
     g.position.set(
-      cell.value.x - 3 + size.w / 2,
+      cell.value.x - room.value.w / 2 + size.w / 2,
       0.14,
-      cell.value.z - 3 + size.d / 2,
+      cell.value.z - room.value.d / 2 + size.d / 2,
     );
     return g;
   });
@@ -137,14 +148,18 @@ function key(e) {
   if (map[e.key]) {
     e.preventDefault();
     cell.value = {
-      x: Math.max(0, Math.min(5, cell.value.x + map[e.key][0])),
-      z: Math.max(0, Math.min(5, cell.value.z + map[e.key][1])),
+      x: Math.max(0, Math.min(room.value.w - 1, cell.value.x + map[e.key][0])),
+      z: Math.max(0, Math.min(room.value.d - 1, cell.value.z + map[e.key][1])),
     };
   }
 }
-onMounted(() => {
+function boot() {
+  engine?.dispose();
+  host.value?.replaceChildren();
   try {
+    failed.value = false;
     engine = createWorld(host.value, {
+      onPet: () => life?.pet(),
       mode: "home",
       getMood: () =>
         Date.now() < buddyBus.at
@@ -165,24 +180,52 @@ onMounted(() => {
         if (editing.value) {
           cell.value = c;
           if (click) commit();
-        }
+        } else if (click && !life?.walk(c))
+          emit("toast", "这里暂时走不过去，给小芽留一条小路吧。");
       },
       onReady: (_, info) => {
         if (host.value) host.value.dataset.drawCalls = info.calls;
       },
     });
-    engine.setHome(decorateHome);
+    engine.setRoomSize(room.value);
+    engine.setLighting(state.home.decor.light);
+    engine.setHome((api) => decorateHome(api, room.value, state.home.decor));
+    life = homeLife(
+      engine,
+      () => state.home,
+      (a) => {
+        speech.value = a.text;
+        buddyMoment(a.mood, 5000, a.text);
+        rememberHomeInteraction(a.model, a.text);
+      },
+    );
     sync();
+    ghost();
+    const activeEngine = engine;
     engine.renderer.domElement.addEventListener("webglcontextlost", (e) => {
+      if (engine !== activeEngine) return;
       e.preventDefault();
       failed.value = true;
     });
   } catch {
     failed.value = true;
   }
+}
+function expandNow() {
+  const r = expandHome(expansion.value);
+  expansion.value = null;
+  emit("toast", r.ok ? `小家扩建到 ${r.area} 平方米啦！` : r.why);
+}
+function interact() {
+  if (!life?.interact(selected.value))
+    emit("toast", "小芽走不到这里，挪开一点家具试试。");
+}
+onMounted(() => {
+  boot();
   window.addEventListener("keydown", key);
   if (sleepy.value) buddyMoment("sleepy", 5000, "睡醒就能见到你，真好。");
 });
+watch(() => [state.home.room, state.home.decor], boot, { deep: true });
 watch(() => state.home.placed, sync, { deep: true });
 watch(() => state.home.inventory, sync, { deep: true });
 watch([editing, item, rotation, cell, check], ghost, { deep: true });
@@ -194,7 +237,7 @@ onBeforeUnmount(() => {
 <template>
   <div class="home-layout">
     <section class="home-main">
-      <div class="home-stage" :class="{ sleepy }">
+      <div class="home-stage" :class="[{ sleepy }, state.home.decor.light]">
         <div class="home-heading">
           <div>
             <span class="eyebrow">A HOME MADE OF LITTLE MOMENTS</span>
@@ -220,12 +263,30 @@ onBeforeUnmount(() => {
           3D 暂时不可用。选择背包中的家具，再用下方平面格子布置，小家仍会保存。
         </div>
         <div class="home-status">
-          <span>{{ state.home.placed.length }} 件家具 · 3 × 3 米的温柔</span
+          <span
+            >{{ state.home.placed.length }} 件家具 · {{ room.w / 2 }} ×
+            {{ room.d / 2 }} 米</span
           ><button aria-label="恢复房间视角" @click="engine?.reset()">⟳</button>
         </div>
         <span v-if="editing" class="placement-banner"
           >{{ check.why }} · 点击地面放下</span
         >
+      </div>
+      <div class="home-controls">
+        <p class="life-speech" role="status">🌱 {{ speech }}</p>
+        <div class="placement-actions">
+          <button class="soft-button" @click="life?.pet()">摸摸小芽</button
+          ><button class="soft-button" @click="engine?.turn(-0.4)">
+            ↶ 转一转</button
+          ><button class="soft-button" @click="engine?.turn(0.4)">
+            转一转 ↷</button
+          ><button class="soft-button" @click="engine?.zoom(-2)">＋</button
+          ><button class="soft-button" @click="engine?.zoom(2)">－</button
+          ><button class="soft-button" @click="engine?.overhead()">
+            俯瞰布置
+          </button>
+        </div>
+        <small>拖动旋转与调整高度 · 双指或滚轮缩放 · 点空地让小芽散步</small>
       </div>
       <div class="inventory">
         <div class="inventory-heading">
@@ -294,12 +355,13 @@ onBeforeUnmount(() => {
         <template v-if="editing"
           ><div
             class="placement-grid"
+            :style="{ gridTemplateColumns: `repeat(${room.w},1fr)` }"
             role="group"
             aria-label="房间平面放置格子"
           >
-            <template v-for="z in 6" :key="z"
+            <template v-for="z in room.d" :key="z"
               ><button
-                v-for="x in 6"
+                v-for="x in room.w"
                 :key="x"
                 :aria-label="`选择第${z}行第${x}列`"
                 :class="{
@@ -354,6 +416,9 @@ onBeforeUnmount(() => {
                 : "这是你为小芽选的一点温柔。"
             }}
           </div>
+          <button class="primary-button" @click="interact">
+            {{ INTERACTIONS[item.model]?.name || "让小芽看看它" }}
+          </button>
           <div class="placement-actions">
             <button class="primary-button" @click="editing = true">
               移动位置</button
@@ -378,7 +443,74 @@ onBeforeUnmount(() => {
           先从背包挑一件家具，<br />再点屋里的空地放下。<br />点击已放好的家具，看看它的回忆。
         </div>
       </section>
+      <section class="home-renovation">
+        <span class="eyebrow">GROW A LITTLE HOME</span>
+        <h3>给生活多一点空间</h3>
+        <p>现在 {{ (room.w * room.d) / 4 }} m²，慢慢长成理想的小家。</p>
+        <button
+          v-for="axis in ['w', 'd']"
+          :key="axis"
+          class="soft-button"
+          :disabled="!expansionOffer(state.home, axis)"
+          @click="expansion = axis"
+        >
+          {{ axis === "w" ? "向右扩建" : "向前扩建" }} ·
+          {{ expansionOffer(state.home, axis)?.price ?? "已达上限" }} 光
+        </button>
+        <h4>换一种心情 · 免费</h4>
+        <label
+          >光线<select
+            :value="state.home.decor.light"
+            @change="changeHomeDecor('light', $event.target.value)"
+          >
+            <option value="day">午后晴光</option>
+            <option value="sunset">日落时分</option>
+            <option value="night">温柔夜晚</option>
+          </select></label
+        ><label
+          >墙面<select
+            :value="state.home.decor.wall"
+            @change="changeHomeDecor('wall', $event.target.value)"
+          >
+            <option v-for="(v, k) in WALLS" :key="k" :value="k">
+              {{ v.name }}
+            </option>
+          </select></label
+        ><label
+          >地板<select
+            :value="state.home.decor.floor"
+            @change="changeHomeDecor('floor', $event.target.value)"
+          >
+            <option v-for="(v, k) in FLOORS" :key="k" :value="k">
+              {{ v.name }}
+            </option>
+          </select></label
+        >
+        <p v-if="state.home.moments.length" class="home-tip">
+          最近的小发现：{{ state.home.moments[0].text }}
+        </p>
+      </section>
     </aside>
+    <ModalFrame v-if="expansion" label="扩建小家" @close="expansion = null"
+      ><h3>让小家再长大一点</h3>
+      <p>
+        花费 {{ expansionOffer(state.home, expansion)?.price }} 光，增加
+        {{ expansionOffer(state.home, expansion)?.addedArea }}
+        m²。现有家具会留在原来的格子。
+      </p>
+      <div class="placement-actions">
+        <button class="soft-button" @click="expansion = null">再想想</button
+        ><button
+          class="primary-button"
+          :disabled="
+            state.home.lumens < expansionOffer(state.home, expansion)?.price
+          "
+          @click="expandNow"
+        >
+          确认扩建
+        </button>
+      </div></ModalFrame
+    >
     <ModalFrame v-if="recycling" label="回收家具" @close="recycling = false"
       ><h3>把这件家具交还给集市？</h3>
       <p>返还 {{ refundFor(current?.paid) }} 光，任务回忆仍保存在手记里。</p>

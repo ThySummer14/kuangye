@@ -24,20 +24,37 @@ onMounted(() => {
         if (!h) return;
         h.dataset.drawCalls = info.calls;
         const bounds = [];
-        labels.value = Object.fromEntries(Object.entries(l).map(([k, v]) => {
-          const button = h.parentElement.querySelector(`[data-place="${k}"]`);
-          const w = button?.offsetWidth || 112, height = Math.max(44, button?.offsetHeight || 44);
-          const pw = h.parentElement.clientWidth, ph = h.parentElement.clientHeight;
-          const x = Math.max(w / 2 + 10, Math.min(pw - w / 2 - 10, h.offsetLeft + v.left / 100 * h.clientWidth));
-          let y = Math.max(160, Math.min(ph - 90, h.offsetTop + v.top / 100 * h.clientHeight));
-          for (let attempt = 0; attempt < 12; attempt++) {
-            const collision = bounds.find(b => Math.abs(x - b.x) < (w + b.w) / 2 + 6 && Math.abs(y - b.y) < (height + b.h) / 2 + 6);
-            if (!collision) break;
-            y = collision.y + (height + collision.h) / 2 + 8;
-          }
-          bounds.push({ x, y, w, h: height });
-          return [k, { left: x / pw * 100, top: y / ph * 100 }];
-        }));
+        labels.value = Object.fromEntries(
+          Object.entries(l).map(([k, v]) => {
+            const button = h.parentElement.querySelector(`[data-place="${k}"]`);
+            const w = button?.offsetWidth || 112,
+              height = Math.max(44, button?.offsetHeight || 44);
+            const pw = h.parentElement.clientWidth,
+              ph = h.parentElement.clientHeight;
+            const x = Math.max(
+              w / 2 + 10,
+              Math.min(
+                pw - w / 2 - 10,
+                h.offsetLeft + (v.left / 100) * h.clientWidth,
+              ),
+            );
+            let y = Math.max(
+              160,
+              Math.min(ph - 90, h.offsetTop + (v.top / 100) * h.clientHeight),
+            );
+            for (let attempt = 0; attempt < 12; attempt++) {
+              const collision = bounds.find(
+                (b) =>
+                  Math.abs(x - b.x) < (w + b.w) / 2 + 6 &&
+                  Math.abs(y - b.y) < (height + b.h) / 2 + 6,
+              );
+              if (!collision) break;
+              y = collision.y + (height + collision.h) / 2 + 8;
+            }
+            bounds.push({ x, y, w, h: height });
+            return [k, { left: (x / pw) * 100, top: (y / ph) * 100 }];
+          }),
+        );
       },
     });
     engine.renderer.domElement.addEventListener("webglcontextlost", (e) => {

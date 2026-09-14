@@ -10,6 +10,9 @@ mkdir -p output/playwright
 "$cli" -s=kuangye-batch goto "$url"
 "$cli" -s=kuangye-batch resize "$width" 900
 "$cli" -s=kuangye-batch eval "window.__KUANGYE__.reset('$scenario')"
+if [ "$scenario" = woodshop ]; then
+  "$cli" -s=kuangye-batch run-code 'async (page) => { await page.locator("[data-place=woodshop]").click(); await page.waitForURL("**#woodshop"); }'
+fi
 "$cli" -s=kuangye-batch snapshot
 "$cli" -s=kuangye-batch screenshot --filename="output/playwright/$scenario-$width.png"
 "$cli" -s=kuangye-batch eval 'window.__KUANGYE__.snapshot()' > "output/playwright/$scenario-$width.state.txt"

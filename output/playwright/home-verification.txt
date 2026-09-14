@@ -1,0 +1,35 @@
+### Result
+[{"place":"home","navigation":{"hash":"#home","dialog":false,"returnTo":"map"},"emotion":{"mood":"celebrate","parameters":[0.35,1,1,0,0.5]},"home":{"room":{"w":8,"d":8},"decor":{"wall":"meadow","floor":"oak","atmosphereVersion":1,"weather":"clear","light":"day"},"moments":[{"key":"discovery:radio","kind":"discovery","text":"这个节拍，小芽也会跟着摇摆。","at":"2026-09-14T13:04:06.077Z"},{"key":"discovery:books","kind":"discovery","text":"这一页的故事，小芽想和你一起看。","at":"2026-09-14T13:04:05.032Z"},{"key":"discovery:bed","kind":"discovery","text":"呼……梦里也是暖暖的小家。","at":"2026-09-14T13:04:03.010Z"},{"key":"discovery:stool","kind":"discovery","text":"坐下来，陪你晃晃叶子。","at":"2026-09-14T13:04:02.435Z"},{"key":"discovery:plant","kind":"discovery","text":"叶子喝饱水了，小芽也精神起来。","at":"2026-09-14T13:04:01.316Z"}],"lumens":500,"earned":500,"spent":0,"refunded":0,"glimmerDays":[],"glimmerPaid":0,"inventory":[{"uid":"qa-0","fid":"plant","paid":0},{"uid":"qa-1","fid":"stool","paid":0},{"uid":"qa-2","fid":"bed","paid":0},{"uid":"qa-3","fid":"books","paid":0},{"uid":"qa-4","fid":"radio","paid":0}],"placed":[{"uid":"qa-0","x":0,"z":0,"rotation":0},{"uid":"qa-1","x":2,"z":0,"rotation":0},{"uid":"qa-2","x":4,"z":0,"rotation":0},{"uid":"qa-3","x":0,"z":3,"rotation":0},{"uid":"qa-4","x":2,"z":3,"rotation":0}],"boundMemories":[],"gifts":[],"nextId":1},"activeTasks":0,"completedTasks":0,"viewport":{"width":1280,"overflow":false}},{"place":"home","navigation":{"hash":"#home","dialog":false,"returnTo":"map"},"emotion":{"mood":"celebrate","parameters":[0.35,1,1,0,0.5]},"home":{"room":{"w":8,"d":8},"decor":{"wall":"meadow","floor":"oak","atmosphereVersion":1,"weather":"clear","light":"day"},"moments":[{"key":"discovery:radio","kind":"discovery","text":"这个节拍，小芽也会跟着摇摆。","at":"2026-09-14T13:04:15.226Z"},{"key":"discovery:books","kind":"discovery","text":"这一页的故事，小芽想和你一起看。","at":"2026-09-14T13:04:14.175Z"},{"key":"discovery:bed","kind":"discovery","text":"呼……梦里也是暖暖的小家。","at":"2026-09-14T13:04:12.159Z"},{"key":"discovery:stool","kind":"discovery","text":"坐下来，陪你晃晃叶子。","at":"2026-09-14T13:04:11.593Z"},{"key":"discovery:plant","kind":"discovery","text":"叶子喝饱水了，小芽也精神起来。","at":"2026-09-14T13:04:10.543Z"}],"lumens":500,"earned":500,"spent":0,"refunded":0,"glimmerDays":[],"glimmerPaid":0,"inventory":[{"uid":"qa-0","fid":"plant","paid":0},{"uid":"qa-1","fid":"stool","paid":0},{"uid":"qa-2","fid":"bed","paid":0},{"uid":"qa-3","fid":"books","paid":0},{"uid":"qa-4","fid":"radio","paid":0}],"placed":[{"uid":"qa-0","x":0,"z":0,"rotation":0},{"uid":"qa-1","x":2,"z":0,"rotation":0},{"uid":"qa-2","x":4,"z":0,"rotation":0},{"uid":"qa-3","x":0,"z":3,"rotation":0},{"uid":"qa-4","x":2,"z":3,"rotation":0}],"boundMemories":[],"gifts":[],"nextId":1},"activeTasks":0,"completedTasks":0,"viewport":{"width":375,"overflow":false}}]
+### Ran Playwright code
+```js
+await (async(page)=>{
+ const results=[];
+ for(const width of [1280,375]){
+  await page.setViewportSize({width,height:900});
+  await page.goto('http://127.0.0.1:5182/?qa#map');
+  await page.evaluate(()=>window.__KUANGYE__.reset('map-navigation','furnished'));
+  await page.locator('[data-place="home"]').click();await page.waitForURL('**#home');
+  await page.getByRole('button',{name:'全部家具',exact:true}).click();
+  const names=await page.locator('.inventory-item').allTextContents();
+  for(let i=0;i<names.length;i++){
+   await page.locator('.inventory-item').nth(i).click();
+   const actions=['一起浇浇花','在这里歇歇脚','让小芽打个盹','翻翻旧故事','一起听一首歌'];
+   await page.getByRole('button',{name:actions[i],exact:true}).click();
+   await page.waitForFunction(i=>window.__KUANGYE__.snapshot().home.moments.length>=i+1,i,{timeout:15000});
+  }
+  const state=await page.evaluate(()=>window.__KUANGYE__.snapshot());
+  if(state.home.lumens!==500||state.viewport.overflow)throw Error('Interaction changes currency or overflows');
+  results.push(state);
+  await page.getByRole('heading',{name:'小芽的家',exact:true}).first().scrollIntoViewIfNeeded();
+  await page.screenshot({path:'output/playwright/home-interactions-'+width+'.png'});
+ }
+ return results;
+}
+)(page);
+```
+### Page
+- Page URL: http://127.0.0.1:5182/?qa#home
+- Page Title: 旷野 · 小芽的家
+- Console: 0 errors, 4 warnings
+### Events
+- New console entries: .playwright-cli/console-2026-09-14T12-48-21-490Z.log#L2-L7

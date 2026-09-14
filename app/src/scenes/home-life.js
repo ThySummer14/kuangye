@@ -165,7 +165,6 @@ export function homeLife(engine, getHome, onMoment) {
         } else if (!reduced) buddy.rotation.z = Math.sin(t * 0.006) * 0.15;
       } else {
         action = null;
-
       }
     }
     // Contact follows the actual support surface, including rugs and seats.

@@ -13,7 +13,16 @@ import HomeView from "./components/HomeView.vue";
 import JournalView from "./components/JournalView.vue";
 import { registerGameTools } from "./game/webmcp.js";
 import { disposeThumbnails } from "./scenes/furniture.js";
-const validTabs = ["map", "tasks", "home", "shop", "panel", "quest", "chains", "woodshop"];
+const validTabs = [
+  "map",
+  "tasks",
+  "home",
+  "shop",
+  "panel",
+  "quest",
+  "chains",
+  "woodshop",
+];
 const tab = ref(
     validTabs.includes(location.hash.slice(1)) ? location.hash.slice(1) : "map",
   ),
@@ -47,7 +56,7 @@ function escape(e) {
     tab.value = "map";
 }
 onMounted(() => {
-  unregisterTools = registerGameTools(navigate);
+  unregisterTools = registerGameTools(navigate, () => tab.value);
   window.addEventListener("hashchange", hashChange);
   window.addEventListener("keydown", escape);
 });
@@ -74,7 +83,13 @@ const nav = [
         <span class="brand-symbol">✳</span
         ><span>旷野<small>KUANGYE</small></span>
       </button>
-      <button v-if="tab !== 'map'" class="soft-button map-return" @click="navigate('map')">← 回到地图</button>
+      <button
+        v-if="tab !== 'map'"
+        class="soft-button map-return"
+        @click="navigate('map')"
+      >
+        ← 回到地图
+      </button>
       <div class="top-stats">
         <span class="wallet"
           >✦ <b>{{ state.home.lumens }}</b> <small>光</small></span
@@ -113,7 +128,6 @@ const nav = [
                 buddyBus.text || "今天的每一点努力，都会让我们的小家暖一点。"
               }}
             </p>
-
           </section>
           <section class="little-task">
             <span class="eyebrow">今天，从这里开始</span>
@@ -127,7 +141,6 @@ const nav = [
               }}
             </h3>
             <p>接一件事 → 收集光 → 布置小家</p>
-
           </section>
           <div class="rail-note">不用赶路。每一步，都算数。</div>
         </aside>

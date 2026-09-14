@@ -7,6 +7,7 @@ const host = ref(null),
   labels = ref({}),
   failed = ref(false);
 const places = [
+  { id: "woodshop", name: "木器铺", sub: "找木木师傅装修", icon: "⌑" },
   { id: "home", name: "小芽的家", sub: "把喜欢的生活，放进家里", icon: "⌂" },
   { id: "shop", name: "林间集市", sub: "去挑一件心动的小物", icon: "♧" },
   { id: "tasks", name: "任务岩壁", sub: "从一件小事出发", icon: "☷" },

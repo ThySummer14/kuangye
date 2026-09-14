@@ -199,6 +199,23 @@ export function createWorld(
         cyl(0.15, 0.12, 0.22, "#b96e50", -0.6 + i * 0.55, 0.78, 0.05, g);
         ball(0.23, "#6d9e69", -0.6 + i * 0.55, 1.03, 0.05, g);
       }
+    } else if (kind === "woodshop") {
+      box(1.65,1.25,1.3,"#dbc49b",0,.68,0,g);
+      for(let i=0;i<7;i++) box(1.68,.035,.035,"#b7956c",0,.18+i*.16,.66,g);
+      const roof = cyl(0,1.45,.75,"#698476",0,1.65,0,g,4); roof.rotation.y=Math.PI/4;
+      box(.48,.85,.06,"#6f5941",.35,.47,.68,g);
+      box(.6,.48,.07,"#bad1c6",-.43,.91,.68,g);
+      box(.04,.51,.1,"#f4e3bb",-.43,.91,.73,g);
+      box(.65,.04,.1,"#f4e3bb",-.43,.91,.73,g);
+      // Workbench, clamped board, tools and stacked timber identify the workshop.
+      box(1.2,.11,.5,"#a87d4f",0,.63,1.12,g);
+      for(const x of [-.48,.48]) box(.08,.58,.35,"#735b40",x,.3,1.12,g);
+      box(.72,.04,.18,"#ead6ac",-.1,.72,1.1,g);
+      box(.045,.3,.045,"#78573d",.37,.88,1.1,g);
+      box(.23,.09,.09,"#667367",.37,1.03,1.1,g);
+      for(let i=0;i<3;i++) box(.2,.13,.95,"#bf9a68",-.99,.13+i*.14,.1,g);
+      box(.56,.3,.07,"#f0ddb0",0,1.42,.8,g);
+      box(.3,.035,.08,"#7e6547",0,1.42,.85,g);
     } else if (kind === "tasks") {
       for (const a of [-0.7, 0.7])
         box(0.12, 1.65, 0.12, "#86674f", a, 0.83, 0, g);
@@ -500,11 +517,12 @@ export function createWorld(
     }
     building("home", -2, -1.6, "home");
     building("shop", 2.65, -0.9, "shop");
+    building("woodshop", -3.25, 0.7, "woodshop");
     building("tasks", -0.9, 2.15, "tasks");
     building("journal", 1, -3.65, "journal");
     [
       [-4, -1, 1.15],
-      [-3.7, 1.5, 0.8],
+      [-4.1, 2.2, 0.65],
       [-2.9, -3.5, 1],
       [-0.4, -4.5, 0.9],
       [3.8, 1, 0.75],

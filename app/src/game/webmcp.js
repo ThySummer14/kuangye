@@ -12,10 +12,10 @@ export function registerGameTools(navigate, getPlace = () => location.hash.slice
   }));
   window.__KUANGYE__ = Object.freeze({ snapshot, ...(QA ? {
     scenarios: Object.keys(SCENARIOS),
-    async reset(name) {
+    async reset(name, variant = "funded") {
       if (!(name in SCENARIOS)) throw new Error("Unknown scenario");
       const home = emptyHome();
-      home.lumens = home.earned = 500;
+      home.lumens = home.earned = variant === "empty" ? 0 : 500;
       home.decor.light = "day"; home.decor.weather = "clear";
       Object.assign(state, { home, active: [], done: [], abandoned: [], settings: {} });
       Object.assign(buddyBus, { mood: "idle", at: 0, text: "" });
@@ -60,7 +60,7 @@ export function registerGameTools(navigate, getPlace = () => location.hash.slice
         properties: {
           place: {
             type: "string",
-            enum: ["map", "tasks", "home", "shop", "panel"],
+            enum: ["map", "tasks", "home", "shop", "panel", "woodshop", "chains"],
           },
         },
         required: ["place"],
@@ -71,7 +71,7 @@ export function registerGameTools(navigate, getPlace = () => location.hash.slice
         if (
           !input ||
           Object.keys(input).length !== 1 ||
-          !["map", "tasks", "home", "shop", "panel"].includes(input.place)
+          !["map", "tasks", "home", "shop", "panel", "woodshop", "chains"].includes(input.place)
         )
           throw new Error("Choose a valid place");
         navigate(input.place);

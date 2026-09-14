@@ -4,7 +4,7 @@ async (page) => {
     await page.setViewportSize({width,height:900});
     await page.goto('http://127.0.0.1:5182/?qa#map');
     await page.evaluate(() => window.__KUANGYE__.reset('map-navigation'));
-    for (const [name,place] of [['⌂ 小芽的家','home'],['♧ 林间集市','shop'],['☷ 任务岩壁','tasks'],['⌁ 瞭望台 · 成长手记','panel']]) {
+    for (const [name,place] of [['⌂ 小芽的家','home'],['♧ 林间集市','shop'],['☷ 任务岩壁','tasks'],['⌁ 瞭望台 · 成长手记','panel'],['⌑ 木器铺','woodshop']]) {
       await page.locator('[data-place="'+(place==='panel'?'journal':place)+'"]').click();
       await page.waitForURL('**#'+place);
       await page.getByRole('button',{name:'← 回到地图',exact:true}).waitFor();

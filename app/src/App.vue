@@ -8,11 +8,12 @@ import AbandonModal from "./components/AbandonModal.vue";
 import BuddyFace from "./components/BuddyFace.vue";
 import QuestView from "./components/QuestView.vue";
 import ShopView from "./components/ShopView.vue";
+import WoodshopView from "./components/WoodshopView.vue";
 import HomeView from "./components/HomeView.vue";
 import JournalView from "./components/JournalView.vue";
 import { registerGameTools } from "./game/webmcp.js";
 import { disposeThumbnails } from "./scenes/furniture.js";
-const validTabs = ["map", "tasks", "home", "shop", "panel", "quest", "chains"];
+const validTabs = ["map", "tasks", "home", "shop", "panel", "quest", "chains", "woodshop"];
 const tab = ref(
     validTabs.includes(location.hash.slice(1)) ? location.hash.slice(1) : "map",
   ),
@@ -63,6 +64,7 @@ const nav = [
   ["home", "⌂", "小芽的家"],
   ["shop", "♧", "林间集市"],
   ["panel", "◷", "成长手记"],
+  ["woodshop", "⌑", "木器铺"],
 ];
 </script>
 <template>
@@ -143,6 +145,7 @@ const nav = [
         @journal="tab = 'panel'"
         @toast="toast"
       />
+      <WoodshopView v-else-if="tab === 'woodshop'" @toast="toast" />
       <ShopView
         v-else-if="tab === 'shop'"
         @home="tab = 'home'"

@@ -3,8 +3,6 @@ import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import * as THREE from "three";
 import {
   state,
-  expandHome,
-  changeHomeDecor,
   rememberHomeInteraction,
   place,
   recycle,
@@ -22,17 +20,15 @@ import { createAtmosphere } from "../scenes/atmosphere.js";
 import FurnitureImage from "./FurnitureImage.vue";
 import BuddyFace from "./BuddyFace.vue";
 import ModalFrame from "./ModalFrame.vue";
-import { roomOf, expansionOffer, WALLS, FLOORS } from "../game/room.js";
+import { roomOf } from "../game/room.js";
 import { homeLife } from "../scenes/home-life.js";
 import { INTERACTIONS } from "../game/buddy-walk.js";
 const room = computed(() => roomOf(state.home));
-const expansion = ref(null),
-  speech = ref("拖动画面转动小家，点家具可以和我一起玩。");
+const speech = ref("拖动画面转动小家，点家具可以和我一起玩。");
 let life,
   atmosphere,
   atmosphereState = { weather: "clear", day: 1, hour: 12 };
-const craftsman = ref(false),
-  ambientDay = ref(1);
+const ambientDay = ref(1);
 function setAtmosphere(v) {
   atmosphereState = v;
   ambientDay.value = v.weather === "moon" ? 0 : v.day;
@@ -224,11 +220,6 @@ function boot() {
   } catch {
     failed.value = true;
   }
-}
-function expandNow() {
-  const r = expandHome(expansion.value);
-  expansion.value = null;
-  emit("toast", r.ok ? `小家扩建到 ${r.area} 平方米啦！` : r.why);
 }
 function interact() {
   if (!life?.interact(selected.value))
@@ -472,88 +463,8 @@ onBeforeUnmount(() => {
           先从背包挑一件家具，<br />再点屋里的空地放下。<br />点击已放好的家具，看看它的回忆。
         </div>
       </section>
-      <section class="craftsman-card">
-        <div class="craftsman-portrait" aria-hidden="true">
-          <span class="craft-hat"></span><span class="craft-face">• ᴗ •</span
-          ><span class="craft-apron">✂</span>
-        </div>
-        <span class="eyebrow">森林里的装修师傅</span>
-        <h3>木木师傅</h3>
-        <p>量一量，敲一敲。<br />把你喜欢的日子，装进小家。</p>
-        <button class="primary-button" @click="craftsman = true">
-          找师傅聊聊装修</button
-        ><small>扩建 · 墙面 · 地板</small>
-      </section>
       <AtmosphereControl @change="setAtmosphere" />
     </aside>
-    <ModalFrame
-      v-if="craftsman"
-      label="木木师傅的装修铺"
-      @close="craftsman = false"
-      ><h2>木木师傅的装修铺</h2>
-      <p>“空间慢慢长大，风格随你喜欢。今天想改哪儿？”</p>
-      <section class="home-renovation">
-        <span class="eyebrow">GROW A LITTLE HOME</span>
-        <h3>给生活多一点空间</h3>
-        <p>现在 {{ (room.w * room.d) / 4 }} m²，慢慢长成理想的小家。</p>
-        <button
-          v-for="axis in ['w', 'd']"
-          :key="axis"
-          class="soft-button"
-          :disabled="!expansionOffer(state.home, axis)"
-          @click="
-            craftsman = false;
-            expansion = axis;
-          "
-        >
-          {{ axis === "w" ? "向右扩建" : "向前扩建" }} ·
-          {{ expansionOffer(state.home, axis)?.price ?? "已达上限" }} 光
-        </button>
-        <h4>换一种心情 · 免费</h4>
-        <label
-          >墙面<select
-            :value="state.home.decor.wall"
-            @change="changeHomeDecor('wall', $event.target.value)"
-          >
-            <option v-for="(v, k) in WALLS" :key="k" :value="k">
-              {{ v.name }}
-            </option>
-          </select></label
-        ><label
-          >地板<select
-            :value="state.home.decor.floor"
-            @change="changeHomeDecor('floor', $event.target.value)"
-          >
-            <option v-for="(v, k) in FLOORS" :key="k" :value="k">
-              {{ v.name }}
-            </option>
-          </select></label
-        >
-        <p v-if="state.home.moments.length" class="home-tip">
-          最近的小发现：{{ state.home.moments[0].text }}
-        </p>
-      </section>
-    </ModalFrame>
-    <ModalFrame v-if="expansion" label="扩建小家" @close="expansion = null"
-      ><h3>让小家再长大一点</h3>
-      <p>
-        花费 {{ expansionOffer(state.home, expansion)?.price }} 光，增加
-        {{ expansionOffer(state.home, expansion)?.addedArea }}
-        m²。现有家具会留在原来的格子。
-      </p>
-      <div class="placement-actions">
-        <button class="soft-button" @click="expansion = null">再想想</button
-        ><button
-          class="primary-button"
-          :disabled="
-            state.home.lumens < expansionOffer(state.home, expansion)?.price
-          "
-          @click="expandNow"
-        >
-          确认扩建
-        </button>
-      </div></ModalFrame
-    >
     <ModalFrame v-if="recycling" label="回收家具" @close="recycling = false"
       ><h3>把这件家具交还给集市？</h3>
       <p>返还 {{ refundFor(current?.paid) }} 光，任务回忆仍保存在手记里。</p>

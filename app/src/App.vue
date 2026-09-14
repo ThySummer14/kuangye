@@ -26,7 +26,8 @@ function toast(t) {
   toastTimer = setTimeout(() => (toastMsg.value = ""), 3000);
 }
 function navigate(id) {
-  tab.value = id === "journal" ? "panel" : id;
+  const next = id === "journal" ? "panel" : id;
+  tab.value = validTabs.includes(next) ? next : "map";
 }
 watch(tab, (t) => {
   location.hash = t;
@@ -34,7 +35,7 @@ watch(tab, (t) => {
 });
 function hashChange() {
   const t = location.hash.slice(1);
-  if (validTabs.includes(t)) tab.value = t;
+  tab.value = validTabs.includes(t) ? t : "map";
 }
 function escape(e) {
   if (
@@ -71,17 +72,7 @@ const nav = [
         <span class="brand-symbol">✳</span
         ><span>旷野<small>KUANGYE</small></span>
       </button>
-      <nav aria-label="主导航">
-        <button
-          v-for="[id, icon, name] in nav"
-          :key="id"
-          :class="{ selected: tab === id }"
-          @click="tab = id"
-        >
-          <span>{{ icon }}</span
-          >{{ name }}
-        </button>
-      </nav>
+      <button v-if="tab !== 'map'" class="soft-button map-return" @click="navigate('map')">← 回到地图</button>
       <div class="top-stats">
         <span class="wallet"
           >✦ <b>{{ state.home.lumens }}</b> <small>光</small></span
@@ -95,7 +86,7 @@ const nav = [
           <h1>
             {{
               tab === "map"
-                ? "生活有点忙，也别忘了自己的小世界。"
+                ? "今天，想去哪里？"
                 : nav.find((n) => n[0] === tab)?.[2] || "我的旅程"
             }}
           </h1>
@@ -120,9 +111,7 @@ const nav = [
                 buddyBus.text || "今天的每一点努力，都会让我们的小家暖一点。"
               }}
             </p>
-            <button class="soft-button" @click="tab = 'home'">
-              去小芽家坐坐 ↗
-            </button>
+
           </section>
           <section class="little-task">
             <span class="eyebrow">今天，从这里开始</span>
@@ -136,9 +125,7 @@ const nav = [
               }}
             </h3>
             <p>接一件事 → 收集光 → 布置小家</p>
-            <button class="primary-button" @click="tab = 'tasks'">
-              发现今日任务 <span>↗</span>
-            </button>
+
           </section>
           <div class="rail-note">不用赶路。每一步，都算数。</div>
         </aside>

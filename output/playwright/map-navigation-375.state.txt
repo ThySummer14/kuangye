@@ -1,0 +1,54 @@
+### Result
+{
+  "place": "map",
+  "navigation": {
+    "hash": "#map",
+    "dialog": false,
+    "returnTo": "map"
+  },
+  "emotion": {
+    "mood": "idle",
+    "parameters": [
+      1,
+      0,
+      0.2,
+      0,
+      0
+    ]
+  },
+  "home": {
+    "room": {
+      "w": 6,
+      "d": 6
+    },
+    "decor": {
+      "wall": "meadow",
+      "floor": "oak",
+      "atmosphereVersion": 1,
+      "weather": "clear",
+      "light": "day"
+    },
+    "moments": [],
+    "lumens": 500,
+    "earned": 500,
+    "spent": 0,
+    "refunded": 0,
+    "glimmerDays": [],
+    "glimmerPaid": 0,
+    "inventory": [],
+    "placed": [],
+    "boundMemories": [],
+    "gifts": [],
+    "nextId": 1
+  },
+  "activeTasks": 0,
+  "completedTasks": 0,
+  "viewport": {
+    "width": 375,
+    "overflow": false
+  }
+}
+### Ran Playwright code
+```js
+await page.evaluate('() => (window.__KUANGYE__.snapshot())');
+```

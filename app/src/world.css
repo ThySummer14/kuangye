@@ -57,32 +57,6 @@ body {
   font-size: 43px;
   letter-spacing: 0;
 }
-.topbar nav {
-  display: flex;
-  gap: 9px;
-  align-self: stretch;
-  align-items: center;
-}
-.topbar nav button {
-  border: 0;
-  background: none;
-  padding: 12px 17px;
-  border-radius: 25px;
-  color: #637366;
-  font-size: 15px;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  gap: 9px;
-}
-.topbar nav button span {
-  font-size: 21px;
-}
-.topbar nav button.selected {
-  background: #e7eee1;
-  color: #2f6245;
-  font-weight: 600;
-}
 .top-stats {
   display: flex;
   align-items: center;
@@ -417,12 +391,6 @@ body {
     padding: 0 3%;
     gap: 15px;
   }
-  .topbar nav {
-    gap: 0;
-  }
-  .topbar nav button {
-    padding: 10px 11px;
-  }
   .top-stats {
     gap: 10px;
   }
@@ -456,30 +424,6 @@ body {
   }
   .brand-symbol {
     font-size: 35px;
-  }
-  .topbar nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: calc(68px + env(safe-area-inset-bottom));
-    padding: 5px 5px calc(5px + env(safe-area-inset-bottom));
-    background: #fbfcf9f5;
-    backdrop-filter: blur(12px);
-    z-index: 40;
-    justify-content: space-around;
-    border-top: 1px solid #e0e6dc;
-  }
-  .topbar nav button {
-    font-size: 11px;
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-    padding: 4px 9px;
-    border-radius: 12px;
-  }
-  .topbar nav button span {
-    font-size: 23px;
   }
   .app-main {
     padding: 23px 16px 95px;
@@ -2302,4 +2246,15 @@ button:disabled {
 .weather-card a {
   display: block;
   color: #677e67;
+}
+
+/* Map is the only main navigation, including on small screens. */
+.map-return { margin-left: auto; margin-right: 20px; white-space: nowrap; }
+.poi-label { min-height: 44px; }
+.map-failed .poi-label { z-index: 3; }
+@media(max-width:760px) {
+  .map-return { padding: 9px; margin-right: 8px; font-size: 12px; }
+  .app-main { padding-bottom: 32px; }
+  .topbar:has(.map-return) .brand small { display: none; }
+  .topbar:has(.map-return) .brand-symbol { display: none; }
 }

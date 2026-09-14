@@ -10,7 +10,7 @@ const places = [
   { id: "home", name: "小芽的家", sub: "把喜欢的生活，放进家里", icon: "⌂" },
   { id: "shop", name: "林间集市", sub: "去挑一件心动的小物", icon: "♧" },
   { id: "tasks", name: "任务岩壁", sub: "从一件小事出发", icon: "☷" },
-  { id: "journal", name: "瞭望台", sub: "看看走过的路", icon: "⌁" },
+  { id: "journal", name: "瞭望台 · 成长手记", sub: "看看走过的路", icon: "⌁" },
 ];
 let engine;
 onMounted(() => {
@@ -22,21 +22,21 @@ onMounted(() => {
         const h = host.value;
         if (!h) return;
         h.dataset.drawCalls = info.calls;
-        labels.value = Object.fromEntries(
-          Object.entries(l).map(([k, v]) => [
-            k,
-            {
-              left:
-                ((h.offsetLeft + (v.left / 100) * h.clientWidth) /
-                  h.parentElement.clientWidth) *
-                100,
-              top:
-                ((h.offsetTop + (v.top / 100) * h.clientHeight) /
-                  h.parentElement.clientHeight) *
-                100,
-            },
-          ]),
-        );
+        const bounds = [];
+        labels.value = Object.fromEntries(Object.entries(l).map(([k, v]) => {
+          const button = h.parentElement.querySelector(`[data-place="${k}"]`);
+          const w = button?.offsetWidth || 112, height = Math.max(44, button?.offsetHeight || 44);
+          const pw = h.parentElement.clientWidth, ph = h.parentElement.clientHeight;
+          const x = Math.max(w / 2 + 10, Math.min(pw - w / 2 - 10, h.offsetLeft + v.left / 100 * h.clientWidth));
+          let y = Math.max(160, Math.min(ph - 90, h.offsetTop + v.top / 100 * h.clientHeight));
+          for (let attempt = 0; attempt < 12; attempt++) {
+            const collision = bounds.find(b => Math.abs(x - b.x) < (w + b.w) / 2 + 6 && Math.abs(y - b.y) < (height + b.h) / 2 + 6);
+            if (!collision) break;
+            y = collision.y + (height + collision.h) / 2 + 8;
+          }
+          bounds.push({ x, y, w, h: height });
+          return [k, { left: x / pw * 100, top: y / ph * 100 }];
+        }));
       },
     });
     engine.renderer.domElement.addEventListener("webglcontextlost", (e) => {
@@ -50,7 +50,7 @@ onMounted(() => {
 onBeforeUnmount(() => engine?.dispose());
 </script>
 <template>
-  <div class="world-stage">
+  <div class="world-stage" :class="{ 'map-failed': failed }">
     <div
       ref="host"
       class="world-canvas"
@@ -64,6 +64,7 @@ onBeforeUnmount(() => engine?.dispose());
     <button
       v-for="p in places"
       :key="p.id"
+      :data-place="p.id"
       class="poi-label"
       :class="p.id"
       :style="

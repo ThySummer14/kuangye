@@ -27,7 +27,7 @@ import { homeLife } from "../scenes/home-life.js";
 import { INTERACTIONS } from "../game/buddy-walk.js";
 const room = computed(() => roomOf(state.home));
 const expansion = ref(null),
-  speech = ref("点点空地，我就蹦过去。拖动画面可以转动小家。");
+  speech = ref("拖动画面转动小家，点家具可以和我一起玩。");
 let life,
   atmosphere,
   atmosphereState = { weather: "clear", day: 1, hour: 12 };
@@ -192,8 +192,7 @@ function boot() {
         if (editing.value) {
           cell.value = c;
           if (click) commit();
-        } else if (click && !life?.walk(c))
-          emit("toast", "这里暂时走不过去，给小芽留一条小路吧。");
+        }
       },
       onReady: (_, info) => {
         if (host.value) host.value.dataset.drawCalls = info.calls;
@@ -316,7 +315,7 @@ onBeforeUnmount(() => {
             俯瞰布置
           </button>
         </div>
-        <small>拖动旋转与调整高度 · 双指或滚轮缩放 · 点空地让小芽散步</small>
+        <small>拖动旋转与调整高度 · 双指或滚轮缩放 · 选择家具与小芽互动</small>
       </div>
       <div class="inventory">
         <div class="inventory-heading">

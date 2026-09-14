@@ -124,7 +124,7 @@ export const INTERACTIONS = {
     name: "在这里歇歇脚",
     action: "sit",
     mood: "happy",
-    text: "蹦跶累了，坐下来晃晃叶子。",
+    text: "坐下来，陪你晃晃叶子。",
   },
   rug: {
     name: "在毯子上打个滚",

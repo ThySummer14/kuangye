@@ -14,7 +14,6 @@ export function homeLife(engine, getHome, onMoment) {
     path = [],
     segment = 0,
     last = 0,
-    idleUntil = 0,
     pending = null,
     action = null,
     signature = "",
@@ -47,6 +46,7 @@ export function homeLife(engine, getHome, onMoment) {
     }
     return blocked;
   }
+  // Movement exists only to approach an explicitly selected furniture interaction.
   function plan(target, interaction) {
     const home = getHome(),
       room = roomOf(home),
@@ -116,11 +116,10 @@ export function homeLife(engine, getHome, onMoment) {
         u = Math.min(1, segment);
       buddy.position.set(
         cell.x + (dest.x - cell.x) * u - room.w / 2 + 0.5,
-        0.05 + (reduced ? 0 : Math.sin(u * Math.PI) * 0.28),
+        0.05,
         cell.z + (dest.z - cell.z) * u - room.d / 2 + 0.5,
       );
       buddy.rotation.y = Math.atan2(dest.x - cell.x, dest.z - cell.z);
-      if (!reduced) buddy.scale.y = 1.3 + Math.sin(u * Math.PI * 2) * 0.1;
       if (u >= 1) {
         cell = path.shift();
         segment = 0;
@@ -138,7 +137,6 @@ export function homeLife(engine, getHome, onMoment) {
       if (pending) {
         action = { ...pending, started: t, until: t + 5000 };
         pending = null;
-        idleUntil = t + 6500;
         buddy.userData.mood = action.mood;
         buddy.userData.moodUntil = Date.now() + 5000;
         startEffect(action);
@@ -155,7 +153,6 @@ export function homeLife(engine, getHome, onMoment) {
           buddy.position.y += action.seat.y * u;
         }
         if (!reduced && ["dance", "roll"].includes(action.action)) {
-          buddy.position.y += Math.abs(Math.sin(t * 0.01)) * 0.25;
           buddy.rotation.z = Math.sin(t * 0.007) * 0.25;
         } else if (["sit", "sleep", "tea", "read"].includes(action.action)) {
           buddy.scale.y = 1.26;
@@ -168,18 +165,7 @@ export function homeLife(engine, getHome, onMoment) {
         } else if (!reduced) buddy.rotation.z = Math.sin(t * 0.006) * 0.15;
       } else {
         action = null;
-        if (t > idleUntil && !reduced) {
-          const free = nearestFree(
-            {
-              x: Math.floor(Math.random() * room.w),
-              z: Math.floor(Math.random() * room.d),
-            },
-            room,
-            blocked,
-          );
-          if (free) plan(free);
-          idleUntil = t + 5000 + Math.random() * 5000;
-        }
+
       }
     }
     // Contact follows the actual support surface, including rugs and seats.
@@ -215,14 +201,9 @@ export function homeLife(engine, getHome, onMoment) {
     effect.position.y += 1.55 + (reduced ? 0 : Math.sin(t * 0.004) * 0.09);
   });
   return {
-    walk(target) {
-      action = null;
-      idleUntil = last + 7000;
-      return plan(target);
-    },
     pet() {
       pending = {
-        action: "dance",
+        action: "look",
         mood: "loved",
         text: "嘿嘿，今天也被你喜欢着。",
         model: "pet",

@@ -389,7 +389,7 @@ export function expandHome(axis) {
       `小家长大到 ${result.area} 平方米啦。`,
       `expansion:${result.next.w}x${result.next.d}`,
     );
-    buddyMoment("celebrate", 3200, "哇，这里又多了一块可以蹦跶的地方。");
+    buddyMoment("celebrate", 3200, "哇，小家又多了一个温暖的角落。");
   }
   return result;
 }

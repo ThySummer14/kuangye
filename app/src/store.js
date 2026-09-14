@@ -1,3 +1,4 @@
+import { QA } from "./game/qa.js";
 import { expandRoom, addHomeMoment, normalizeDecor } from "./game/room.js";
 import { normalizeState } from "./game/save.js";
 // Reactive API facade. Quest actions stay compatible; home rules and save migration are pure modules.
@@ -24,7 +25,7 @@ export function buddyMoment(mood, ms = 1500, text = "") {
   buddyBus.at = Date.now() + ms;
 }
 
-const KEY = "kuangye.v3";
+const KEY = QA ? "kuangye.qa.v3" : "kuangye.v3";
 const LEGACY_KEY = "kuangye.v1";
 const emptyState = () => ({
   home: emptyHome(),
@@ -35,7 +36,7 @@ const emptyState = () => ({
 });
 
 const load = () => {
-  for (const key of [KEY, "kuangye.v2", LEGACY_KEY]) {
+  for (const key of (QA ? [KEY] : [KEY, "kuangye.v2", LEGACY_KEY])) {
     try {
       const raw = JSON.parse(localStorage.getItem(key));
       const normalized = normalizeState(raw);

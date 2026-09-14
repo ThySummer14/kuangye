@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { state, changeHomeDecor } from "../store.js";
 import { WEATHER, eastEightHour, daylight } from "../game/atmosphere.js";
+import { QA } from "../game/qa.js";
 import { fetchWeather } from "../services/weather.js";
 const emit = defineEmits(["change"]);
 const now = ref(new Date()),
@@ -28,6 +29,7 @@ const effective = computed(() => ({
 }));
 watch(effective, (v) => emit("change", v), { immediate: true });
 async function sync(locate = false) {
+  if (QA) { status.value = "本地场景 · 晴天"; return; }
   controller?.abort();
   controller = new AbortController();
   const own = controller;

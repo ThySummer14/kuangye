@@ -1,8 +1,29 @@
 import { nextTick } from "vue";
-import { state, levelInfo } from "../store.js";
-export function registerGameTools(navigate) {
+import { state, levelInfo, buddyBus } from "../store.js";
+import { EXPRESSIONS } from "./emotions.js";
+import { QA, SCENARIOS } from "./qa.js";
+import { emptyHome } from "./home.js";
+export function registerGameTools(navigate, getPlace = () => location.hash.slice(1) || "map") {
+  const snapshot = () => JSON.parse(JSON.stringify({
+    place: getPlace(), navigation: { hash: location.hash, dialog: !!document.querySelector("dialog[open]"), returnTo: "map" },
+    emotion: { mood: buddyBus.mood, parameters: EXPRESSIONS[buddyBus.mood] || EXPRESSIONS.idle },
+    home: state.home, activeTasks: state.active.length, completedTasks: state.done.length,
+    viewport: { width: innerWidth, overflow: document.documentElement.scrollWidth > innerWidth },
+  }));
+  window.__KUANGYE__ = Object.freeze({ snapshot, ...(QA ? {
+    scenarios: Object.keys(SCENARIOS),
+    async reset(name) {
+      if (!(name in SCENARIOS)) throw new Error("Unknown scenario");
+      const home = emptyHome();
+      home.lumens = home.earned = 500;
+      home.decor.light = "day"; home.decor.weather = "clear";
+      Object.assign(state, { home, active: [], done: [], abandoned: [], settings: {} });
+      Object.assign(buddyBus, { mood: "idle", at: 0, text: "" });
+      navigate("map"); await nextTick(); return snapshot();
+    },
+  } : {}) });
   const context = document.modelContext;
-  if (!context?.registerTool) return () => {};
+  if (!context?.registerTool) return () => { delete window.__KUANGYE__; };
   const lifecycle = new AbortController();
   const tools = [
     {
@@ -68,5 +89,5 @@ export function registerGameTools(navigate) {
       /* Optional browser capability; the visible game remains fully functional. */
     }
   }
-  return () => lifecycle.abort();
+  return () => { lifecycle.abort(); delete window.__KUANGYE__; };
 }

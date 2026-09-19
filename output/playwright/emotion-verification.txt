@@ -1,43 +1,118 @@
 ### Result
-[{"place":"emotion-lab","navigation":{"standalone":true},"emotion":{"mood":"happy","parameters":{"leftH":0.8157475735379727,"rightH":0.7634062345259813,"leftW":0.9946755224300503,"rightW":0.9946755224300503,"leftTilt":-16.425958205595972,"rightTilt":16.425958205595972,"smile":-0.30853347529978414,"mouth":0.08446397444603884,"yaw":0,"pitch":-7.34062345259813,"roll":-3.2341339011991366,"bodyW":0.9876586609880087,"bodyH":0.9712764434980015,"cheek":0.17020439239007917,"leaf":-0.13660092106795105,"split":18,"gazeX":0,"gazeY":0},"velocity":{"leftH":-0.8038655136925377,"rightH":-0.5500132462106838,"leftW":1.4808048936441482,"rightW":1.4808048936441482,"leftTilt":118.46439149153186,"rightTilt":-118.46439149153186,"smile":6.346306687046352,"mouth":1.1423352036683425,"yaw":0,"pitch":55.00132462106836,"roll":25.385226748185406,"bodyW":0.25385226748185424,"bodyH":0.042308711246975564,"cheek":2.3269791185836617,"leaf":1.4384961823971723,"split":0,"gazeX":0,"gazeY":0}},"settings":{"frequency":12,"damping":0.86,"blink":true,"breath":true,"paused":false},"viewport":{"width":1280,"overflow":false}},{"place":"emotion-lab","navigation":{"standalone":true},"emotion":{"mood":"happy","parameters":{"leftH":0.7709724198520587,"rightH":0.7327706030566717,"leftW":1.077156068693576,"rightW":1.077156068693576,"leftTilt":-9.827514504513921,"rightTilt":9.827514504513921,"smile":0.04495458011532594,"mouth":0.14809182442075866,"yaw":0,"pitch":-4.277060305667179,"roll":-1.8201816795386963,"bodyW":1.0017981832046132,"bodyH":0.9736330305341022,"cheek":0.29981667937561945,"leaf":-0.05647696184052614,"split":18,"gazeX":0,"gazeY":0},"velocity":{"leftH":-0.9150292131711791,"rightH":-0.6260726195381755,"leftW":1.685580129525858,"rightW":1.685580129525858,"leftTilt":134.84641036206855,"rightTilt":-134.84641036206855,"smile":7.2239148408251,"mouth":1.300304671348518,"yaw":0,"pitch":62.607261953817584,"roll":28.8956593633004,"bodyW":0.288956593633004,"bodyH":0.04815943227216713,"cheek":2.6487687749692035,"leaf":1.6374206972536893,"split":0,"gazeX":0,"gazeY":0}},"settings":{"frequency":12,"damping":0.86,"blink":true,"breath":true,"paused":false},"viewport":{"width":1280,"overflow":false}},{"place":"emotion-lab","navigation":{"standalone":true},"emotion":{"mood":"happy","parameters":{"leftH":0.7286464553911491,"rightH":0.7038107326360494,"leftW":1.1551249505952519,"rightW":1.1551249505952519,"leftTilt":-3.5900039523798704,"rightTilt":3.5900039523798704,"smile":0.3791069311225075,"mouth":0.20823924760205126,"yaw":0,"pitch":-1.3810732636049403,"roll":-0.48357227550997006,"bodyW":1.0151642772449005,"bodyH":0.9758607128741501,"cheek":0.42233920807825265,"leaf":0.019264237721101668,"split":18,"gazeX":0,"gazeY":0},"velocity":{"leftH":-0.7551531586473091,"rightH":-0.5166837401271063,"leftW":1.3910716080345173,"rightW":1.3910716080345173,"leftTilt":111.28572864276138,"rightTilt":-111.28572864276138,"smile":5.961735463005071,"mouth":1.073112383340913,"yaw":0,"pitch":51.66837401271067,"roll":23.846941852020283,"bodyW":0.23846941852020223,"bodyH":0.03974490308670019,"cheek":2.185969669768527,"leaf":1.3513267049478161,"split":0,"gazeX":0,"gazeY":0}},"settings":{"frequency":12,"damping":0.86,"blink":true,"breath":true,"paused":false},"viewport":{"width":1280,"overflow":false}},{"place":"emotion-lab","navigation":{"standalone":true},"emotion":{"mood":"happy","parameters":{"leftH":0.6622827640909172,"rightH":0.6584039964832592,"leftW":1.277373855621995,"rightW":1.277373855621995,"leftTilt":6.189908449759565,"rightTilt":-6.189908449759565,"smile":0.9030308098085483,"mouth":0.3025455457655387,"yaw":0,"pitch":3.1596003516740856,"roll":1.6121232392341933,"bodyW":1.036121232392342,"bodyH":0.9793535387320569,"cheek":0.6144446302631345,"leaf":0.13802031688993763,"split":18,"gazeX":0,"gazeY":0},"velocity":{"leftH":-0.28438388909037354,"rightH":-0.19457845043025584,"leftW":0.5238650588506875,"rightW":0.5238650588506875,"leftTilt":41.90920470805508,"rightTilt":-41.90920470805508,"smile":2.2451359665029496,"mouth":0.4041244739705311,"yaw":0,"pitch":19.45784504302557,"roll":8.980543866011798,"bodyW":0.08980543866011684,"bodyH":0.014967573110019387,"cheek":0.8232165210510818,"leaf":0.5088974857406685,"split":0,"gazeX":0,"gazeY":0}},"settings":{"frequency":8,"damping":0.75,"blink":false,"breath":false,"paused":false},"viewport":{"width":1280,"overflow":false}},{"place":"emotion-lab","navigation":{"standalone":true},"emotion":{"mood":"happy","parameters":{"leftH":0.8365989608731965,"rightH":0.7776729732290293,"leftW":0.9562650720756906,"rightW":0.9562650720756906,"leftTilt":-19.498794233944746,"rightTilt":19.498794233944746,"smile":-0.4731496911041828,"mouth":0.05483305560124707,"yaw":0,"pitch":-8.76729732290292,"roll":-3.8925987644167312,"bodyW":0.9810740123558327,"bodyH":0.9701790020593054,"cheek":0.10984511326179958,"leaf":-0.1739139299836148,"split":18,"gazeX":0,"gazeY":0},"velocity":{"leftH":-0.383908120049588,"rightH":-0.2626739768760342,"leftW":0.7071991685123995,"rightW":0.7071991685123995,"leftTilt":56.57593348099192,"rightTilt":-56.57593348099192,"smile":3.0308535793388502,"mouth":0.5455536442809932,"yaw":0,"pitch":26.267397687603406,"roll":12.123414317355401,"bodyW":0.12123414317355426,"bodyH":0.020205690528925707,"cheek":1.1113129790909126,"leaf":0.6869934779834737,"split":0,"gazeX":0,"gazeY":0}},"settings":{"frequency":12,"damping":0.86,"blink":true,"breath":true,"paused":false},"viewport":{"width":375,"overflow":false}},{"place":"emotion-lab","navigation":{"standalone":true},"emotion":{"mood":"happy","parameters":{"leftH":0.8157475735379726,"rightH":0.7634062345259813,"leftW":0.9946755224300503,"rightW":0.9946755224300503,"leftTilt":-16.42595820559597,"rightTilt":16.42595820559597,"smile":-0.30853347529978414,"mouth":0.08446397444603879,"yaw":0,"pitch":-7.340623452598129,"roll":-3.2341339011991366,"bodyW":0.9876586609880087,"bodyH":0.9712764434980015,"cheek":0.17020439239007912,"leaf":-0.13660092106795105,"split":18,"gazeX":0,"gazeY":0},"velocity":{"leftH":-0.8038655136925371,"rightH":-0.5500132462106838,"leftW":1.4808048936441491,"rightW":1.4808048936441491,"leftTilt":118.46439149153188,"rightTilt":-118.46439149153188,"smile":6.346306687046347,"mouth":1.1423352036683436,"yaw":0,"pitch":55.001324621068356,"roll":25.38522674818539,"bodyW":0.2538522674818541,"bodyH":0.04230871124697564,"cheek":2.32697911858366,"leaf":1.4384961823971723,"split":0,"gazeX":0,"gazeY":0}},"settings":{"frequency":12,"damping":0.86,"blink":true,"breath":true,"paused":false},"viewport":{"width":375,"overflow":false}},{"place":"emotion-lab","navigation":{"standalone":true},"emotion":{"mood":"happy","parameters":{"leftH":0.7863712263646795,"rightH":0.743306628565307,"leftW":1.0487898461703271,"rightW":1.0487898461703271,"leftTilt":-12.09681230637382,"rightTilt":12.09681230637382,"smile":-0.07661494498431187,"mouth":0.12620930990282384,"yaw":0,"pitch":-5.330662856530704,"roll":-2.3064597799372475,"bodyW":0.9969354022006276,"bodyH":0.972822567033438,"cheek":0.2552411868390856,"leaf":-0.0840327208631107,"split":18,"gazeX":0,"gazeY":0},"velocity":{"leftH":-0.923459467082556,"rightH":-0.6318406880038547,"leftW":1.7011095446257634,"rightW":1.7011095446257634,"leftTilt":136.088763570061,"rightTilt":-136.088763570061,"smile":7.290469476967554,"mouth":1.3122845058541597,"yaw":0,"pitch":63.18406880038545,"roll":29.161877907870217,"bodyW":0.29161877907870215,"bodyH":0.0486031298464502,"cheek":2.673172141554768,"leaf":1.6525064147793116,"split":0,"gazeX":0,"gazeY":0}},"settings":{"frequency":12,"damping":0.86,"blink":true,"breath":true,"paused":false},"viewport":{"width":375,"overflow":false}},{"place":"emotion-lab","navigation":{"standalone":true},"emotion":{"mood":"happy","parameters":{"leftH":0.6875182659927805,"rightH":0.6756703925213762,"leftW":1.2308874047501412,"rightW":1.2308874047501412,"leftTilt":2.470992380011296,"rightTilt":-2.470992380011296,"smile":0.7038031632148911,"mouth":0.26668456937868035,"yaw":0,"pitch":1.4329607478623867,"roll":0.8152126528595638,"bodyW":1.028152126528596,"bodyH":0.9780253544214327,"cheek":0.5413944931787933,"leaf":0.0928620503287086,"split":18,"gazeX":0,"gazeY":0},"velocity":{"leftH":-0.4952308697651858,"rightH":-0.33884217404986383,"leftW":0.9122673916727115,"rightW":0.9122673916727115,"leftTilt":72.98139133381687,"rightTilt":-72.98139133381687,"smile":3.909717392883047,"mouth":0.7037491307189484,"yaw":0,"pitch":33.88421740498641,"roll":15.638869571532188,"bodyW":0.15638869571532063,"bodyH":0.026064782619220038,"cheek":1.433563044057117,"leaf":0.8862026090534902,"split":0,"gazeX":0,"gazeY":0}},"settings":{"frequency":8,"damping":0.75,"blink":false,"breath":false,"paused":false},"viewport":{"width":375,"overflow":false}}]
+[{"place":"emotion-lab","navigation":{"standalone":true},"dimension":"2d","emotion":{"mood":"happy","parameters":{"leftH":0.8157475735379726,"rightH":0.7634062345259813,"leftW":0.9946755224300503,"rightW":0.9946755224300503,"leftTilt":-16.42595820559597,"rightTilt":16.42595820559597,"smile":-0.30853347529978414,"mouth":0.05382933049400432,"yaw":0,"pitch":-7.340623452598129,"roll":-3.2341339011991366,"bodyW":0.9876586609880087,"bodyH":0.9712764434980015,"cheek":0.17020439239007912,"leaf":-0.13660092106795105,"split":18,"gazeX":0,"gazeY":0},"velocity":{"leftH":-0.8038655136925371,"rightH":-0.5500132462106838,"leftW":1.4808048936441491,"rightW":1.4808048936441491,"leftTilt":118.46439149153188,"rightTilt":-118.46439149153188,"smile":6.346306687046347,"mouth":0.12692613374092698,"yaw":0,"pitch":55.001324621068356,"roll":25.38522674818539,"bodyW":0.2538522674818541,"bodyH":0.04230871124697564,"cheek":2.32697911858366,"leaf":1.4384961823971723,"split":0,"gazeX":0,"gazeY":0}},"settings":{"frequency":12,"damping":0.86,"blink":true,"breath":true,"paused":false},"viewport":{"width":1280,"overflow":false}},{"place":"emotion-lab","navigation":{"standalone":true},"dimension":"2d","emotion":{"mood":"happy","parameters":{"leftH":0.7709724198520588,"rightH":0.7327706030566717,"leftW":1.077156068693576,"rightW":1.077156068693576,"leftTilt":-9.827514504513914,"rightTilt":9.827514504513914,"smile":0.04495458011532594,"mouth":0.06089909160230651,"yaw":0,"pitch":-4.277060305667176,"roll":-1.8201816795386963,"bodyW":1.001798183204613,"bodyH":0.9736330305341022,"cheek":0.29981667937561934,"leaf":-0.05647696184052617,"split":18,"gazeX":0,"gazeY":0},"velocity":{"leftH":-0.915029213171179,"rightH":-0.6260726195381753,"leftW":1.6855801295258575,"rightW":1.6855801295258575,"leftTilt":134.84641036206855,"rightTilt":-134.84641036206855,"smile":7.223914840825101,"mouth":0.14447829681650204,"yaw":0,"pitch":62.60726195381755,"roll":28.895659363300403,"bodyW":0.28895659363300397,"bodyH":0.04815943227216719,"cheek":2.648768774969204,"leaf":1.6374206972536898,"split":0,"gazeX":0,"gazeY":0}},"settings":{"frequency":12,"damping":0.86,"blink":true,"breath":true,"paused":false},"viewport":{"width":1280,"overflow":false}},{"place":"emotion-lab","navigation":{"standalone":true},"dimension":"2d","emotion":{"mood":"happy","parameters":{"leftH":0.7286464553911491,"rightH":0.7038107326360493,"leftW":1.1551249505952517,"rightW":1.1551249505952517,"leftTilt":-3.5900039523798615,"rightTilt":3.5900039523798615,"smile":0.3791069311225074,"mouth":0.06758213862245013,"yaw":0,"pitch":-1.3810732636049368,"roll":-0.4835722755099705,"bodyW":1.0151642772449003,"bodyH":0.9758607128741501,"cheek":0.42233920807825254,"leaf":0.019264237721101612,"split":18,"gazeX":0,"gazeY":0},"velocity":{"leftH":-0.7551531586473093,"rightH":-0.5166837401271062,"leftW":1.391071608034518,"rightW":1.391071608034518,"leftTilt":111.28572864276133,"rightTilt":-111.28572864276133,"smile":5.961735463005072,"mouth":0.11923470926010153,"yaw":0,"pitch":51.66837401271064,"roll":23.846941852020286,"bodyW":0.23846941852020279,"bodyH":0.039744903086700006,"cheek":2.185969669768528,"leaf":1.3513267049478168,"split":0,"gazeX":0,"gazeY":0}},"settings":{"frequency":12,"damping":0.86,"blink":true,"breath":true,"paused":false},"viewport":{"width":1280,"overflow":false}},{"place":"emotion-lab","navigation":{"standalone":true},"dimension":"2d","emotion":{"mood":"happy","parameters":{"leftH":0.6622827640909171,"rightH":0.6584039964832593,"leftW":1.2773738556219947,"rightW":1.2773738556219947,"leftTilt":6.189908449759564,"rightTilt":-6.189908449759564,"smile":0.9030308098085482,"mouth":0.07806061619617095,"yaw":0,"pitch":3.159600351674084,"roll":1.6121232392341929,"bodyW":1.036121232392342,"bodyH":0.979353538732057,"cheek":0.6144446302631342,"leaf":0.13802031688993757,"split":18,"gazeX":0,"gazeY":0},"velocity":{"leftH":-0.28438388909037393,"rightH":-0.194578450430256,"leftW":0.5238650588506889,"rightW":0.5238650588506889,"leftTilt":41.9092047080551,"rightTilt":-41.9092047080551,"smile":2.245135966502952,"mouth":0.04490271933005911,"yaw":0,"pitch":19.45784504302559,"roll":8.98054386601181,"bodyW":0.08980543866011764,"bodyH":0.014967573110019361,"cheek":0.8232165210510831,"leaf":0.5088974857406693,"split":0,"gazeX":0,"gazeY":0}},"settings":{"frequency":8,"damping":0.75,"blink":false,"breath":false,"paused":false},"viewport":{"width":1280,"overflow":false}},{"place":"emotion-lab","navigation":{"standalone":true},"dimension":"3d","emotion":{"mood":"idle","parameters":{"leftH":1.0005925781920104,"rightH":1.0006153419507973,"leftW":0.9999001789126626,"rightW":0.9999001789126626,"leftTilt":0.0004934265022894449,"rightTilt":-0.0004934265022894449,"smile":0.17974976239866255,"mouth":0.019741204829886595,"yaw":0.003669037043429808,"pitch":-0.0019382123097162567,"roll":0.003439290653864216,"bodyW":1.0000029302085993,"bodyH":0.9999915673044754,"cheek":0.19938600590456151,"leaf":-0.000008924942462492518,"split":18,"gazeX":0.35611963491134524,"gazeY":0},"velocity":{"leftH":-0.004979071954799308,"rightH":-0.005552543773085294,"leftW":0.0012958490573385002,"rightW":0.0012958490573385002,"leftTilt":0.0010706434196615059,"rightTilt":-0.0010706434196615059,"smile":0.001694509743244083,"mouth":0.0031552961259302356,"yaw":-0.010964939769251286,"pitch":0.03004732569067077,"roll":-0.014745495225489687,"bodyW":-0.00007042983866389435,"bodyH":0.0001687427597070528,"cheek":0.005036372374510514,"leaf":0.0003590064987200791,"split":0,"gazeX":2.2043657380461092,"gazeY":0}},"settings":{"frequency":12,"damping":0.86,"blink":true,"breath":true,"paused":false},"viewport":{"width":1280,"overflow":false}},{"place":"emotion-lab","navigation":{"standalone":true},"dimension":"2d","emotion":{"mood":"happy","parameters":{"leftH":0.8278719061407076,"rightH":0.7717018305173263,"leftW":0.9723412255302752,"rightW":0.9723412255302752,"leftTilt":-18.21270195757797,"rightTilt":18.21270195757797,"smile":-0.40425189058453403,"mouth":0.05191496218830932,"yaw":0,"pitch":-8.170183051732629,"roll":-3.617007562338136,"bodyW":0.9838299243766186,"bodyH":0.9706383207294365,"cheek":0.1351076401190041,"leaf":-0.15829709519916105,"split":18,"gazeX":0,"gazeY":0},"velocity":{"leftH":-0.642886660415804,"rightH":-0.43986982028449795,"leftW":1.1842649007659558,"rightW":1.1842649007659558,"leftTilt":94.74119206127646,"rightTilt":-94.74119206127646,"smile":5.075421003282663,"mouth":0.10150842006565332,"yaw":0,"pitch":43.98698202844975,"roll":20.301684013130654,"bodyW":0.20301684013130672,"bodyH":0.0338361400218845,"cheek":1.860987701203643,"leaf":1.1504287607440706,"split":0,"gazeX":0,"gazeY":0}},"settings":{"frequency":12,"damping":0.86,"blink":true,"breath":true,"paused":false},"viewport":{"width":375,"overflow":false}},{"place":"emotion-lab","navigation":{"standalone":true},"dimension":"2d","emotion":{"mood":"happy","parameters":{"leftH":0.8015010343693303,"rightH":0.753658602463226,"leftW":1.0209191472143915,"rightW":1.0209191472143915,"leftTilt":-14.326468222848685,"rightTilt":14.326468222848685,"smile":-0.1960607976526081,"mouth":0.05607878404694784,"yaw":0,"pitch":-6.365860246322603,"roll":-2.7842431906104324,"bodyW":0.9921575680938957,"bodyH":0.9720262613489826,"cheek":0.21144437419404372,"leaf":-0.11110711413459115,"split":18,"gazeX":0,"gazeY":0},"velocity":{"leftH":-0.8915691447226625,"rightH":-0.6100209937576118,"leftW":1.6423642139628012,"rightW":1.6423642139628012,"leftTilt":131.3891371170241,"rightTilt":-131.3891371170241,"smile":7.038703774126288,"mouth":0.14077407548252574,"yaw":0,"pitch":61.00209937576115,"roll":28.154815096505153,"bodyW":0.2815481509650518,"bodyH":0.046924691827508566,"cheek":2.5808580505129717,"leaf":1.5954395221352922,"split":0,"gazeX":0,"gazeY":0}},"settings":{"frequency":12,"damping":0.86,"blink":true,"breath":true,"paused":false},"viewport":{"width":375,"overflow":false}},{"place":"emotion-lab","navigation":{"standalone":true},"dimension":"2d","emotion":{"mood":"happy","parameters":{"leftH":0.7709724198520587,"rightH":0.7327706030566719,"leftW":1.077156068693576,"rightW":1.077156068693576,"leftTilt":-9.827514504513918,"rightTilt":9.827514504513918,"smile":0.04495458011532549,"mouth":0.06089909160230651,"yaw":0,"pitch":-4.277060305667179,"roll":-1.820181679538698,"bodyW":1.001798183204613,"bodyH":0.9736330305341022,"cheek":0.2998166793756194,"leaf":-0.05647696184052617,"split":18,"gazeX":0,"gazeY":0},"velocity":{"leftH":-0.9150292131711788,"rightH":-0.6260726195381755,"leftW":1.6855801295258581,"rightW":1.6855801295258581,"leftTilt":134.8464103620686,"rightTilt":-134.8464103620686,"smile":7.2239148408251035,"mouth":0.14447829681650204,"yaw":0,"pitch":62.607261953817556,"roll":28.895659363300414,"bodyW":0.28895659363300435,"bodyH":0.04815943227216721,"cheek":2.6487687749692044,"leaf":1.63742069725369,"split":0,"gazeX":0,"gazeY":0}},"settings":{"frequency":12,"damping":0.86,"blink":true,"breath":true,"paused":false},"viewport":{"width":375,"overflow":false}},{"place":"emotion-lab","navigation":{"standalone":true},"dimension":"2d","emotion":{"mood":"happy","parameters":{"leftH":0.6724280644182963,"rightH":0.665345517759887,"leftW":1.2586851444926117,"rightW":1.2586851444926117,"leftTilt":4.694811559408959,"rightTilt":-4.694811559408959,"smile":0.8229363335397655,"mouth":0.07645872667079531,"yaw":0,"pitch":2.4654482240113,"roll":1.2917453341590621,"bodyW":1.0329174533415908,"bodyH":0.9788195755569319,"cheek":0.5850766556312473,"leaf":0.1198655689356802,"split":18,"gazeX":0,"gazeY":0},"velocity":{"leftH":-0.3840632581195037,"rightH":-0.2627801239765033,"leftW":0.7074849491675089,"rightW":0.7074849491675089,"leftTilt":56.59879593340063,"rightTilt":-56.59879593340063,"smile":3.0320783535750353,"mouth":0.060641567071500715,"yaw":0,"pitch":26.2780123976503,"roll":12.128313414300138,"bodyW":0.12128313414300126,"bodyH":0.020213855690499768,"cheek":1.1117620629775133,"leaf":0.6872710934770078,"split":0,"gazeX":0,"gazeY":0}},"settings":{"frequency":8,"damping":0.75,"blink":false,"breath":false,"paused":false},"viewport":{"width":375,"overflow":false}},{"place":"emotion-lab","navigation":{"standalone":true},"dimension":"3d","emotion":{"mood":"idle","parameters":{"leftH":1.000676839374697,"rightH":1.0007107632664607,"leftW":0.999877051134547,"rightW":0.999877051134547,"leftTilt":0.0004976139457126048,"rightTilt":-0.0004976139457126048,"smile":0.17972234064278733,"mouth":0.01968468682186284,"yaw":0.0037899602034444065,"pitch":-0.0024856032571608563,"roll":0.003643543532832185,"bodyW":1.0000042398985636,"bodyH":0.9999884223163786,"cheek":0.1993007636319239,"leaf":-0.000015759602502523505,"split":18,"gazeX":0.4546152996373426,"gazeY":0},"velocity":{"leftH":-0.0052059586998100295,"rightH":-0.005938706637251616,"leftW":0.0015088439186256883,"rightW":0.0015088439186256883,"leftTilt":0.0025143027557333873,"rightTilt":-0.0025143027557333873,"smile":0.0016315338207956976,"mouth":0.003635792495809189,"yaw":-0.00465120552086931,"pitch":0.03607835331730605,"roll":-0.010567376545086141,"bodyW":-0.00008909459744610783,"bodyH":0.0002097814039100756,"cheek":0.005227698313609852,"leaf":0.00047116945080426454,"split":0,"gazeX":3.3708737902775794,"gazeY":0}},"settings":{"frequency":12,"damping":0.86,"blink":true,"breath":true,"paused":false},"viewport":{"width":375,"overflow":false}}]
 ### Ran Playwright code
 ```js
 await (async (page) => {
- const results=[],errors=[];
- page.on('pageerror',e=>errors.push(e.message));
- for(const width of [1280,375]) {
-  await page.setViewportSize({width,height:900});
-  await page.goto('http://127.0.0.1:5182/emotion-lab.html?qa');
-  await page.getByRole('button',{name:'重置试验台',exact:true}).click();
-  const ids=await page.locator('[data-mood]').evaluateAll(es=>es.map(e=>e.dataset.mood));
-  if(ids.length!==14)throw Error('Missing moods');
-  for(const id of ids){await page.locator('[data-mood="'+id+'"]').click();await page.waitForFunction(id=>window.__KUANGYE__.snapshot().emotion.mood===id,id);}
-  await page.getByLabel('起点',{exact:true}).selectOption('sad');
-  await page.getByLabel('终点',{exact:true}).selectOption('happy');
-  await page.getByRole('heading',{name:'小芽的表情试验台'}).scrollIntoViewIfNeeded();
-  await page.getByRole('button',{name:'播放这段过渡',exact:true}).click();
-  for(const n of [1,2,3]){await page.screenshot({path:'output/playwright/emotion-transition-'+width+'-'+n+'.png'});results.push(await page.evaluate(()=>window.__KUANGYE__.snapshot()));}
-  await page.getByRole('button',{name:'暂停观察',exact:true}).click();
-  const before=await page.evaluate(()=>window.__KUANGYE__.snapshot().emotion.parameters);
-  await page.getByLabel('弹簧速度',{exact:true}).fill('8');
-  await page.getByLabel('阻尼',{exact:true}).fill('0.75');
-  const after=await page.evaluate(()=>window.__KUANGYE__.snapshot().emotion.parameters);
-  if(JSON.stringify(before)!==JSON.stringify(after))throw Error('Pause failed');
-  await page.getByRole('button',{name:'继续播放',exact:true}).click();
-  await page.getByRole('button',{name:'循环往返',exact:true}).click();
-  await page.getByLabel('眨眼',{exact:true}).uncheck();
-  await page.getByLabel('呼吸与叶片',{exact:true}).uncheck();
-  const state=await page.evaluate(()=>window.__KUANGYE__.snapshot());
-  if(state.viewport.overflow||state.settings.frequency!==8||state.settings.damping!==.75)throw Error('Lab controls/overflow');
-  results.push(state);
-  await page.getByRole('button',{name:'重置试验台',exact:true}).click();
-  await page.locator('[data-mood="loved"]').click();
-  await page.waitForFunction(()=>window.__KUANGYE__.snapshot().emotion.parameters.smile>.94);
-  await page.getByRole('heading',{name:'小芽的表情试验台'}).scrollIntoViewIfNeeded();
-  await page.screenshot({path:'output/playwright/emotion-lab-'+width+'.png',fullPage:true});
- }
- if(errors.length)throw Error(errors.join('\n'));
- return results;
-}
-)(page);
+  const results = [],
+    errors = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  for (const width of [1280, 375]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("http://127.0.0.1:5182/emotion-lab.html?qa");
+    await page.getByRole("button", { name: "重置试验台", exact: true }).click();
+    const ids = await page
+      .locator("[data-mood]")
+      .evaluateAll((es) => es.map((e) => e.dataset.mood));
+    if (ids.length !== 14) throw Error("Missing moods");
+    for (const id of ids) {
+      await page.locator('[data-mood="' + id + '"]').click();
+      await page.waitForFunction(
+        (id) => window.__KUANGYE__.snapshot().emotion.mood === id,
+        id,
+      );
+    }
+    await page.getByLabel("起点", { exact: true }).selectOption("sad");
+    await page.getByLabel("终点", { exact: true }).selectOption("happy");
+    await page
+      .getByRole("heading", { name: "软角 · 表情试验台" })
+      .scrollIntoViewIfNeeded();
+    await page
+      .getByRole("button", { name: "播放这段过渡", exact: true })
+      .click();
+    for (const n of [1, 2, 3]) {
+      await page.screenshot({
+        path:
+          "output/playwright/emotion-transition-" + width + "-" + n + ".png",
+      });
+      results.push(await page.evaluate(() => window.__KUANGYE__.snapshot()));
+    }
+    await page.getByRole("button", { name: "暂停观察", exact: true }).click();
+    const before = await page.evaluate(
+      () => window.__KUANGYE__.snapshot().emotion.parameters,
+    );
+    await page.getByLabel("弹簧速度", { exact: true }).fill("8");
+    await page.getByLabel("阻尼", { exact: true }).fill("0.75");
+    const after = await page.evaluate(
+      () => window.__KUANGYE__.snapshot().emotion.parameters,
+    );
+    if (JSON.stringify(before) !== JSON.stringify(after))
+      throw Error("Pause failed");
+    await page.getByRole("button", { name: "继续播放", exact: true }).click();
+    await page.getByRole("button", { name: "循环往返", exact: true }).click();
+    await page.getByLabel("眨眼", { exact: true }).uncheck();
+    await page.getByLabel("呼吸", { exact: true }).uncheck();
+    const state = await page.evaluate(() => window.__KUANGYE__.snapshot());
+    if (
+      state.viewport.overflow ||
+      state.settings.frequency !== 8 ||
+      state.settings.damping !== 0.75
+    )
+      throw Error("Lab controls/overflow");
+    results.push(state);
+    await page.getByRole("button", { name: "重置试验台", exact: true }).click();
+    await page.locator('[data-mood="loved"]').click();
+    await page.waitForFunction(
+      () => window.__KUANGYE__.snapshot().emotion.parameters.smile > 0.94,
+    );
+    await page
+      .getByRole("heading", { name: "软角 · 表情试验台" })
+      .scrollIntoViewIfNeeded();
+    await page.screenshot({
+      path: "output/playwright/emotion-lab-" + width + ".png",
+      fullPage: true,
+    });
+    await page.getByRole("button", { name: "立体形象", exact: true }).click();
+    await page.locator('.mascot-study[data-ready="true"]').waitFor();
+    for (const id of ids) {
+      await page.locator('[data-mood="' + id + '"]').click();
+      await page.waitForFunction(
+        (id) => window.__KUANGYE__.snapshot().emotion.mood === id,
+        id,
+      );
+    }
+    await page.locator('[data-mood="idle"]').click();
+    await page.waitForFunction(
+      () =>
+        Math.abs(
+          window.__KUANGYE__.snapshot().emotion.parameters.smile - 0.18,
+        ) < 0.01,
+    );
+    await page
+      .getByRole("heading", { name: "软角 · 表情试验台" })
+      .scrollIntoViewIfNeeded();
+    await page.screenshot({
+      path: "output/playwright/emotion-3d-" + width + ".png",
+      fullPage: true,
+    });
+    const box = await page.locator(".mascot-study").boundingBox();
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width / 2 + 120, box.y + box.height / 2, {
+      steps: 10,
+    });
+    await page.mouse.up();
+    await page.screenshot({
+      path: "output/playwright/emotion-3d-side-" + width + ".png",
+      fullPage: true,
+    });
+    results.push(await page.evaluate(() => window.__KUANGYE__.snapshot()));
+  }
+  if (errors.length) throw Error(errors.join("\n"));
+  return results;
+})(page);
 ```
+### Page
+- Page URL: http://127.0.0.1:5182/emotion-lab.html?qa
+- Page Title: 软角 · 表情试验台
+### Events
+- New console entries: .playwright-cli/console-2026-09-19T11-33-42-701Z.log#L28-L33

@@ -6,6 +6,7 @@ export default defineConfig({
   base: "./",
   build: {
     rollupOptions: {
+      input: { main: "index.html", lab: "emotion-lab.html" },
       output: { manualChunks: { three: ["three"], vue: ["vue"] } },
     },
   },

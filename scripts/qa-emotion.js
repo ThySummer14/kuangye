@@ -20,7 +20,7 @@ async (page) => {
     await page.getByLabel("起点", { exact: true }).selectOption("sad");
     await page.getByLabel("终点", { exact: true }).selectOption("happy");
     await page
-      .getByRole("heading", { name: "小芽的表情试验台" })
+      .getByRole("heading", { name: "软角 · 表情试验台" })
       .scrollIntoViewIfNeeded();
     await page
       .getByRole("button", { name: "播放这段过渡", exact: true })
@@ -46,7 +46,7 @@ async (page) => {
     await page.getByRole("button", { name: "继续播放", exact: true }).click();
     await page.getByRole("button", { name: "循环往返", exact: true }).click();
     await page.getByLabel("眨眼", { exact: true }).uncheck();
-    await page.getByLabel("呼吸与叶片", { exact: true }).uncheck();
+    await page.getByLabel("呼吸", { exact: true }).uncheck();
     const state = await page.evaluate(() => window.__KUANGYE__.snapshot());
     if (
       state.viewport.overflow ||
@@ -61,12 +61,47 @@ async (page) => {
       () => window.__KUANGYE__.snapshot().emotion.parameters.smile > 0.94,
     );
     await page
-      .getByRole("heading", { name: "小芽的表情试验台" })
+      .getByRole("heading", { name: "软角 · 表情试验台" })
       .scrollIntoViewIfNeeded();
     await page.screenshot({
       path: "output/playwright/emotion-lab-" + width + ".png",
       fullPage: true,
     });
+    await page.getByRole("button", { name: "立体形象", exact: true }).click();
+    await page.locator('.mascot-study[data-ready="true"]').waitFor();
+    for (const id of ids) {
+      await page.locator('[data-mood="' + id + '"]').click();
+      await page.waitForFunction(
+        (id) => window.__KUANGYE__.snapshot().emotion.mood === id,
+        id,
+      );
+    }
+    await page.locator('[data-mood="idle"]').click();
+    await page.waitForFunction(
+      () =>
+        Math.abs(
+          window.__KUANGYE__.snapshot().emotion.parameters.smile - 0.18,
+        ) < 0.01,
+    );
+    await page
+      .getByRole("heading", { name: "软角 · 表情试验台" })
+      .scrollIntoViewIfNeeded();
+    await page.screenshot({
+      path: "output/playwright/emotion-3d-" + width + ".png",
+      fullPage: true,
+    });
+    const box = await page.locator(".mascot-study").boundingBox();
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width / 2 + 120, box.y + box.height / 2, {
+      steps: 10,
+    });
+    await page.mouse.up();
+    await page.screenshot({
+      path: "output/playwright/emotion-3d-side-" + width + ".png",
+      fullPage: true,
+    });
+    results.push(await page.evaluate(() => window.__KUANGYE__.snapshot()));
   }
   if (errors.length) throw Error(errors.join("\n"));
   return results;

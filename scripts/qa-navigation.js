@@ -28,6 +28,11 @@ async (page) => {
         .click();
       await page.waitForURL("**#map");
     }
+    await page.locator('[data-place="atelier"]').click();
+    await page.waitForURL("**/emotion-lab.html?qa");
+    await page.getByRole("link", { name: "← 回到地图", exact: true }).click();
+    await page.waitForURL("**/?qa#map");
+    results.push({ width, place: "atelier", pass: true });
     await page.screenshot({
       path: "output/playwright/map-navigation-" + width + ".png",
     });

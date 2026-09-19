@@ -36,6 +36,7 @@ function toast(t) {
   toastTimer = setTimeout(() => (toastMsg.value = ""), 3000);
 }
 function navigate(id) {
+  if (id === "atelier") { location.href = "./emotion-lab.html" + location.search; return; }
   const next = id === "journal" ? "panel" : id;
   tab.value = validTabs.includes(next) ? next : "map";
 }

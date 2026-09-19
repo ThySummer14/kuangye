@@ -9,7 +9,9 @@ const result = spawnSync(
   [
     "-s=kuangye-batch",
     "run-code",
-    readFileSync("scripts/qa-" + scenario + ".js", "utf8"),
+    readFileSync("scripts/qa-" + scenario + ".js", "utf8")
+      .trim()
+      .replace(/;$/, ""),
   ],
   { encoding: "utf8" },
 );

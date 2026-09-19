@@ -1,11 +1,14 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, nextTick } from "vue";
+import MascotStudy from "./MascotStudy.vue";
 import SproutPortrait from "./SproutPortrait.vue";
 import {
   EMOTION_NAMES,
   EMOTION_POSES,
   EMOTION_SPRING,
 } from "../game/emotions.js";
+const dimension = ref("2d");
+const locationSearch = location.search;
 const mood = ref("idle"),
   from = ref("idle"),
   to = ref("happy"),
@@ -35,6 +38,7 @@ function snapshot() {
   return {
     place: "emotion-lab",
     navigation: { standalone: true },
+    dimension: dimension.value,
     emotion: portrait.value?.snapshot(),
     settings: {
       frequency: frequency.value,
@@ -81,10 +85,13 @@ onBeforeUnmount(() => {
     <header>
       <div>
         <small>KUANGYE / EXPRESSION STUDY</small>
-        <h1>小芽的表情试验台</h1>
+        <h1>软角 · 表情试验台</h1>
         <p>一点眼神，一点心情。试着连续点几种表情。</p>
       </div>
-      <button @click="reset">重置试验台</button>
+      <div class="lab-header-actions">
+        <a :href="'./' + (locationSearch || '') + '#map'">← 回到地图</a
+        ><button @click="reset">重置试验台</button>
+      </div>
     </header>
     <div class="lab-workspace">
       <section class="lab-stage">
@@ -92,7 +99,15 @@ onBeforeUnmount(() => {
           <span>正在感受</span><strong>{{ EMOTION_NAMES[mood] }}</strong
           ><small>{{ mood }}</small>
         </div>
-        <SproutPortrait
+        <div class="dimension-switch">
+          <button :aria-pressed="dimension === '2d'" @click="dimension = '2d'">
+            平面表情</button
+          ><button :aria-pressed="dimension === '3d'" @click="dimension = '3d'">
+            立体形象
+          </button>
+        </div>
+        <component
+          :is="dimension === '3d' ? MascotStudy : SproutPortrait"
           ref="portrait"
           :mood="mood"
           :size="400"
@@ -102,7 +117,13 @@ onBeforeUnmount(() => {
           :breath="breath"
           :paused="paused"
         />
-        <p>移动指针，小芽会看向你</p>
+        <p>
+          {{
+            dimension === "3d"
+              ? "拖动转身，看看软角的另一面"
+              : "移动指针，软角会看向你"
+          }}
+        </p>
         <button @click="paused = !paused">
           {{ paused ? "继续播放" : "暂停观察" }}
         </button>
@@ -160,7 +181,7 @@ onBeforeUnmount(() => {
         <p class="hint">速度越高，响应越快；阻尼越低，回弹越明显。</p>
         <div class="toggles">
           <label><input type="checkbox" v-model="blink" />眨眼</label
-          ><label><input type="checkbox" v-model="breath" />呼吸与叶片</label>
+          ><label><input type="checkbox" v-model="breath" />呼吸</label>
         </div>
         <details>
           <summary>查看当前情绪参数</summary>
@@ -192,7 +213,7 @@ onBeforeUnmount(() => {
       </div>
     </section>
     <footer>
-      独立试验台 · 不读取或修改游戏存档 ·
+      02 软角 · 不读取或修改游戏存档 ·
       <a href="./licenses/bloub-MIT.txt">bloub / MIT</a>
     </footer>
   </main>
@@ -479,5 +500,41 @@ footer a {
   .stage-caption strong {
     font-size: 21px;
   }
+}
+
+.lab-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.lab-header-actions a {
+  color: #61744e;
+  font-size: 12px;
+  text-decoration: none;
+  white-space: nowrap;
+  padding: 10px;
+}
+.lab-header-actions button {
+  font-size: 12px;
+}
+@media (max-width: 760px) {
+  .lab-header-actions {
+    justify-content: flex-end;
+    gap: 6px;
+    max-width: 104px;
+  }
+  .lab-header-actions button {
+    font-size: 10px;
+  }
+}
+.dimension-switch {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+.dimension-switch button {
+  padding: 7px 12px;
+  font-size: 11px;
 }
 </style>

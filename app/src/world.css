@@ -2259,3 +2259,4 @@ button:disabled {
   .topbar:has(.map-return) .brand-symbol { display: none; }
 }
 .poi-label.woodshop { left: 20%; top: 55%; }
+.poi-label.atelier { left: 76%; top: 32%; }

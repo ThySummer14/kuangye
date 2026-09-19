@@ -1,33 +1,53 @@
 ### Result
-[{"width":1280,"place":"home","pass":true},{"width":1280,"place":"shop","pass":true},{"width":1280,"place":"tasks","pass":true},{"width":1280,"place":"panel","pass":true},{"width":1280,"place":"woodshop","pass":true},{"place":"map","navigation":{"hash":"#map","dialog":false,"returnTo":"map"},"emotion":{"mood":"idle","parameters":[1,0,0.2,0,0]},"home":{"room":{"w":6,"d":6},"decor":{"wall":"meadow","floor":"oak","atmosphereVersion":1,"weather":"clear","light":"day"},"moments":[],"lumens":500,"earned":500,"spent":0,"refunded":0,"glimmerDays":[],"glimmerPaid":0,"inventory":[],"placed":[],"boundMemories":[],"gifts":[],"nextId":1},"activeTasks":0,"completedTasks":0,"viewport":{"width":1280,"overflow":false}},{"width":375,"place":"home","pass":true},{"width":375,"place":"shop","pass":true},{"width":375,"place":"tasks","pass":true},{"width":375,"place":"panel","pass":true},{"width":375,"place":"woodshop","pass":true},{"place":"map","navigation":{"hash":"#map","dialog":false,"returnTo":"map"},"emotion":{"mood":"idle","parameters":[1,0,0.2,0,0]},"home":{"room":{"w":6,"d":6},"decor":{"wall":"meadow","floor":"oak","atmosphereVersion":1,"weather":"clear","light":"day"},"moments":[],"lumens":500,"earned":500,"spent":0,"refunded":0,"glimmerDays":[],"glimmerPaid":0,"inventory":[],"placed":[],"boundMemories":[],"gifts":[],"nextId":1},"activeTasks":0,"completedTasks":0,"viewport":{"width":375,"overflow":false}}]
+[{"width":1280,"place":"home","pass":true},{"width":1280,"place":"shop","pass":true},{"width":1280,"place":"tasks","pass":true},{"width":1280,"place":"panel","pass":true},{"width":1280,"place":"woodshop","pass":true},{"width":1280,"place":"atelier","pass":true},{"place":"map","navigation":{"hash":"#map","dialog":false,"returnTo":"map"},"emotion":{"mood":"idle","parameters":[1,0.18,0.02,0,0]},"scene":{"skin":"softCorner","position":[0,0.06330659452931066,1.3],"emotion":{"mood":"idle","parameters":{"leftH":1,"rightH":1,"leftW":1,"rightW":1,"leftTilt":0,"rightTilt":0,"smile":0.18,"mouth":0.02,"yaw":0,"pitch":0,"roll":0,"bodyW":1,"bodyH":1,"cheek":0.2,"leaf":0,"split":18,"gazeX":0,"gazeY":0},"velocity":{"leftH":0,"rightH":0,"leftW":0,"rightW":0,"leftTilt":0,"rightTilt":0,"smile":0,"mouth":0,"yaw":0,"pitch":0,"roll":0,"bodyW":0,"bodyH":0,"cheek":0,"leaf":0,"split":0,"gazeX":0,"gazeY":0}},"shadow":[0,0.037,1.3]},"home":{"room":{"w":6,"d":6},"decor":{"wall":"meadow","floor":"oak","atmosphereVersion":1,"weather":"clear","light":"day"},"moments":[],"lumens":500,"earned":500,"spent":0,"refunded":0,"glimmerDays":[],"glimmerPaid":0,"inventory":[],"placed":[],"boundMemories":[],"gifts":[],"nextId":1},"activeTasks":0,"completedTasks":0,"viewport":{"width":1280,"overflow":false}},{"width":375,"place":"home","pass":true},{"width":375,"place":"shop","pass":true},{"width":375,"place":"tasks","pass":true},{"width":375,"place":"panel","pass":true},{"width":375,"place":"woodshop","pass":true},{"width":375,"place":"atelier","pass":true},{"place":"map","navigation":{"hash":"#map","dialog":false,"returnTo":"map"},"emotion":{"mood":"idle","parameters":[1,0.18,0.02,0,0]},"scene":{"skin":"softCorner","position":[0,0.060041861404558916,1.3],"emotion":{"mood":"idle","parameters":{"leftH":1,"rightH":1,"leftW":1,"rightW":1,"leftTilt":0,"rightTilt":0,"smile":0.18,"mouth":0.02,"yaw":0,"pitch":0,"roll":0,"bodyW":1,"bodyH":1,"cheek":0.2,"leaf":0,"split":18,"gazeX":0,"gazeY":0},"velocity":{"leftH":0,"rightH":0,"leftW":0,"rightW":0,"leftTilt":0,"rightTilt":0,"smile":0,"mouth":0,"yaw":0,"pitch":0,"roll":0,"bodyW":0,"bodyH":0,"cheek":0,"leaf":0,"split":0,"gazeX":0,"gazeY":0}},"shadow":[0,0.037,1.3]},"home":{"room":{"w":6,"d":6},"decor":{"wall":"meadow","floor":"oak","atmosphereVersion":1,"weather":"clear","light":"day"},"moments":[],"lumens":500,"earned":500,"spent":0,"refunded":0,"glimmerDays":[],"glimmerPaid":0,"inventory":[],"placed":[],"boundMemories":[],"gifts":[],"nextId":1},"activeTasks":0,"completedTasks":0,"viewport":{"width":375,"overflow":false}}]
 ### Ran Playwright code
 ```js
 await (async (page) => {
   const results = [];
-  for (const width of [1280,375]) {
-    await page.setViewportSize({width,height:900});
-    await page.goto('http://127.0.0.1:5182/?qa#map');
-    await page.evaluate(() => window.__KUANGYE__.reset('map-navigation'));
-    for (const [name,place] of [['⌂ 小芽的家','home'],['♧ 林间集市','shop'],['☷ 任务岩壁','tasks'],['⌁ 瞭望台 · 成长手记','panel'],['⌑ 木器铺','woodshop']]) {
-      await page.locator('[data-place="'+(place==='panel'?'journal':place)+'"]').click();
-      await page.waitForURL('**#'+place);
-      await page.getByRole('button',{name:'← 回到地图',exact:true}).waitFor();
+  for (const width of [1280, 375]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("http://127.0.0.1:5182/?qa#map");
+    await page.evaluate(() => window.__KUANGYE__.reset("map-navigation"));
+    for (const [name, place] of [
+      ["⌂ 小芽的家", "home"],
+      ["♧ 林间集市", "shop"],
+      ["☷ 任务岩壁", "tasks"],
+      ["⌁ 瞭望台 · 成长手记", "panel"],
+      ["⌑ 木器铺", "woodshop"],
+    ]) {
+      await page
+        .locator(
+          '[data-place="' + (place === "panel" ? "journal" : place) + '"]',
+        )
+        .click();
+      await page.waitForURL("**#" + place);
+      await page
+        .getByRole("button", { name: "← 回到地图", exact: true })
+        .waitFor();
       const state = await page.evaluate(() => window.__KUANGYE__.snapshot());
-      if(state.viewport.overflow) throw new Error('Overflow: '+place);
-      results.push({width,place,pass:true});
-      await page.getByRole('button',{name:'← 回到地图',exact:true}).click();
-      await page.waitForURL('**#map');
+      if (state.viewport.overflow) throw new Error("Overflow: " + place);
+      results.push({ width, place, pass: true });
+      await page
+        .getByRole("button", { name: "← 回到地图", exact: true })
+        .click();
+      await page.waitForURL("**#map");
     }
-    await page.screenshot({path:'output/playwright/map-navigation-'+width+'.png'});
+    await page.locator('[data-place="atelier"]').click();
+    await page.waitForURL("**/emotion-lab.html?qa");
+    await page.getByRole("link", {name: "← 回到地图", exact: true}).click();
+    await page.waitForURL("**/?qa#map");
+    results.push({width, place: "atelier", pass: true});
+    await page.screenshot({
+      path: "output/playwright/map-navigation-" + width + ".png",
+    });
     results.push(await page.evaluate(() => window.__KUANGYE__.snapshot()));
   }
   return results;
-}
-)(page);
+})(page);
 ```
 ### Page
 - Page URL: http://127.0.0.1:5182/?qa#map
 - Page Title: 旷野 · 小芽的家
-- Console: 0 errors, 16 warnings
+- Console: 0 errors, 1 warnings
 ### Events
-- New console entries: .playwright-cli/console-2026-09-14T12-40-14-825Z.log#L9-L21
+- New console entries: .playwright-cli/console-2026-09-19T11-33-42-701Z.log#L1-L15

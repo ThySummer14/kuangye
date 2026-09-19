@@ -1,8 +1,7 @@
-import { paintEye, paintMouth, blinkAt } from "./face-paint.js";
+import { makeSoftCorner } from "./mascot-model.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import * as THREE from "three";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
-import { EXPRESSIONS, springStep } from "../game/emotions.js";
 
 // Batch static meshes while leaving animated characters and picking surfaces independent.
 export function mergeStatic(root, keep = [], perPoi = false) {
@@ -154,9 +153,19 @@ export function createWorld(
     const g = new THREE.Group();
     g.position.set(x, 0, z);
     world.add(g);
-    if (kind === "home") {
+    if (kind === "home" || kind === "atelier") {
       box(1.9, 1.5, 1.65, "#fff2ce", 0, 0.8, 0, g);
-      const roof = cyl(0, 1.75, 1.05, "#c77553", 0, 2.05, 0, g, 4);
+      const roof = cyl(
+        0,
+        1.75,
+        1.05,
+        kind === "atelier" ? "#789794" : "#c77553",
+        0,
+        2.05,
+        0,
+        g,
+        4,
+      );
       roof.rotation.y = Math.PI / 4;
       box(0.45, 0.9, 0.07, "#8a664b", 0.38, 0.5, 0.86, g);
       box(0.48, 0.52, 0.08, "#93cbd0", -0.47, 1, 0.86, g);
@@ -200,22 +209,26 @@ export function createWorld(
         ball(0.23, "#6d9e69", -0.6 + i * 0.55, 1.03, 0.05, g);
       }
     } else if (kind === "woodshop") {
-      box(1.65,1.25,1.3,"#dbc49b",0,.68,0,g);
-      for(let i=0;i<7;i++) box(1.68,.035,.035,"#b7956c",0,.18+i*.16,.66,g);
-      const roof = cyl(0,1.45,.75,"#698476",0,1.65,0,g,4); roof.rotation.y=Math.PI/4;
-      box(.48,.85,.06,"#6f5941",.35,.47,.68,g);
-      box(.6,.48,.07,"#bad1c6",-.43,.91,.68,g);
-      box(.04,.51,.1,"#f4e3bb",-.43,.91,.73,g);
-      box(.65,.04,.1,"#f4e3bb",-.43,.91,.73,g);
+      box(1.65, 1.25, 1.3, "#dbc49b", 0, 0.68, 0, g);
+      for (let i = 0; i < 7; i++)
+        box(1.68, 0.035, 0.035, "#b7956c", 0, 0.18 + i * 0.16, 0.66, g);
+      const roof = cyl(0, 1.45, 0.75, "#698476", 0, 1.65, 0, g, 4);
+      roof.rotation.y = Math.PI / 4;
+      box(0.48, 0.85, 0.06, "#6f5941", 0.35, 0.47, 0.68, g);
+      box(0.6, 0.48, 0.07, "#bad1c6", -0.43, 0.91, 0.68, g);
+      box(0.04, 0.51, 0.1, "#f4e3bb", -0.43, 0.91, 0.73, g);
+      box(0.65, 0.04, 0.1, "#f4e3bb", -0.43, 0.91, 0.73, g);
       // Workbench, clamped board, tools and stacked timber identify the workshop.
-      box(1.2,.11,.5,"#a87d4f",0,.63,1.12,g);
-      for(const x of [-.48,.48]) box(.08,.58,.35,"#735b40",x,.3,1.12,g);
-      box(.72,.04,.18,"#ead6ac",-.1,.72,1.1,g);
-      box(.045,.3,.045,"#78573d",.37,.88,1.1,g);
-      box(.23,.09,.09,"#667367",.37,1.03,1.1,g);
-      for(let i=0;i<3;i++) box(.2,.13,.95,"#bf9a68",-.99,.13+i*.14,.1,g);
-      box(.56,.3,.07,"#f0ddb0",0,1.42,.8,g);
-      box(.3,.035,.08,"#7e6547",0,1.42,.85,g);
+      box(1.2, 0.11, 0.5, "#a87d4f", 0, 0.63, 1.12, g);
+      for (const x of [-0.48, 0.48])
+        box(0.08, 0.58, 0.35, "#735b40", x, 0.3, 1.12, g);
+      box(0.72, 0.04, 0.18, "#ead6ac", -0.1, 0.72, 1.1, g);
+      box(0.045, 0.3, 0.045, "#78573d", 0.37, 0.88, 1.1, g);
+      box(0.23, 0.09, 0.09, "#667367", 0.37, 1.03, 1.1, g);
+      for (let i = 0; i < 3; i++)
+        box(0.2, 0.13, 0.95, "#bf9a68", -0.99, 0.13 + i * 0.14, 0.1, g);
+      box(0.56, 0.3, 0.07, "#f0ddb0", 0, 1.42, 0.8, g);
+      box(0.3, 0.035, 0.08, "#7e6547", 0, 1.42, 0.85, g);
     } else if (kind === "tasks") {
       for (const a of [-0.7, 0.7])
         box(0.12, 1.65, 0.12, "#86674f", a, 0.83, 0, g);
@@ -255,210 +268,13 @@ export function createWorld(
     poi(id, x, z, kind === "home" ? 2.7 : 2.3);
   }
   function makeBuddy(x, z, scale = 1) {
-    const g = new THREE.Group();
+    const g = makeSoftCorner(world, {
+      getMood,
+      mode,
+      getGaze: () => ({ x: pointer.x * 0.7, y: -pointer.y * 0.5 }),
+    });
     g.position.set(x, 0.05, z);
     g.scale.setScalar(scale);
-    g.userData.dynamic = true;
-    world.add(g);
-    // Pear-shaped seed: a broad soft base, rounded crown, and continuous surface.
-    const radiusAt = (y) => {
-      const t = THREE.MathUtils.clamp((y - 0.02) / 0.68, 0, 1);
-      return 0.33 * Math.pow(Math.sin(Math.PI * t), 0.52) * (1.04 - 0.12 * t);
-    };
-    const profile = Array.from({ length: 41 }, (_, i) => {
-      const y = 0.02 + (0.68 * i) / 40;
-      return new THREE.Vector2(radiusAt(y), y);
-    });
-    const body = mesh(
-      new THREE.LatheGeometry(profile, 48),
-      "#93b968",
-      0,
-      0,
-      0,
-      g,
-    );
-    body.scale.z = 1;
-    // Decals follow the seed's curved surface, so the face cannot float or clip into it.
-    function skinPatch(w, h, cy) {
-      const geo = new THREE.PlaneGeometry(w, h, 32, 24),
-        pos = geo.attributes.position;
-      for (let i = 0; i < pos.count; i++) {
-        const x = pos.getX(i),
-          y = pos.getY(i) + cy,
-          r = radiusAt(y);
-        pos.setXYZ(i, x, y, Math.sqrt(Math.max(0.0001, r * r - x * x)) + 0.005);
-      }
-      geo.computeVertexNormals();
-      return geo;
-    }
-    const bellyCanvas = document.createElement("canvas");
-    bellyCanvas.width = 256;
-    bellyCanvas.height = 128;
-    const bc = bellyCanvas.getContext("2d");
-    bc.fillStyle = "#c2d79b";
-    bc.beginPath();
-    bc.ellipse(128, 64, 124, 58, 0, 0, Math.PI * 2);
-    bc.fill();
-    const bellyTexture = new THREE.CanvasTexture(bellyCanvas);
-    bellyTexture.colorSpace = THREE.SRGBColorSpace;
-    const belly = new THREE.Mesh(
-      skinPatch(0.43, 0.15, 0.16),
-      new THREE.MeshStandardMaterial({
-        map: bellyTexture,
-        transparent: true,
-        depthWrite: false,
-        roughness: 1,
-      }),
-    );
-    g.add(belly);
-    const shadowCanvas = document.createElement("canvas");
-    shadowCanvas.width = 128;
-    shadowCanvas.height = 128;
-    const sc = shadowCanvas.getContext("2d"),
-      gradient = sc.createRadialGradient(64, 64, 5, 64, 64, 63);
-    gradient.addColorStop(0, "rgba(52,59,36,.48)");
-    gradient.addColorStop(0.45, "rgba(52,59,36,.22)");
-    gradient.addColorStop(1, "rgba(52,59,36,0)");
-    sc.fillStyle = gradient;
-    sc.fillRect(0, 0, 128, 128);
-    const contact = new THREE.Mesh(
-      new THREE.PlaneGeometry(1.15, 1.15),
-      new THREE.MeshBasicMaterial({
-        map: new THREE.CanvasTexture(shadowCanvas),
-        transparent: true,
-        depthWrite: false,
-        opacity: 0.75,
-      }),
-    );
-    contact.rotation.x = -Math.PI / 2;
-    contact.userData.dynamic = true;
-    contact.renderOrder = 2;
-    world.add(contact);
-    g.userData.contactShadow = contact;
-    const faceCanvas = document.createElement("canvas");
-    faceCanvas.width = 256;
-    faceCanvas.height = 256;
-    const faceCtx = faceCanvas.getContext("2d"),
-      texture = new THREE.CanvasTexture(faceCanvas);
-    texture.colorSpace = THREE.SRGBColorSpace;
-    const face = new THREE.Mesh(
-      skinPatch(0.48, 0.36, 0.4),
-      new THREE.MeshBasicMaterial({
-        map: texture,
-        transparent: true,
-        depthWrite: false,
-      }),
-    );
-    face.renderOrder = 1;
-    g.add(face);
-    const values = [...EXPRESSIONS.idle],
-      vel = [0, 0, 0, 0, 0];
-    let previous = 0;
-    g.userData.drawFace = (t) => {
-      const mood =
-          g.userData.moodUntil > Date.now() ? g.userData.mood : getMood(),
-        goal = EXPRESSIONS[mood] || EXPRESSIONS.idle,
-        dt = Math.min((t - previous) / 1000 || 0.016, 0.04);
-      previous = t;
-      const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-      for (let i = 0; i < 5; i++) {
-        if (reduced) {
-          values[i] = goal[i];
-          vel[i] = 0;
-          continue;
-        }
-        const step = springStep(values[i], vel[i], goal[i], dt, 12);
-        values[i] = step.position;
-        vel[i] = step.velocity;
-      }
-      const c = faceCtx;
-      c.clearRect(0, 0, 256, 256);
-      c.fillStyle = "#344938";
-      c.lineWidth = 11;
-      c.lineCap = "round";
-      c.strokeStyle = "#344938";
-      const blink = reduced ? 1 : blinkAt(t);
-      for (const x of [75, 181]) {
-        c.beginPath();
-        const gaze = Math.sin(t * 0.0006) * 4;
-        paintEye(
-          c,
-          x + gaze,
-          110,
-          11,
-          Math.max(
-            1,
-            19 * values[0] * blink * (x < 128 ? 1 + values[3] : 1 - values[3]),
-          ),
-          values[1],
-          values[3] * (x < 128 ? -1 : 1),
-        );
-        c.fillStyle = "#da9e8c88";
-        c.beginPath();
-        c.ellipse(x + (x < 128 ? -17 : 17), 150, 22, 9, 0, 0, Math.PI * 2);
-        c.fill();
-        c.fillStyle = "#344938";
-      }
-      paintMouth(c, 128, 155, values[2], values[1], 16);
-      texture.needsUpdate = true;
-      g.userData.faceRoll = values[3] * 0.3;
-      if (mode !== "home") g.rotation.z = g.userData.faceRoll;
-    };
-    const leaves = new THREE.Group();
-    leaves.position.y = 0.88;
-    g.add(leaves);
-    const leafShape = new THREE.Shape();
-    leafShape.moveTo(0, 0);
-    leafShape.bezierCurveTo(0.05, 0.2, 0.23, 0.22, 0.36, 0.23);
-    leafShape.bezierCurveTo(0.3, 0.03, 0.13, -0.04, 0, 0);
-    for (const side of [-1, 1]) {
-      const leaf = mesh(
-        new THREE.ExtrudeGeometry(leafShape, {
-          depth: 0.025,
-          bevelEnabled: true,
-          bevelSegments: 2,
-          steps: 1,
-          bevelSize: 0.015,
-          bevelThickness: 0.015,
-          curveSegments: 10,
-        }),
-        side < 0 ? "#7fae54" : "#8fbc60",
-        0,
-        0,
-        0,
-        leaves,
-      );
-      leaf.scale.x = side;
-    }
-    const stemCurve = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(0, 0.65, 0),
-      new THREE.Vector3(-0.018, 0.77, 0),
-      new THREE.Vector3(0, 0.91, 0),
-    ]);
-    mesh(
-      new THREE.TubeGeometry(stemCurve, 16, 0.019, 8, false),
-      "#6f9448",
-      0,
-      0,
-      0,
-      g,
-    );
-    for (const side of [-1, 1]) {
-      const vein = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(0, 0.01, 0.04),
-        new THREE.Vector3(side * 0.14, 0.095, 0.045),
-        new THREE.Vector3(side * 0.29, 0.19, 0.04),
-      ]);
-      mesh(
-        new THREE.TubeGeometry(vein, 10, 0.007, 5, false),
-        "#a5c982",
-        0,
-        0,
-        0,
-        leaves,
-      );
-    }
-    g.userData.leaves = leaves;
     animated.push(g);
     if (mode === "home") buddy = g;
     return g;
@@ -515,6 +331,7 @@ export function createWorld(
       );
       stone.scale.y = 0.45;
     }
+    building("atelier", 3.1, -3.3, "atelier");
     building("home", -2, -1.6, "home");
     building("shop", 2.65, -0.9, "shop");
     building("woodshop", -3.25, 0.7, "woodshop");
@@ -526,7 +343,6 @@ export function createWorld(
       [-2.9, -3.5, 1],
       [-0.4, -4.5, 0.9],
       [3.8, 1, 0.75],
-      [3, -3, 1.1],
     ].forEach((a) => tree(...a));
     [
       [-4.25, -2.6, 0.85],
@@ -780,6 +596,13 @@ export function createWorld(
         top: (-0.5 * v.y + 0.5) * 100,
       };
     }
+    if (buddy)
+      el.dataset.buddy = JSON.stringify({
+        skin: buddy.userData.skin,
+        position: buddy.position.toArray(),
+        emotion: buddy.userData.emotionSnapshot?.(),
+        shadow: buddy.userData.contactShadow.position.toArray(),
+      });
     onReady?.(labels, renderer.info.render);
     if (first) {
       first = false;

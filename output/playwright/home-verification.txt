@@ -1,35 +1,53 @@
 ### Result
-[{"place":"home","navigation":{"hash":"#home","dialog":false,"returnTo":"map"},"emotion":{"mood":"celebrate","parameters":[0.35,1,1,0,0.5]},"home":{"room":{"w":8,"d":8},"decor":{"wall":"meadow","floor":"oak","atmosphereVersion":1,"weather":"clear","light":"day"},"moments":[{"key":"discovery:radio","kind":"discovery","text":"这个节拍，小芽也会跟着摇摆。","at":"2026-09-14T13:04:06.077Z"},{"key":"discovery:books","kind":"discovery","text":"这一页的故事，小芽想和你一起看。","at":"2026-09-14T13:04:05.032Z"},{"key":"discovery:bed","kind":"discovery","text":"呼……梦里也是暖暖的小家。","at":"2026-09-14T13:04:03.010Z"},{"key":"discovery:stool","kind":"discovery","text":"坐下来，陪你晃晃叶子。","at":"2026-09-14T13:04:02.435Z"},{"key":"discovery:plant","kind":"discovery","text":"叶子喝饱水了，小芽也精神起来。","at":"2026-09-14T13:04:01.316Z"}],"lumens":500,"earned":500,"spent":0,"refunded":0,"glimmerDays":[],"glimmerPaid":0,"inventory":[{"uid":"qa-0","fid":"plant","paid":0},{"uid":"qa-1","fid":"stool","paid":0},{"uid":"qa-2","fid":"bed","paid":0},{"uid":"qa-3","fid":"books","paid":0},{"uid":"qa-4","fid":"radio","paid":0}],"placed":[{"uid":"qa-0","x":0,"z":0,"rotation":0},{"uid":"qa-1","x":2,"z":0,"rotation":0},{"uid":"qa-2","x":4,"z":0,"rotation":0},{"uid":"qa-3","x":0,"z":3,"rotation":0},{"uid":"qa-4","x":2,"z":3,"rotation":0}],"boundMemories":[],"gifts":[],"nextId":1},"activeTasks":0,"completedTasks":0,"viewport":{"width":1280,"overflow":false}},{"place":"home","navigation":{"hash":"#home","dialog":false,"returnTo":"map"},"emotion":{"mood":"celebrate","parameters":[0.35,1,1,0,0.5]},"home":{"room":{"w":8,"d":8},"decor":{"wall":"meadow","floor":"oak","atmosphereVersion":1,"weather":"clear","light":"day"},"moments":[{"key":"discovery:radio","kind":"discovery","text":"这个节拍，小芽也会跟着摇摆。","at":"2026-09-14T13:04:15.226Z"},{"key":"discovery:books","kind":"discovery","text":"这一页的故事，小芽想和你一起看。","at":"2026-09-14T13:04:14.175Z"},{"key":"discovery:bed","kind":"discovery","text":"呼……梦里也是暖暖的小家。","at":"2026-09-14T13:04:12.159Z"},{"key":"discovery:stool","kind":"discovery","text":"坐下来，陪你晃晃叶子。","at":"2026-09-14T13:04:11.593Z"},{"key":"discovery:plant","kind":"discovery","text":"叶子喝饱水了，小芽也精神起来。","at":"2026-09-14T13:04:10.543Z"}],"lumens":500,"earned":500,"spent":0,"refunded":0,"glimmerDays":[],"glimmerPaid":0,"inventory":[{"uid":"qa-0","fid":"plant","paid":0},{"uid":"qa-1","fid":"stool","paid":0},{"uid":"qa-2","fid":"bed","paid":0},{"uid":"qa-3","fid":"books","paid":0},{"uid":"qa-4","fid":"radio","paid":0}],"placed":[{"uid":"qa-0","x":0,"z":0,"rotation":0},{"uid":"qa-1","x":2,"z":0,"rotation":0},{"uid":"qa-2","x":4,"z":0,"rotation":0},{"uid":"qa-3","x":0,"z":3,"rotation":0},{"uid":"qa-4","x":2,"z":3,"rotation":0}],"boundMemories":[],"gifts":[],"nextId":1},"activeTasks":0,"completedTasks":0,"viewport":{"width":375,"overflow":false}}]
+[{"place":"home","navigation":{"hash":"#home","dialog":false,"returnTo":"map"},"emotion":{"mood":"celebrate","parameters":[0.5,1,0.7,0,0]},"scene":{"skin":"softCorner","position":[-1.5960543782661738,-0.002000000000000001,-1.5000000000000004],"emotion":{"mood":"curious","parameters":{"leftH":1.1599775231449423,"rightH":0.839985779948843,"leftW":1.04999977064434,"rightW":1.04999977064434,"leftTilt":-11.999816515468671,"rightTilt":11.999816515468671,"smile":0.1499970183763841,"mouth":0.13999770644336135,"yaw":6.999770644336117,"pitch":2.999816515468996,"roll":-5.999701837636968,"bodyW":0.9700016054896475,"bodyH":1.0299983945103528,"cheek":0.19999954128867942,"leaf":0.07999472481973444,"split":18,"gazeX":0,"gazeY":0},"velocity":{"leftH":0.00009385432350680901,"rightH":0.00005937722507049436,"leftW":9.576971693463464e-7,"rightW":9.576971693463464e-7,"leftTilt":-0.000766157743540808,"rightTilt":0.000766157743540808,"smile":0.00001245006328594323,"mouth":0.00000957697178675486,"yaw":0.000957697178713834,"pitch":0.0007661577427069365,"roll":-0.0012450063322901111,"bodyW":-0.0000067038802519289325,"bodyH":0.000006703880250919395,"cheek":0.000001915394339161269,"leaf":0.000022027035100813848,"split":0,"gazeX":0,"gazeY":0}},"shadow":[-1.5960543782661738,0.026999999999999996,-1.5000000000000004]},"home":{"room":{"w":8,"d":8},"decor":{"wall":"meadow","floor":"oak","atmosphereVersion":1,"weather":"clear","light":"day"},"moments":[{"key":"discovery:radio","kind":"discovery","text":"这个节拍，小芽也会跟着摇摆。","at":"2026-09-19T11:37:48.162Z"},{"key":"discovery:books","kind":"discovery","text":"这一页的故事，小芽想和你一起看。","at":"2026-09-19T11:37:47.099Z"},{"key":"discovery:bed","kind":"discovery","text":"呼……梦里也是暖暖的小家。","at":"2026-09-19T11:37:45.058Z"},{"key":"discovery:stool","kind":"discovery","text":"坐下来，陪你晃晃叶子。","at":"2026-09-19T11:37:44.494Z"},{"key":"discovery:plant","kind":"discovery","text":"叶子喝饱水了，小芽也精神起来。","at":"2026-09-19T11:37:43.446Z"}],"lumens":500,"earned":500,"spent":0,"refunded":0,"glimmerDays":[],"glimmerPaid":0,"inventory":[{"uid":"qa-0","fid":"plant","paid":0},{"uid":"qa-1","fid":"stool","paid":0},{"uid":"qa-2","fid":"bed","paid":0},{"uid":"qa-3","fid":"books","paid":0},{"uid":"qa-4","fid":"radio","paid":0}],"placed":[{"uid":"qa-0","x":0,"z":0,"rotation":0},{"uid":"qa-1","x":2,"z":0,"rotation":0},{"uid":"qa-2","x":4,"z":0,"rotation":0},{"uid":"qa-3","x":0,"z":3,"rotation":0},{"uid":"qa-4","x":2,"z":3,"rotation":0}],"boundMemories":[],"gifts":[],"nextId":1},"activeTasks":0,"completedTasks":0,"viewport":{"width":1280,"overflow":false}},{"place":"home","navigation":{"hash":"#home","dialog":false,"returnTo":"map"},"emotion":{"mood":"celebrate","parameters":[0.5,1,0.7,0,0]},"scene":{"skin":"softCorner","position":[-1.5961830651193258,-0.002000000000000001,-1.5000000000000004],"emotion":{"mood":"curious","parameters":{"leftH":1.159976170474709,"rightH":0.8399849241778792,"leftW":1.0499997568415826,"rightW":1.0499997568415826,"leftTilt":-11.999805473262679,"rightTilt":11.999805473262679,"smile":0.14999683894053714,"mouth":0.13999756841578653,"yaw":6.999756841578635,"pitch":2.9998054732630117,"roll":-5.999683894052243,"bodyW":0.9700017021089498,"bodyH":1.0299982978910505,"cheek":0.19999951368316463,"leaf":0.07999440735631243,"split":18,"gazeX":0,"gazeY":0},"velocity":{"leftH":0.00006600161592598696,"rightH":0.00004175612436455201,"leftW":6.734858855033469e-7,"rightW":6.734858855033469e-7,"leftTilt":-0.000538788700960994,"rightTilt":0.000538788700960994,"smile":0.00000875531642640052,"mouth":0.000006734858767502301,"yaw":0.0006734858767398546,"pitch":0.0005387887015957207,"roll":-0.0008755316397925543,"bodyW":-0.0000047144011362183075,"bodyH":0.000004714401136853939,"cheek":0.0000013469717676518028,"leaf":0.00001549017517226245,"split":0,"gazeX":0,"gazeY":0}},"shadow":[-1.5961830651193258,0.026999999999999996,-1.5000000000000004]},"home":{"room":{"w":8,"d":8},"decor":{"wall":"meadow","floor":"oak","atmosphereVersion":1,"weather":"clear","light":"day"},"moments":[{"key":"discovery:radio","kind":"discovery","text":"这个节拍，小芽也会跟着摇摆。","at":"2026-09-19T11:37:57.291Z"},{"key":"discovery:books","kind":"discovery","text":"这一页的故事，小芽想和你一起看。","at":"2026-09-19T11:37:56.241Z"},{"key":"discovery:bed","kind":"discovery","text":"呼……梦里也是暖暖的小家。","at":"2026-09-19T11:37:54.223Z"},{"key":"discovery:stool","kind":"discovery","text":"坐下来，陪你晃晃叶子。","at":"2026-09-19T11:37:53.656Z"},{"key":"discovery:plant","kind":"discovery","text":"叶子喝饱水了，小芽也精神起来。","at":"2026-09-19T11:37:52.608Z"}],"lumens":500,"earned":500,"spent":0,"refunded":0,"glimmerDays":[],"glimmerPaid":0,"inventory":[{"uid":"qa-0","fid":"plant","paid":0},{"uid":"qa-1","fid":"stool","paid":0},{"uid":"qa-2","fid":"bed","paid":0},{"uid":"qa-3","fid":"books","paid":0},{"uid":"qa-4","fid":"radio","paid":0}],"placed":[{"uid":"qa-0","x":0,"z":0,"rotation":0},{"uid":"qa-1","x":2,"z":0,"rotation":0},{"uid":"qa-2","x":4,"z":0,"rotation":0},{"uid":"qa-3","x":0,"z":3,"rotation":0},{"uid":"qa-4","x":2,"z":3,"rotation":0}],"boundMemories":[],"gifts":[],"nextId":1},"activeTasks":0,"completedTasks":0,"viewport":{"width":375,"overflow":false}}]
 ### Ran Playwright code
 ```js
-await (async(page)=>{
- const results=[];
- for(const width of [1280,375]){
-  await page.setViewportSize({width,height:900});
-  await page.goto('http://127.0.0.1:5182/?qa#map');
-  await page.evaluate(()=>window.__KUANGYE__.reset('map-navigation','furnished'));
-  await page.locator('[data-place="home"]').click();await page.waitForURL('**#home');
-  await page.getByRole('button',{name:'全部家具',exact:true}).click();
-  const names=await page.locator('.inventory-item').allTextContents();
-  for(let i=0;i<names.length;i++){
-   await page.locator('.inventory-item').nth(i).click();
-   const actions=['一起浇浇花','在这里歇歇脚','让小芽打个盹','翻翻旧故事','一起听一首歌'];
-   await page.getByRole('button',{name:actions[i],exact:true}).click();
-   await page.waitForFunction(i=>window.__KUANGYE__.snapshot().home.moments.length>=i+1,i,{timeout:15000});
+await (async (page) => {
+  const results = [];
+  for (const width of [1280, 375]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("http://127.0.0.1:5182/?qa#map");
+    await page.evaluate(() =>
+      window.__KUANGYE__.reset("map-navigation", "furnished"),
+    );
+    await page.locator('[data-place="home"]').click();
+    await page.waitForURL("**#home");
+    await page.getByRole("button", { name: "全部家具", exact: true }).click();
+    const names = await page.locator(".inventory-item").allTextContents();
+    for (let i = 0; i < names.length; i++) {
+      await page.locator(".inventory-item").nth(i).click();
+      const actions = [
+        "一起浇浇花",
+        "在这里歇歇脚",
+        "让小芽打个盹",
+        "翻翻旧故事",
+        "一起听一首歌",
+      ];
+      await page.getByRole("button", { name: actions[i], exact: true }).click();
+      await page.waitForFunction(
+        (i) => window.__KUANGYE__.snapshot().home.moments.length >= i + 1,
+        i,
+        { timeout: 15000 },
+      );
+    }
+    const state = await page.evaluate(() => window.__KUANGYE__.snapshot());
+    if (state.home.lumens !== 500 || state.viewport.overflow)
+      throw Error("Interaction changes currency or overflows");
+    results.push(state);
+    await page
+      .getByRole("heading", { name: "小芽的家", exact: true })
+      .first()
+      .scrollIntoViewIfNeeded();
+    await page.screenshot({
+      path: "output/playwright/home-interactions-" + width + ".png",
+    });
   }
-  const state=await page.evaluate(()=>window.__KUANGYE__.snapshot());
-  if(state.home.lumens!==500||state.viewport.overflow)throw Error('Interaction changes currency or overflows');
-  results.push(state);
-  await page.getByRole('heading',{name:'小芽的家',exact:true}).first().scrollIntoViewIfNeeded();
-  await page.screenshot({path:'output/playwright/home-interactions-'+width+'.png'});
- }
- return results;
-}
-)(page);
+  return results;
+})(page);
 ```
 ### Page
 - Page URL: http://127.0.0.1:5182/?qa#home
 - Page Title: 旷野 · 小芽的家
-- Console: 0 errors, 4 warnings
+- Console: 0 errors, 5 warnings
 ### Events
-- New console entries: .playwright-cli/console-2026-09-14T12-48-21-490Z.log#L2-L7
+- New console entries: .playwright-cli/console-2026-09-19T11-33-42-701Z.log#L16-L19

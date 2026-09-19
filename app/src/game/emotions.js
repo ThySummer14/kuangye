@@ -1,16 +1,3 @@
-export const EXPRESSIONS = {
-  idle: [1, 0, 0.2, 0, 0],
-  curious: [1.22, 0.08, 0.15, -0.15, 0],
-  happy: [0.55, 1, 0.75, 0.05, 0.15],
-  proud: [0.65, 0.65, 0.35, -0.08, 0],
-  celebrate: [0.35, 1, 1, 0, 0.5],
-  sleepy: [0.12, -0.1, 0.05, 0.1, 0],
-  sad: [0.55, -0.4, 0, -0.1, 0],
-  worried: [0.7, -0.25, 0.1, 0.15, 0],
-  shocked: [1.4, 0.1, 0.9, 0, 0.1],
-  loved: [0.55, 1, 0.6, 0.08, 0.2],
-  excited: [0.4, 1, 0.9, 0, 0.4],
-};
 // Critical damping has an exact solution: stable even when the tab resumes after suspension.
 export function springStep(position, velocity, target, dt, omega = 25) {
   const offset = position - target,
@@ -22,7 +9,6 @@ export function springStep(position, velocity, target, dt, omega = 25) {
   };
 }
 
-// Experimental lab only; not connected to the main-site character.
 // One source for the lab, portrait and 3D skin. Every field morphs continuously.
 export const EMOTION_NAMES = {
   idle: "自在",
@@ -75,7 +61,7 @@ const pose = (
   gazeY: 0,
 });
 export const EMOTION_POSES = {
-  idle: pose(1, 1, 1, 0, 0.18, 0.08, 0, 0, 0, 1, 1, 0.2, 0),
+  idle: pose(1, 1, 1, 0, 0.18, 0.02, 0, 0, 0, 1, 1, 0.2, 0),
   curious: pose(
     1.16,
     0.84,
@@ -91,7 +77,7 @@ export const EMOTION_POSES = {
     0.2,
     0.08,
   ),
-  happy: pose(0.65, 0.65, 1.3, 8, 1, 0.32, 0, 4, 2, 1.04, 0.98, 0.65, 0.16),
+  happy: pose(0.65, 0.65, 1.3, 8, 1, 0.08, 0, 4, 2, 1.04, 0.98, 0.65, 0.16),
   proud: pose(
     0.78,
     0.72,
@@ -168,8 +154,8 @@ export const EMOTION_POSES = {
     0.25,
     0.24,
   ),
-  loved: pose(0.6, 0.6, 1.2, 12, 0.95, 0.28, -3, 5, -4, 1.03, 0.99, 1, 0.1),
-  excited: pose(1.08, 1.15, 1.25, -6, 0.8, 0.5, 4, 6, 3, 1.02, 1.04, 0.7, 0.22),
+  loved: pose(0.6, 0.6, 1.2, 12, 0.95, 0.08, -3, 5, -4, 1.03, 0.99, 1, 0.1),
+  excited: pose(1.15, 1.15, 1.08, 0, 0.12, 0.65, 0, 3, 0, 1, 1.03, 0.5, 0.1),
   thinking: pose(0.88, 0.5, 1, -14, 0.02, 0.07, 12, 5, 8, 0.99, 1.02, 0.1, 0),
   focused: pose(0.58, 0.58, 1.1, 18, 0.1, 0.04, 0, 5, 0, 0.97, 1.02, 0.1, 0.03),
   shy: pose(0.6, 0.72, 1, -8, 0.55, 0.12, -9, -4, -7, 1.02, 0.98, 0.9, -0.05),
@@ -231,3 +217,10 @@ export function createEmotionMotion(initial = "idle") {
     },
   };
 }
+
+export const EXPRESSIONS = Object.fromEntries(
+  Object.entries(EMOTION_POSES).map(([id, p]) => [
+    id,
+    [(p.leftH + p.rightH) / 2, p.smile, p.mouth, (p.roll * Math.PI) / 180, 0],
+  ]),
+);

@@ -1,55 +1,88 @@
 ### Result
-[{"place":"woodshop","navigation":{"hash":"#woodshop","dialog":false,"returnTo":"map"},"emotion":{"mood":"idle","parameters":[1,0,0.2,0,0]},"home":{"room":{"w":8,"d":6},"decor":{"wall":"blue","floor":"walnut","atmosphereVersion":1,"weather":"clear","light":"day"},"moments":[{"key":"expansion:8x6","kind":"expansion","text":"小家长大到 12 平方米啦。","at":"2026-09-14T12:41:11.001Z"}],"lumens":470,"earned":500,"spent":30,"refunded":0,"glimmerDays":[],"glimmerPaid":0,"inventory":[],"placed":[],"boundMemories":[],"gifts":[],"nextId":1},"activeTasks":0,"completedTasks":0,"viewport":{"width":1280,"overflow":false}},{"place":"woodshop","navigation":{"hash":"#woodshop","dialog":false,"returnTo":"map"},"emotion":{"mood":"celebrate","parameters":[0.35,1,1,0,0.5]},"home":{"room":{"w":12,"d":12},"decor":{"wall":"blue","floor":"walnut","atmosphereVersion":1,"weather":"clear","light":"day"},"moments":[{"key":"expansion:12x12","kind":"expansion","text":"小家长大到 36 平方米啦。","at":"2026-09-14T12:41:11.500Z"},{"key":"expansion:12x10","kind":"expansion","text":"小家长大到 30 平方米啦。","at":"2026-09-14T12:41:11.433Z"},{"key":"expansion:12x8","kind":"expansion","text":"小家长大到 24 平方米啦。","at":"2026-09-14T12:41:11.367Z"},{"key":"expansion:12x6","kind":"expansion","text":"小家长大到 18 平方米啦。","at":"2026-09-14T12:41:11.266Z"},{"key":"expansion:10x6","kind":"expansion","text":"小家长大到 15 平方米啦。","at":"2026-09-14T12:41:11.200Z"},{"key":"expansion:8x6","kind":"expansion","text":"小家长大到 12 平方米啦。","at":"2026-09-14T12:41:11.001Z"}],"lumens":20,"earned":500,"spent":480,"refunded":0,"glimmerDays":[],"glimmerPaid":0,"inventory":[],"placed":[],"boundMemories":[],"gifts":[],"nextId":1},"activeTasks":0,"completedTasks":0,"viewport":{"width":1280,"overflow":false}},{"place":"woodshop","navigation":{"hash":"#woodshop","dialog":false,"returnTo":"map"},"emotion":{"mood":"idle","parameters":[1,0,0.2,0,0]},"home":{"room":{"w":8,"d":6},"decor":{"wall":"blue","floor":"walnut","atmosphereVersion":1,"weather":"clear","light":"day"},"moments":[{"key":"expansion:8x6","kind":"expansion","text":"小家长大到 12 平方米啦。","at":"2026-09-14T12:41:14.019Z"}],"lumens":470,"earned":500,"spent":30,"refunded":0,"glimmerDays":[],"glimmerPaid":0,"inventory":[],"placed":[],"boundMemories":[],"gifts":[],"nextId":1},"activeTasks":0,"completedTasks":0,"viewport":{"width":375,"overflow":false}},{"place":"woodshop","navigation":{"hash":"#woodshop","dialog":false,"returnTo":"map"},"emotion":{"mood":"celebrate","parameters":[0.35,1,1,0,0.5]},"home":{"room":{"w":12,"d":12},"decor":{"wall":"blue","floor":"walnut","atmosphereVersion":1,"weather":"clear","light":"day"},"moments":[{"key":"expansion:12x12","kind":"expansion","text":"小家长大到 36 平方米啦。","at":"2026-09-14T12:41:14.499Z"},{"key":"expansion:12x10","kind":"expansion","text":"小家长大到 30 平方米啦。","at":"2026-09-14T12:41:14.434Z"},{"key":"expansion:12x8","kind":"expansion","text":"小家长大到 24 平方米啦。","at":"2026-09-14T12:41:14.366Z"},{"key":"expansion:12x6","kind":"expansion","text":"小家长大到 18 平方米啦。","at":"2026-09-14T12:41:14.267Z"},{"key":"expansion:10x6","kind":"expansion","text":"小家长大到 15 平方米啦。","at":"2026-09-14T12:41:14.200Z"},{"key":"expansion:8x6","kind":"expansion","text":"小家长大到 12 平方米啦。","at":"2026-09-14T12:41:14.019Z"}],"lumens":20,"earned":500,"spent":480,"refunded":0,"glimmerDays":[],"glimmerPaid":0,"inventory":[],"placed":[],"boundMemories":[],"gifts":[],"nextId":1},"activeTasks":0,"completedTasks":0,"viewport":{"width":375,"overflow":false}}]
+[{"place":"woodshop","navigation":{"hash":"#woodshop","dialog":false,"returnTo":"map"},"emotion":{"mood":"idle","parameters":[1,0.18,0.02,0,0]},"scene":null,"home":{"room":{"w":8,"d":6},"decor":{"wall":"blue","floor":"walnut","atmosphereVersion":1,"weather":"clear","light":"day"},"moments":[{"key":"expansion:8x6","kind":"expansion","text":"小家长大到 12 平方米啦。","at":"2026-09-19T11:38:18.524Z"}],"lumens":470,"earned":500,"spent":30,"refunded":0,"glimmerDays":[],"glimmerPaid":0,"inventory":[],"placed":[],"boundMemories":[],"gifts":[],"nextId":1},"activeTasks":0,"completedTasks":0,"viewport":{"width":1280,"overflow":false}},{"place":"woodshop","navigation":{"hash":"#woodshop","dialog":false,"returnTo":"map"},"emotion":{"mood":"celebrate","parameters":[0.5,1,0.7,0,0]},"scene":null,"home":{"room":{"w":12,"d":12},"decor":{"wall":"blue","floor":"walnut","atmosphereVersion":1,"weather":"clear","light":"day"},"moments":[{"key":"expansion:12x12","kind":"expansion","text":"小家长大到 36 平方米啦。","at":"2026-09-19T11:38:19.008Z"},{"key":"expansion:12x10","kind":"expansion","text":"小家长大到 30 平方米啦。","at":"2026-09-19T11:38:18.941Z"},{"key":"expansion:12x8","kind":"expansion","text":"小家长大到 24 平方米啦。","at":"2026-09-19T11:38:18.874Z"},{"key":"expansion:12x6","kind":"expansion","text":"小家长大到 18 平方米啦。","at":"2026-09-19T11:38:18.774Z"},{"key":"expansion:10x6","kind":"expansion","text":"小家长大到 15 平方米啦。","at":"2026-09-19T11:38:18.707Z"},{"key":"expansion:8x6","kind":"expansion","text":"小家长大到 12 平方米啦。","at":"2026-09-19T11:38:18.524Z"}],"lumens":20,"earned":500,"spent":480,"refunded":0,"glimmerDays":[],"glimmerPaid":0,"inventory":[],"placed":[],"boundMemories":[],"gifts":[],"nextId":1},"activeTasks":0,"completedTasks":0,"viewport":{"width":1280,"overflow":false}},{"place":"woodshop","navigation":{"hash":"#woodshop","dialog":false,"returnTo":"map"},"emotion":{"mood":"idle","parameters":[1,0.18,0.02,0,0]},"scene":null,"home":{"room":{"w":8,"d":6},"decor":{"wall":"blue","floor":"walnut","atmosphereVersion":1,"weather":"clear","light":"day"},"moments":[{"key":"expansion:8x6","kind":"expansion","text":"小家长大到 12 平方米啦。","at":"2026-09-19T11:38:21.558Z"}],"lumens":470,"earned":500,"spent":30,"refunded":0,"glimmerDays":[],"glimmerPaid":0,"inventory":[],"placed":[],"boundMemories":[],"gifts":[],"nextId":1},"activeTasks":0,"completedTasks":0,"viewport":{"width":375,"overflow":false}},{"place":"woodshop","navigation":{"hash":"#woodshop","dialog":false,"returnTo":"map"},"emotion":{"mood":"celebrate","parameters":[0.5,1,0.7,0,0]},"scene":null,"home":{"room":{"w":12,"d":12},"decor":{"wall":"blue","floor":"walnut","atmosphereVersion":1,"weather":"clear","light":"day"},"moments":[{"key":"expansion:12x12","kind":"expansion","text":"小家长大到 36 平方米啦。","at":"2026-09-19T11:38:22.041Z"},{"key":"expansion:12x10","kind":"expansion","text":"小家长大到 30 平方米啦。","at":"2026-09-19T11:38:21.975Z"},{"key":"expansion:12x8","kind":"expansion","text":"小家长大到 24 平方米啦。","at":"2026-09-19T11:38:21.908Z"},{"key":"expansion:12x6","kind":"expansion","text":"小家长大到 18 平方米啦。","at":"2026-09-19T11:38:21.808Z"},{"key":"expansion:10x6","kind":"expansion","text":"小家长大到 15 平方米啦。","at":"2026-09-19T11:38:21.741Z"},{"key":"expansion:8x6","kind":"expansion","text":"小家长大到 12 平方米啦。","at":"2026-09-19T11:38:21.558Z"}],"lumens":20,"earned":500,"spent":480,"refunded":0,"glimmerDays":[],"glimmerPaid":0,"inventory":[],"placed":[],"boundMemories":[],"gifts":[],"nextId":1},"activeTasks":0,"completedTasks":0,"viewport":{"width":375,"overflow":false}}]
 ### Ran Playwright code
 ```js
 await (async (page) => {
-  const results=[];
-  for(const width of [1280,375]) {
-    await page.setViewportSize({width,height:900});
-    await page.goto('http://127.0.0.1:5182/?qa#map');
-    await page.evaluate(()=>window.__KUANGYE__.reset('woodshop'));
+  const results = [];
+  for (const width of [1280, 375]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("http://127.0.0.1:5182/?qa#map");
+    await page.evaluate(() => window.__KUANGYE__.reset("woodshop"));
     await page.locator('[data-place="woodshop"]').click();
-    await page.waitForURL('**#woodshop');
-    await page.getByRole('button',{name:'雨后蓝 选这块墙色',exact:true}).click();
-    await page.getByRole('button',{name:'暖胡桃木 铺上这款木地板',exact:true}).click();
-    await page.getByRole('button',{name:'请师傅开工 · 30 光',exact:true}).click();
-    await page.getByRole('button',{name:'再想想',exact:true}).click();
-    let s=await page.evaluate(()=>window.__KUANGYE__.snapshot());
-    if(s.home.lumens!==500 || s.home.decor.wall!=='blue' || s.home.decor.floor!=='walnut') throw Error('Cancel/decor');
-    await page.getByRole('button',{name:'请师傅开工 · 30 光',exact:true}).click();
-    await page.getByRole('button',{name:'确认扩建',exact:true}).click();
+    await page.waitForURL("**#woodshop");
+    await page
+      .getByRole("button", { name: "雨后蓝 选这块墙色", exact: true })
+      .click();
+    await page
+      .getByRole("button", { name: "暖胡桃木 铺上这款木地板", exact: true })
+      .click();
+    await page
+      .getByRole("button", { name: "请师傅开工 · 30 光", exact: true })
+      .click();
+    await page.getByRole("button", { name: "再想想", exact: true }).click();
+    let s = await page.evaluate(() => window.__KUANGYE__.snapshot());
+    if (
+      s.home.lumens !== 500 ||
+      s.home.decor.wall !== "blue" ||
+      s.home.decor.floor !== "walnut"
+    )
+      throw Error("Cancel/decor");
+    await page
+      .getByRole("button", { name: "请师傅开工 · 30 光", exact: true })
+      .click();
+    await page.getByRole("button", { name: "确认扩建", exact: true }).click();
     await page.reload();
-    s=await page.evaluate(()=>window.__KUANGYE__.snapshot());
-    if(s.home.lumens!==470 || s.home.room.w!==8 || s.home.decor.wall!=='blue') throw Error('Persistence');
-    await page.screenshot({path:'output/playwright/woodshop-'+width+'.png',fullPage:true});
+    s = await page.evaluate(() => window.__KUANGYE__.snapshot());
+    if (
+      s.home.lumens !== 470 ||
+      s.home.room.w !== 8 ||
+      s.home.decor.wall !== "blue"
+    )
+      throw Error("Persistence");
+    await page.screenshot({
+      path: "output/playwright/woodshop-" + width + ".png",
+      fullPage: true,
+    });
     results.push(s);
-    for(const axis of ['向右扩建 →','向前扩建 ↓']) {
-      await page.getByRole('button',{name:axis,exact:true}).click();
-      while(await page.getByRole('button',{name:/请师傅开工/}).count()) {
-        await page.getByRole('button',{name:/请师傅开工/}).click();
-        await page.getByRole('button',{name:'确认扩建',exact:true}).click();
+    for (const axis of ["向右扩建 →", "向前扩建 ↓"]) {
+      await page.getByRole("button", { name: axis, exact: true }).click();
+      while (await page.getByRole("button", { name: /请师傅开工/ }).count()) {
+        await page.getByRole("button", { name: /请师傅开工/ }).click();
+        await page
+          .getByRole("button", { name: "确认扩建", exact: true })
+          .click();
       }
     }
-    s=await page.evaluate(()=>window.__KUANGYE__.snapshot());
-    if(s.home.lumens!==20 || s.home.room.w!==12 || s.home.room.d!==12) throw Error('Cap/economy');
+    s = await page.evaluate(() => window.__KUANGYE__.snapshot());
+    if (s.home.lumens !== 20 || s.home.room.w !== 12 || s.home.room.d !== 12)
+      throw Error("Cap/economy");
     results.push(s);
-    await page.evaluate(()=>window.__KUANGYE__.reset('woodshop','empty'));
+    await page.evaluate(() => window.__KUANGYE__.reset("woodshop", "empty"));
     await page.locator('[data-place="woodshop"]').click();
-    await page.waitForURL('**#woodshop');
-    if(!await page.getByRole('button',{name:'请师傅开工 · 30 光',exact:true}).isDisabled()) throw Error('Insufficient funds');
-    if((await page.evaluate(()=>window.__KUANGYE__.snapshot())).viewport.overflow) throw Error('Overflow');
-    await page.getByRole('button',{name:'← 回到地图',exact:true}).click();
+    await page.waitForURL("**#woodshop");
+    if (
+      !(await page
+        .getByRole("button", { name: "请师傅开工 · 30 光", exact: true })
+        .isDisabled())
+    )
+      throw Error("Insufficient funds");
+    if (
+      (await page.evaluate(() => window.__KUANGYE__.snapshot())).viewport
+        .overflow
+    )
+      throw Error("Overflow");
+    await page.getByRole("button", { name: "← 回到地图", exact: true }).click();
     await page.locator('[data-place="home"]').click();
-    await page.waitForURL('**#home');
-    if(await page.getByRole('button',{name:'找师傅聊聊装修'}).count()) throw Error('Craftsman still at home');
+    await page.waitForURL("**#home");
+    if (await page.getByRole("button", { name: "找师傅聊聊装修" }).count())
+      throw Error("Craftsman still at home");
   }
   return results;
-}
-)(page);
+})(page);
 ```
 ### Page
 - Page URL: http://127.0.0.1:5182/?qa#home
 - Page Title: 旷野 · 小芽的家
 - Console: 0 errors, 3 warnings
 ### Events
-- New console entries: .playwright-cli/console-2026-09-14T12-40-14-825Z.log#L1-L8
+- New console entries: .playwright-cli/console-2026-09-19T11-33-42-701Z.log#L20-L27

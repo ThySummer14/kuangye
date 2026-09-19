@@ -18,8 +18,13 @@ export function registerGameTools(
         },
         emotion: {
           mood: Date.now() < buddyBus.at ? buddyBus.mood : "idle",
-          parameters: EXPRESSIONS[Date.now() < buddyBus.at ? buddyBus.mood : "idle"] || EXPRESSIONS.idle,
+          parameters:
+            EXPRESSIONS[Date.now() < buddyBus.at ? buddyBus.mood : "idle"] ||
+            EXPRESSIONS.idle,
         },
+        scene: JSON.parse(
+          document.querySelector("[data-buddy]")?.dataset.buddy || "null",
+        ),
         home: state.home,
         activeTasks: state.active.length,
         completedTasks: state.done.length,

@@ -99,3 +99,7 @@ npm run build      # 构建 app/dist，再生成 Sites 使用的根 dist
 `game/mascot.js` 管外观与闭合轮廓，`game/emotions.js` 是情绪参数的单一来源；赛季皮肤不拥有情绪或互动状态。目前只有已选02默认皮肤，没有新增换肤商城。3D身体、五官和柔和接触阴影均为程序化几何，没有角色贴图；bloub 两个几何辅助函数保留 MIT 许可，moodstone 和 momo 仅作节奏/体积参考。
 
 第三轮仅交 [世界观候选文档](docs/WORLDVIEW-PROPOSALS-2026-09.md)，尚未实施区域解锁、剧情、蚀刻章或新任务。
+
+## 第四轮 · 系列与蚀刻章设计骨架
+
+世界观已选A「归光营地」。[SERIES.md](docs/SERIES.md)规定八类系列、一条长期主题线一枚三阶蚀刻章、作者空白写作卡、收集预算及未来v3兼容策略。`data/series.js`和`data/etchings.js`只有未启用模板与空正式目录，没有接入运行时。任务文案由用户本人填写；本轮未实施系列、图鉴界面、奖励或迁移，第五轮概念图尚未启用。角色表情的最新参考分析见 [视觉诊断](docs/MASCOT-EXPRESSION-REVIEW.md)。

@@ -4,9 +4,14 @@ async (page) => {
   page.on("pageerror", (e) => errors.push(e.message));
   const settle = (id) =>
     page.waitForFunction((id) => {
-      const s = window.__KUANGYE__.snapshot().emotion;
+      const state = window.__KUANGYE__.snapshot(),
+        s = state.emotion;
       return (
         s.mood === id &&
+        Object.entries(state.target).every(
+          ([k, v]) =>
+            k.startsWith("gaze") || Math.abs(s.parameters[k] - v) < 0.005,
+        ) &&
         Object.values(s.velocity).every((v) => Math.abs(v) < 0.025)
       );
     }, id);

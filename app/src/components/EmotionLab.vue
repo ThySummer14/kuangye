@@ -46,6 +46,7 @@ function snapshot() {
     lighting: lighting.value,
     features: portrait.value?.features?.(),
     emotion: portrait.value?.snapshot(),
+    target: { ...EMOTION_POSES[mood.value] },
     settings: {
       frequency: frequency.value,
       damping: damping.value,

@@ -1,102 +1,99 @@
-// Shared geometry and surface palette; seasons never own emotion or interaction state.
+// docs/mascot.md is the sole visual authority. No economy or save state here.
 export const MASCOT_SKINS = Object.freeze({
   softCorner: Object.freeze({
     id: "softCorner",
-    name: "软角",
-    body: "#f3eee4",
-    highlight: "#fffdf7",
-    shade: "#d6d0c3",
-    eye: "#493b2a",
-    cheek: "#dfafa0",
+    name: "小芽",
+    body: "#fdf7f1",
+    highlight: "#fdf7f1",
+    shade: "#f7ece3",
+    eye: "#d9af68",
+    cheek: "#fdd1cf",
+    sproutLight: "#c7ef90",
+    sproutDark: "#a7e160",
+    lantern: "#ffd98a",
+    shadow: "#766952",
   }),
 });
 export const DEFAULT_SKIN = "softCorner";
-const anchors = [
-  [128, 226],
-  [91, 224],
-  [69, 213],
-  [58, 192],
-  [49, 183],
-  [47, 172],
-  [54, 161],
-  [61, 137],
-  [75, 108],
-  [87, 91],
-  [94, 73],
-  [103, 64],
-  [114, 65],
-  [126, 82],
-  [142, 88],
-  [155, 79],
-  [165, 81],
-  [174, 96],
-  [183, 114],
-  [194, 136],
-  [201, 161],
-  [210, 171],
-  [209, 183],
-  [200, 189],
-  [190, 210],
-  [166, 223],
-];
-export function softOutline(p = { bodyW: 1, bodyH: 1 }, t = 0, breath = false) {
-  const points = [];
-  const h = p.bodyH + (breath ? Math.sin(t * 0.00115) * 0.007 : 0);
-  for (let i = 0; i < 64; i++) {
-    const u = (i / 64) * anchors.length,
-      j = Math.floor(u),
-      v = u - j;
-    const a = anchors[(j - 1 + anchors.length) % anchors.length],
-      b = anchors[j],
-      c = anchors[(j + 1) % anchors.length],
-      d = anchors[(j + 2) % anchors.length];
-    const at = (k) =>
-      0.5 *
-      (2 * b[k] +
-        (-a[k] + c[k]) * v +
-        (2 * a[k] - 5 * b[k] + 4 * c[k] - d[k]) * v * v +
-        (-a[k] + 3 * b[k] - 3 * c[k] + d[k]) * v * v * v);
-    points.push({
-      x: 128 + (at(0) - 128) * p.bodyW,
-      y: 226 + (at(1) - 226) * h,
-    });
-  }
-  return points;
-}
-export const BASE_OUTLINE = softOutline();
-// Front depth of a rounded closed shell, used by the body and all facial geometry.
-export function surfaceDepth(x, y) {
-  const dx = x - 128,
-    dy = y - 140,
-    r = Math.hypot(dx, dy);
-  if (r < 1e-6) return 0.34;
-  const nx = dx / r,
-    ny = dy / r;
-  let boundary = 100;
-  for (let i = 0; i < 64; i++) {
-    const a = BASE_OUTLINE[i],
-      b = BASE_OUTLINE[(i + 1) % 64],
-      ex = b.x - a.x,
-      ey = b.y - a.y,
-      den = nx * ey - ny * ex;
-    if (Math.abs(den) < 1e-8) continue;
-    const ax = a.x - 128,
-      ay = a.y - 140,
-      dist = (ax * ey - ay * ex) / den,
-      u = (ax * ny - ay * nx) / den;
-    if (dist > 0 && u >= 0 && u <= 1) {
-      boundary = dist;
-      break;
+export const MASCOT_UNIT = 190;
+export const DEPTH_RATIO = 0.84;
+// Bottom-to-top radial profile, in the same 256px coordinate space as the portrait.
+export const BODY_PROFILE = Object.freeze([
+  [226, 0],
+  [225, 43],
+  [221, 67],
+  [212, 80],
+  [196, 87],
+  [172, 86],
+  [149, 78],
+  [127, 65],
+  [108, 47],
+  [95, 25],
+  [89, 0],
+]);
+export const HORNS = Object.freeze([
+  { x: 91, y: 87, rx: 22, ry: 28, rz: 18 },
+  { x: 174, y: 101, rx: 17, ry: 20, rz: 15 },
+]);
+export function bodyRadius(y) {
+  if (y >= 226 || y <= 89) return 0;
+  for (let i = 0; i < BODY_PROFILE.length - 1; i++) {
+    const [a, ra] = BODY_PROFILE[i],
+      [b, rb] = BODY_PROFILE[i + 1];
+    if (y <= a && y >= b) {
+      const u = (a - y) / (a - b),
+        before = BODY_PROFILE[Math.max(0, i - 1)],
+        after = BODY_PROFILE[Math.min(BODY_PROFILE.length - 1, i + 2)];
+      const m0 = ((rb - before[1]) / (before[0] - b)) * (a - b),
+        m1 = ((after[1] - ra) / (a - after[0])) * (a - b);
+      return (
+        (2 * u ** 3 - 3 * u * u + 1) * ra +
+        (u ** 3 - 2 * u * u + u) * m0 +
+        (-2 * u ** 3 + 3 * u * u) * rb +
+        (u ** 3 - u * u) * m1
+      );
     }
   }
-  const base = 1 / Math.sqrt((nx / 72) ** 2 + (ny / 80) ** 2);
-  let low = 0,
-    high = 1;
-  for (let i = 0; i < 22; i++) {
-    const q = (low + high) / 2,
-      rr = q * (base + (boundary - base) * q ** 4);
-    if (rr < r) low = q;
-    else high = q;
-  }
-  return 0.34 * Math.sqrt(Math.max(0, 1 - ((low + high) / 2) ** 2));
+  return 0;
+}
+export function softOutline(p = { bodyW: 1, bodyH: 1 }, t = 0, breath = false) {
+  const h =
+    p.bodyH +
+    (breath ? Math.sin(t * 0.00115) * 0.004 * (p.breathScale ?? 1) : 0);
+  return Array.from({ length: 64 }, (_, i) => {
+    const a = (i / 64) * Math.PI * 2,
+      y = 157.5 - Math.cos(a) * 68.5;
+    return {
+      x: 128 + Math.sign(Math.sin(a)) * bodyRadius(y) * p.bodyW,
+      y: 226 + (y - 226) * h,
+    };
+  });
+}
+export const BASE_OUTLINE = softOutline();
+export function surfaceDepth(x, y) {
+  const r = bodyRadius(y);
+  return (
+    (Math.sqrt(Math.max(0, r * r - (x - 128) ** 2)) * DEPTH_RATIO) / MASCOT_UNIT
+  );
+}
+// Two leaves only, anchored at the same stem tip in both renderers.
+export function sproutPose(p) {
+  const droop = Math.max(0, -p.leaf),
+    upright = Math.max(0, p.leaf);
+  return {
+    base: { x: 128, y: 93 },
+    control: { x: 128 + droop * 22, y: 69 - upright * 6 },
+    tip: { x: 135 + droop * 14, y: 66 + droop * 17 - upright * 6 },
+    angle: droop * 1.3 - upright * 0.18,
+  };
+}
+export function handPose(p, side) {
+  const lift = p.arms || 0,
+    hug = p.hug || 0;
+  return {
+    x: 128 + side * (82 - hug * 31),
+    y: 196 - lift * 31 - hug * 15,
+    rx: 14,
+    ry: 15,
+  };
 }

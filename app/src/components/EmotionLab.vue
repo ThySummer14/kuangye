@@ -5,9 +5,12 @@ import SproutPortrait from "./SproutPortrait.vue";
 import {
   EMOTION_NAMES,
   EMOTION_POSES,
+  EMOTION_REFERENCES,
   EMOTION_SPRING,
 } from "../game/emotions.js";
-const dimension = ref("2d");
+const dimension = ref("2d"),
+  view = ref("front"),
+  lighting = ref("day");
 const locationSearch = location.search;
 const mood = ref("idle"),
   from = ref("idle"),
@@ -39,6 +42,9 @@ function snapshot() {
     place: "emotion-lab",
     navigation: { standalone: true },
     dimension: dimension.value,
+    view: view.value,
+    lighting: lighting.value,
+    features: portrait.value?.features?.(),
     emotion: portrait.value?.snapshot(),
     settings: {
       frequency: frequency.value,
@@ -54,6 +60,10 @@ function snapshot() {
   };
 }
 async function reset() {
+  dimension.value = "2d";
+  view.value = "front";
+  lighting.value = "day";
+  await nextTick();
   loop.value = false;
   paused.value = false;
   from.value = "idle";
@@ -85,7 +95,7 @@ onBeforeUnmount(() => {
     <header>
       <div>
         <small>KUANGYE / EXPRESSION STUDY</small>
-        <h1>软角 · 表情试验台</h1>
+        <h1>小芽 · 表情试验台</h1>
         <p>一点眼神，一点心情。试着连续点几种表情。</p>
       </div>
       <div class="lab-header-actions">
@@ -94,7 +104,10 @@ onBeforeUnmount(() => {
       </div>
     </header>
     <div class="lab-workspace">
-      <section class="lab-stage">
+      <section
+        class="lab-stage"
+        :class="{ 'night-study': lighting === 'night' }"
+      >
         <div class="stage-caption">
           <span>正在感受</span><strong>{{ EMOTION_NAMES[mood] }}</strong
           ><small>{{ mood }}</small>
@@ -106,10 +119,29 @@ onBeforeUnmount(() => {
             立体形象
           </button>
         </div>
+        <div class="study-controls">
+          <label v-if="dimension === '3d'"
+            >视角<select aria-label="模型视角" v-model="view">
+              <option value="front">正面</option>
+              <option value="quarter">四分之三</option>
+              <option value="side">右侧面</option>
+              <option value="back">背面</option>
+              <option value="top">俯视</option>
+            </select></label
+          >
+          <label
+            >光照<select aria-label="试验光照" v-model="lighting">
+              <option value="day">日间</option>
+              <option value="night">夜间</option>
+            </select></label
+          >
+        </div>
         <component
           :is="dimension === '3d' ? MascotStudy : SproutPortrait"
           ref="portrait"
           :mood="mood"
+          :view="view"
+          :lighting="lighting"
           :size="400"
           :frequency="frequency"
           :damping="damping"
@@ -120,10 +152,22 @@ onBeforeUnmount(() => {
         <p>
           {{
             dimension === "3d"
-              ? "拖动转身，看看软角的另一面"
-              : "移动指针，软角会看向你"
+              ? "拖动转身，看看小芽的另一面"
+              : "移动指针，小芽会看向你"
           }}
         </p>
+        <div class="avatar-study">
+          <SproutPortrait
+            :mood="mood"
+            :size="64"
+            :frequency="frequency"
+            :damping="damping"
+            :blink="blink"
+            :breath="breath"
+            :paused="paused"
+          /><span>64px 小头像</span>
+        </div>
+        <p class="reference-note">{{ EMOTION_REFERENCES[mood] }}</p>
         <button @click="paused = !paused">
           {{ paused ? "继续播放" : "暂停观察" }}
         </button>
@@ -213,7 +257,7 @@ onBeforeUnmount(() => {
       </div>
     </section>
     <footer>
-      02 软角 · 不读取或修改游戏存档 ·
+      小芽形象 v1 · 不读取或修改游戏存档 ·
       <a href="./licenses/bloub-MIT.txt">bloub / MIT</a>
     </footer>
   </main>
@@ -536,5 +580,53 @@ footer a {
 .dimension-switch button {
   padding: 7px 12px;
   font-size: 11px;
+}
+</style>
+
+<style scoped>
+.study-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin: 10px 0;
+}
+.study-controls label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+.study-controls select {
+  padding: 6px;
+}
+.avatar-study {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 12px;
+}
+.lab-stage.night-study {
+  background: #25332c;
+  color: #e8eddf;
+}
+.lab-stage.night-study p,
+.lab-stage.night-study span,
+.lab-stage.night-study small {
+  color: #c4d3bb;
+}
+.reference-note {
+  font-size: 12px;
+  max-width: 100%;
+  line-height: 1.6;
+}
+</style>
+
+<style scoped>
+.lab-stage.night-study button,
+.lab-stage.night-study select {
+  color: #354936;
+  background: #f8faf2;
 }
 </style>

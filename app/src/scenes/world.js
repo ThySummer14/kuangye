@@ -538,19 +538,17 @@ export function createWorld(
       Math.cos(angle) * distance,
     );
     camera.lookAt(target);
-    animated.forEach((g, i) => {
+    animated.forEach((g) => {
       g.userData.drawFace?.(t);
       if (mode === "home") return;
-      g.position.y =
-        0.05 +
-        (matchMedia("(prefers-reduced-motion: reduce)").matches
-          ? 0
-          : Math.sin(t * 0.002 + i) * 0.035);
+      // The seated mascot breathes through its shared shape, never floats above its shadow.
+      g.position.y = 0.05;
+      const breath = g.userData.emotionSnapshot?.().parameters.breathScale ?? 1;
       g.rotation.y =
         0.65 +
         (matchMedia("(prefers-reduced-motion: reduce)").matches
           ? 0
-          : Math.sin(t * 0.0005) * 0.18);
+          : Math.sin(t * 0.0005) * 0.06 * breath);
     });
     homeTick?.(t, buddy);
     atmosphereTick?.(t);
@@ -599,6 +597,7 @@ export function createWorld(
     if (buddy)
       el.dataset.buddy = JSON.stringify({
         skin: buddy.userData.skin,
+        features: buddy.userData.visualFeatures?.(),
         position: buddy.position.toArray(),
         emotion: buddy.userData.emotionSnapshot?.(),
         shadow: buddy.userData.contactShadow.position.toArray(),

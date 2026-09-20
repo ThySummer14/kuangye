@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { ref, onMounted, onBeforeUnmount, watch } from "vue";
 import * as THREE from "three";
 import { makeSoftCorner } from "../scenes/mascot-model.js";
 const props = defineProps({
@@ -10,6 +10,8 @@ const props = defineProps({
   blink: { default: true },
   breath: { default: true },
   paused: Boolean,
+  view: { default: "front" },
+  lighting: { default: "day" },
 });
 const host = ref(null),
   failed = ref(false);
@@ -35,12 +37,34 @@ function move(e) {
     drag = e.clientX;
   }
 }
+function setView() {
+  yaw =
+    {
+      front: 0,
+      quarter: Math.PI / 4,
+      side: Math.PI / 2,
+      back: Math.PI,
+      top: 0,
+    }[props.view] || 0;
+  camera?.position.set(
+    0,
+    props.view === "top" ? 3 : 0.56,
+    props.view === "top" ? 0.12 : 3,
+  );
+  camera?.lookAt(0, 0.51, 0);
+}
+watch(() => props.view, setView);
 function render(t) {
   const dt = Math.min(t - last || 16, 100);
   last = t;
   if (!props.paused) time += dt;
   buddy.userData.drawFace(time);
   buddy.rotation.y = yaw;
+  scene.children
+    .filter((o) => o.isLight)
+    .forEach((o) => {
+      o.intensity = props.lighting === "night" ? 0.35 : 2.2;
+    });
   renderer.render(scene, camera);
   host.value.dataset.ready = "true";
   frame = requestAnimationFrame(render);
@@ -56,9 +80,8 @@ onMounted(() => {
     const light = new THREE.DirectionalLight("#fffaf2", 2.5);
     light.position.set(-3, 5, 4);
     scene.add(light);
-    camera = new THREE.PerspectiveCamera(32, 1, 0.1, 20);
-    camera.position.set(0, 0.65, 2.25);
-    camera.lookAt(0, 0.41, 0);
+    camera = new THREE.OrthographicCamera(-0.66, 0.66, 0.66, -0.66, 0.1, 20);
+    setView();
     buddy = makeSoftCorner(scene, {
       getMood: () => props.mood,
       getGaze: () => gaze,
@@ -90,6 +113,7 @@ onBeforeUnmount(() => {
 });
 defineExpose({
   snapshot: () => buddy?.userData.emotionSnapshot(),
+  features: () => buddy?.userData.visualFeatures(),
   reset: (m) => {
     buddy?.userData.resetEmotion(m);
     time = 0;
@@ -103,7 +127,7 @@ defineExpose({
     class="mascot-study sprout-portrait"
     :style="{ width: size + 'px', maxWidth: '100%', aspectRatio: 1 }"
     role="img"
-    aria-label="可拖动旋转的软角立体形象"
+    aria-label="可拖动旋转的小芽立体形象"
     @pointerdown="
       (e) => {
         drag = e.clientX;

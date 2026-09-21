@@ -1,6 +1,7 @@
 <script setup>
-import { ref, computed } from "vue";
-import { TASKS, CATS, DIFF, TYPES } from "../data/tasks.js";
+import { ref, computed, nextTick } from "vue";
+import { CATS, DIFF, TYPES } from "../data/tasks.js";
+import { selectTasks } from "../game/task-selection.js";
 import {
   state,
   accept,
@@ -21,30 +22,16 @@ const cat = ref("all"),
   scope = ref("today"),
   query = ref(""),
   amounts = ref({});
-const list = computed(() => {
-  const available = TASKS.filter(
-    (t) =>
-      (cat.value === "all" || t.cat === cat.value) &&
-      (!query.value || t.title.includes(query.value)) &&
-      (scope.value !== "today" ||
-        (["E", "D"].includes(t.diff) && (!t.chain || t.stage === 1))) &&
-      !state.active.some((a) => a.qid === t.id) &&
-      !state.done.some((d) => d.qid === t.id && !t.repeatable),
-  );
-  if (scope.value === "all" || query.value) return available;
-  const ranked = available.sort(
-    (a, b) =>
-      (a.type === "once" ? 0 : 2) +
-      (a.diff === "E" ? 0 : 1) -
-      ((b.type === "once" ? 0 : 2) + (b.diff === "E" ? 0 : 1)),
-  );
-  return cat.value === "all"
-    ? Object.keys(CATS)
-        .map((c) => ranked.find((t) => t.cat === c))
-        .filter(Boolean)
-    : ranked.slice(0, 6);
-});
-function take(t) {
+const list = computed(() => selectTasks(state, {
+  cat: cat.value, scope: scope.value, query: query.value,
+}));
+const activeCards = new Map();
+const searchInput = ref(null);
+function cardRef(id, element) {
+  if (element) activeCards.set(id, element);
+  else activeCards.delete(id);
+}
+async function take(t) {
   const c = canAccept(t);
   if (!c.ok) {
     emit("toast", c.why);
@@ -52,6 +39,17 @@ function take(t) {
   }
   accept(t);
   emit("toast", `已接下「${t.title}」，按自己的节奏来。`);
+  await nextTick();
+  const card = activeCards.get(t.id);
+  card?.focus({ preventScroll: true });
+  card?.scrollIntoView({ block: "center", behavior: "instant" });
+}
+async function clearFilters() {
+  query.value = "";
+  cat.value = "all";
+  scope.value = "today";
+  await nextTick();
+  searchInput.value?.focus();
 }
 function log(a) {
   if (logUnits(a, amounts.value[a.qid])) {
@@ -81,13 +79,16 @@ function log(a) {
         还没出发也没关系。从下面挑一件心动的小事吧。
       </div>
       <div v-else class="active-grid">
-        <article v-for="a in state.active" :key="a.qid" class="active-card">
+        <article v-for="a in state.active" :key="a.qid" class="active-card"
+          :ref="el => cardRef(a.qid, el)" :data-active-task="a.qid"
+          tabindex="-1" :aria-label="'已接下：' + taskById[a.qid].title">
           <div class="task-meta">
             <span>{{ CATS[taskById[a.qid].cat].name }}</span
             ><span>✦ {{ lumenReward(DIFF[taskById[a.qid].diff].xp) }} 光</span>
           </div>
           <h3>{{ taskById[a.qid].title }}</h3>
           <p>{{ taskById[a.qid].desc }}</p>
+          <p class="action-reminder">先去生活里做，回来再记录。还没做完，也可以下次继续。</p>
           <template v-if="taskById[a.qid].type !== 'once'"
             ><div class="task-progress">
               <i
@@ -102,7 +103,7 @@ function log(a) {
             </div>
             <small
               >{{ progressOf(a).cur }} / {{ progressOf(a).target }}
-              {{ taskById[a.qid].type === "streak" ? "天" : "" }}</small
+              {{ taskById[a.qid].type === "streak" ? "天" : taskById[a.qid].unit }}</small
             ></template
           >
           <div class="task-actions">
@@ -125,7 +126,7 @@ function log(a) {
                 type="number"
                 min="0.01"
                 step="any"
-                placeholder="本次数量"
+                :placeholder="'本次数量' + (taskById[a.qid].unit ? '（' + taskById[a.qid].unit + '）' : '')"
                 required
               /><button class="soft-button">记录</button>
             </form>
@@ -157,6 +158,7 @@ function log(a) {
         ><button @click="emit('chains')">成长线 ↗</button>
       </div>
       <input
+        ref="searchInput"
         v-model="query"
         aria-label="搜索任务"
         placeholder="搜索一件想做的事…"
@@ -175,6 +177,7 @@ function log(a) {
         {{ c.name }}
       </button>
     </div>
+    <p v-if="query.trim()" class="search-scope" role="status">搜索全部难度的支线 · {{ cat === 'all' ? '所有领域' : CATS[cat].name }} · {{ list.length }} 件</p>
     <div class="quest-grid">
       <article v-for="t in list" :key="t.id" class="quest-card">
         <div class="task-meta">
@@ -201,6 +204,14 @@ function log(a) {
     </div>
     <div v-if="!list.length" class="active-empty">
       这里暂时没有匹配的任务。换个分类，或清空搜索试试。
+      <button class="soft-button" @click="clearFilters">清空筛选，看看适合今天的事</button>
     </div>
   </div>
 </template>
+<style scoped>
+.active-card:focus { outline: 2px solid #557252; outline-offset: 4px; }
+.active-section .section-title > span { max-width: none; }
+.active-card .action-reminder { font-size: 13px; color: #64715f; padding-left: 12px; border-left: 2px solid #cbd6ba; }
+.search-scope { color: #64715f; font-size: 13px; margin: 0 0 18px; }
+.active-empty .soft-button { display: block; margin: 16px auto 0; }
+</style>

@@ -37,7 +37,7 @@
 ```bash
 npm --prefix app ci
 npm run dev        # Vite 开发服务器
-npm test           # node:test，34 项逻辑、存档与场景回归检查
+npm test           # node:test，36 项逻辑、存档与场景回归检查
 npm run build      # 构建 app/dist，再生成 Sites 使用的根 dist
 ```
 

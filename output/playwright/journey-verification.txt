@@ -176,9 +176,9 @@ await (async (page) => {
 ### Page
 - Page URL: http://127.0.0.1:5182/?qa#map
 - Page Title: 旷野 · 小芽的家
-- Console: 0 errors, 7 warnings
+- Console: 0 errors, 11 warnings
 ### Events
-- New console entries: .playwright-cli/console-2026-09-21T07-09-47-375Z.log#L1-L7
+- New console entries: .playwright-cli/console-2026-09-21T12-32-09-474Z.log#L5-L11
 - Downloading file kuangye-2026-09-21.json ...
 - Downloaded file kuangye-2026-09-21.json to ".playwright-cli/kuangye-2026-09-21.json"
 - Downloading file kuangye-2026-09-21.json ...

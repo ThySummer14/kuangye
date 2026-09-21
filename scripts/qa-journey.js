@@ -1,0 +1,170 @@
+async (page) => {
+  const widths = [1280, 375];
+  const review = "沿着河堤跑完了第一圈，风很轻。";
+  const results = [];
+  const pageErrors = [];
+  page.on("pageerror", (error) => pageErrors.push(error.message));
+
+  const jsonEqual = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+  const injectFile = async (text, name) => {
+    await page.locator('input[type="file"]').evaluate(
+      (input, payload) => {
+        const data = new DataTransfer();
+        data.items.add(
+          new File([payload.text], payload.name, { type: "application/json" }),
+        );
+        input.files = data.files;
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+      },
+      { text, name },
+    );
+  };
+
+  for (const width of widths) {
+    let step = "start";
+    try {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto("http://127.0.0.1:5182/?qa#map");
+      await page.evaluate(() => {
+        const create = URL.createObjectURL.bind(URL);
+        window.__qaExports = [];
+        URL.createObjectURL = blob => {
+          if (blob instanceof Blob && blob.type.includes('json')) window.__qaExports.push(blob.text());
+          return create(blob);
+        };
+      });
+      await page.evaluate(() => window.__KUANGYE__.reset("map-navigation", "empty"));
+
+      step = "map-to-tasks";
+      await page.locator('[data-place="tasks"]').click();
+      await page.waitForURL("**#tasks");
+      if ((await page.evaluate(() => window.__KUANGYE__.snapshot())).viewport.overflow)
+        throw new Error("任务岩壁横向溢出");
+
+      step = "search-and-accept-run-s1";
+      await page.getByRole("textbox", { name: "搜索任务" }).fill("完成第一次 2 公里慢跑");
+      const taskCard = page.locator(".quest-card").filter({ hasText: "完成第一次 2 公里慢跑" });
+      await taskCard.getByRole("button", { name: "接下这件事 ＋", exact: true }).click();
+      await page.waitForFunction(() => window.__KUANGYE__.snapshot().activeTasks === 1);
+
+      step = "complete-with-review";
+      await page.getByRole("button", { name: "我完成了", exact: true }).click();
+      await page.getByRole("textbox", { name: "给未来的自己留一句话 （可选）" }).fill(review);
+      await page.getByRole("button", { name: "完成，收下这束光", exact: true }).click();
+      await page.getByRole("heading", { name: "＋15 光", exact: true }).waitFor();
+      const completed = await page.evaluate(() => window.__KUANGYE__.snapshot());
+      if (completed.completedTasks !== 1 || completed.home.lumens !== 15)
+        throw new Error(`完成后状态不符：${JSON.stringify({ completedTasks: completed.completedTasks, lumens: completed.home.lumens })}`);
+      await page.screenshot({ path: `output/playwright/journey-complete-${width}.png` });
+
+      step = "go-to-shop-and-buy-mat";
+      await page.getByRole("button", { name: "去集市，给小家添一点温暖 ↗", exact: true }).click();
+      await page.waitForURL("**#shop");
+      await page.getByRole("button", { name: "购买编织草席", exact: true }).click();
+      await page.waitForFunction(() => {
+        const state = window.__KUANGYE__.snapshot();
+        return state.home.inventory.length === 1 && state.home.lumens === 10;
+      });
+
+      step = "place-mat-on-grid";
+      await page.getByRole("button", { name: "回家布置 ↗", exact: true }).click();
+      await page.waitForURL("**#home");
+      await page.locator(".inventory-item").filter({ hasText: "编织草席" }).click();
+      const grid = page.getByRole("group", { name: "房间平面放置格子" });
+      await grid.getByRole("button", { name: "选择第1行第1列", exact: true }).click();
+      await page.getByRole("button", { name: "放在这里", exact: true }).click();
+      await page.waitForFunction(() => window.__KUANGYE__.snapshot().home.placed.length === 1);
+      const placed = await page.evaluate(() => window.__KUANGYE__.snapshot());
+      const item = placed.home.inventory[0];
+      if (
+        placed.completedTasks !== 1 ||
+        placed.home.inventory.length !== 1 ||
+        placed.home.placed.length !== 1 ||
+        placed.home.lumens !== 10 ||
+        item?.fid !== "mat" ||
+        item?.memory?.qid !== "run-s1" ||
+        item?.memory?.review !== review
+      ) {
+        throw new Error(
+          `摆放后状态不符：${JSON.stringify({
+            completedTasks: placed.completedTasks,
+            inventory: placed.home.inventory,
+            placed: placed.home.placed,
+            lumens: placed.home.lumens,
+          })}`,
+        );
+      }
+      await page.screenshot({ path: `output/playwright/journey-home-${width}.png`, fullPage: true });
+
+      step = "journal-export";
+      await page.getByRole("button", { name: "← 回到地图", exact: true }).click();
+      await page.waitForURL("**#map");
+      await page.locator('[data-place="journal"]').click();
+      await page.waitForURL("**#panel");
+      const beforeBackup = await page.evaluate(() => window.__KUANGYE__.snapshot());
+      const download = await Promise.all([
+        page.waitForEvent("download"),
+        page.getByRole("button", { name: "导出备份", exact: true }).click(),
+      ]).then(([file]) => file);
+      const downloadName = download.suggestedFilename();
+      if (!downloadName.endsWith(".json")) throw new Error(`导出文件名不是 JSON：${downloadName}`);
+      const backup = await page.evaluate(() => window.__qaExports.at(-1));
+      const exported = JSON.parse(backup);
+      if (exported.version !== 3 || exported.state.done[0]?.review !== review)
+        throw new Error('实际导出内容缺少版本或完成回顾');
+      const exportedState = JSON.stringify(exported.state);
+
+      step = "journal-import-same-backup";
+      await injectFile(backup, `journey-${width}-backup.json`);
+      await page.getByRole("button", { name: "恢复这份备份", exact: true }).waitFor();
+      await page.getByRole("button", { name: "恢复这份备份", exact: true }).click();
+      await page.waitForFunction(() => !document.querySelector(".import-confirm"));
+      const restored = await page.evaluate(() => window.__KUANGYE__.snapshot());
+      if (!jsonEqual(beforeBackup.home, restored.home) || beforeBackup.completedTasks !== restored.completedTasks)
+        throw new Error("恢复同份备份后余额、记录或家具发生重复/变化");
+
+      step = "reject-future-version";
+      const future = JSON.stringify({ app: "kuangye", version: 4, state: JSON.parse(exportedState) });
+      await injectFile(future, `journey-${width}-future.json`);
+      await page.waitForFunction(() => document.querySelector(".toast")?.textContent.includes("尚不支持的版本"));
+      const futureToast = await page.locator(".toast").textContent();
+      const afterFuture = await page.evaluate(() => window.__KUANGYE__.snapshot());
+      if (!futureToast.includes("尚不支持的版本") || !jsonEqual(restored.home, afterFuture.home) || restored.completedTasks !== afterFuture.completedTasks)
+        throw new Error(`future version 未明确拒绝或改动原存档：${futureToast}`);
+
+      step = "reject-unknown-task";
+      const unknownState = JSON.parse(exportedState);
+      unknownState.done = [...unknownState.done, { qid: "unknown-qa-qid", xp: 25, at: "2026-09-21", review: "不应被导入", units: [] }];
+      const unknown = JSON.stringify({ app: "kuangye", version: 3, state: unknownState });
+      await injectFile(unknown, `journey-${width}-unknown.json`);
+      await page.waitForFunction(() => document.querySelector(".toast")?.textContent.includes("当前任务库无法识别"));
+      const unknownToast = await page.locator(".toast").textContent();
+      const afterUnknown = await page.evaluate(() => window.__KUANGYE__.snapshot());
+      if (!unknownToast.includes("当前任务库无法识别") || !jsonEqual(restored.home, afterUnknown.home) || restored.completedTasks !== afterUnknown.completedTasks)
+        throw new Error(`unknown qid 未明确拒绝或改动原存档：${unknownToast}`);
+      await page.screenshot({ path: `output/playwright/journey-journal-${width}.png`, fullPage: true });
+
+      step = "return-to-map";
+      await page.getByRole("button", { name: "← 回到地图", exact: true }).click();
+      await page.waitForURL("**#map");
+      const final = await page.evaluate(() => window.__KUANGYE__.snapshot());
+      if (final.viewport.overflow || final.completedTasks !== 1 || final.home.inventory.length !== 1 || final.home.placed.length !== 1 || final.home.lumens !== 10)
+        throw new Error(`回地图终态不符：${JSON.stringify({ viewport: final.viewport, completedTasks: final.completedTasks, home: final.home })}`);
+      await page.screenshot({ path: `output/playwright/journey-final-${width}.png` });
+      results.push({ width, status: "PASS", download: downloadName, final: {lumens:final.home.lumens, completed:final.completedTasks, inventory:final.home.inventory.length, placed:final.home.placed.length, memory:final.home.inventory[0].memory}, rejected:[futureToast,unknownToast] });
+    } catch (error) {
+      await page.screenshot({ path: `output/playwright/journey-fail-${width}.png` }).catch(() => {});
+      results.push({ width, status: "FAIL", step, error: error.message });
+    }
+  }
+
+  const failures = results.filter((result) => result.status !== "PASS");
+  const report = {
+    status: failures.length || pageErrors.length ? "FAIL" : "PASS",
+    results,
+    pageErrors,
+    screenshots: "output/playwright/journey-*.png",
+  };
+  if (failures.length || pageErrors.length) throw Error(JSON.stringify(report));
+  return report;
+}

@@ -1,7 +1,7 @@
 import { readFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 const scenario = process.argv[2] || "navigation";
-if (!["navigation", "woodshop", "emotion", "home", "mascot"].includes(scenario))
+if (!["navigation", "woodshop", "emotion", "home", "mascot", "etchings", "journey"].includes(scenario))
   throw new Error("Unknown scenario");
 mkdirSync("output/playwright", { recursive: true });
 const result = spawnSync(

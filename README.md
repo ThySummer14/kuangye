@@ -28,7 +28,7 @@
 
 第一次打开会读取 v3；损坏时依次尝试 `kuangye.v2` 与 `kuangye.v1`。旧版键保留不覆盖，历史已完成任务会折算为起始光余额。导入 v1/v2/v3 JSON 统一经过白名单清洗；当前任务、小家库存、摆放位置与铭牌一起导出。恢复备份前，界面会确认替换，并先自动导出当前数据。
 
-**不同网址不能直接读取彼此的浏览器存档。** 从旧 GitHub Pages 迁移到 Sites 时，先在旧网站导出，再在新网站的「成长手记 → 导入备份」恢复。无痕浏览、清理浏览器数据或换设备前也应备份。
+**不同网址不能直接读取彼此的浏览器存档。** 从旧 GitHub Pages 迁移到 Sites 时，先在旧网站导出，再在新网站的「成长手记 → 导入备份」恢复。导入会拒绝当前任务库无法识别的历史记录与高于 v3 的未来版本，保留原备份，不静默丢失；无痕浏览、清理浏览器数据或换设备前也应备份。
 
 ## 开发与检查
 
@@ -37,7 +37,7 @@
 ```bash
 npm --prefix app ci
 npm run dev        # Vite 开发服务器
-npm test           # node:test，31 项逻辑、存档与场景回归检查
+npm test           # node:test，34 项逻辑、存档与场景回归检查
 npm run build      # 构建 app/dist，再生成 Sites 使用的根 dist
 ```
 
@@ -102,4 +102,4 @@ npm run build      # 构建 app/dist，再生成 Sites 使用的根 dist
 
 ## 第四轮 · 系列与蚀刻章设计骨架
 
-世界观已选A「归光营地」。[SERIES.md](docs/SERIES.md)规定八类系列、一条长期主题线一枚三阶蚀刻章、作者空白写作卡、收集预算及未来v3兼容策略。`data/series.js`和`data/etchings.js`只有未启用模板与空正式目录，没有接入运行时。任务文案由用户本人填写；本轮未实施系列、图鉴界面、奖励或迁移，第五轮概念图尚未启用。角色表情的最新参考分析见 [视觉诊断](docs/MASCOT-EXPRESSION-REVIEW.md)。
+世界观已选A「归光营地」。[SERIES.md](docs/SERIES.md)规定八类系列、一条长期主题线一枚三阶蚀刻章、作者空白写作卡、收集预算及未来v3兼容策略。`data/series.js`和`data/etchings.js`仍是未启用模板，正式 `series/etchings` 目录为空；本轮按用户整体批准的两张总览完成了 [24 张蚀刻章 PNG 与营地印记柜场景 gallery](docs/art/etchings/README.md)，运行时为 24 张 WebP，小图为程序化 SVG。地图 → 瞭望台 → 营地印记柜两击可达只读预览，章未获得、不发光，尚未接入系列发放、任务求值或迁移。角色表情唯一冻结真值见 [形象规范](docs/mascot.md)；[视觉诊断](docs/MASCOT-EXPRESSION-REVIEW.md) 仅作历史参考。

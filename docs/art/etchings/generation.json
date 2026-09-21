@@ -1,0 +1,154 @@
+{
+  "tool": "built-in image_gen",
+  "reference": "../etchings-overview-v2.png",
+  "images": [
+    {
+      "label": "01-plain",
+      "prompt": "Create ONE standalone concept plate of the medallion in row 1 (四时归灯), column 1 (素刻) of the attached approved overview. The overview is visual reference, not an edit target. Faithfully redraw ONLY that single badge at high detail: preserve its exact silhouette, negative spaces, motif, construction stage, materials, restrained colors and hand-carved tool marks. Do not show neighboring badges or the grid. Center it large with generous 15% margin on plain warm ivory, front view with subtle relief depth, soft studio shadow. Square composition. No text, numbers, labels, logos or extra decorative props. Woodcut/etched matte metal handmade feeling in the quiet low-saturation 旷野 island world. This is an individual art concept for approved badge 01-plain, not a sheet. Do not complete missing structural pieces of the inlaid stage; preserve the unjoined parts if present.",
+      "source": "/Users/thysummer/.codex/generated_images/01a094ac-459a-7cd2-85db-54c77d9f5af1/exec-be13675e-157b-4024-8503-f1ce8434482e.png",
+      "file": "01-plain.png"
+    },
+    {
+      "label": "01-inlaid",
+      "prompt": "Create ONE standalone concept plate of the medallion in row 1 (四时归灯), column 2 (嵌纹) of the attached approved overview. The overview is visual reference, not an edit target. Faithfully redraw ONLY that single badge at high detail: preserve its exact silhouette, negative spaces, motif, construction stage, materials, restrained colors and hand-carved tool marks. Do not show neighboring badges or the grid. Center it large with generous 15% margin on plain warm ivory, front view with subtle relief depth, soft studio shadow. Square composition. No text, numbers, labels, logos or extra decorative props. Woodcut/etched matte metal handmade feeling in the quiet low-saturation 旷野 island world. This is an individual art concept for approved badge 01-inlaid, not a sheet. Do not complete missing structural pieces of the inlaid stage; preserve the unjoined parts if present.",
+      "source": "/Users/thysummer/.codex/generated_images/01a094ac-459a-7cd2-85db-54c77d9f5af1/exec-ea356255-7151-4925-8e6d-c5355c6c6193.png",
+      "file": "01-inlaid.png"
+    },
+    {
+      "label": "01-gilded",
+      "prompt": "Create ONE standalone concept plate of the medallion in row 1 (四时归灯), column 3 (镀彩) of the attached approved overview. The overview is visual reference, not an edit target. Faithfully redraw ONLY that single badge at high detail: preserve its exact silhouette, negative spaces, motif, construction stage, materials, restrained colors and hand-carved tool marks. Do not show neighboring badges or the grid. Center it large with generous 15% margin on plain warm ivory, front view with subtle relief depth, soft studio shadow. Square composition. No text, numbers, labels, logos or extra decorative props. Woodcut/etched matte metal handmade feeling in the quiet low-saturation 旷野 island world. This is an individual art concept for approved badge 01-gilded, not a sheet. Do not complete missing structural pieces of the inlaid stage; preserve the unjoined parts if present.",
+      "source": "/Users/thysummer/.codex/generated_images/01a094ac-459a-7cd2-85db-54c77d9f5af1/exec-a4b466e2-64ec-4e94-889a-b8462457f327.png",
+      "file": "01-gilded.png"
+    },
+    {
+      "label": "02-plain",
+      "prompt": "Create ONE standalone concept plate of the medallion in row 2 (山径成桥), column 1 (素刻) of the attached approved overview. The overview is visual reference, not an edit target. Faithfully redraw ONLY that single badge at high detail: preserve its exact silhouette, negative spaces, motif, construction stage, materials, restrained colors and hand-carved tool marks. Do not show neighboring badges or the grid. Center it large with generous 15% margin on plain warm ivory, front view with subtle relief depth, soft studio shadow. Square composition. No text, numbers, labels, logos or extra decorative props. Woodcut/etched matte metal handmade feeling in the quiet low-saturation 旷野 island world. This is an individual art concept for approved badge 02-plain, not a sheet. Do not complete missing structural pieces of the inlaid stage; preserve the unjoined parts if present.",
+      "source": "/Users/thysummer/.codex/generated_images/01a094ac-459a-7cd2-85db-54c77d9f5af1/exec-dcbcf62f-1f32-46ca-b13d-5c344e65891a.png",
+      "file": "02-plain.png"
+    },
+    {
+      "label": "02-inlaid",
+      "prompt": "Create ONE standalone concept plate of the medallion in row 2 (山径成桥), column 2 (嵌纹) of the attached approved overview. The overview is visual reference, not an edit target. Faithfully redraw ONLY that single badge at high detail: preserve its exact silhouette, negative spaces, motif, construction stage, materials, restrained colors and hand-carved tool marks. Do not show neighboring badges or the grid. Center it large with generous 15% margin on plain warm ivory, front view with subtle relief depth, soft studio shadow. Square composition. No text, numbers, labels, logos or extra decorative props. Woodcut/etched matte metal handmade feeling in the quiet low-saturation 旷野 island world. This is an individual art concept for approved badge 02-inlaid, not a sheet. Do not complete missing structural pieces of the inlaid stage; preserve the unjoined parts if present.",
+      "source": "/Users/thysummer/.codex/generated_images/01a094ac-459a-7cd2-85db-54c77d9f5af1/exec-719c35a5-614d-4cb6-a723-12446bddaa6b.png",
+      "file": "02-inlaid.png"
+    },
+    {
+      "label": "02-gilded",
+      "prompt": "Create ONE standalone concept plate of the medallion in row 2 (山径成桥), column 3 (镀彩) of the attached approved overview. The overview is visual reference, not an edit target. Faithfully redraw ONLY that single badge at high detail: preserve its exact silhouette, negative spaces, motif, construction stage, materials, restrained colors and hand-carved tool marks. Do not show neighboring badges or the grid. Center it large with generous 15% margin on plain warm ivory, front view with subtle relief depth, soft studio shadow. Square composition. No text, numbers, labels, logos or extra decorative props. Woodcut/etched matte metal handmade feeling in the quiet low-saturation 旷野 island world. This is an individual art concept for approved badge 02-gilded, not a sheet. Do not complete missing structural pieces of the inlaid stage; preserve the unjoined parts if present.",
+      "source": "/Users/thysummer/.codex/generated_images/01a094ac-459a-7cd2-85db-54c77d9f5af1/exec-dae57ec2-84f5-413f-bac9-b8c4f233e9f3.png",
+      "file": "02-gilded.png"
+    },
+    {
+      "label": "03-plain",
+      "prompt": "Create ONE standalone concept plate of the medallion in row 3 (门外初光), column 1 (素刻) of the attached approved overview. The overview is visual reference, not an edit target. Faithfully redraw ONLY that single badge at high detail: preserve its exact silhouette, negative spaces, motif, construction stage, materials, restrained colors and hand-carved tool marks. Do not show neighboring badges or the grid. Center it large with generous 15% margin on plain warm ivory, front view with subtle relief depth, soft studio shadow. Square composition. No text, numbers, labels, logos or extra decorative props. Woodcut/etched matte metal handmade feeling in the quiet low-saturation 旷野 island world. This is an individual art concept for approved badge 03-plain, not a sheet. Do not complete missing structural pieces of the inlaid stage; preserve the unjoined parts if present.",
+      "source": "/Users/thysummer/.codex/generated_images/01a094ac-459a-7cd2-85db-54c77d9f5af1/exec-86ea8a4d-855d-4f3c-b05e-0e31895ba9e1.png",
+      "file": "03-plain.png"
+    },
+    {
+      "label": "03-inlaid",
+      "prompt": "Create ONE standalone concept plate of the medallion in row 3 (门外初光), column 2 (嵌纹) of the attached approved overview. The overview is visual reference, not an edit target. Faithfully redraw ONLY that single badge at high detail: preserve its exact silhouette, negative spaces, motif, construction stage, materials, restrained colors and hand-carved tool marks. Do not show neighboring badges or the grid. Center it large with generous 15% margin on plain warm ivory, front view with subtle relief depth, soft studio shadow. Square composition. No text, numbers, labels, logos or extra decorative props. Woodcut/etched matte metal handmade feeling in the quiet low-saturation 旷野 island world. This is an individual art concept for approved badge 03-inlaid, not a sheet. Do not complete missing structural pieces of the inlaid stage; preserve the unjoined parts if present.",
+      "source": "/Users/thysummer/.codex/generated_images/01a094ac-459a-7cd2-85db-54c77d9f5af1/exec-dafa5e38-6153-4060-a2c8-2d86c35769e7.png",
+      "file": "03-inlaid.png"
+    },
+    {
+      "label": "03-gilded",
+      "prompt": "Create ONE standalone concept plate of the medallion in row 3 (门外初光), column 3 (镀彩) of the attached approved overview. The overview is visual reference, not an edit target. Faithfully redraw ONLY that single badge at high detail: preserve its exact silhouette, negative spaces, motif, construction stage, materials, restrained colors and hand-carved tool marks. Do not show neighboring badges or the grid. Center it large with generous 15% margin on plain warm ivory, front view with subtle relief depth, soft studio shadow. Square composition. No text, numbers, labels, logos or extra decorative props. Woodcut/etched matte metal handmade feeling in the quiet low-saturation 旷野 island world. This is an individual art concept for approved badge 03-gilded, not a sheet. Do not complete missing structural pieces of the inlaid stage; preserve the unjoined parts if present.",
+      "source": "/Users/thysummer/.codex/generated_images/01a094ac-459a-7cd2-85db-54c77d9f5af1/exec-42636d3c-cb90-4b54-b78f-1721500a0408.png",
+      "file": "03-gilded.png"
+    },
+    {
+      "label": "04-plain",
+      "prompt": "Create ONE standalone concept plate of the medallion in row 4 (滴水成湾), column 1 (素刻) of the attached approved overview. The overview is visual reference, not an edit target. Faithfully redraw ONLY that single badge at high detail: preserve its exact silhouette, negative spaces, motif, construction stage, materials, restrained colors and hand-carved tool marks. Do not show neighboring badges or the grid. Center it large with generous 15% margin on plain warm ivory, front view with subtle relief depth, soft studio shadow. Square composition. No text, numbers, labels, logos or extra decorative props. Woodcut/etched matte metal handmade feeling in the quiet low-saturation 旷野 island world. This is an individual art concept for approved badge 04-plain, not a sheet. Do not complete missing structural pieces of the inlaid stage; preserve the unjoined parts if present.",
+      "source": "/Users/thysummer/.codex/generated_images/01a094ac-459a-7cd2-85db-54c77d9f5af1/exec-ad56ec66-db94-4ec7-9296-fe140ba942a7.png",
+      "file": "04-plain.png"
+    },
+    {
+      "label": "04-inlaid",
+      "prompt": "Create ONE standalone concept plate of the medallion in row 4 (滴水成湾), column 2 (嵌纹) of the attached approved overview. The overview is visual reference, not an edit target. Faithfully redraw ONLY that single badge at high detail: preserve its exact silhouette, negative spaces, motif, construction stage, materials, restrained colors and hand-carved tool marks. Do not show neighboring badges or the grid. Center it large with generous 15% margin on plain warm ivory, front view with subtle relief depth, soft studio shadow. Square composition. No text, numbers, labels, logos or extra decorative props. Woodcut/etched matte metal handmade feeling in the quiet low-saturation 旷野 island world. This is an individual art concept for approved badge 04-inlaid, not a sheet. Do not complete missing structural pieces of the inlaid stage; preserve the unjoined parts if present.",
+      "source": "/Users/thysummer/.codex/generated_images/01a094ac-459a-7cd2-85db-54c77d9f5af1/exec-548a1d5b-bbbb-40c7-b3a6-537ef22159f6.png",
+      "file": "04-inlaid.png"
+    },
+    {
+      "label": "04-gilded",
+      "prompt": "Create ONE standalone concept plate of the medallion in row 4 (滴水成湾), column 3 (镀彩) of the attached approved overview. The overview is visual reference, not an edit target. Faithfully redraw ONLY that single badge at high detail: preserve its exact silhouette, negative spaces, motif, construction stage, materials, restrained colors and hand-carved tool marks. Do not show neighboring badges or the grid. Center it large with generous 15% margin on plain warm ivory, front view with subtle relief depth, soft studio shadow. Square composition. No text, numbers, labels, logos or extra decorative props. Woodcut/etched matte metal handmade feeling in the quiet low-saturation 旷野 island world. This is an individual art concept for approved badge 04-gilded, not a sheet. Do not complete missing structural pieces of the inlaid stage; preserve the unjoined parts if present.",
+      "source": "/Users/thysummer/.codex/generated_images/01a094ac-459a-7cd2-85db-54c77d9f5af1/exec-12c332fd-9de7-40ab-9b34-776d5e686c36.png",
+      "file": "04-gilded.png"
+    },
+    {
+      "label": "05-plain",
+      "prompt": "Create ONE standalone concept plate of the medallion in row 5 (经纬相合), column 1 (素刻) of the attached approved overview. The overview is visual reference, not an edit target. Faithfully redraw ONLY that single badge at high detail: preserve its exact silhouette, negative spaces, motif, construction stage, materials, restrained colors and hand-carved tool marks. Do not show neighboring badges or the grid. Center it large with generous 15% margin on plain warm ivory, front view with subtle relief depth, soft studio shadow. Square composition. No text, numbers, labels, logos or extra decorative props. Woodcut/etched matte metal handmade feeling in the quiet low-saturation 旷野 island world. This is an individual art concept for approved badge 05-plain, not a sheet. Do not complete missing structural pieces of the inlaid stage; preserve the unjoined parts if present.",
+      "source": "/Users/thysummer/.codex/generated_images/01a094ac-459a-7cd2-85db-54c77d9f5af1/exec-302535ce-cbff-4b80-bfbf-368292805c80.png",
+      "file": "05-plain.png"
+    },
+    {
+      "label": "05-inlaid",
+      "prompt": "Create ONE standalone concept plate of the medallion in row 5 (经纬相合), column 2 (嵌纹) of the attached approved overview. The overview is visual reference, not an edit target. Faithfully redraw ONLY that single badge at high detail: preserve its exact silhouette, negative spaces, motif, construction stage, materials, restrained colors and hand-carved tool marks. Do not show neighboring badges or the grid. Center it large with generous 15% margin on plain warm ivory, front view with subtle relief depth, soft studio shadow. Square composition. No text, numbers, labels, logos or extra decorative props. Woodcut/etched matte metal handmade feeling in the quiet low-saturation 旷野 island world. This is an individual art concept for approved badge 05-inlaid, not a sheet. Do not complete missing structural pieces of the inlaid stage; preserve the unjoined parts if present.",
+      "source": "/Users/thysummer/.codex/generated_images/01a094ac-459a-7cd2-85db-54c77d9f5af1/exec-d582d8f7-7dc0-4ff0-a81e-d92fd906cdbe.png",
+      "file": "05-inlaid.png"
+    },
+    {
+      "label": "05-gilded",
+      "prompt": "Create ONE standalone concept plate of the medallion in row 5 (经纬相合), column 3 (镀彩) of the attached approved overview. The overview is visual reference, not an edit target. Faithfully redraw ONLY that single badge at high detail: preserve its exact silhouette, negative spaces, motif, construction stage, materials, restrained colors and hand-carved tool marks. Do not show neighboring badges or the grid. Center it large with generous 15% margin on plain warm ivory, front view with subtle relief depth, soft studio shadow. Square composition. No text, numbers, labels, logos or extra decorative props. Woodcut/etched matte metal handmade feeling in the quiet low-saturation 旷野 island world. This is an individual art concept for approved badge 05-gilded, not a sheet. Do not complete missing structural pieces of the inlaid stage; preserve the unjoined parts if present.",
+      "source": "/Users/thysummer/.codex/generated_images/01a094ac-459a-7cd2-85db-54c77d9f5af1/exec-dcc9b66e-c8a9-4465-a40c-e262bdc061c8.png",
+      "file": "05-gilded.png"
+    },
+    {
+      "label": "06-plain",
+      "prompt": "Create ONE standalone concept plate of the medallion in row 6 (林间远路), column 1 (素刻) of the attached approved overview. The overview is visual reference, not an edit target. Faithfully redraw ONLY that single badge at high detail: preserve its exact silhouette, negative spaces, motif, construction stage, materials, restrained colors and hand-carved tool marks. Do not show neighboring badges or the grid. Center it large with generous 15% margin on plain warm ivory, front view with subtle relief depth, soft studio shadow. Square composition. No text, numbers, labels, logos or extra decorative props. Woodcut/etched matte metal handmade feeling in the quiet low-saturation 旷野 island world. This is an individual art concept for approved badge 06-plain, not a sheet. Do not complete missing structural pieces of the inlaid stage; preserve the unjoined parts if present.",
+      "source": "/Users/thysummer/.codex/generated_images/01a094ac-459a-7cd2-85db-54c77d9f5af1/exec-8bfb4040-e9ed-40e8-9931-d12edbf68789.png",
+      "file": "06-plain.png"
+    },
+    {
+      "label": "06-inlaid",
+      "prompt": "Create ONE standalone concept plate of the medallion in row 6 (林间远路), column 2 (嵌纹) of the attached approved overview. The overview is visual reference, not an edit target. Faithfully redraw ONLY that single badge at high detail: preserve its exact silhouette, negative spaces, motif, construction stage, materials, restrained colors and hand-carved tool marks. Do not show neighboring badges or the grid. Center it large with generous 15% margin on plain warm ivory, front view with subtle relief depth, soft studio shadow. Square composition. No text, numbers, labels, logos or extra decorative props. Woodcut/etched matte metal handmade feeling in the quiet low-saturation 旷野 island world. This is an individual art concept for approved badge 06-inlaid, not a sheet. Do not complete missing structural pieces of the inlaid stage; preserve the unjoined parts if present.",
+      "source": "/Users/thysummer/.codex/generated_images/01a094ac-459a-7cd2-85db-54c77d9f5af1/exec-fd4f2efa-64e0-4443-9503-5b5515644cc4.png",
+      "file": "06-inlaid.png"
+    },
+    {
+      "label": "06-gilded",
+      "prompt": "Create ONE standalone concept plate of the medallion in row 6 (林间远路), column 3 (镀彩) of the attached approved overview. The overview is visual reference, not an edit target. Faithfully redraw ONLY that single badge at high detail: preserve its exact silhouette, negative spaces, motif, construction stage, materials, restrained colors and hand-carved tool marks. Do not show neighboring badges or the grid. Center it large with generous 15% margin on plain warm ivory, front view with subtle relief depth, soft studio shadow. Square composition. No text, numbers, labels, logos or extra decorative props. Woodcut/etched matte metal handmade feeling in the quiet low-saturation 旷野 island world. This is an individual art concept for approved badge 06-gilded, not a sheet. Do not complete missing structural pieces of the inlaid stage; preserve the unjoined parts if present.",
+      "source": "/Users/thysummer/.codex/generated_images/01a094ac-459a-7cd2-85db-54c77d9f5af1/exec-97950438-7c48-4d73-9fbc-474011af5eb0.png",
+      "file": "06-gilded.png"
+    },
+    {
+      "label": "07-plain",
+      "revision": 2,
+      "prompt_note": "prompt 为初次生成时保存的完整非修正版；revision 2 的修正版 prompt 未留存，不补写。",
+      "prompt": "Create ONE standalone concept plate of the medallion in row 7 (木屑成器), column 1 (素刻) of the attached approved overview. The overview is visual reference, not an edit target. Faithfully redraw ONLY that single badge at high detail: preserve its exact silhouette, negative spaces, motif, construction stage, materials, restrained colors and hand-carved tool marks. Do not show neighboring badges or the grid. Center it large with generous 15% margin on plain warm ivory, front view with subtle relief depth, soft studio shadow. Square composition. No text, numbers, labels, logos or extra decorative props. Woodcut/etched matte metal handmade feeling in the quiet low-saturation 旷野 island world. This is an individual art concept for approved badge 07-plain, not a sheet. Do not complete missing structural pieces of the inlaid stage; preserve the unjoined parts if present.",
+      "source": "/Users/thysummer/.codex/generated_images/01a094ac-459a-7cd2-85db-54c77d9f5af1/exec-db77ac8f-ad2a-4c7e-85ad-38047bf27125.png",
+      "file": "07-plain.png"
+    },
+    {
+      "label": "07-inlaid",
+      "prompt": "Create ONE standalone concept plate of the medallion in row 7 (木屑成器), column 2 (嵌纹) of the attached approved overview. The overview is visual reference, not an edit target. Faithfully redraw ONLY that single badge at high detail: preserve its exact silhouette, negative spaces, motif, construction stage, materials, restrained colors and hand-carved tool marks. Do not show neighboring badges or the grid. Center it large with generous 15% margin on plain warm ivory, front view with subtle relief depth, soft studio shadow. Square composition. No text, numbers, labels, logos or extra decorative props. Woodcut/etched matte metal handmade feeling in the quiet low-saturation 旷野 island world. This is an individual art concept for approved badge 07-inlaid, not a sheet. Do not complete missing structural pieces of the inlaid stage; preserve the unjoined parts if present.",
+      "source": "/Users/thysummer/.codex/generated_images/01a094ac-459a-7cd2-85db-54c77d9f5af1/exec-9b516ea3-954e-4e11-9948-f7f47f85c271.png",
+      "file": "07-inlaid.png"
+    },
+    {
+      "label": "07-gilded",
+      "revision": 2,
+      "prompt_note": "prompt 为初次生成时保存的完整非修正版；revision 2 的修正版 prompt 未留存，不补写。",
+      "prompt": "Create ONE standalone concept plate of the medallion in row 7 (木屑成器), column 3 (镀彩) of the attached approved overview. The overview is visual reference, not an edit target. Faithfully redraw ONLY that single badge at high detail: preserve its exact silhouette, negative spaces, motif, construction stage, materials, restrained colors and hand-carved tool marks. Do not show neighboring badges or the grid. Center it large with generous 15% margin on plain warm ivory, front view with subtle relief depth, soft studio shadow. Square composition. No text, numbers, labels, logos or extra decorative props. Woodcut/etched matte metal handmade feeling in the quiet low-saturation 旷野 island world. This is an individual art concept for approved badge 07-gilded, not a sheet. Do not complete missing structural pieces of the inlaid stage; preserve the unjoined parts if present.",
+      "source": "/Users/thysummer/.codex/generated_images/01a094ac-459a-7cd2-85db-54c77d9f5af1/exec-0031d784-d644-4bcc-88c5-3b8bd7a988fc.png",
+      "file": "07-gilded.png"
+    },
+    {
+      "label": "08-plain",
+      "prompt": "Create ONE standalone concept plate of the medallion in row 8 (湖心回声), column 1 (素刻) of the attached approved overview. The overview is visual reference, not an edit target. Faithfully redraw ONLY that single badge at high detail: preserve its exact silhouette, negative spaces, motif, construction stage, materials, restrained colors and hand-carved tool marks. Do not show neighboring badges or the grid. Center it large with generous 15% margin on plain warm ivory, front view with subtle relief depth, soft studio shadow. Square composition. No text, numbers, labels, logos or extra decorative props. Woodcut/etched matte metal handmade feeling in the quiet low-saturation 旷野 island world. This is an individual art concept for approved badge 08-plain, not a sheet. Do not complete missing structural pieces of the inlaid stage; preserve the unjoined parts if present.",
+      "source": "/Users/thysummer/.codex/generated_images/01a094ac-459a-7cd2-85db-54c77d9f5af1/exec-dc8fef30-54a1-4247-b77d-8fca144ca025.png",
+      "file": "08-plain.png"
+    },
+    {
+      "label": "08-inlaid",
+      "prompt": "Create ONE standalone concept plate of the medallion in row 8 (湖心回声), column 2 (嵌纹) of the attached approved overview. The overview is visual reference, not an edit target. Faithfully redraw ONLY that single badge at high detail: preserve its exact silhouette, negative spaces, motif, construction stage, materials, restrained colors and hand-carved tool marks. Do not show neighboring badges or the grid. Center it large with generous 15% margin on plain warm ivory, front view with subtle relief depth, soft studio shadow. Square composition. No text, numbers, labels, logos or extra decorative props. Woodcut/etched matte metal handmade feeling in the quiet low-saturation 旷野 island world. This is an individual art concept for approved badge 08-inlaid, not a sheet. Do not complete missing structural pieces of the inlaid stage; preserve the unjoined parts if present.",
+      "source": "/Users/thysummer/.codex/generated_images/01a094ac-459a-7cd2-85db-54c77d9f5af1/exec-6782a02f-9436-4b15-97c1-9c5d5f70f863.png",
+      "file": "08-inlaid.png"
+    },
+    {
+      "label": "08-gilded",
+      "prompt": "Create ONE standalone concept plate of the medallion in row 8 (湖心回声), column 3 (镀彩) of the attached approved overview. The overview is visual reference, not an edit target. Faithfully redraw ONLY that single badge at high detail: preserve its exact silhouette, negative spaces, motif, construction stage, materials, restrained colors and hand-carved tool marks. Do not show neighboring badges or the grid. Center it large with generous 15% margin on plain warm ivory, front view with subtle relief depth, soft studio shadow. Square composition. No text, numbers, labels, logos or extra decorative props. Woodcut/etched matte metal handmade feeling in the quiet low-saturation 旷野 island world. This is an individual art concept for approved badge 08-gilded, not a sheet. Do not complete missing structural pieces of the inlaid stage; preserve the unjoined parts if present.",
+      "source": "/Users/thysummer/.codex/generated_images/01a094ac-459a-7cd2-85db-54c77d9f5af1/exec-cfa8a5a8-eb05-4f54-8c5e-4a882edd5658.png",
+      "file": "08-gilded.png"
+    }
+  ]
+}

@@ -1889,6 +1889,7 @@ button:disabled {
   .placement-grid,
   .placement-feedback,
   .placement-card > .placement-actions,
+  .placement-card > .primary-button,
   .placement-card > .text-button,
   .placement-card > small,
   .memory-plaque {

@@ -1,6 +1,6 @@
 import { QA } from "./game/qa.js";
 import { expandRoom, addHomeMoment, normalizeDecor } from "./game/room.js";
-import { normalizeState } from "./game/save.js";
+import { normalizeState, parseImport } from "./game/save.js";
 // Reactive API facade. Quest actions stay compatible; home rules and save migration are pure modules.
 import { reactive, watch, computed } from "vue";
 import { TASKS, DIFF, CATS } from "./data/tasks.js";
@@ -56,6 +56,7 @@ watch(
   () => {
     try {
       localStorage.setItem(KEY, JSON.stringify(state));
+      saveWarning.text = "";
     } catch (e) {
       saveWarning.text = "浏览器未能保存进度，请先在成长手记中导出备份。";
     }
@@ -343,8 +344,7 @@ export function exportData() {
   );
 }
 export function importData(json) {
-  const s = normalizeState(JSON.parse(json));
-  if (!s) throw new Error("数据格式不对：缺少 active 数组");
+  const s = parseImport(json);
   state.active = s.active;
   state.done = s.done;
   state.abandoned = s.abandoned;

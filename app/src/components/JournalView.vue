@@ -13,6 +13,9 @@ import {
 import { CATS, METRICS } from "../data/tasks.js";
 import { furnitureById } from "../data/furniture.js";
 import BuddyFace from "./BuddyFace.vue";
+import EtchingCabinet from "./EtchingCabinet.vue";
+import { parseImport } from '../game/save.js';
+const view = ref('journal');
 const emit = defineEmits(["toast", "chains"]),
   file = ref(null),
   filter = ref("done"),
@@ -42,9 +45,7 @@ async function readFile(e) {
   if (!f) return;
   try {
     const text = await f.text();
-    const raw = JSON.parse(text),
-      s = raw.state || raw;
-    if (!Array.isArray(s.active)) throw new Error("缺少任务记录");
+    const s = parseImport(text);
     pendingImport.value = text;
     importSummary.value = `${s.done?.length || 0} 条完成记录，${s.active.length} 件进行中的事`;
   } catch (err) {
@@ -88,7 +89,12 @@ function report() {
 }
 </script>
 <template>
-  <div class="journal-layout">
+  <div class="place-tabs" role="group" aria-label="瞭望台内的去处">
+    <button :class="{active:view==='journal'}" :aria-pressed="view==='journal'" @click="view='journal'">成长手记</button>
+    <button :class="{active:view==='etchings'}" :aria-pressed="view==='etchings'" @click="view='etchings'">营地印记柜</button>
+  </div>
+  <EtchingCabinet v-if="view==='etchings'" />
+  <div v-else class="journal-layout">
     <aside class="journal-summary">
       <BuddyFace :size="160" mood="proud" /><span class="eyebrow"
         >你走过的路，都在这里</span

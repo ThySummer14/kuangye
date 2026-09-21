@@ -2,6 +2,22 @@ import { TASKS } from "../data/tasks.js";
 import { dateStr } from "../data/season.js";
 import { normalizeHome } from "./home.js";
 const TASK_IDS = new Set(TASKS.map((t) => t.id));
+// Import must not silently discard unfamiliar history during whitelist cleaning.
+export function parseImport(json) {
+  const raw = JSON.parse(json);
+  if (raw?.version != null && (!Number.isInteger(raw.version) || raw.version > 3))
+    throw new Error('这份备份来自尚不支持的版本，请保留原文件并使用对应版本恢复');
+  const source = raw?.state || raw;
+  if (!source || !Array.isArray(source.active))
+    throw new Error('数据格式不对：缺少 active 数组');
+  const unknown = ['active','done','abandoned'].flatMap(key =>
+    Array.isArray(source[key]) ? source[key].filter(record =>
+      record && typeof record.qid === 'string' && !TASK_IDS.has(record.qid)
+    ) : []);
+  if (unknown.length)
+    throw new Error(`备份中有 ${unknown.length} 条当前任务库无法识别的记录。为保留这些经历，本次未导入；请保留原备份`);
+  return normalizeState(raw);
+}
 export function normalizeState(raw) {
   const source = raw?.state || raw;
   if (!source || !Array.isArray(source.active)) return null;

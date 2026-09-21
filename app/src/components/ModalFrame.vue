@@ -8,7 +8,11 @@ onMounted(() => {
   previous = document.activeElement;
   dialog.value.showModal();
 });
-onBeforeUnmount(() => previous?.focus?.());
+onBeforeUnmount(() => {
+  // Release native modal inertness before returning focus to its trigger.
+  dialog.value?.close();
+  if (previous?.isConnected) previous.focus();
+});
 </script>
 <template>
   <dialog

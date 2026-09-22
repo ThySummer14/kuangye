@@ -1,0 +1,73 @@
+async (page) => {
+  const results = [], errors = [];
+  page.on('pageerror', e => errors.push(e.message));
+  const snapshot = () => page.evaluate(() => window.__KUANGYE__.snapshot());
+  const fresh = async () => {
+    await page.goto('http://127.0.0.1:5182/?qa#map');
+    await page.reload();
+    await page.evaluate(() => window.__KUANGYE__.reset('map-navigation', 'empty'));
+    await page.locator('[data-place="tasks"]').click();
+    await page.getByRole('textbox', {name:'搜索任务'}).fill('完成第一次 2 公里慢跑');
+    await page.getByRole('button', {name:'接下这件事 ＋', exact:true}).click();
+    await page.getByRole('button', {name:'我完成了', exact:true}).click();
+    await page.getByRole('textbox', {name:'给未来的自己留一句话 （可选）'}).fill('沿着河堤跑完第一圈，风很轻。');
+  };
+  const confirm = async () => {
+    await page.getByRole('button', {name:'完成，收下这束光', exact:true}).click();
+    await page.getByRole('heading', {name:'＋15 光', exact:true}).waitFor();
+    await page.waitForFunction(() => document.activeElement?.matches('dialog .primary-button'));
+    const s = await snapshot();
+    if(s.completedTasks !== 1 || s.home.lumens !== 15 || s.viewport.overflow) throw Error('完成结算或视口异常');
+  };
+  for(const width of [1280,375]) {
+    const height = width === 375 ? 812 : 900;
+    await page.setViewportSize({width,height});
+    await fresh(); await confirm();
+    const primary = page.locator('dialog .primary-button');
+    if(await primary.count() !== 1 || await primary.innerText() !== '收好了，回到地图') throw Error('主按钮不是结束');
+    const box = await primary.boundingBox();
+    if(!box || box.y < 0 || box.y+box.height > height) throw Error('主按钮不在视口');
+    await page.locator('.toast').waitFor({state:'detached'});
+    await page.screenshot({path:`output/playwright/completion-result-${width}.png`});
+    await primary.click(); await page.waitForURL('**#map');
+    if(!await page.evaluate(() => document.activeElement?.classList.contains('brand'))) throw Error('回地图焦点不符');
+    await page.reload();
+    const reloaded = await snapshot();
+    if(reloaded.completedTasks !== 1 || reloaded.home.lumens !== 15) throw Error('刷新丢失或重复奖励');
+    const savedReview = await page.evaluate(() => JSON.parse(localStorage.getItem('kuangye.qa.v3')).done[0]?.review === '沿着河堤跑完第一圈，风很轻。');
+    if(!savedReview) throw Error('回顾未写入本地QA存档');
+    await fresh(); await confirm();
+    await page.keyboard.press('Escape');
+    await page.locator('dialog').waitFor({state:'detached'});
+    const escaped = await snapshot();
+    if(escaped.completedTasks !== 1 || escaped.home.lumens !== 15) throw Error('Escape改变奖励');
+    await fresh(); await confirm();
+    await page.getByRole('button', {name:'接下成长线的下一步',exact:true}).click();
+    await page.locator('dialog').waitFor({state:'detached'});
+    const chain = await snapshot();
+    if(chain.activeTasks !== 1 || chain.completedTasks !== 1 || chain.home.lumens !== 15) throw Error('可选成长线状态异常');
+    await fresh();
+    await page.evaluate(() => { Storage.prototype.setItem = function(){throw new DOMException('QA quota','QuotaExceededError');}; });
+    await confirm();
+    const status = await page.locator('.completion-saved').innerText();
+    if(!status.includes('浏览器未能保存进度') || status.includes('已记入成长手记')) throw Error('存储失败却显示成功');
+    await page.locator('.toast').waitFor({state:'detached'});
+    await page.screenshot({path:`output/playwright/completion-save-failure-${width}.png`});
+    await page.reload();
+    await page.goto('http://127.0.0.1:5182/?qa#map');
+    await page.evaluate(() => window.__KUANGYE__.reset('woodshop','furnished'));
+    await page.locator('[data-place="home"]').click();
+    await page.locator('[data-buddy]').waitFor();
+    for(const light of ['day','night']) {
+      await page.getByLabel(/^光线/).selectOption(light);
+      await page.waitForFunction(light=>window.__KUANGYE__.snapshot().home.decor.light===light,light);
+      await page.locator('.home-stage').scrollIntoViewIfNeeded();
+      await page.locator('.home-stage').screenshot({path:`output/playwright/completion-home-${light}-${width}.png`});
+      const home = await snapshot();
+      if(home.viewport.overflow || home.home.lumens!==500 || home.scene.features.leaves!==2) throw Error('日夜场景状态异常');
+    }
+    results.push({width,height,status:'PASS',completed:reloaded.completedTasks,lumens:reloaded.home.lumens,saveFailure:status});
+  }
+  if(errors.length) throw Error(JSON.stringify(errors));
+  return {status:'PASS',results,pageErrors:errors};
+}

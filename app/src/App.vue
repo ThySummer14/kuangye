@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch, onMounted, onBeforeUnmount } from "vue";
+import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { state, levelInfo, now, buddyBus, saveWarning } from "./store.js";
 import WorldScene from "./components/WorldScene.vue";
 import ChainsView from "./components/ChainsView.vue";
@@ -39,6 +39,11 @@ function navigate(id) {
   if (id === "atelier") { location.href = "./emotion-lab.html" + location.search; return; }
   const next = id === "journal" ? "panel" : id;
   tab.value = validTabs.includes(next) ? next : "map";
+}
+async function finishToMap() {
+  navigate("map");
+  await nextTick();
+  document.querySelector(".brand")?.focus();
 }
 watch(tab, (t) => {
   location.hash = t;
@@ -193,6 +198,7 @@ const nav = [
       @close="completing = null"
       @done="toast"
       @shop="tab = 'shop'"
+      @map="finishToMap"
     /><AbandonModal
       v-if="abandoning"
       :active="abandoning"

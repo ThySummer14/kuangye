@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, nextTick } from "vue";
 import {
   taskById,
   complete,
@@ -7,23 +7,27 @@ import {
   accept,
   nextChainStage,
   state,
+  saveWarning,
 } from "../store.js";
 import { DIFF } from "../data/tasks.js";
 import { lumenReward } from "../game/home.js";
 import BuddyFace from "./BuddyFace.vue";
 import ModalFrame from "./ModalFrame.vue";
 const props = defineProps({ active: Object }),
-  emit = defineEmits(["close", "done", "shop"]);
+  emit = defineEmits(["close", "done", "shop", "map"]);
+const finishButton = ref(null);
 const task = computed(() => taskById[props.active.qid]),
   diff = computed(() => DIFF[task.value.diff]),
   review = ref(""),
   result = ref(false),
   glimmer = ref(0);
-function confirm() {
+async function confirm() {
   const before = state.home.glimmerPaid;
   if (complete(props.active, review.value.trim())) {
     glimmer.value = state.home.glimmerPaid - before;
     result.value = true;
+    await nextTick();
+    finishButton.value?.focus();
   }
 }
 const next = computed(() => (result.value ? nextChainStage(task.value) : null));
@@ -31,6 +35,10 @@ function finish() {
   if (result.value)
     emit("done", `这件事完成了，收获 ${lumenReward(diff.value.xp)} 光`);
   emit("close");
+}
+function returnToMap() {
+  finish();
+  emit("map");
 }
 function nextTask() {
   if (accept(next.value)) {
@@ -76,8 +84,18 @@ function nextTask() {
           这七天的微光，又凝成了 {{ glimmer }} 点光。
         </p>
       </div>
+      <p class="completion-saved" role="status">
+        {{ saveWarning.text || "已记入成长手记。这一件事，收好了。" }}
+      </p>
       <button
+        ref="finishButton"
         class="primary-button full-button"
+        @click="returnToMap"
+      >
+        {{ saveWarning.text ? "回到地图" : "收好了，回到地图" }}
+      </button>
+      <button
+        class="text-button"
         @click="
           emit('shop');
           emit('close');
@@ -90,9 +108,16 @@ function nextTask() {
         @click="nextTask"
       >
         接下成长线的下一步</button
-      ><button class="text-button" @click="finish">
-        先把这一刻记下来
-      </button></template
+      ></template
     ></ModalFrame
   >
 </template>
+<style scoped>
+.completion-saved {
+  text-align: center;
+  color: #667459;
+  font-size: 13px;
+  line-height: 1.7;
+  margin: 0 0 16px;
+}
+</style>

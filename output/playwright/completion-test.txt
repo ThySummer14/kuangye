@@ -1,0 +1,234 @@
+
+> test
+> npm --prefix app test
+
+
+> kuangye@0.1.0 test
+> node --test
+
+TAP version 13
+# Subtest: old light settings migrate to outdoor sync and explicit overrides persist
+ok 1 - old light settings migrate to outdoor sync and explicit overrides persist
+  ---
+  duration_ms: 1.33075
+  type: 'test'
+  ...
+# Subtest: east-eight clock is independent from host timezone and daylight is continuous
+ok 2 - east-eight clock is independent from host timezone and daylight is continuous
+  ---
+  duration_ms: 0.224541
+  type: 'test'
+  ...
+# Subtest: weather codes map to supported scenes without inventing unavailable data
+ok 3 - weather codes map to supported scenes without inventing unavailable data
+  ---
+  duration_ms: 0.388792
+  type: 'test'
+  ...
+# Subtest: blink closes and opens continuously without hard steps
+ok 4 - blink closes and opens continuously without hard steps
+  ---
+  duration_ms: 3.831125
+  type: 'test'
+  ...
+# Subtest: legacy and v3 backups share import cleaning without losing known history
+ok 5 - legacy and v3 backups share import cleaning without losing known history
+  ---
+  duration_ms: 1.285375
+  type: 'test'
+  ...
+# Subtest: import refuses unknown task history instead of silently deleting it
+ok 6 - import refuses unknown task history instead of silently deleting it
+  ---
+  duration_ms: 0.467667
+  type: 'test'
+  ...
+# Subtest: future backup schema cannot overwrite current data through import
+ok 7 - future backup schema cannot overwrite current data through import
+  ---
+  duration_ms: 0.160375
+  type: 'test'
+  ...
+# Subtest: all 196 mood pairs converge; interruption preserves pose and velocity
+ok 8 - all 196 mood pairs converge; interruption preserves pose and velocity
+  ---
+  duration_ms: 97.29725
+  type: 'test'
+  ...
+# Subtest: spring is timestep consistent and resumes safely; closed outlines retain topology
+ok 9 - spring is timestep consistent and resumes safely; closed outlines retain topology
+  ---
+  duration_ms: 1.771
+  type: 'test'
+  ...
+# Subtest: completion rewards are rounded to five and invalid input never creates currency
+ok 10 - completion rewards are rounded to five and invalid input never creates currency
+  ---
+  duration_ms: 1.649708
+  type: 'test'
+  ...
+# Subtest: unique recorded days yield glimmer once; gaps never remove progress
+ok 11 - unique recorded days yield glimmer once; gaps never remove progress
+  ---
+  duration_ms: 0.335083
+  type: 'test'
+  ...
+# Subtest: first task can buy first furniture and memory binds once per completion
+ok 12 - first task can buy first furniture and memory binds once per completion
+  ---
+  duration_ms: 0.112292
+  type: 'test'
+  ...
+# Subtest: placement enforces rotated footprint, bounds, collisions and can move itself
+ok 13 - placement enforces rotated footprint, bounds, collisions and can move itself
+  ---
+  duration_ms: 0.256834
+  type: 'test'
+  ...
+# Subtest: recycle returns 70 percent of actual paid price only once and removes placement
+ok 14 - recycle returns 70 percent of actual paid price only once and removes placement
+  ---
+  duration_ms: 0.734459
+  type: 'test'
+  ...
+# Subtest: level gifts are idempotent and cannot be bought or recycled
+ok 15 - level gifts are idempotent and cannot be bought or recycled
+  ---
+  duration_ms: 0.161792
+  type: 'test'
+  ...
+# Subtest: v2 migration preserves active, done, abandoned and credits historical completion light
+ok 16 - v2 migration preserves active, done, abandoned and credits historical completion light
+  ---
+  duration_ms: 0.266167
+  type: 'test'
+  ...
+# Subtest: v3 save round trip keeps purchased prices, placements and plaques
+ok 17 - v3 save round trip keeps purchased prices, placements and plaques
+  ---
+  duration_ms: 0.29125
+  type: 'test'
+  ...
+# Subtest: corrupt home data is sanitized without removing task records
+ok 18 - corrupt home data is sanitized without removing task records
+  ---
+  duration_ms: 0.303541
+  type: 'test'
+  ...
+# Subtest: vintage stock is deterministic and independent from purchases
+ok 19 - vintage stock is deterministic and independent from purchases
+  ---
+  duration_ms: 0.582875
+  type: 'test'
+  ...
+# Subtest: all expressions interpolate without overshooting or discontinuity
+ok 20 - all expressions interpolate without overshooting or discontinuity
+  ---
+  duration_ms: 2.383875
+  type: 'test'
+  ...
+# Subtest: idle stays put; explicit furniture actions remain available without hopping
+ok 21 - idle stays put; explicit furniture actions remain available without hopping
+  ---
+  duration_ms: 24.8825
+  type: 'test'
+  ...
+# Subtest: soft corner is a closed volumetric shell with outward normals
+ok 22 - soft corner is a closed volumetric shell with outward normals
+  ---
+  duration_ms: 6.59425
+  type: 'test'
+  ...
+# Subtest: every expression stays on the body; character and shadow use no texture maps
+ok 23 - every expression stays on the body; character and shadow use no texture maps
+  ---
+  duration_ms: 16.567875
+  type: 'test'
+  ...
+# Subtest: expansion charges once per added strip and never spends unavailable light
+ok 24 - expansion charges once per added strip and never spends unavailable light
+  ---
+  duration_ms: 2.013166
+  type: 'test'
+  ...
+# Subtest: expanded placements survive normalization and old saves start at nine square metres
+ok 25 - expanded placements survive normalization and old saves start at nine square metres
+  ---
+  duration_ms: 0.550667
+  type: 'test'
+  ...
+# Subtest: rugs support furniture while solid furniture cannot overlap
+ok 26 - rugs support furniture while solid furniture cannot overlap
+  ---
+  duration_ms: 0.229667
+  type: 'test'
+  ...
+# Subtest: walking goes around furniture, rejects sealed destinations and finds reachable interaction edge
+ok 27 - walking goes around furniture, rejects sealed destinations and finds reachable interaction edge
+  ---
+  duration_ms: 3.183167
+  type: 'test'
+  ...
+# Subtest: home discoveries are bounded and cannot be farmed into currency
+ok 28 - home discoveries are bounded and cannot be farmed into currency
+  ---
+  duration_ms: 1.447083
+  type: 'test'
+  ...
+# Subtest: wall fixtures share their supporting cutaway group
+ok 29 - wall fixtures share their supporting cutaway group
+  ---
+  duration_ms: 36.5515
+  type: 'test'
+  ...
+# Subtest: static batching keeps rounded boxes, spheres and tubes sharing one material
+ok 30 - static batching keeps rounded boxes, spheres and tubes sharing one material
+  ---
+  duration_ms: 14.542416
+  type: 'test'
+  ...
+# Subtest: full store flow pays exactly once, persists v3, and imports home together with tasks
+ok 31 - full store flow pays exactly once, persists v3, and imports home together with tasks
+  ---
+  duration_ms: 2.987333
+  type: 'test'
+  ...
+# Subtest: streak check-in is unique and cannot complete early; abandoning never changes currency
+ok 32 - streak check-in is unique and cannot complete early; abandoning never changes currency
+  ---
+  duration_ms: 0.338542
+  type: 'test'
+  ...
+# Subtest: three concurrent tasks remains the global limit
+ok 33 - three concurrent tasks remains the global limit
+  ---
+  duration_ms: 0.870833
+  type: 'test'
+  ...
+# Subtest: damaged v3 falls back to a legacy save without overwriting the legacy key
+ok 34 - damaged v3 falls back to a legacy save without overwriting the legacy key
+  ---
+  duration_ms: 2.154375
+  type: 'test'
+  ...
+# Subtest: search finds advanced tasks without changing today's suggestions
+ok 35 - search finds advanced tasks without changing today's suggestions
+  ---
+  duration_ms: 1.940834
+  type: 'test'
+  ...
+# Subtest: search respects chosen domain and existing task history
+ok 36 - search respects chosen domain and existing task history
+  ---
+  duration_ms: 0.28125
+  type: 'test'
+  ...
+1..36
+# tests 36
+# suites 0
+# pass 36
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 171.281209

@@ -1,5 +1,5 @@
 ### Result
-{"status":"PASS","results":[{"width":1280,"status":"PASS","download":"kuangye-2026-09-21.json","final":{"lumens":10,"completed":1,"inventory":1,"placed":1,"memory":{"qid":"run-s1","review":"沿着河堤跑完了第一圈，风很轻。","date":"2026-09-21"}},"rejected":["未能读取备份：这份备份来自尚不支持的版本，请保留原文件并使用对应版本恢复","未能读取备份：备份中有 1 条当前任务库无法识别的记录。为保留这些经历，本次未导入；请保留原备份"]},{"width":375,"status":"PASS","download":"kuangye-2026-09-21.json","final":{"lumens":10,"completed":1,"inventory":1,"placed":1,"memory":{"qid":"run-s1","review":"沿着河堤跑完了第一圈，风很轻。","date":"2026-09-21"}},"rejected":["未能读取备份：这份备份来自尚不支持的版本，请保留原文件并使用对应版本恢复","未能读取备份：备份中有 1 条当前任务库无法识别的记录。为保留这些经历，本次未导入；请保留原备份"]}],"pageErrors":[],"screenshots":"output/playwright/journey-*.png"}
+{"status":"PASS","results":[{"width":1280,"status":"PASS","download":"kuangye-2026-09-25.json","final":{"lumens":10,"completed":1,"inventory":1,"placed":1,"memory":{"qid":"run-s1","review":"沿着河堤跑完了第一圈，风很轻。","date":"2026-09-25"}},"rejected":["未能读取备份：这份备份来自尚不支持的版本，请保留原文件并使用对应版本恢复","未能读取备份：备份中有 1 条当前任务库无法识别的记录。为保留这些经历，本次未导入；请保留原备份"]},{"width":375,"status":"PASS","download":"kuangye-2026-09-25.json","final":{"lumens":10,"completed":1,"inventory":1,"placed":1,"memory":{"qid":"run-s1","review":"沿着河堤跑完了第一圈，风很轻。","date":"2026-09-25"}},"rejected":["未能读取备份：这份备份来自尚不支持的版本，请保留原文件并使用对应版本恢复","未能读取备份：备份中有 1 条当前任务库无法识别的记录。为保留这些经历，本次未导入；请保留原备份"]}],"pageErrors":[],"screenshots":"output/playwright/journey-*.png"}
 ### Ran Playwright code
 ```js
 await (async (page) => {
@@ -176,14 +176,14 @@ await (async (page) => {
 ### Page
 - Page URL: http://127.0.0.1:5182/?qa#map
 - Page Title: 旷野 · 小芽的家
-- Console: 0 errors, 11 warnings
+- Console: 0 errors, 7 warnings
 ### Events
-- New console entries: .playwright-cli/console-2026-09-21T12-49-52-061Z.log#L61-L67
-- Downloading file kuangye-2026-09-21.json ...
-- Downloaded file kuangye-2026-09-21.json to ".playwright-cli/kuangye-2026-09-21.json"
-- Downloading file kuangye-2026-09-21.json ...
-- Downloaded file kuangye-2026-09-21.json to ".playwright-cli/kuangye-2026-09-21.json"
-- Downloading file kuangye-2026-09-21.json ...
-- Downloaded file kuangye-2026-09-21.json to ".playwright-cli/kuangye-2026-09-21.json"
-- Downloading file kuangye-2026-09-21.json ...
-- Downloaded file kuangye-2026-09-21.json to ".playwright-cli/kuangye-2026-09-21.json"
+- New console entries: .playwright-cli/console-2026-09-25T10-40-14-519Z.log#L16-L21
+- Downloading file kuangye-2026-09-25.json ...
+- Downloaded file kuangye-2026-09-25.json to ".playwright-cli/kuangye-2026-09-25.json"
+- Downloading file kuangye-2026-09-25.json ...
+- Downloaded file kuangye-2026-09-25.json to ".playwright-cli/kuangye-2026-09-25.json"
+- Downloading file kuangye-2026-09-25.json ...
+- Downloaded file kuangye-2026-09-25.json to ".playwright-cli/kuangye-2026-09-25.json"
+- Downloading file kuangye-2026-09-25.json ...
+- Downloaded file kuangye-2026-09-25.json to ".playwright-cli/kuangye-2026-09-25.json"

@@ -50,4 +50,4 @@ await (async (page) => {
 - Page Title: 旷野 · 小芽的家
 - Console: 0 errors, 1 warnings
 ### Events
-- New console entries: .playwright-cli/console-2026-09-21T02-27-40-014Z.log#L2-L15
+- New console entries: .playwright-cli/console-2026-09-25T10-40-14-519Z.log#L1-L15

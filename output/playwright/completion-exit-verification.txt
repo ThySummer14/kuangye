@@ -76,5 +76,9 @@ await (async (page) => {
   return {status:'PASS',results,pageErrors:errors};
 })(page);
 ```
+### Page
+- Page URL: http://127.0.0.1:5182/?qa#home
+- Page Title: 旷野 · 小芽的家
+- Console: 0 errors, 4 warnings
 ### Events
-- New console entries: .playwright-cli/console-2026-09-21T12-49-52-061Z.log#L21-L60
+- New console entries: .playwright-cli/console-2026-09-25T10-40-14-519Z.log#L22-L46

@@ -10,8 +10,8 @@ Resolve Package Graph
 
 
 Resolved source packages:
-  capacitor-swift-pm: https://github.com/ionic-team/capacitor-swift-pm.git @ 8.5.2
   CapApp-SPM: /Users/thysummer/工作流/code/旷野/app/ios/App/CapApp-SPM @ local
+  capacitor-swift-pm: https://github.com/ionic-team/capacitor-swift-pm.git @ 8.5.2
 
 Writing result bundle at path:
 	/tmp/kuangye-result-testCompletionWritesNativeSaveAndSurvivesRelaunch.xcresult
@@ -48,9 +48,27 @@ GatherProvisioningInputs
 
 CreateBuildDescription
 
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --print-asset-tag-combinations --output-format xml1 /Users/thysummer/工作流/code/旷野/app/ios/App/App/Assets.xcassets
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/ibtool --version --output-format xml1
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --version --output-format xml1
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+Build description signature: e8146d4ac67146b3dc361bfa449f7f3d
+Build description path: /tmp/kuangye-dd/Build/Intermediates.noindex/XCBuildData/e8146d4ac67146b3dc361bfa449f7f3d.xcbuilddata
 ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /tmp/kuangye-dd/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
     cd /Users/thysummer/工作流/code/旷野/app/ios/App/App.xcodeproj
     /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /tmp/kuangye-dd/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+SwiftDriver KuangyeUITests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'KuangyeUITests' from project 'App')
+    cd /Users/thysummer/工作流/code/旷野/app/ios/App
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name KuangyeUITests -Onone @/tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/Objects-normal/arm64/KuangyeUITests.SwiftFileList -DDEBUG -module-alias Testing\=_Testing_Unavailable -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target arm64-apple-ios15.0-simulator -g -module-cache-path /tmp/kuangye-dd/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/kuangye-dd/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -parse-as-library -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/kuangye-dd/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/Objects-normal/arm64/KuangyeUITests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/kuangye-dd/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/kuangye-dd/ModuleCache.noindex -sdk-module-cache-path /tmp/kuangye-dd/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/Objects-normal/arm64/KuangyeUITests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/Objects-normal/arm64/KuangyeUITests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/kuangye-dd/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/Objects-normal/arm64/KuangyeUITests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/KuangyeUITests-generated-files.hmap -Xcc -I/tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/KuangyeUITests-own-target-headers.hmap -Xcc -I/tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/KuangyeUITests-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/App-0ca3007d900a678c2b4d53418799ee3d-VFS-iphonesimulator/all-product-headers.yaml -Xcc -iquote -Xcc /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/KuangyeUITests-project-headers.hmap -Xcc -I/tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/include -Xcc -I/tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/DerivedSources-normal/arm64 -Xcc -I/tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/DerivedSources/arm64 -Xcc -I/tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/Objects-normal/arm64/KuangyeUITests-Swift.h -working-directory /Users/thysummer/工作流/code/旷野/app/ios/App -experimental-emit-module-separately -disable-cmo
 
 ProcessInfoPlistFile /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/App.app/Info.plist /Users/thysummer/工作流/code/旷野/app/ios/App/App/Info.plist (in target 'App' from project 'App')
     cd /Users/thysummer/工作流/code/旷野/app/ios/App
@@ -65,106 +83,144 @@ ProcessInfoPlistFile /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/Kuangy
     cd /Users/thysummer/工作流/code/旷野/app/ios/App
     builtin-infoPlistUtility /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/empty-KuangyeUITests.plist -producttype com.apple.product-type.bundle.ui-testing -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/ProductTypeInfoPlistAdditions.plist -o /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/KuangyeUITests-Runner.app/PlugIns/KuangyeUITests.xctest/Info.plist
 
+SwiftEmitModule normal arm64 Emitting\ module\ for\ KuangyeUITests (in target 'KuangyeUITests' from project 'App')
+
+SwiftCompile normal arm64 (in target 'KuangyeUITests' from project 'App')
+    cd /Users/thysummer/工作流/code/旷野/app/ios/App
+    
+
+SwiftCompile normal arm64 Compiling\ NativeSaveTests.swift /Users/thysummer/工作流/code/旷野/app/ios/App/AppUITests/NativeSaveTests.swift (in target 'KuangyeUITests' from project 'App')
+
+SwiftCompile normal arm64 /Users/thysummer/工作流/code/旷野/app/ios/App/AppUITests/NativeSaveTests.swift (in target 'KuangyeUITests' from project 'App')
+    cd /Users/thysummer/工作流/code/旷野/app/ios/App
+    builtin-SwiftPerFileCompile NativeSaveTests.swift
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for KuangyeUITests (in target 'KuangyeUITests' from project 'App')
+
+SwiftDriver\ Compilation\ Requirements KuangyeUITests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'KuangyeUITests' from project 'App')
+    cd /Users/thysummer/工作流/code/旷野/app/ios/App
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name KuangyeUITests -Onone @/tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/Objects-normal/arm64/KuangyeUITests.SwiftFileList -DDEBUG -module-alias Testing\=_Testing_Unavailable -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target arm64-apple-ios15.0-simulator -g -module-cache-path /tmp/kuangye-dd/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/kuangye-dd/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -parse-as-library -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/kuangye-dd/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/Objects-normal/arm64/KuangyeUITests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/kuangye-dd/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/kuangye-dd/ModuleCache.noindex -sdk-module-cache-path /tmp/kuangye-dd/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/Objects-normal/arm64/KuangyeUITests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/Objects-normal/arm64/KuangyeUITests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/kuangye-dd/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/Objects-normal/arm64/KuangyeUITests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/KuangyeUITests-generated-files.hmap -Xcc -I/tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/KuangyeUITests-own-target-headers.hmap -Xcc -I/tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/KuangyeUITests-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/App-0ca3007d900a678c2b4d53418799ee3d-VFS-iphonesimulator/all-product-headers.yaml -Xcc -iquote -Xcc /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/KuangyeUITests-project-headers.hmap -Xcc -I/tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/include -Xcc -I/tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/DerivedSources-normal/arm64 -Xcc -I/tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/DerivedSources/arm64 -Xcc -I/tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/Objects-normal/arm64/KuangyeUITests-Swift.h -working-directory /Users/thysummer/工作流/code/旷野/app/ios/App -experimental-emit-module-separately -disable-cmo
+
+Copy /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/KuangyeUITests.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/Objects-normal/arm64/KuangyeUITests.swiftsourceinfo (in target 'KuangyeUITests' from project 'App')
+    cd /Users/thysummer/工作流/code/旷野/app/ios/App
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/Objects-normal/arm64/KuangyeUITests.swiftsourceinfo /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/KuangyeUITests.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo
+
+Copy /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/KuangyeUITests.swiftmodule/arm64-apple-ios-simulator.abi.json /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/Objects-normal/arm64/KuangyeUITests.abi.json (in target 'KuangyeUITests' from project 'App')
+    cd /Users/thysummer/工作流/code/旷野/app/ios/App
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/Objects-normal/arm64/KuangyeUITests.abi.json /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/KuangyeUITests.swiftmodule/arm64-apple-ios-simulator.abi.json
+
+SwiftDriverJobDiscovery normal arm64 Compiling NativeSaveTests.swift (in target 'KuangyeUITests' from project 'App')
+
+SwiftDriver\ Compilation KuangyeUITests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'KuangyeUITests' from project 'App')
+    cd /Users/thysummer/工作流/code/旷野/app/ios/App
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name KuangyeUITests -Onone @/tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/Objects-normal/arm64/KuangyeUITests.SwiftFileList -DDEBUG -module-alias Testing\=_Testing_Unavailable -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -target arm64-apple-ios15.0-simulator -g -module-cache-path /tmp/kuangye-dd/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/kuangye-dd/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk/Developer/Library/Frameworks -parse-as-library -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/kuangye-dd/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache -output-file-map /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/Objects-normal/arm64/KuangyeUITests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/kuangye-dd/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/kuangye-dd/ModuleCache.noindex -sdk-module-cache-path /tmp/kuangye-dd/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/Objects-normal/arm64/KuangyeUITests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/Objects-normal/arm64/KuangyeUITests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/kuangye-dd/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/Objects-normal/arm64/KuangyeUITests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/KuangyeUITests-generated-files.hmap -Xcc -I/tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/KuangyeUITests-own-target-headers.hmap -Xcc -I/tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/KuangyeUITests-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/App-0ca3007d900a678c2b4d53418799ee3d-VFS-iphonesimulator/all-product-headers.yaml -Xcc -iquote -Xcc /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/KuangyeUITests-project-headers.hmap -Xcc -I/tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/include -Xcc -I/tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/DerivedSources-normal/arm64 -Xcc -I/tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/DerivedSources/arm64 -Xcc -I/tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/Objects-normal/arm64/KuangyeUITests-Swift.h -working-directory /Users/thysummer/工作流/code/旷野/app/ios/App -experimental-emit-module-separately -disable-cmo
+
 CopySwiftLibs /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/KuangyeUITests-Runner.app/PlugIns/KuangyeUITests.xctest (in target 'KuangyeUITests' from project 'App')
     cd /Users/thysummer/工作流/code/旷野/app/ios/App
     builtin-swiftStdLibTool --copy --verbose --scan-executable /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/KuangyeUITests-Runner.app/PlugIns/KuangyeUITests.xctest/KuangyeUITests --scan-folder /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/KuangyeUITests-Runner.app/PlugIns/KuangyeUITests.xctest/Frameworks --scan-folder /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/KuangyeUITests-Runner.app/PlugIns/KuangyeUITests.xctest/PlugIns --scan-folder /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/KuangyeUITests-Runner.app/PlugIns/KuangyeUITests.xctest/SystemExtensions --scan-folder /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/KuangyeUITests-Runner.app/PlugIns/KuangyeUITests.xctest/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/KuangyeUITests-Runner.app/PlugIns/KuangyeUITests.xctest/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
 Ignoring --strip-bitcode because --sign was not passed
 
+ExtractAppIntentsMetadata (in target 'KuangyeUITests' from project 'App')
+    cd /Users/thysummer/工作流/code/旷野/app/ios/App
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name KuangyeUITests --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk --xcode-version 27A266a --platform-family iOS --deployment-target 15.0 --bundle-identifier dev.kuangye.uitest --output /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/KuangyeUITests-Runner.app/PlugIns/KuangyeUITests.xctest --target-triple arm64-apple-ios15.0-simulator --binary-file /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/KuangyeUITests-Runner.app/PlugIns/KuangyeUITests.xctest/KuangyeUITests --dependency-file /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/Objects-normal/arm64/KuangyeUITests_dependency_info.dat --stringsdata-file /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/Objects-normal/arm64/KuangyeUITests.SwiftFileList --metadata-file-list /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/KuangyeUITests.DependencyMetadataFileList --static-metadata-file-list /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/KuangyeUITests.DependencyStaticMetadataFileList --swift-const-vals-list /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/Objects-normal/arm64/KuangyeUITests.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --no-app-shortcuts-localization
+2026-09-25 20:27:31.572 appintentsmetadataprocessor[63195:918033] Starting appintentsmetadataprocessor export
+2026-09-25 20:27:31.573 appintentsmetadataprocessor[63195:918033] warning: Metadata extraction skipped, no AppIntents.framework dependency found
+
+PruneExplicitPrecompiledModules /tmp/kuangye-dd/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
 PruneExplicitPrecompiledModules /tmp/kuangye-dd/SDKExplicitPrecompiledModules
 
 PruneExplicitPrecompiledModules /tmp/kuangye-dd/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
 
-PruneExplicitPrecompiledModules /tmp/kuangye-dd/Build/Intermediates.noindex/ExplicitPrecompiledModules
-
-2026-09-25 20:10:37.969203+0800 KuangyeUITests-Runner[50326:883492] [Default] Running tests...
+2026-09-25 20:27:32.748370+0800 KuangyeUITests-Runner[63196:918227] [Default] Running tests...
     t =      nans Interface orientation changed to Portrait
-Test Suite 'Selected tests' started at 2026-09-25 20:10:40.175.
-Test Suite 'KuangyeUITests.xctest' started at 2026-09-25 20:10:40.175.
-Test Suite 'NativeSaveTests' started at 2026-09-25 20:10:40.176.
+Test Suite 'Selected tests' started at 2026-09-25 20:27:35.439.
+Test Suite 'KuangyeUITests.xctest' started at 2026-09-25 20:27:35.440.
+Test Suite 'NativeSaveTests' started at 2026-09-25 20:27:35.440.
 Test Case '-[KuangyeUITests.NativeSaveTests testCompletionWritesNativeSaveAndSurvivesRelaunch]' started.
-    t =     0.00s Start Test at 2026-09-25 20:10:40.178
+    t =     0.00s Start Test at 2026-09-25 20:27:35.442
     t =     0.02s Set Up
-    t =     0.07s Open dev.kuangye.prototype
-    t =     0.07s     Launch dev.kuangye.prototype
-2026-09-25 20:10:40.308 xcodebuild[50313:883235] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
-2026-09-25 20:10:40.308 xcodebuild[50313:883235] [MT] IDELaunchParametersSnapshot: no debugger version
-    t =     0.58s         Setting up automation session
-objc[50326]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x10a074398) and /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x10a168310). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
-    t =     2.66s         Wait for dev.kuangye.prototype to idle
-    t =     4.52s Waiting 60.0s for Button (First Match) to exist
-    t =     5.56s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
-    t =     5.56s         Checking existence of `Button (First Match)`
-    t =     5.62s Tap Button (First Match)
-    t =     5.62s     Wait for dev.kuangye.prototype to idle
-    t =     5.63s     Find the Button (First Match)
-    t =     5.65s     Check for interrupting elements affecting "☷ 任务岩壁" Button
-    t =     5.67s     Synthesize event
-    t =     5.97s     Wait for dev.kuangye.prototype to idle
-    t =     5.97s Waiting 30.0s for StaticText (First Match) to exist
-    t =     7.01s     Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
-    t =     7.01s         Checking existence of `StaticText (First Match)`
-    t =     7.07s Waiting 20.0s for Button (First Match) to exist
-    t =     8.11s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
-    t =     8.11s         Checking existence of `Button (First Match)`
-    t =     8.16s Tap Button (First Match)
-    t =     8.16s     Wait for dev.kuangye.prototype to idle
-    t =     8.16s     Find the Button (First Match)
-    t =     8.20s     Check for interrupting elements affecting "我完成了" Button
-    t =     8.23s     Synthesize event
-    t =     8.52s     Wait for dev.kuangye.prototype to idle
-    t =     8.53s Waiting 20.0s for Button (First Match) to exist
-    t =     9.57s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
-    t =     9.57s         Checking existence of `Button (First Match)`
-    t =     9.60s Tap Button (First Match)
-    t =     9.60s     Wait for dev.kuangye.prototype to idle
-    t =     9.60s     Find the Button (First Match)
-    t =     9.62s     Check for interrupting elements affecting "完成，收下这束光" Button
-    t =     9.64s     Synthesize event
-    t =     9.94s     Wait for dev.kuangye.prototype to idle
-    t =     9.94s Waiting 20.0s for Button (First Match) to exist
-    t =    10.97s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
-    t =    10.97s         Checking existence of `Button (First Match)`
-    t =    11.00s Tap Button (First Match)
-    t =    11.00s     Wait for dev.kuangye.prototype to idle
-    t =    11.01s     Find the Button (First Match)
-    t =    11.02s     Check for interrupting elements affecting "收好了，回到地图" Button
-    t =    11.04s     Synthesize event
-    t =    11.34s     Wait for dev.kuangye.prototype to idle
-    t =    11.34s Waiting 30.0s for StaticText (First Match) to exist
-    t =    12.38s     Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
-    t =    12.38s         Checking existence of `StaticText (First Match)`
-    t =    16.41s Terminate dev.kuangye.prototype:50480
-    t =    17.48s Open dev.kuangye.prototype
-    t =    17.48s     Launch dev.kuangye.prototype
-2026-09-25 20:10:57.660 xcodebuild[50313:883235] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
-2026-09-25 20:10:57.660 xcodebuild[50313:883235] [MT] IDELaunchParametersSnapshot: no debugger version
-    t =    17.69s         Setting up automation session
-    t =    19.38s         Wait for dev.kuangye.prototype to idle
-    t =    21.23s Waiting 60.0s for Button (First Match) to exist
-    t =    22.26s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
-    t =    22.27s         Checking existence of `Button (First Match)`
-    t =    22.33s Tap Button (First Match)
-    t =    22.33s     Wait for dev.kuangye.prototype to idle
-    t =    22.34s     Find the Button (First Match)
-    t =    22.37s     Check for interrupting elements affecting "☷ 任务岩壁" Button
-    t =    22.39s     Synthesize event
-    t =    22.69s     Wait for dev.kuangye.prototype to idle
-    t =    22.69s Waiting 30.0s for StaticText (First Match) to exist
-    t =    23.73s     Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
-    t =    23.73s         Checking existence of `StaticText (First Match)`
-    t =    23.79s Find the Target Application 'dev.kuangye.prototype'
-    t =    23.89s Added attachment named '03-after-relaunch'
-    t =    23.89s Tear Down
-Test Case '-[KuangyeUITests.NativeSaveTests testCompletionWritesNativeSaveAndSurvivesRelaunch]' passed (24.148 seconds).
-Test Suite 'NativeSaveTests' passed at 2026-09-25 20:11:04.326.
-	 Executed 1 test, with 0 failures (0 unexpected) in 24.148 (24.150) seconds
-Test Suite 'KuangyeUITests.xctest' passed at 2026-09-25 20:11:04.326.
-	 Executed 1 test, with 0 failures (0 unexpected) in 24.148 (24.151) seconds
-Test Suite 'Selected tests' passed at 2026-09-25 20:11:04.327.
-	 Executed 1 test, with 0 failures (0 unexpected) in 24.148 (24.152) seconds
-2026-09-25 20:11:04.682 xcodebuild[50313:883235] [MT] IDETestOperationsObserverDebug: 27.676 elapsed -- Testing started completed.
-2026-09-25 20:11:04.682 xcodebuild[50313:883235] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
-2026-09-25 20:11:04.682 xcodebuild[50313:883235] [MT] IDETestOperationsObserverDebug: 27.676 sec, +27.676 sec -- end
+    t =     0.05s Open dev.kuangye.prototype
+    t =     0.05s     Launch dev.kuangye.prototype
+2026-09-25 20:27:35.693 xcodebuild[63178:917942] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-25 20:27:35.693 xcodebuild[63178:917942] [MT] IDELaunchParametersSnapshot: no debugger version
+objc[63196]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x107d58398) and /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x107e4c310). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =     0.67s         Setting up automation session
+    t =     3.06s         Wait for dev.kuangye.prototype to idle
+    t =     5.01s Waiting 60.0s for Button (First Match) to exist
+    t =     6.04s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     6.04s         Checking existence of `Button (First Match)`
+    t =     6.10s Tap Button (First Match)
+    t =     6.10s     Wait for dev.kuangye.prototype to idle
+    t =     6.10s     Find the Button (First Match)
+    t =     6.12s     Check for interrupting elements affecting "☷ 任务岩壁" Button
+    t =     6.15s     Synthesize event
+    t =     6.45s     Wait for dev.kuangye.prototype to idle
+    t =     6.45s Waiting 30.0s for StaticText (First Match) to exist
+    t =     7.49s     Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
+    t =     7.49s         Checking existence of `StaticText (First Match)`
+    t =     7.53s Waiting 20.0s for Button (First Match) to exist
+    t =     8.57s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     8.57s         Checking existence of `Button (First Match)`
+    t =     8.62s Tap Button (First Match)
+    t =     8.62s     Wait for dev.kuangye.prototype to idle
+    t =     8.63s     Find the Button (First Match)
+    t =     8.66s     Check for interrupting elements affecting "我完成了" Button
+    t =     8.69s     Synthesize event
+    t =     8.98s     Wait for dev.kuangye.prototype to idle
+    t =     8.98s Waiting 20.0s for Button (First Match) to exist
+    t =    10.02s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    10.02s         Checking existence of `Button (First Match)`
+    t =    10.05s Tap Button (First Match)
+    t =    10.05s     Wait for dev.kuangye.prototype to idle
+    t =    10.06s     Find the Button (First Match)
+    t =    10.08s     Check for interrupting elements affecting "完成，收下这束光" Button
+    t =    10.10s     Synthesize event
+    t =    10.39s     Wait for dev.kuangye.prototype to idle
+    t =    10.40s Waiting 20.0s for Button (First Match) to exist
+    t =    11.43s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    11.43s         Checking existence of `Button (First Match)`
+    t =    11.46s Tap Button (First Match)
+    t =    11.46s     Wait for dev.kuangye.prototype to idle
+    t =    11.46s     Find the Button (First Match)
+    t =    11.48s     Check for interrupting elements affecting "收好了，回到地图" Button
+    t =    11.50s     Synthesize event
+    t =    11.79s     Wait for dev.kuangye.prototype to idle
+    t =    11.80s Waiting 30.0s for StaticText (First Match) to exist
+    t =    12.83s     Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
+    t =    12.83s         Checking existence of `StaticText (First Match)`
+    t =    16.86s Terminate dev.kuangye.prototype:63222
+    t =    17.93s Open dev.kuangye.prototype
+    t =    17.94s     Launch dev.kuangye.prototype
+2026-09-25 20:27:53.376 xcodebuild[63178:917942] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-25 20:27:53.376 xcodebuild[63178:917942] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    18.14s         Setting up automation session
+    t =    19.70s         Wait for dev.kuangye.prototype to idle
+    t =    21.52s Waiting 60.0s for Button (First Match) to exist
+    t =    22.56s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    22.56s         Checking existence of `Button (First Match)`
+    t =    22.61s Tap Button (First Match)
+    t =    22.61s     Wait for dev.kuangye.prototype to idle
+    t =    22.62s     Find the Button (First Match)
+    t =    22.64s     Check for interrupting elements affecting "☷ 任务岩壁" Button
+    t =    22.67s     Synthesize event
+    t =    22.97s     Wait for dev.kuangye.prototype to idle
+    t =    22.98s Waiting 30.0s for StaticText (First Match) to exist
+    t =    24.02s     Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
+    t =    24.02s         Checking existence of `StaticText (First Match)`
+    t =    24.07s Find the Target Application 'dev.kuangye.prototype'
+    t =    24.15s Added attachment named '03-after-relaunch'
+    t =    24.15s Tear Down
+Test Case '-[KuangyeUITests.NativeSaveTests testCompletionWritesNativeSaveAndSurvivesRelaunch]' passed (24.406 seconds).
+Test Suite 'NativeSaveTests' passed at 2026-09-25 20:27:59.848.
+	 Executed 1 test, with 0 failures (0 unexpected) in 24.406 (24.408) seconds
+Test Suite 'KuangyeUITests.xctest' passed at 2026-09-25 20:27:59.849.
+	 Executed 1 test, with 0 failures (0 unexpected) in 24.406 (24.409) seconds
+Test Suite 'Selected tests' passed at 2026-09-25 20:27:59.849.
+	 Executed 1 test, with 0 failures (0 unexpected) in 24.406 (24.410) seconds
+2026-09-25 20:28:00.164 xcodebuild[63178:917942] [MT] IDETestOperationsObserverDebug: 28.587 elapsed -- Testing started completed.
+2026-09-25 20:28:00.164 xcodebuild[63178:917942] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-09-25 20:28:00.164 xcodebuild[63178:917942] [MT] IDETestOperationsObserverDebug: 28.587 sec, +28.587 sec -- end
 
 Test session results, code coverage, and logs:
 	/tmp/kuangye-result-testCompletionWritesNativeSaveAndSurvivesRelaunch.xcresult

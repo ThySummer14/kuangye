@@ -30,4 +30,4 @@
 
 - 设置/手记内提供"清除全部数据"：删除 Application Support 两个 JSON 与 Documents 备份（`SaveFiles` 目录已知，实现成本低）。
 - 卸载 App 即删除沙盒全部数据（iOS 系统行为）。
-- 本条目前**未实现**，隐私政策不得先于实现宣称删除入口。
+- 2026-09-25 已实现：成长手记 → 数据 → 重置，双平台 purge（原生删 Application Support 双代文件；Documents 导出备份属用户财产不动）。隐私政策可以如实宣称。

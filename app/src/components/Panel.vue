@@ -5,6 +5,7 @@ import {
   exportData, importData, resetData, now,
 } from '../store'
 import { CATS, METRICS } from '../data/tasks'
+import { nativePlatform } from '../services/native.js'
 // 3D 场景懒加载：进面板才下载 three.js
 const SkyDiorama = defineAsyncComponent(() => import('./SkyDiorama.vue'))
 
@@ -141,7 +142,7 @@ function onReset() {
   </details>
 
   <!-- 数据 -->
-  <div class="section-h"><span class="t">数据</span><span class="s">一切都在这台设备的浏览器里</span><span class="line" /></div>
+  <div class="section-h"><span class="t">数据</span><span class="s">{{ nativePlatform ? "一切都在这台设备的应用里" : "一切都在这台设备的浏览器里" }}</span><span class="line" /></div>
   <div class="char-card" style="margin-top: 0">
     <div class="setting-row">
       <button class="btn btn-sm" @click="doExport">导出备份 JSON</button>

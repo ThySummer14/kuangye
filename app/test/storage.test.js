@@ -13,6 +13,7 @@ function fixture(entries = {}) {
   const io = {
     read: async key => files.get(key) ?? null,
     writeAtomic: async (key,value) => { operations.push(key); files.set(key,value); },
+    deleteAll: async () => { operations.push('deleteAll'); files.clear(); },
   };
   return { files, legacy, io, operations, old: {getItem:key=>legacy.get(key) ?? null} };
 }
@@ -89,11 +90,22 @@ test('overlapping save calls preserve request order and the penultimate generati
   assert.deepEqual(f.operations,['previous','current','previous','current']);
 });
 test('web driver keeps original keys, QA isolation, and write errors observable', () => {
-  const f=fixture(); const mem={getItem:f.old.getItem,setItem:(k,v)=>f.legacy.set(k,v)};
+  const f=fixture(); const mem={getItem:f.old.getItem,setItem:(k,v)=>f.legacy.set(k,v),removeItem:k=>f.legacy.delete(k)};
   f.legacy.set('kuangye.v2',text());
   const web=createWebStorage(()=>mem); assert.equal(web.load().done.length,1);
   const qa=createWebStorage(()=>mem,true); assert.equal(qa.load(),null);
   qa.save(text('QA')); assert.equal(f.legacy.get('kuangye.v2'),text());
   web.save(text('Web')); assert.equal(JSON.parse(f.legacy.get('kuangye.v3')).done[0].review,'Web');
   mem.setItem=()=>{throw Error('quota');}; assert.throws(()=>web.save(text()),/quota/);
+});
+test('purge deletes the whole vault and the next save starts fresh', async () => {
+  const f=fixture({current:envelope('旧')});
+  const driver=await createFileStorage(f.io,f.old);
+  await driver.purge();
+  assert.equal(f.files.get('current'),undefined);
+  assert.equal(f.files.get('previous'),undefined);
+  await driver.save(text('新开始'));
+  assert.equal(f.files.get('previous'),undefined);
+  assert.equal(JSON.parse(f.files.get('current')).state.done[0].review,'新开始');
+  assert.deepEqual(f.operations,['deleteAll','current']);
 });

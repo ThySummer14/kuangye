@@ -14,6 +14,8 @@ export function createWebStorage(storage, qa = false) {
       return null;
     },
     save(text) { storage().setItem(key, text); },
+    // A reset means the old generation is really gone, not renamed to backup.
+    purge() { storage().removeItem(key); },
   };
 }
 
@@ -50,9 +52,19 @@ export async function createFileStorage(io, legacyStorage) {
       parseImport(text);
       const envelope = JSON.stringify({ app: 'kuangye', version: 3, state: JSON.parse(text) });
       const operation = queue.catch(() => {}).then(async () => {
+        // A purge empties the vault: nothing is preserved as backup, so the
+        // next save starts a brand-new generation.
         if (good != null) await verifiedWrite('previous', good);
         await verifiedWrite('current', envelope);
         good = envelope;
+      });
+      queue = operation;
+      return operation;
+    },
+    purge() {
+      const operation = queue.catch(() => {}).then(async () => {
+        await io.deleteAll();
+        good = null;
       });
       queue = operation;
       return operation;

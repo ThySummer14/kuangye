@@ -8,6 +8,7 @@ export async function initializeNativeStorage() {
   const driver = await createFileStorage({
     read: async name => (await files.read({ name })).text ?? null,
     writeAtomic: (name, text) => files.write({ name, text }),
+    deleteAll: () => files.deleteAll(),
   }, localStorage);
   useStorageDriver(driver);
   document.documentElement.classList.add('native-app');

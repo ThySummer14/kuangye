@@ -6,5 +6,6 @@ export const persistence = {
   get notice() { return driver.notice || ''; },
   load: () => driver.load(),
   save: text => driver.save(text),
+  purge: () => driver.purge ? driver.purge() : undefined,
 };
 export function useStorageDriver(next) { driver = next; }

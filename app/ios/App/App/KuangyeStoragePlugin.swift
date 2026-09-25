@@ -7,7 +7,8 @@ public class KuangyeStoragePlugin: CAPPlugin, CAPBridgedPlugin {
     public let jsName = "KuangyeStorage"
     public let pluginMethods: [CAPPluginMethod] = [
         CAPPluginMethod(name: "read", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "write", returnType: CAPPluginReturnPromise)
+        CAPPluginMethod(name: "write", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "deleteAll", returnType: CAPPluginReturnPromise)
     ]
     private let queue = DispatchQueue(label: "dev.kuangye.storage")
     private lazy var files = SaveFiles(directory: FileManager.default.urls(
@@ -28,6 +29,13 @@ public class KuangyeStoragePlugin: CAPPlugin, CAPBridgedPlugin {
         }
         queue.async {
             do { try self.files.write(name, text: text); call.resolve() }
+            catch { call.reject(error.localizedDescription) }
+        }
+    }
+
+    @objc func deleteAll(_ call: CAPPluginCall) {
+        queue.async {
+            do { try self.files.deleteAll(); call.resolve() }
             catch { call.reject(error.localizedDescription) }
         }
     }

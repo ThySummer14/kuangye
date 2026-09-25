@@ -10,8 +10,8 @@ Resolve Package Graph
 
 
 Resolved source packages:
-  capacitor-swift-pm: https://github.com/ionic-team/capacitor-swift-pm.git @ 8.5.2
   CapApp-SPM: /Users/thysummer/工作流/code/旷野/app/ios/App/CapApp-SPM @ local
+  capacitor-swift-pm: https://github.com/ionic-team/capacitor-swift-pm.git @ 8.5.2
 
 note: Using codesigning identity override: 
 ComputePackagePrebuildTargetDependencyGraph
@@ -47,14 +47,21 @@ ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefaul
     cd /Users/thysummer/工作流/code/旷野/app/ios/App/App.xcodeproj
     /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /tmp/kuangye-dd/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
 
+CpResource /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/App.app/capacitor.config.json /Users/thysummer/工作流/code/旷野/app/ios/App/App/capacitor.config.json (in target 'App' from project 'App')
+    cd /Users/thysummer/工作流/code/旷野/app/ios/App
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/thysummer/工作流/code/旷野/app/ios/App/App/capacitor.config.json /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/App.app
+
+CpResource /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/App.app/config.xml /Users/thysummer/工作流/code/旷野/app/ios/App/App/config.xml (in target 'App' from project 'App')
+    cd /Users/thysummer/工作流/code/旷野/app/ios/App
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/thysummer/工作流/code/旷野/app/ios/App/App/config.xml /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/App.app
+
 ProcessInfoPlistFile /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/App.app/Info.plist /Users/thysummer/工作流/code/旷野/app/ios/App/App/Info.plist (in target 'App' from project 'App')
     cd /Users/thysummer/工作流/code/旷野/app/ios/App
     builtin-infoPlistUtility /Users/thysummer/工作流/code/旷野/app/ios/App/App/Info.plist -producttype com.apple.product-type.application -genpkginfo /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/App.app/PkgInfo -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/App.build/Base.lproj/LaunchScreen-SBPartialInfo.plist -additionalcontentfile /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/App.build/Base.lproj/Main-SBPartialInfo.plist -additionalcontentfile /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/App.build/assetcatalog_generated_info.plist -scanforprivacyfile /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/App.app/Frameworks/Capacitor.framework -scanforprivacyfile /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/App.app/Frameworks/Cordova.framework -o /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/App.app/Info.plist
 
-CopySwiftLibs /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/App.app (in target 'App' from project 'App')
+CpResource /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/App.app/public /Users/thysummer/工作流/code/旷野/app/ios/App/App/public (in target 'App' from project 'App')
     cd /Users/thysummer/工作流/code/旷野/app/ios/App
-    builtin-swiftStdLibTool --copy --verbose --scan-executable /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/App.app/App.debug.dylib --scan-folder /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/App.app/Frameworks --scan-folder /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/App.app/PlugIns --scan-folder /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/App.app/SystemExtensions --scan-folder /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/App.app/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/App.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/App.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
-Ignoring --strip-bitcode because --sign was not passed
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/thysummer/工作流/code/旷野/app/ios/App/App/public /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/App.app
 
 PruneExplicitPrecompiledModules /tmp/kuangye-dd/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
 

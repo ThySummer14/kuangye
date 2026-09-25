@@ -61,101 +61,110 @@ CopySwiftLibs /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/App.app (in t
     builtin-swiftStdLibTool --copy --verbose --scan-executable /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/App.app/App.debug.dylib --scan-folder /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/App.app/Frameworks --scan-folder /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/App.app/PlugIns --scan-folder /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/App.app/SystemExtensions --scan-folder /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/App.app/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/App.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/App.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
 Ignoring --strip-bitcode because --sign was not passed
 
-PruneExplicitPrecompiledModules /tmp/kuangye-dd/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+ProcessInfoPlistFile /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/KuangyeUITests-Runner.app/PlugIns/KuangyeUITests.xctest/Info.plist /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/empty-KuangyeUITests.plist (in target 'KuangyeUITests' from project 'App')
+    cd /Users/thysummer/工作流/code/旷野/app/ios/App
+    builtin-infoPlistUtility /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/empty-KuangyeUITests.plist -producttype com.apple.product-type.bundle.ui-testing -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/ProductTypeInfoPlistAdditions.plist -o /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/KuangyeUITests-Runner.app/PlugIns/KuangyeUITests.xctest/Info.plist
+
+CopySwiftLibs /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/KuangyeUITests-Runner.app/PlugIns/KuangyeUITests.xctest (in target 'KuangyeUITests' from project 'App')
+    cd /Users/thysummer/工作流/code/旷野/app/ios/App
+    builtin-swiftStdLibTool --copy --verbose --scan-executable /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/KuangyeUITests-Runner.app/PlugIns/KuangyeUITests.xctest/KuangyeUITests --scan-folder /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/KuangyeUITests-Runner.app/PlugIns/KuangyeUITests.xctest/Frameworks --scan-folder /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/KuangyeUITests-Runner.app/PlugIns/KuangyeUITests.xctest/PlugIns --scan-folder /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/KuangyeUITests-Runner.app/PlugIns/KuangyeUITests.xctest/SystemExtensions --scan-folder /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/KuangyeUITests-Runner.app/PlugIns/KuangyeUITests.xctest/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /tmp/kuangye-dd/Build/Products/Debug-iphonesimulator/KuangyeUITests-Runner.app/PlugIns/KuangyeUITests.xctest/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /tmp/kuangye-dd/Build/Intermediates.noindex/App.build/Debug-iphonesimulator/KuangyeUITests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+Ignoring --strip-bitcode because --sign was not passed
 
 PruneExplicitPrecompiledModules /tmp/kuangye-dd/SDKExplicitPrecompiledModules
 
+PruneExplicitPrecompiledModules /tmp/kuangye-dd/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
 PruneExplicitPrecompiledModules /tmp/kuangye-dd/Build/Intermediates.noindex/ExplicitPrecompiledModules
 
-2026-09-25 19:38:06.684676+0800 KuangyeUITests-Runner[29788:808893] [Default] Running tests...
+2026-09-25 20:10:37.969203+0800 KuangyeUITests-Runner[50326:883492] [Default] Running tests...
     t =      nans Interface orientation changed to Portrait
-Test Suite 'Selected tests' started at 2026-09-25 19:38:08.619.
-Test Suite 'KuangyeUITests.xctest' started at 2026-09-25 19:38:08.620.
-Test Suite 'NativeSaveTests' started at 2026-09-25 19:38:08.620.
+Test Suite 'Selected tests' started at 2026-09-25 20:10:40.175.
+Test Suite 'KuangyeUITests.xctest' started at 2026-09-25 20:10:40.175.
+Test Suite 'NativeSaveTests' started at 2026-09-25 20:10:40.176.
 Test Case '-[KuangyeUITests.NativeSaveTests testCompletionWritesNativeSaveAndSurvivesRelaunch]' started.
-    t =     0.00s Start Test at 2026-09-25 19:38:08.623
+    t =     0.00s Start Test at 2026-09-25 20:10:40.178
     t =     0.02s Set Up
-    t =     0.03s Open dev.kuangye.prototype
-    t =     0.03s     Launch dev.kuangye.prototype
-2026-09-25 19:38:08.693 xcodebuild[29780:808662] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
-2026-09-25 19:38:08.693 xcodebuild[29780:808662] [MT] IDELaunchParametersSnapshot: no debugger version
-objc[29788]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x105338398) and /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x108c28310). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
-    t =     0.49s         Setting up automation session
-    t =     2.07s         Wait for dev.kuangye.prototype to idle
-    t =     3.83s Waiting 60.0s for Button (First Match) to exist
-    t =     4.91s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
-    t =     4.91s         Checking existence of `Button (First Match)`
-    t =     4.96s Tap Button (First Match)
-    t =     4.96s     Wait for dev.kuangye.prototype to idle
-    t =     4.97s     Find the Button (First Match)
-    t =     4.99s     Check for interrupting elements affecting "☷ 任务岩壁" Button
-    t =     5.02s     Synthesize event
-    t =     5.31s     Wait for dev.kuangye.prototype to idle
-    t =     5.31s Waiting 30.0s for StaticText (First Match) to exist
-    t =     6.39s     Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
-    t =     6.39s         Checking existence of `StaticText (First Match)`
-    t =     6.44s Waiting 20.0s for Button (First Match) to exist
-    t =     7.52s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
-    t =     7.52s         Checking existence of `Button (First Match)`
-    t =     7.57s Tap Button (First Match)
-    t =     7.57s     Wait for dev.kuangye.prototype to idle
-    t =     7.57s     Find the Button (First Match)
-    t =     7.60s     Check for interrupting elements affecting "我完成了" Button
-    t =     7.63s     Synthesize event
-    t =     7.92s     Wait for dev.kuangye.prototype to idle
-    t =     7.92s Waiting 20.0s for Button (First Match) to exist
-    t =     9.00s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
-    t =     9.00s         Checking existence of `Button (First Match)`
-    t =     9.02s Tap Button (First Match)
-    t =     9.02s     Wait for dev.kuangye.prototype to idle
-    t =     9.03s     Find the Button (First Match)
-    t =     9.04s     Check for interrupting elements affecting "完成，收下这束光" Button
-    t =     9.06s     Synthesize event
-    t =     9.35s     Wait for dev.kuangye.prototype to idle
-    t =     9.36s Waiting 20.0s for Button (First Match) to exist
-    t =    10.44s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
-    t =    10.44s         Checking existence of `Button (First Match)`
-    t =    10.47s Tap Button (First Match)
-    t =    10.47s     Wait for dev.kuangye.prototype to idle
-    t =    10.47s     Find the Button (First Match)
-    t =    10.49s     Check for interrupting elements affecting "收好了，回到地图" Button
-    t =    10.52s     Synthesize event
-    t =    10.80s     Wait for dev.kuangye.prototype to idle
-    t =    10.81s Waiting 30.0s for StaticText (First Match) to exist
-    t =    11.88s     Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
-    t =    11.88s         Checking existence of `StaticText (First Match)`
-    t =    15.91s Terminate dev.kuangye.prototype:29807
-    t =    17.01s Open dev.kuangye.prototype
-    t =    17.01s     Launch dev.kuangye.prototype
-2026-09-25 19:38:25.636 xcodebuild[29780:808662] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
-2026-09-25 19:38:25.636 xcodebuild[29780:808662] [MT] IDELaunchParametersSnapshot: no debugger version
-    t =    17.23s         Setting up automation session
-    t =    18.78s         Wait for dev.kuangye.prototype to idle
-    t =    20.50s Waiting 60.0s for Button (First Match) to exist
-    t =    21.57s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
-    t =    21.57s         Checking existence of `Button (First Match)`
-    t =    21.63s Tap Button (First Match)
-    t =    21.63s     Wait for dev.kuangye.prototype to idle
-    t =    21.63s     Find the Button (First Match)
-    t =    21.65s     Check for interrupting elements affecting "☷ 任务岩壁" Button
-    t =    21.68s     Synthesize event
-    t =    21.97s     Wait for dev.kuangye.prototype to idle
-    t =    21.98s Waiting 30.0s for StaticText (First Match) to exist
-    t =    23.06s     Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
-    t =    23.06s         Checking existence of `StaticText (First Match)`
-    t =    23.11s Find the Target Application 'dev.kuangye.prototype'
-    t =    23.19s Added attachment named '03-after-relaunch'
-    t =    23.19s Tear Down
-Test Case '-[KuangyeUITests.NativeSaveTests testCompletionWritesNativeSaveAndSurvivesRelaunch]' passed (23.445 seconds).
-Test Suite 'NativeSaveTests' passed at 2026-09-25 19:38:32.067.
-	 Executed 1 test, with 0 failures (0 unexpected) in 23.445 (23.447) seconds
-Test Suite 'KuangyeUITests.xctest' passed at 2026-09-25 19:38:32.068.
-	 Executed 1 test, with 0 failures (0 unexpected) in 23.445 (23.447) seconds
-Test Suite 'Selected tests' passed at 2026-09-25 19:38:32.068.
-	 Executed 1 test, with 0 failures (0 unexpected) in 23.445 (23.448) seconds
-2026-09-25 19:38:32.372 xcodebuild[29780:808662] [MT] IDETestOperationsObserverDebug: 26.524 elapsed -- Testing started completed.
-2026-09-25 19:38:32.372 xcodebuild[29780:808662] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
-2026-09-25 19:38:32.372 xcodebuild[29780:808662] [MT] IDETestOperationsObserverDebug: 26.524 sec, +26.524 sec -- end
+    t =     0.07s Open dev.kuangye.prototype
+    t =     0.07s     Launch dev.kuangye.prototype
+2026-09-25 20:10:40.308 xcodebuild[50313:883235] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-25 20:10:40.308 xcodebuild[50313:883235] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.58s         Setting up automation session
+objc[50326]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x10a074398) and /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x10a168310). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =     2.66s         Wait for dev.kuangye.prototype to idle
+    t =     4.52s Waiting 60.0s for Button (First Match) to exist
+    t =     5.56s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     5.56s         Checking existence of `Button (First Match)`
+    t =     5.62s Tap Button (First Match)
+    t =     5.62s     Wait for dev.kuangye.prototype to idle
+    t =     5.63s     Find the Button (First Match)
+    t =     5.65s     Check for interrupting elements affecting "☷ 任务岩壁" Button
+    t =     5.67s     Synthesize event
+    t =     5.97s     Wait for dev.kuangye.prototype to idle
+    t =     5.97s Waiting 30.0s for StaticText (First Match) to exist
+    t =     7.01s     Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
+    t =     7.01s         Checking existence of `StaticText (First Match)`
+    t =     7.07s Waiting 20.0s for Button (First Match) to exist
+    t =     8.11s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     8.11s         Checking existence of `Button (First Match)`
+    t =     8.16s Tap Button (First Match)
+    t =     8.16s     Wait for dev.kuangye.prototype to idle
+    t =     8.16s     Find the Button (First Match)
+    t =     8.20s     Check for interrupting elements affecting "我完成了" Button
+    t =     8.23s     Synthesize event
+    t =     8.52s     Wait for dev.kuangye.prototype to idle
+    t =     8.53s Waiting 20.0s for Button (First Match) to exist
+    t =     9.57s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     9.57s         Checking existence of `Button (First Match)`
+    t =     9.60s Tap Button (First Match)
+    t =     9.60s     Wait for dev.kuangye.prototype to idle
+    t =     9.60s     Find the Button (First Match)
+    t =     9.62s     Check for interrupting elements affecting "完成，收下这束光" Button
+    t =     9.64s     Synthesize event
+    t =     9.94s     Wait for dev.kuangye.prototype to idle
+    t =     9.94s Waiting 20.0s for Button (First Match) to exist
+    t =    10.97s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    10.97s         Checking existence of `Button (First Match)`
+    t =    11.00s Tap Button (First Match)
+    t =    11.00s     Wait for dev.kuangye.prototype to idle
+    t =    11.01s     Find the Button (First Match)
+    t =    11.02s     Check for interrupting elements affecting "收好了，回到地图" Button
+    t =    11.04s     Synthesize event
+    t =    11.34s     Wait for dev.kuangye.prototype to idle
+    t =    11.34s Waiting 30.0s for StaticText (First Match) to exist
+    t =    12.38s     Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
+    t =    12.38s         Checking existence of `StaticText (First Match)`
+    t =    16.41s Terminate dev.kuangye.prototype:50480
+    t =    17.48s Open dev.kuangye.prototype
+    t =    17.48s     Launch dev.kuangye.prototype
+2026-09-25 20:10:57.660 xcodebuild[50313:883235] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-25 20:10:57.660 xcodebuild[50313:883235] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    17.69s         Setting up automation session
+    t =    19.38s         Wait for dev.kuangye.prototype to idle
+    t =    21.23s Waiting 60.0s for Button (First Match) to exist
+    t =    22.26s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    22.27s         Checking existence of `Button (First Match)`
+    t =    22.33s Tap Button (First Match)
+    t =    22.33s     Wait for dev.kuangye.prototype to idle
+    t =    22.34s     Find the Button (First Match)
+    t =    22.37s     Check for interrupting elements affecting "☷ 任务岩壁" Button
+    t =    22.39s     Synthesize event
+    t =    22.69s     Wait for dev.kuangye.prototype to idle
+    t =    22.69s Waiting 30.0s for StaticText (First Match) to exist
+    t =    23.73s     Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
+    t =    23.73s         Checking existence of `StaticText (First Match)`
+    t =    23.79s Find the Target Application 'dev.kuangye.prototype'
+    t =    23.89s Added attachment named '03-after-relaunch'
+    t =    23.89s Tear Down
+Test Case '-[KuangyeUITests.NativeSaveTests testCompletionWritesNativeSaveAndSurvivesRelaunch]' passed (24.148 seconds).
+Test Suite 'NativeSaveTests' passed at 2026-09-25 20:11:04.326.
+	 Executed 1 test, with 0 failures (0 unexpected) in 24.148 (24.150) seconds
+Test Suite 'KuangyeUITests.xctest' passed at 2026-09-25 20:11:04.326.
+	 Executed 1 test, with 0 failures (0 unexpected) in 24.148 (24.151) seconds
+Test Suite 'Selected tests' passed at 2026-09-25 20:11:04.327.
+	 Executed 1 test, with 0 failures (0 unexpected) in 24.148 (24.152) seconds
+2026-09-25 20:11:04.682 xcodebuild[50313:883235] [MT] IDETestOperationsObserverDebug: 27.676 elapsed -- Testing started completed.
+2026-09-25 20:11:04.682 xcodebuild[50313:883235] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-09-25 20:11:04.682 xcodebuild[50313:883235] [MT] IDETestOperationsObserverDebug: 27.676 sec, +27.676 sec -- end
 
 Test session results, code coverage, and logs:
 	/tmp/kuangye-result-testCompletionWritesNativeSaveAndSurvivesRelaunch.xcresult

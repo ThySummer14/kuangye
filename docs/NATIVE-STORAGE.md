@@ -26,4 +26,4 @@
 
 XCUITest 驱动真实 App（scheme `KuangyeTests`，`scripts/native/run-sim-tests.sh` 可复放）：种子 347 光经插件读取（WebView localStorage 为空）→ 完成慢跑任务 → 362 光 → 终止进程重启后完整恢复；磁盘上 `current.json`=362 且 `previous.json`=347 双代齐备。备份切片：手记页"导出备份"写入 App 容器 Documents（宿主侧核验 `kuangye-2026-09-25.json`，envelope version 3、lumens 362）并弹出系统分享面板（截图 output/native/sim/04-share-sheet.png）；"导入备份"走文件选择器（UTType.json，安全作用域读取），解析仍走共享 `parseImport`。Web 回归 journey/completion-exit/navigation 双宽度 PASS、无 pageerror；`npm test` 45/45（含备份桥 Web 回退语义）。
 
-仍未验证、不得据以上称发布候选：真实 iPhone 性能与签名包；真机"文件"App 里选取备份导入的就地演练（选择器已可打开，但未在模拟器 Files 中放入真实 JSON 走完整闭环）；系统分享面板的实际目的地（Copy/保存到文件）未逐一验证。
+导入往返同样在模拟器上闭环：选择器直达 Documents 点选备份→共享 parseImport→恢复确认→toast 成功。仍未验证、不得据以上称发布候选：真实 iPhone 性能与签名包；真机 WebView→原生文件的就地迁移演练；分享面板目的地（Copy/保存到"文件"）逐一验证。

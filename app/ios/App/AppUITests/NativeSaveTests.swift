@@ -127,8 +127,46 @@ final class NativeSaveTests: XCTestCase {
         // The plugin writes Documents first, then presents the share sheet.
         Thread.sleep(forTimeInterval: 3.0)
         snap(app, "04-share-sheet")
-        let cancel = button(containing: "取消", in: app).exists ? button(containing: "取消", in: app)
-            : button(containing: "Cancel", in: app)
-        if cancel.exists && cancel.isHittable { cancel.tap() }
+        // The iOS 26 share sheet has no visible cancel button: tap outside
+        // (above the sheet), then swipe down as a fallback.
+        app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap()
+        Thread.sleep(forTimeInterval: 1.0)
+        if button(containing: "导出备份", in: app).exists == false { app.swipeDown() }
+        XCTAssertTrue(
+            button(containing: "导出备份", in: app).waitForExistence(timeout: 8),
+            "share sheet did not dismiss"
+        )
+        Thread.sleep(forTimeInterval: 1.0)
+
+        // Round-trip: the picker can reach this app's own Documents through
+        // On My iPhone, so the exported file is re-importable end to end.
+        let importBtn = button(containing: "导入备份", in: app)
+        XCTAssertTrue(importBtn.waitForExistence(timeout: 10), "import button missing")
+        importBtn.tap()
+
+        // The plugin opens the picker directly in the app's Documents folder.
+        Thread.sleep(forTimeInterval: 2.0)
+        snap(app, "05-picker")
+
+        // Picker file rows are exposed as cells, not buttons: match any element.
+        let backupFile = app.descendants(matching: .any)
+            .matching(NSPredicate(format: "label CONTAINS %@", "kuangye-")).firstMatch
+        XCTAssertTrue(backupFile.waitForExistence(timeout: 10), "exported backup not visible in picker")
+        backupFile.tap()
+
+        // The app shows the standard pre-restore confirm with a summary.
+        let restore = button(containing: "恢复这份备份", in: app)
+        if restore.waitForExistence(timeout: 10) {
+            snap(app, "07-import-confirm")
+            restore.tap()
+            XCTAssertTrue(
+                text(containing: "备份已恢复", in: app).waitForExistence(timeout: 10),
+                "restore toast missing"
+            )
+            snap(app, "08-import-done")
+        } else {
+            snap(app, "07-import-missing")
+            XCTFail("restore confirmation missing after picking the backup")
+        }
     }
 }

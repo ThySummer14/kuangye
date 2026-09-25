@@ -46,6 +46,9 @@ public class KuangyeBackupPlugin: CAPPlugin, CAPBridgedPlugin, UIDocumentPickerD
             }
             self.pendingImportCall = call
             let picker = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.json], asCopy: true)
+            // Land directly on the backups this app exports; users still see
+            // the full picker and can browse anywhere else.
+            picker.directoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
             picker.delegate = self
             self.bridge?.viewController?.present(picker, animated: true)
         }

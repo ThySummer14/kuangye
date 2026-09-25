@@ -1,0 +1,3 @@
+Finding content...
+Automatically resolved architecture variant for platform iOS as 'arm64'.
+iOS 27.0 (24A434) - 0B4995C6-EC8C-4098-A418-97CD6DC304D4

@@ -13,6 +13,7 @@ import HomeView from "./components/HomeView.vue";
 import JournalView from "./components/JournalView.vue";
 import { registerGameTools } from "./game/webmcp.js";
 import { disposeThumbnails } from "./scenes/furniture.js";
+import { nativePlatform } from "./services/native.js";
 const validTabs = [
   "map",
   "tasks",
@@ -189,7 +190,9 @@ const nav = [
         ><span
           >Lv.{{ levelInfo.level }} {{ levelInfo.name }} · 已完成
           {{ state.done.length }} 件小事</span
-        ><span>你的进度保存在此浏览器</span>
+        ><span>{{
+          nativePlatform ? "你的进度保存在这台设备里" : "你的进度保存在此浏览器"
+        }}</span>
       </div>
     </main>
     <CompleteModal

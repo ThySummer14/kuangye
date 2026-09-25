@@ -1,0 +1,25 @@
+本机原生环境只读盘点
+盘点日期：2026-09-22
+
+工具链
+- `xcode-select -p`：`/Applications/Xcode.app/Contents/Developer`
+- `xcodebuild -version`：Xcode 27.0，Build version 27A266a
+- `xcodebuild -showsdks`：存在 iOS SDK 27.0（`iphoneos27.0`）和 iOS Simulator SDK 27.0（`iphonesimulator27.0`）；同时可见 macOS/tvOS/visionOS/watchOS 27.0 SDK。
+- `xcrun --find simctl`：`/Applications/Xcode.app/Contents/Developer/usr/bin/simctl`
+
+CoreSimulator
+- `xcrun simctl list runtimes`：无条目（只有 `== Runtimes ==`）。
+- `xcrun simctl list devices available`：无条目（只有 `== Devices ==`）。
+- 下列常见 runtime 目录均不存在，目录大小因此为 0/无可用 runtime：
+  - `/Library/Developer/CoreSimulator/Profiles/Runtimes`
+  - `/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Library/Developer/CoreSimulator/Profiles/Runtimes`
+  - `/Users/thysummer/Library/Developer/CoreSimulator/Profiles/Runtimes`
+- 通过 `mdfind 'kMDItemFSName == "*.runtime"c'` 未发现其他 `.runtime` 包。
+
+磁盘
+- `df -h`：根/数据卷 460 GiB，总已用约 357 GiB，可用约 80 GiB，容量使用率 82%。
+
+结论
+- 可以在不登录 Apple 账号、不签名的条件下做 generic iOS Simulator build：使用 `iphonesimulator27.0` SDK，并在构建设置中关闭签名（例如 `CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO`）。本次未执行构建，也未改项目代码。
+- 当前不能运行 iOS Simulator：阻塞项是本机没有已安装的 iOS Simulator runtime，也没有可用模拟器设备；Apple 账号/签名不是当前缺口。
+- 要运行需要后续安装一个匹配的 iOS Simulator runtime，并创建/启动对应 device。本次未下载 runtime、未安装系统内容、未操作账号或签名。

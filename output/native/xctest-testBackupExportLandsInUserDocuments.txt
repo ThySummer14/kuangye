@@ -1,0 +1,176 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project App.xcodeproj -scheme KuangyeTests -destination "platform=iOS Simulator,id=A13C33B5-CB99-4D3F-929D-16D5856958DE" -derivedDataPath /tmp/kuangye-dd CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= -resultBundlePath /tmp/kuangye-result-testBackupExportLandsInUserDocuments.xcresult "-only-testing:KuangyeUITests/NativeSaveTests/testBackupExportLandsInUserDocuments" test
+
+Build settings from command line:
+    CODE_SIGN_IDENTITY = 
+    CODE_SIGNING_ALLOWED = NO
+    CODE_SIGNING_REQUIRED = NO
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  capacitor-swift-pm: https://github.com/ionic-team/capacitor-swift-pm.git @ 8.5.2
+  CapApp-SPM: /Users/thysummer/工作流/code/旷野/app/ios/App/CapApp-SPM @ local
+
+Writing result bundle at path:
+	/tmp/kuangye-result-testBackupExportLandsInUserDocuments.xcresult
+
+note: Using codesigning identity override: 
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (6 targets)
+    Target 'KuangyeUITests' in project 'App'
+        ➜ Explicit dependency on target 'App' in project 'App'
+    Target 'App' in project 'App'
+        ➜ Explicit dependency on target 'CapApp-SPM-product' in project 'CapApp-SPM'
+    Target 'CapApp-SPM-product' in project 'CapApp-SPM'
+        ➜ Explicit dependency on target 'CapApp-SPM' in project 'CapApp-SPM'
+        ➜ Explicit dependency on target 'Capacitor-product' in project 'capacitor-swift-pm'
+        ➜ Explicit dependency on target 'Cordova-product' in project 'capacitor-swift-pm'
+    Target 'CapApp-SPM' in project 'CapApp-SPM'
+        ➜ Explicit dependency on target 'Capacitor-product' in project 'capacitor-swift-pm'
+        ➜ Explicit dependency on target 'Cordova-product' in project 'capacitor-swift-pm'
+    Target 'Cordova-product' in project 'capacitor-swift-pm' (no dependencies)
+    Target 'Capacitor-product' in project 'capacitor-swift-pm' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk /tmp/kuangye-dd/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+    cd /Users/thysummer/工作流/code/旷野/app/ios/App/App.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.0.sdk -o /tmp/kuangye-dd/SDKStatCaches.noindex/iphonesimulator27.0-24A430-8dc58220667be655e1bcc261a7455254.sdkstatcache
+
+PruneExplicitPrecompiledModules /tmp/kuangye-dd/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /tmp/kuangye-dd/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /tmp/kuangye-dd/SDKExplicitPrecompiledModules
+
+2026-09-25 20:11:06.632306+0800 KuangyeUITests-Runner[51159:886441] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-09-25 20:11:08.635.
+Test Suite 'KuangyeUITests.xctest' started at 2026-09-25 20:11:08.636.
+Test Suite 'NativeSaveTests' started at 2026-09-25 20:11:08.636.
+Test Case '-[KuangyeUITests.NativeSaveTests testBackupExportLandsInUserDocuments]' started.
+    t =     0.00s Start Test at 2026-09-25 20:11:08.637
+    t =     0.02s Set Up
+    t =     0.02s Open dev.kuangye.prototype
+    t =     0.02s     Launch dev.kuangye.prototype
+2026-09-25 20:11:08.709 xcodebuild[51154:886229] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-25 20:11:08.709 xcodebuild[51154:886229] [MT] IDELaunchParametersSnapshot: no debugger version
+objc[51159]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x107fe4398) and /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x1084d0310). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =     0.49s         Setting up automation session
+    t =     2.09s         Wait for dev.kuangye.prototype to idle
+    t =     3.79s Waiting 60.0s for Button (First Match) to exist
+    t =     4.83s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =     4.83s         Checking existence of `Button (First Match)`
+    t =     4.88s Tap Button (First Match)
+    t =     4.88s     Wait for dev.kuangye.prototype to idle
+    t =     4.88s     Find the Button (First Match)
+    t =     4.91s     Check for interrupting elements affecting "⌁ 瞭望台 · 成长手记" Button
+    t =     4.94s     Synthesize event
+    t =     5.23s     Wait for dev.kuangye.prototype to idle
+    t =     5.23s Checking existence of `Button (First Match)`
+    t =     5.27s Find the Button (First Match)
+    t =     6.30s     Find the Button (First Match) (retry 1)
+    t =     6.35s Swipe up Target Application 'dev.kuangye.prototype'
+    t =     6.35s     Wait for dev.kuangye.prototype to idle
+    t =     6.36s     Find the Target Application 'dev.kuangye.prototype'
+    t =     6.37s     Check for interrupting elements affecting "旷野" Application
+    t =     6.39s     Synthesize event
+    t =     6.81s     Wait for dev.kuangye.prototype to idle
+    t =     8.62s Checking existence of `"导出备份" Button`
+    t =     9.35s Checking existence of `"导出备份" Button`
+    t =     9.45s Checking existence of `"导出备份" Button`
+    t =     9.47s Checking existence of `"导出备份" Button`
+    t =     9.49s Checking existence of `"导出备份" Button`
+    t =     9.52s Waiting 10.0s for "导出备份" Button to exist
+    t =    10.56s     Checking `Expect predicate `existsNoRetry == 1` for object "导出备份" Button`
+    t =    10.57s         Checking existence of `"导出备份" Button`
+    t =    10.60s Tap "导出备份" Button
+    t =    10.60s     Wait for dev.kuangye.prototype to idle
+    t =    10.61s     Find the "导出备份" Button
+    t =    10.64s     Check for interrupting elements affecting "导出备份" Button
+    t =    10.74s     Synthesize event
+    t =    11.05s     Wait for dev.kuangye.prototype to idle
+    t =    14.77s Find the Target Application 'dev.kuangye.prototype'
+    t =    14.90s Added attachment named '04-share-sheet'
+    t =    14.90s Tap Target Application 'dev.kuangye.prototype'[0.50, 0.20]
+    t =    14.90s     Wait for dev.kuangye.prototype to idle
+    t =    14.91s     Find the Target Application 'dev.kuangye.prototype'
+    t =    14.93s     Check for interrupting elements affecting "旷野" Application
+    t =    14.96s     Synthesize event
+    t =    14.96s         Find the Target Application 'dev.kuangye.prototype'
+    t =    14.98s         Find the Target Application 'dev.kuangye.prototype'
+    t =    15.01s         Find the Target Application 'dev.kuangye.prototype'
+    t =    15.31s     Wait for dev.kuangye.prototype to idle
+    t =    16.71s Checking existence of `Button (First Match)`
+    t =    16.74s Waiting 8.0s for Button (First Match) to exist
+    t =    17.78s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    17.78s         Checking existence of `Button (First Match)`
+    t =    18.82s Waiting 10.0s for Button (First Match) to exist
+    t =    19.85s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    19.86s         Checking existence of `Button (First Match)`
+    t =    19.89s Tap Button (First Match)
+    t =    19.89s     Wait for dev.kuangye.prototype to idle
+    t =    19.90s     Find the Button (First Match)
+    t =    19.92s     Check for interrupting elements affecting "导入备份" Button
+    t =    19.94s     Synthesize event
+    t =    20.24s     Wait for dev.kuangye.prototype to idle
+    t =    22.24s Find the Target Application 'dev.kuangye.prototype'
+    t =    22.32s Added attachment named '05-picker'
+    t =    22.32s Waiting 10.0s for Any (First Match) to exist
+    t =    23.36s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    23.36s         Checking existence of `Any (First Match)`
+    t =    24.45s Tap Any (First Match)
+    t =    24.45s     Wait for dev.kuangye.prototype to idle
+    t =    24.45s     Find the Any (First Match)
+    t =    24.50s     Check for interrupting elements affecting "kuangye-2026-09-25.json, json" Cell
+    t =    24.55s     Synthesize event
+    t =    24.84s     Wait for dev.kuangye.prototype to idle
+    t =    25.34s Waiting 10.0s for Button (First Match) to exist
+    t =    26.38s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    26.38s         Checking existence of `Button (First Match)`
+    t =    26.41s Find the Target Application 'dev.kuangye.prototype'
+    t =    26.50s Added attachment named '07-import-confirm'
+    t =    26.50s Tap Button (First Match)
+    t =    26.50s     Wait for dev.kuangye.prototype to idle
+    t =    26.50s     Find the Button (First Match)
+    t =    26.53s     Check for interrupting elements affecting "恢复这份备份" Button
+    t =    26.55s     Synthesize event
+    t =    26.84s     Wait for dev.kuangye.prototype to idle
+    t =    26.84s Waiting 10.0s for StaticText (First Match) to exist
+    t =    27.88s     Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
+    t =    27.88s         Checking existence of `StaticText (First Match)`
+    t =    27.92s Find the Target Application 'dev.kuangye.prototype'
+    t =    28.01s Added attachment named '08-import-done'
+    t =    28.01s Tear Down
+Test Case '-[KuangyeUITests.NativeSaveTests testBackupExportLandsInUserDocuments]' passed (28.241 seconds).
+Test Suite 'NativeSaveTests' passed at 2026-09-25 20:11:36.879.
+	 Executed 1 test, with 0 failures (0 unexpected) in 28.241 (28.243) seconds
+Test Suite 'KuangyeUITests.xctest' passed at 2026-09-25 20:11:36.880.
+	 Executed 1 test, with 0 failures (0 unexpected) in 28.241 (28.244) seconds
+Test Suite 'Selected tests' passed at 2026-09-25 20:11:36.880.
+	 Executed 1 test, with 0 failures (0 unexpected) in 28.241 (28.245) seconds
+2026-09-25 20:11:37.194 xcodebuild[51154:886229] [MT] IDETestOperationsObserverDebug: 31.399 elapsed -- Testing started completed.
+2026-09-25 20:11:37.194 xcodebuild[51154:886229] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-09-25 20:11:37.194 xcodebuild[51154:886229] [MT] IDETestOperationsObserverDebug: 31.399 sec, +31.399 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/kuangye-result-testBackupExportLandsInUserDocuments.xcresult
+
+** TEST SUCCEEDED **
+
+Testing started

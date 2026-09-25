@@ -15,6 +15,7 @@ import { furnitureById } from "../data/furniture.js";
 import BuddyFace from "./BuddyFace.vue";
 import EtchingCabinet from "./EtchingCabinet.vue";
 import { parseImport } from '../game/save.js';
+import { nativePlatform, exportBackup, pickBackup } from "../services/backup.js";
 const view = ref('journal');
 const emit = defineEmits(["toast", "chains"]),
   file = ref(null),
@@ -24,6 +25,9 @@ const emit = defineEmits(["toast", "chains"]),
 const records = computed(() =>
   [...(filter.value === "done" ? state.done : state.abandoned)].reverse(),
 );
+function backupName() {
+  return `kuangye-${new Date().toISOString().slice(0, 10)}.json`;
+}
 function download(text, name, type = "application/json") {
   const url = URL.createObjectURL(new Blob([text], { type })),
     a = document.createElement("a");
@@ -32,12 +36,34 @@ function download(text, name, type = "application/json") {
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
-function backup() {
-  download(
-    exportData(),
-    `kuangye-${new Date().toISOString().slice(0, 10)}.json`,
-  );
-  emit("toast", "已导出任务与小家备份");
+async function backup({ interactive = true } = {}) {
+  const text = exportData();
+  if (nativePlatform) {
+    try {
+      await exportBackup(backupName(), text, { interactive });
+      if (interactive) emit("toast", "备份已存入「文件」，也可以分享到其他应用");
+    } catch (err) {
+      emit("toast", "未能导出备份：" + err.message);
+    }
+    return;
+  }
+  download(text, backupName());
+  if (interactive) emit("toast", "已导出任务与小家备份");
+}
+async function importBackup() {
+  if (!nativePlatform) {
+    file.value?.click();
+    return;
+  }
+  try {
+    const text = await pickBackup();
+    if (!text) return;
+    const s = parseImport(text);
+    pendingImport.value = text;
+    importSummary.value = `${s.done?.length || 0} 条完成记录，${s.active.length} 件进行中的事`;
+  } catch (err) {
+    emit("toast", "未能读取备份：" + err.message);
+  }
 }
 async function readFile(e) {
   const f = e.target.files[0];
@@ -54,7 +80,7 @@ async function readFile(e) {
 }
 function restore() {
   try {
-    backup();
+    backup({ interactive: false });
     importData(pendingImport.value);
     pendingImport.value = "";
     emit("toast", "备份已恢复，原进度也已自动导出");
@@ -193,11 +219,17 @@ function report() {
       <section class="backup-section">
         <div>
           <h3>把小家，好好保存。</h3>
-          <p>进度存在当前浏览器。换设备或换网址前，请先导出备份。</p>
+          <p>
+            {{
+              nativePlatform
+                ? "进度保存在这台设备的应用里。换手机或清理存储前，请先把备份存到「文件」。"
+                : "进度存在当前浏览器。换设备或换网址前，请先导出备份。"
+            }}
+          </p>
         </div>
         <div class="placement-actions">
           <button class="soft-button" @click="backup">导出备份</button
-          ><button class="text-button" @click="file.click()">导入备份</button
+          ><button class="text-button" @click="importBackup">导入备份</button
           ><input
             ref="file"
             type="file"

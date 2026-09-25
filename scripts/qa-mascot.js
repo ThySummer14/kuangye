@@ -18,6 +18,7 @@ async (page) => {
   for (const width of [1280, 375]) {
     await page.setViewportSize({ width, height: 1000 });
     await page.goto("http://127.0.0.1:5182/emotion-lab.html?qa");
+    await page.waitForFunction(() => window.__KUANGYE__);
     await page.evaluate(() => window.__KUANGYE__.reset());
     await page.getByLabel("眨眼", { exact: true }).uncheck();
     await page.getByLabel("呼吸", { exact: true }).uncheck();
@@ -100,6 +101,7 @@ async (page) => {
     if (avatar.width !== 64 || avatar.height !== 64)
       throw Error("Avatar must be 64 CSS px");
     await page.goto("http://127.0.0.1:5182/?qa#map");
+    await page.waitForFunction(() => window.__KUANGYE__);
     await page.evaluate(() =>
       window.__KUANGYE__.reset("woodshop", "furnished"),
     );

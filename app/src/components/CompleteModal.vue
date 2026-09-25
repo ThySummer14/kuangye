@@ -85,14 +85,14 @@ function nextTask() {
         </p>
       </div>
       <p class="completion-saved" role="status">
-        {{ saveWarning.text || "已记入成长手记。这一件事，收好了。" }}
+        {{ saveWarning.text || (saveWarning.pending ? "正在保存这一刻…" : "已记入成长手记。这一件事，收好了。") }}
       </p>
       <button
         ref="finishButton"
         class="primary-button full-button"
         @click="returnToMap"
       >
-        {{ saveWarning.text ? "回到地图" : "收好了，回到地图" }}
+        {{ (saveWarning.text || saveWarning.pending) ? "回到地图" : "收好了，回到地图" }}
       </button>
       <button
         class="text-button"

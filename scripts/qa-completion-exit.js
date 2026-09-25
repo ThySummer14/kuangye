@@ -4,7 +4,9 @@ async (page) => {
   const snapshot = () => page.evaluate(() => window.__KUANGYE__.snapshot());
   const fresh = async () => {
     await page.goto('http://127.0.0.1:5182/?qa#map');
+    await page.waitForFunction(() => window.__KUANGYE__);
     await page.reload();
+    await page.waitForFunction(() => window.__KUANGYE__);
     await page.evaluate(() => window.__KUANGYE__.reset('map-navigation', 'empty'));
     await page.locator('[data-place="tasks"]').click();
     await page.getByRole('textbox', {name:'搜索任务'}).fill('完成第一次 2 公里慢跑');
@@ -32,6 +34,7 @@ async (page) => {
     await primary.click(); await page.waitForURL('**#map');
     if(!await page.evaluate(() => document.activeElement?.classList.contains('brand'))) throw Error('回地图焦点不符');
     await page.reload();
+    await page.waitForFunction(() => window.__KUANGYE__);
     const reloaded = await snapshot();
     if(reloaded.completedTasks !== 1 || reloaded.home.lumens !== 15) throw Error('刷新丢失或重复奖励');
     const savedReview = await page.evaluate(() => JSON.parse(localStorage.getItem('kuangye.qa.v3')).done[0]?.review === '沿着河堤跑完第一圈，风很轻。');
@@ -54,7 +57,9 @@ async (page) => {
     await page.locator('.toast').waitFor({state:'detached'});
     await page.screenshot({path:`output/playwright/completion-save-failure-${width}.png`});
     await page.reload();
+    await page.waitForFunction(() => window.__KUANGYE__);
     await page.goto('http://127.0.0.1:5182/?qa#map');
+    await page.waitForFunction(() => window.__KUANGYE__);
     await page.evaluate(() => window.__KUANGYE__.reset('woodshop','furnished'));
     await page.locator('[data-place="home"]').click();
     await page.locator('[data-buddy]').waitFor();

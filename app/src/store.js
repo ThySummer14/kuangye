@@ -1,6 +1,7 @@
+import { persistence } from './services/persistence.js';
 import { QA } from "./game/qa.js";
 import { expandRoom, addHomeMoment, normalizeDecor } from "./game/room.js";
-import { normalizeState, parseImport } from "./game/save.js";
+import { parseImport } from "./game/save.js";
 // Reactive API facade. Quest actions stay compatible; home rules and save migration are pure modules.
 import { reactive, watch, computed } from "vue";
 import { TASKS, DIFF, CATS } from "./data/tasks.js";
@@ -25,8 +26,6 @@ export function buddyMoment(mood, ms = 1500, text = "") {
   buddyBus.at = Date.now() + ms;
 }
 
-const KEY = QA ? "kuangye.qa.v3" : "kuangye.v3";
-const LEGACY_KEY = "kuangye.v1";
 const emptyState = () => ({
   home: emptyHome(),
   active: [], // { qid, start, logs:[{d, v?, note?, shield?}], shields }
@@ -35,31 +34,32 @@ const emptyState = () => ({
   settings: { devDate: "" },
 });
 
-const load = () => {
-  for (const key of (QA ? [KEY] : [KEY, "kuangye.v2", LEGACY_KEY])) {
-    try {
-      const raw = JSON.parse(localStorage.getItem(key));
-      const normalized = normalizeState(raw);
-      if (normalized) return normalized;
-    } catch (e) {
-      /* 损坏数据尝试下一个版本 */
-    }
-  }
-  return emptyState();
-};
-
-export const state = reactive(load());
-export const saveWarning = reactive({ text: "" });
-
+export const state = reactive(persistence.load() || emptyState());
+export const saveWarning = reactive({ text: persistence.notice, pending: false });
+let saveRequest = 0;
 watch(
   state,
   () => {
+    const request = ++saveRequest;
+    const failed = () => {
+      if (request !== saveRequest) return;
+      saveWarning.pending = false;
+      saveWarning.text = persistence.kind === 'native'
+        ? '设备未能保存进度，请保持应用打开，并在成长手记中备份。'
+        : '浏览器未能保存进度，请先在成长手记中导出备份。';
+    };
+    const saved = () => {
+      if (request !== saveRequest) return;
+      saveWarning.pending = false;
+      saveWarning.text = '';
+    };
     try {
-      localStorage.setItem(KEY, JSON.stringify(state));
-      saveWarning.text = "";
-    } catch (e) {
-      saveWarning.text = "浏览器未能保存进度，请先在成长手记中导出备份。";
-    }
+      const result = persistence.save(JSON.stringify(state));
+      if (result?.then) {
+        saveWarning.pending = true;
+        result.then(saved, failed);
+      } else saved();
+    } catch { failed(); }
   },
   { deep: true },
 );

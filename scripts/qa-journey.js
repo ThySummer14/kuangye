@@ -25,6 +25,7 @@ async (page) => {
     try {
       await page.setViewportSize({ width, height: 900 });
       await page.goto("http://127.0.0.1:5182/?qa#map");
+      await page.waitForFunction(() => window.__KUANGYE__);
       await page.evaluate(() => {
         const create = URL.createObjectURL.bind(URL);
         window.__qaExports = [];

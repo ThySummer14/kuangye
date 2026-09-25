@@ -14,13 +14,16 @@
 
 参考：[Capacitor iOS](https://capacitorjs.com/docs/ios)、[应用内插件](https://capacitorjs.com/docs/ios/custom-code)。依赖代码保留各包 MIT 声明；本地文件策略为本项目实现，不借用外部美术资产。
 
-## 模拟器端到端验证与两处修复（2026-09-25）
+## 模拟器端到端验证与三处修复（2026-09-25）
 
-安装 iOS 27.0 Simulator runtime 后，在 iPhone 17 Pro 模拟器上完成了此前缺失的真机级验证，过程中发现并修复两个纯逻辑测试盖不住的缺陷：
+安装 iOS 27.0 Simulator runtime 后，在 iPhone 17 Pro 模拟器上完成了此前缺失的真机级验证，过程中发现并修复三个纯逻辑测试盖不住的缺陷：
 
 1. **插件从未注册**：Capacitor 模板的 `SceneDelegate` 在代码里硬建了朴素 `CAPBridgeViewController()`，把 Storyboard 里配好 `AppViewController`（`capacitorDidLoad` 注册 KuangyeStorage 的唯一入口）整个绕过，App 一启动就报 "plugin is not implemented"。失败保护如预期生效：显示"先保住你的记录"，没有假装成功，没有覆盖任何文件。修复为从 Main.storyboard 实例化初始视图控制器（SceneDelegate.swift）。
-2. **Web 被拖进异步启动**：`main.js` 原本让所有平台都 await 文件恢复后再动态 import 挂载，Web 只是多了几毫秒，但启动从此与模块网络加载竞速，QA 脚本 reload 后立即取 `__KUANGYE__` 已然抢先。改为 Web 同步挂载（与历史行为 1:1），只有原生平台 await 存档恢复后再挂载——挂载先于恢复完成才会出现空档覆盖，这正是要防的事故。
+2. **状态在驱动挂上前快照**：`store.js` 在模块求值时就执行 `persistence.load()`。若把挂载改回同步（静态 import App.vue），模块图先于 `initializeNativeStorage` 求值，原生驱动尚未就位，状态永远是空档——而且读取本身成功，界面却空着，极易误判为"读取失败"。最终方案：所有平台统一异步启动（先 `await initializeNativeStorage()`，再动态 import App 挂载）；QA 脚本改为在每个 goto/reload 后显式 `waitForFunction(() => window.__KUANGYE__)`，不再依赖同步引导的隐式时序。
+3. **xcodebuild test 每次重装都会删除数据容器**：宿主侧预置的种子存档在测试运行前就被删掉。XCUITest 改为在测试进程内部自我播种（runner 通过容器元数据 `MCMMetadataIdentifier` 定位 App 容器写入种子），时机在重装之后、启动之前；`scripts/native/run-sim-tests.sh` 固化了 build→test→宿主侧磁盘核验的可复放顺序（注意每次 test 都要重新解析容器 UUID）。
 
-验证链（证据在 `output/native/`）：Swift SaveFilesCheck 真实原子写、双代保留、路径逃逸拒绝 → 无签名模拟器构建 → XCUITest 驱动真实 App：预置 347 光的原生文件被读取（WebView localStorage 为空，余额只能来自插件）→ 完成慢跑任务 → 362 光 → 终止进程重启后从原生文件完整恢复，磁盘上 `current.json` 为 362 且 `previous.json` 保留 347 上一代。截图与脚本在 `output/native/sim/` 与 `AppUITests/NativeSaveTests.swift`（scheme KuangyeTests，可随时 `xcodebuild test` 复放）。
+### 验证链（证据在 `output/native/`）
 
-仍未验证、不得据以上称发布候选：真实 iPhone 性能与签名包；WebView 旧 localStorage 在真机上的就地迁移（逻辑由测试覆盖，但未在设备上用真实 WebView 存档演练）；系统分享与原生备份导入导出（留下一切片）。
+XCUITest 驱动真实 App（scheme `KuangyeTests`，`scripts/native/run-sim-tests.sh` 可复放）：种子 347 光经插件读取（WebView localStorage 为空）→ 完成慢跑任务 → 362 光 → 终止进程重启后完整恢复；磁盘上 `current.json`=362 且 `previous.json`=347 双代齐备。备份切片：手记页"导出备份"写入 App 容器 Documents（宿主侧核验 `kuangye-2026-09-25.json`，envelope version 3、lumens 362）并弹出系统分享面板（截图 output/native/sim/04-share-sheet.png）；"导入备份"走文件选择器（UTType.json，安全作用域读取），解析仍走共享 `parseImport`。Web 回归 journey/completion-exit/navigation 双宽度 PASS、无 pageerror；`npm test` 45/45（含备份桥 Web 回退语义）。
+
+仍未验证、不得据以上称发布候选：真实 iPhone 性能与签名包；真机"文件"App 里选取备份导入的就地演练（选择器已可打开，但未在模拟器 Files 中放入真实 JSON 走完整闭环）；系统分享面板的实际目的地（Copy/保存到文件）未逐一验证。

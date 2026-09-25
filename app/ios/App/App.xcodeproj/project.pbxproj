@@ -19,6 +19,7 @@
 		A20000000000000000000001 /* SaveFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000001 /* SaveFiles.swift */; };
 		A20000000000000000000002 /* KuangyeStoragePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000002 /* KuangyeStoragePlugin.swift */; };
 		A20000000000000000000003 /* AppViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000003 /* AppViewController.swift */; };
+		A20000000000000000000004 /* KuangyeBackupPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000004 /* KuangyeBackupPlugin.swift */; };
 		B10000000000000000000001 /* NativeSaveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000002 /* NativeSaveTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -37,6 +38,7 @@
 		A10000000000000000000001 /* SaveFiles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveFiles.swift; sourceTree = "<group>"; };
 		A10000000000000000000002 /* KuangyeStoragePlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KuangyeStoragePlugin.swift; sourceTree = "<group>"; };
 		A10000000000000000000003 /* AppViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewController.swift; sourceTree = "<group>"; };
+		A10000000000000000000004 /* KuangyeBackupPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KuangyeBackupPlugin.swift; sourceTree = "<group>"; };
 		B10000000000000000000002 /* NativeSaveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeSaveTests.swift; sourceTree = "<group>"; };
 		B10000000000000000000003 /* KuangyeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KuangyeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -87,6 +89,7 @@
 				504EC3071FED79650016851F /* AppDelegate.swift */,
 				A10000000000000000000003 /* AppViewController.swift */,
 				A10000000000000000000002 /* KuangyeStoragePlugin.swift */,
+				A10000000000000000000004 /* KuangyeBackupPlugin.swift */,
 				A10000000000000000000001 /* SaveFiles.swift */,
 				504EC30B1FED79650016851F /* Main.storyboard */,
 				504EC30E1FED79650016851F /* Assets.xcassets */,
@@ -220,6 +223,7 @@
 				504EC3081FED79650016851F /* AppDelegate.swift in Sources */,
 				A20000000000000000000003 /* AppViewController.swift in Sources */,
 				A20000000000000000000002 /* KuangyeStoragePlugin.swift in Sources */,
+				A20000000000000000000004 /* KuangyeBackupPlugin.swift in Sources */,
 				A20000000000000000000001 /* SaveFiles.swift in Sources */,
 				9582B6832FE993A70072D4E8 /* SceneDelegate.swift in Sources */,
 			);

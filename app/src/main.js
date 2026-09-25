@@ -1,13 +1,11 @@
 import { createApp } from 'vue'
-import App from './App.vue'
 import { initializeNativeStorage, nativePlatform } from './services/native.js'
 import './style.css'
 import './world.css'
 
-function mount() {
-  createApp(App).mount('#app');
-}
-
+// App.vue (and therefore store.js) must not be evaluated until the storage
+// driver holds the restored save: the store snapshots state at module load.
+// Native waits for the Application Support files; web resolves immediately.
 function showStartupError(error) {
   const root = document.querySelector('#app');
   const title = document.createElement('h1');
@@ -22,10 +20,14 @@ function showStartupError(error) {
   root.replaceChildren(title, message, retry);
 }
 
-// Web boots synchronously as before. Native waits for the save files first:
-// mounting before the restore finishes would overwrite state with an empty one.
-if (nativePlatform) {
-  initializeNativeStorage().then(mount, showStartupError);
-} else {
-  mount();
+async function start() {
+  try {
+    await initializeNativeStorage();
+    const { default: App } = await import('./App.vue');
+    createApp(App).mount('#app');
+  } catch (error) {
+    if (nativePlatform) showStartupError(error);
+    else throw error;
+  }
 }
+start();

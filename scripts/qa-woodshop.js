@@ -3,6 +3,7 @@ async (page) => {
   for (const width of [1280, 375]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("http://127.0.0.1:5182/?qa#map");
+    await page.waitForFunction(() => window.__KUANGYE__);
     await page.evaluate(() => window.__KUANGYE__.reset("woodshop"));
     await page.locator('[data-place="woodshop"]').click();
     await page.waitForURL("**#woodshop");
@@ -28,6 +29,7 @@ async (page) => {
       .click();
     await page.getByRole("button", { name: "确认扩建", exact: true }).click();
     await page.reload();
+    await page.waitForFunction(() => window.__KUANGYE__);
     s = await page.evaluate(() => window.__KUANGYE__.snapshot());
     if (
       s.home.lumens !== 470 ||

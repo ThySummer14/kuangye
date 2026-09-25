@@ -29,6 +29,7 @@ await (async (page) => {
     try {
       await page.setViewportSize({ width, height: 900 });
       await page.goto("http://127.0.0.1:5182/?qa#map");
+      await page.waitForFunction(() => window.__KUANGYE__);
       await page.evaluate(() => {
         const create = URL.createObjectURL.bind(URL);
         window.__qaExports = [];
@@ -176,9 +177,9 @@ await (async (page) => {
 ### Page
 - Page URL: http://127.0.0.1:5182/?qa#map
 - Page Title: 旷野 · 小芽的家
-- Console: 0 errors, 7 warnings
+- Console: 0 errors, 11 warnings
 ### Events
-- New console entries: .playwright-cli/console-2026-09-25T10-40-14-519Z.log#L16-L21
+- New console entries: .playwright-cli/console-2026-09-25T10-40-14-519Z.log#L92-L98
 - Downloading file kuangye-2026-09-25.json ...
 - Downloaded file kuangye-2026-09-25.json to ".playwright-cli/kuangye-2026-09-25.json"
 - Downloading file kuangye-2026-09-25.json ...

@@ -2,6 +2,7 @@ async (page) => {
  const results=[],errors=[];page.on('pageerror',e=>errors.push(e.message));
  for(const width of [1280,375]){
   await page.setViewportSize({width,height:1000});await page.goto('http://127.0.0.1:5182/?qa#map');
+  await page.waitForFunction(() => window.__KUANGYE__);
   await page.evaluate(()=>window.__KUANGYE__.reset('map-navigation'));
   await page.locator('[data-place="journal"]').click();await page.waitForURL('**#panel');
   await page.getByRole('button',{name:'营地印记柜',exact:true}).click();

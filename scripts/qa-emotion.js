@@ -5,6 +5,7 @@ async (page) => {
   for (const width of [1280, 375]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("http://127.0.0.1:5182/emotion-lab.html?qa");
+    await page.waitForFunction(() => window.__KUANGYE__);
     await page.getByRole("button", { name: "重置试验台", exact: true }).click();
     const ids = await page
       .locator("[data-mood]")

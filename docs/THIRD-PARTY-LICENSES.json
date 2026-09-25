@@ -1,0 +1,324 @@
+{
+  "schemaVersion": 2,
+  "generatedFrom": {
+    "npmLockfile": "app/package-lock.json",
+    "swiftPackage": "app/ios/App/App.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved",
+    "npmInstalled": "app/node_modules/*/package.json",
+    "npmLicenseSources": "app/node_modules/*/(LICENSE|NOTICE)"
+  },
+  "runtime": [
+    {
+      "name": "@babel/helper-string-parser",
+      "version": "7.29.7",
+      "license": "MIT",
+      "source": "https://github.com/babel/babel",
+      "text": "app/public/licenses/npm-babel--helper-string-parser-LICENSE",
+      "sourceFile": "app/node_modules/@babel/helper-string-parser/LICENSE",
+      "sha256": "117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76"
+    },
+    {
+      "name": "@babel/helper-validator-identifier",
+      "version": "7.29.7",
+      "license": "MIT",
+      "source": "https://github.com/babel/babel",
+      "text": "app/public/licenses/npm-babel--helper-validator-identifier-LICENSE",
+      "sourceFile": "app/node_modules/@babel/helper-validator-identifier/LICENSE",
+      "sha256": "117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76"
+    },
+    {
+      "name": "@babel/parser",
+      "version": "7.29.8",
+      "license": "MIT",
+      "source": "https://github.com/babel/babel",
+      "text": "app/public/licenses/npm-babel--parser-LICENSE",
+      "sourceFile": "app/node_modules/@babel/parser/LICENSE",
+      "sha256": "2e97627cb278aa7556fb9e8817368302301a595b6c7582512b8d74c57b773652"
+    },
+    {
+      "name": "@babel/types",
+      "version": "7.29.8",
+      "license": "MIT",
+      "source": "https://github.com/babel/babel",
+      "text": "app/public/licenses/npm-babel--types-LICENSE",
+      "sourceFile": "app/node_modules/@babel/types/LICENSE",
+      "sha256": "117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76"
+    },
+    {
+      "name": "@capacitor/core",
+      "version": "8.5.2",
+      "license": "MIT",
+      "source": "https://github.com/ionic-team/capacitor",
+      "text": "app/public/licenses/npm-capacitor--core-LICENSE",
+      "sourceFile": "app/node_modules/@capacitor/core/LICENSE",
+      "sha256": "9c6ebf3e5ab832ba4d5af38f340978e1fedbfee6e3d23662dfdb8917a9d864dd"
+    },
+    {
+      "name": "@capacitor/ios",
+      "version": "8.5.2",
+      "license": "MIT",
+      "source": "https://github.com/ionic-team/capacitor",
+      "text": "app/public/licenses/npm-capacitor--ios-LICENSE",
+      "sourceFile": "app/node_modules/@capacitor/ios/LICENSE",
+      "sha256": "9c6ebf3e5ab832ba4d5af38f340978e1fedbfee6e3d23662dfdb8917a9d864dd"
+    },
+    {
+      "name": "@jridgewell/sourcemap-codec",
+      "version": "1.6.0",
+      "license": "MIT",
+      "source": "https://github.com/jridgewell/sourcemaps",
+      "text": "app/public/licenses/npm-jridgewell--sourcemap-codec-LICENSE",
+      "sourceFile": "app/node_modules/@jridgewell/sourcemap-codec/LICENSE",
+      "sha256": "769d154fbde32a915af110b1123650bc79f4cbe675acc66e005265bf069c6c6c"
+    },
+    {
+      "name": "@vue/compiler-core",
+      "version": "3.5.42",
+      "license": "MIT",
+      "source": "https://github.com/vuejs/core",
+      "text": "app/public/licenses/npm-vue--compiler-core-LICENSE",
+      "sourceFile": "app/node_modules/@vue/compiler-core/LICENSE",
+      "sha256": "1bb85cc9b13b81ef41c81c51866172fc345e0503c86726a6755b796590b70175"
+    },
+    {
+      "name": "@vue/compiler-dom",
+      "version": "3.5.42",
+      "license": "MIT",
+      "source": "https://github.com/vuejs/core",
+      "text": "app/public/licenses/npm-vue--compiler-dom-LICENSE",
+      "sourceFile": "app/node_modules/@vue/compiler-dom/LICENSE",
+      "sha256": "1bb85cc9b13b81ef41c81c51866172fc345e0503c86726a6755b796590b70175"
+    },
+    {
+      "name": "@vue/compiler-sfc",
+      "version": "3.5.42",
+      "license": "MIT",
+      "source": "https://github.com/vuejs/core",
+      "text": "app/public/licenses/npm-vue--compiler-sfc-LICENSE",
+      "sourceFile": "app/node_modules/@vue/compiler-sfc/LICENSE",
+      "sha256": "1bb85cc9b13b81ef41c81c51866172fc345e0503c86726a6755b796590b70175"
+    },
+    {
+      "name": "@vue/compiler-ssr",
+      "version": "3.5.42",
+      "license": "MIT",
+      "source": "https://github.com/vuejs/core",
+      "text": "app/public/licenses/npm-vue--compiler-ssr-LICENSE",
+      "sourceFile": "app/node_modules/@vue/compiler-ssr/LICENSE",
+      "sha256": "1bb85cc9b13b81ef41c81c51866172fc345e0503c86726a6755b796590b70175"
+    },
+    {
+      "name": "@vue/reactivity",
+      "version": "3.5.42",
+      "license": "MIT",
+      "source": "https://github.com/vuejs/core",
+      "text": "app/public/licenses/npm-vue--reactivity-LICENSE",
+      "sourceFile": "app/node_modules/@vue/reactivity/LICENSE",
+      "sha256": "1bb85cc9b13b81ef41c81c51866172fc345e0503c86726a6755b796590b70175"
+    },
+    {
+      "name": "@vue/runtime-core",
+      "version": "3.5.42",
+      "license": "MIT",
+      "source": "https://github.com/vuejs/core",
+      "text": "app/public/licenses/npm-vue--runtime-core-LICENSE",
+      "sourceFile": "app/node_modules/@vue/runtime-core/LICENSE",
+      "sha256": "1bb85cc9b13b81ef41c81c51866172fc345e0503c86726a6755b796590b70175"
+    },
+    {
+      "name": "@vue/runtime-dom",
+      "version": "3.5.42",
+      "license": "MIT",
+      "source": "https://github.com/vuejs/core",
+      "text": "app/public/licenses/npm-vue--runtime-dom-LICENSE",
+      "sourceFile": "app/node_modules/@vue/runtime-dom/LICENSE",
+      "sha256": "1bb85cc9b13b81ef41c81c51866172fc345e0503c86726a6755b796590b70175"
+    },
+    {
+      "name": "@vue/server-renderer",
+      "version": "3.5.42",
+      "license": "MIT",
+      "source": "https://github.com/vuejs/core",
+      "text": "app/public/licenses/npm-vue--server-renderer-LICENSE",
+      "sourceFile": "app/node_modules/@vue/server-renderer/LICENSE",
+      "sha256": "1bb85cc9b13b81ef41c81c51866172fc345e0503c86726a6755b796590b70175"
+    },
+    {
+      "name": "@vue/shared",
+      "version": "3.5.42",
+      "license": "MIT",
+      "source": "https://github.com/vuejs/core",
+      "text": "app/public/licenses/npm-vue--shared-LICENSE",
+      "sourceFile": "app/node_modules/@vue/shared/LICENSE",
+      "sha256": "1bb85cc9b13b81ef41c81c51866172fc345e0503c86726a6755b796590b70175"
+    },
+    {
+      "name": "csstype",
+      "version": "3.2.3",
+      "license": "MIT",
+      "source": "https://github.com/frenic/csstype",
+      "text": "app/public/licenses/npm-csstype-LICENSE",
+      "sourceFile": "app/node_modules/csstype/LICENSE",
+      "sha256": "11d55bd4541c75ee7879547ac49089c489163dae49551389713c3d026cab383e"
+    },
+    {
+      "name": "entities",
+      "version": "7.0.1",
+      "license": "BSD-2-Clause",
+      "source": "https://github.com/fb55/entities",
+      "text": "app/public/licenses/npm-entities-LICENSE",
+      "sourceFile": "app/node_modules/entities/LICENSE",
+      "sha256": "cb992345949ccd6e8394b2cd6c465f7b897c864f845937dbf64e8997f389e164"
+    },
+    {
+      "name": "estree-walker",
+      "version": "2.0.2",
+      "license": "MIT",
+      "source": "https://github.com/Rich-Harris/estree-walker",
+      "text": "app/public/licenses/npm-estree-walker-LICENSE",
+      "sourceFile": "app/node_modules/estree-walker/LICENSE",
+      "sha256": "8a6dcbabe7179f9c8489c08a7d874d0f1e093ae7449e03756ccf87cb9d0e296e"
+    },
+    {
+      "name": "magic-string",
+      "version": "0.30.21",
+      "license": "MIT",
+      "source": "https://github.com/Rich-Harris/magic-string",
+      "text": "app/public/licenses/npm-magic-string-LICENSE",
+      "sourceFile": "app/node_modules/magic-string/LICENSE",
+      "sha256": "1cbe51b907662f6cb1492b16c359384a595180bf0e4d101603ed525e75c4e484"
+    },
+    {
+      "name": "nanoid",
+      "version": "3.3.18",
+      "license": "MIT",
+      "source": "https://github.com/ai/nanoid",
+      "text": "app/public/licenses/npm-nanoid-LICENSE",
+      "sourceFile": "app/node_modules/nanoid/LICENSE",
+      "sha256": "da4db1480d9beea3483a2eda5c53b22238d0827d57da162b48f122e04d2d9987"
+    },
+    {
+      "name": "picocolors",
+      "version": "1.1.1",
+      "license": "ISC",
+      "source": "https://github.com/alexeyraspopov/picocolors",
+      "text": "app/public/licenses/npm-picocolors-LICENSE",
+      "sourceFile": "app/node_modules/picocolors/LICENSE",
+      "sha256": "6582629e2979466878f6014313dcc2f3756c9616148682227ce3063dde310750"
+    },
+    {
+      "name": "postcss",
+      "version": "8.5.26",
+      "license": "MIT",
+      "source": "https://github.com/postcss/postcss",
+      "text": "app/public/licenses/npm-postcss-LICENSE",
+      "sourceFile": "app/node_modules/postcss/LICENSE",
+      "sha256": "5be1f3465bba68a626777f984878814aaf35e7ef8e9fd314d469bcf887050fb8"
+    },
+    {
+      "name": "source-map-js",
+      "version": "1.2.1",
+      "license": "BSD-3-Clause",
+      "source": "https://github.com/7rulnik/source-map-js",
+      "text": "app/public/licenses/npm-source-map-js-LICENSE",
+      "sourceFile": "app/node_modules/source-map-js/LICENSE",
+      "sha256": "6cb0631f71c7749763fd3dd1d5bee52dd1070ec17f2edc1710079ad070bd2fbd"
+    },
+    {
+      "name": "three",
+      "version": "0.185.1",
+      "license": "MIT",
+      "source": "https://github.com/mrdoob/three.js",
+      "text": "app/public/licenses/npm-three-LICENSE",
+      "sourceFile": "app/node_modules/three/LICENSE",
+      "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc"
+    },
+    {
+      "name": "tslib",
+      "version": "2.8.1",
+      "license": "0BSD",
+      "source": "https://github.com/Microsoft/tslib",
+      "text": "app/public/licenses/npm-tslib-LICENSE.txt",
+      "sourceFile": "app/node_modules/tslib/LICENSE.txt",
+      "sha256": "210b19e543130388c68654b7497e967119ce17145f66ab7d85688fbd70f08751"
+    },
+    {
+      "name": "vue",
+      "version": "3.5.42",
+      "license": "MIT",
+      "source": "https://github.com/vuejs/core",
+      "text": "app/public/licenses/npm-vue-LICENSE",
+      "sourceFile": "app/node_modules/vue/LICENSE",
+      "sha256": "1bb85cc9b13b81ef41c81c51866172fc345e0503c86726a6755b796590b70175"
+    }
+  ],
+  "native": [
+    {
+      "name": "Capacitor",
+      "version": "8.5.2",
+      "revision": "0b6882e9a3288342aacf36348e5a94e4f1dd7b13",
+      "product": "Capacitor",
+      "license": "MIT",
+      "source": "https://github.com/ionic-team/capacitor-swift-pm.git",
+      "text": "app/public/licenses/capacitor-swift-pm-LICENSE.md",
+      "sha256": "48f126b6311bd8e86b56bb3d2c5105a7999e9c348c2ceca7e60e397e7b5f41de"
+    },
+    {
+      "name": "Cordova",
+      "version": "8.5.2",
+      "revision": "0b6882e9a3288342aacf36348e5a94e4f1dd7b13",
+      "product": "Cordova",
+      "license": "Apache-2.0",
+      "source": "https://github.com/ionic-team/capacitor-swift-pm.git",
+      "text": "app/public/licenses/cordova-apache-2.0.txt",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "evidence": "app/node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/Classes/Public/CDV.h",
+      "licenseTextSource": "https://www.apache.org/licenses/LICENSE-2.0.txt"
+    }
+  ],
+  "source": [
+    {
+      "name": "bloub-shape",
+      "license": "MIT",
+      "source": null,
+      "sourceEvidence": [
+        "app/src/vendor/bloub-shape.js",
+        "docs/RUNLOG-2026-09.md",
+        "docs/需求整理-2026-09.md"
+      ],
+      "text": "app/public/licenses/bloub-MIT.txt",
+      "usage": "adapted closed-path and eye-pose geometry helpers",
+      "sha256": "d43fe2742faaf4a86210ec33bb155f101f64883e3994be9193099367940736b4",
+      "notes": "The original local reference was not available in this checkout; no upstream URL is asserted."
+    }
+  ],
+  "development": [
+    {
+      "name": "@capacitor/cli",
+      "version": "8.5.2",
+      "license": "MIT",
+      "source": "https://github.com/ionic-team/capacitor",
+      "role": "development-only"
+    },
+    {
+      "name": "@vitejs/plugin-vue",
+      "version": "5.2.4",
+      "license": "MIT",
+      "source": "https://github.com/vitejs/vite-plugin-vue",
+      "role": "development-only"
+    },
+    {
+      "name": "vite",
+      "version": "6.4.3",
+      "license": "MIT",
+      "source": "https://github.com/vitejs/vite",
+      "role": "development-only"
+    }
+  ],
+  "notes": [
+    "Runtime closure is the 27 non-dev, non-optional packages in app/package-lock.json.",
+    "npm versions, license identifiers, repository URLs, and license bytes are verified against the installed package metadata and files.",
+    "Capacitor and Cordova use the exact Package.resolved pin; Capacitor is MIT at that revision and Cordova source headers carry Apache 2.0 notices.",
+    "The bloub source URL is intentionally omitted because the local reference checkout is unavailable and no upstream URL was verified.",
+    "The Cordova Apache license text is the complete official Apache 2.0 text; the evidence header is recorded separately."
+  ]
+}

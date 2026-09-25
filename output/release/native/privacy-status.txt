@@ -1,0 +1,50 @@
+app_bundle=/tmp/kuangye-release-dd-20260925/Build/Products/Debug-iphonesimulator/App.app
+
+== root PrivacyInfo.xcprivacy ==
+/tmp/kuangye-release-dd-20260925/Build/Products/Debug-iphonesimulator/App.app/PrivacyInfo.xcprivacy: OK
+{
+  "NSPrivacyAccessedAPITypes" => [
+  ]
+  "NSPrivacyCollectedDataTypes" => [
+  ]
+  "NSPrivacyTracking" => false
+}
+
+== all embedded PrivacyInfo manifests ==
+
+-- /tmp/kuangye-release-dd-20260925/Build/Products/Debug-iphonesimulator/App.app/Frameworks/Capacitor.framework/PrivacyInfo.xcprivacy --
+/tmp/kuangye-release-dd-20260925/Build/Products/Debug-iphonesimulator/App.app/Frameworks/Capacitor.framework/PrivacyInfo.xcprivacy: OK
+{
+  "NSPrivacyAccessedAPITypes" => [
+  ]
+  "NSPrivacyCollectedDataTypes" => [
+  ]
+  "NSPrivacyTracking" => false
+  "NSPrivacyTrackingDomains" => [
+  ]
+}
+
+-- /tmp/kuangye-release-dd-20260925/Build/Products/Debug-iphonesimulator/App.app/Frameworks/Cordova.framework/PrivacyInfo.xcprivacy --
+/tmp/kuangye-release-dd-20260925/Build/Products/Debug-iphonesimulator/App.app/Frameworks/Cordova.framework/PrivacyInfo.xcprivacy: OK
+{
+  "NSPrivacyAccessedAPITypes" => [
+  ]
+  "NSPrivacyCollectedDataTypes" => [
+  ]
+  "NSPrivacyTracking" => false
+  "NSPrivacyTrackingDomains" => [
+  ]
+}
+
+-- /tmp/kuangye-release-dd-20260925/Build/Products/Debug-iphonesimulator/App.app/PrivacyInfo.xcprivacy --
+/tmp/kuangye-release-dd-20260925/Build/Products/Debug-iphonesimulator/App.app/PrivacyInfo.xcprivacy: OK
+{
+  "NSPrivacyAccessedAPITypes" => [
+  ]
+  "NSPrivacyCollectedDataTypes" => [
+  ]
+  "NSPrivacyTracking" => false
+}
+
+manifest_count=3
+privacy_verification=OK

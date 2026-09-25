@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node --test"
+    "test": "node --test",
+    "check:release": "node ../scripts/check-release-assets.mjs"
   },
   "dependencies": {
     "@capacitor/core": "8.5.2",

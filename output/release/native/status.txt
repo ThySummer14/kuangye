@@ -1,0 +1,9 @@
+build_exit=0
+testCompletionWritesNativeSaveAndSurvivesRelaunch_exit=0
+completion_files=OK
+testBackupExportLandsInUserDocuments_exit=0
+export_file=OK
+ALL_SIM_VERIFICATIONS_OK
+result_completion=/tmp/kuangye-release-testCompletionWritesNativeSaveAndSurvivesRelaunch-20260925.xcresult
+result_backup=/tmp/kuangye-release-testBackupExportLandsInUserDocuments-20260925.xcresult
+derived_data=/tmp/kuangye-release-dd-20260925

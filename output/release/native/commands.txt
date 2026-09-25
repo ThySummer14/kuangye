@@ -1,0 +1,16 @@
+device_udid=A13C33B5-CB99-4D3F-929D-16D5856958DE
+device_name=kuangye-verify
+runtime=iOS 27.0
+
+commands=
+xcrun simctl list devices
+xcodebuild -project app/ios/App/App.xcodeproj -scheme KuangyeTests -destination platform=iOS Simulator,id=A13C33B5-CB99-4D3F-929D-16D5856958DE -derivedDataPath /tmp/kuangye-release-dd-20260925 CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" build
+xcodebuild ... -only-testing:KuangyeUITests/NativeSaveTests/testCompletionWritesNativeSaveAndSurvivesRelaunch test
+xcodebuild ... -only-testing:KuangyeUITests/NativeSaveTests/testBackupExportLandsInUserDocuments test
+
+result_bundles:
+/tmp/kuangye-release-testBackupExportLandsInUserDocuments-20260925.xcresult
+/tmp/kuangye-release-testCompletionWritesNativeSaveAndSurvivesRelaunch-20260925.xcresult
+
+tracked_or_modified_release_files:
+?? output/release/native/

@@ -2261,3 +2261,10 @@ button:disabled {
 }
 .poi-label.woodshop { left: 20%; top: 55%; }
 .poi-label.atelier { left: 76%; top: 32%; }
+
+/* Native web content stays clear of the device cutout and home indicator. */
+.native-app body {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.startup-error { max-width: 520px; margin: 60px auto; padding: 24px; line-height: 1.8; }

@@ -3,6 +3,7 @@ import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { state, changeHomeDecor } from "../store.js";
 import { WEATHER, eastEightHour, daylight } from "../game/atmosphere.js";
 import { QA } from "../game/qa.js";
+import { nativePlatform } from "../services/native.js";
 import { fetchWeather } from "../services/weather.js";
 const emit = defineEmits(["change"]);
 const now = ref(new Date()),
@@ -29,6 +30,7 @@ const effective = computed(() => ({
 }));
 watch(effective, (v) => emit("change", v), { immediate: true });
 async function sync(locate = false) {
+  if (nativePlatform) { status.value = "本地晴天 · 可自选天气"; return; }
   if (QA) { status.value = "本地场景 · 晴天"; return; }
   controller?.abort();
   controller = new AbortController();
@@ -87,7 +89,7 @@ onBeforeUnmount(() => {
         :value="mode"
         @change="changeHomeDecor('weather', $event.target.value)"
       >
-        <option value="auto">跟随室外天气</option>
+        <option value="auto">{{ nativePlatform ? "本地晴天" : "跟随室外天气" }}</option>
         <option v-for="(name, id) in WEATHER" :key="id" :value="id">
           {{ name }}
         </option>
@@ -102,9 +104,9 @@ onBeforeUnmount(() => {
         <option value="sunset">日落时分</option>
         <option value="night">温柔夜晚</option>
       </select></label
-    ><button class="text-button" :disabled="loading" @click="sync(true)">
+    ><button v-if="!nativePlatform" class="text-button" :disabled="loading" @click="sync(true)">
       {{ loading ? "同步中…" : "重新定位与同步" }}</button
-    ><small
+    ><small v-if="!nativePlatform"
       >位置授权失败时使用新乡。仅将约公里级坐标用于查询天气，不保存定位轨迹。<a
         href="https://open-meteo.com/"
         target="_blank"

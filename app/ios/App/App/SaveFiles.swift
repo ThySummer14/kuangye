@@ -27,4 +27,12 @@ final class SaveFiles {
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         try Data(text.utf8).write(to: destination, options: .atomic)
     }
+
+    /// Removes both generations. Exported backups in Documents are user
+    /// property and are deliberately left untouched.
+    func deleteAll() throws {
+        for name in ["current", "previous"] {
+            try? FileManager.default.removeItem(at: url(name))
+        }
+    }
 }

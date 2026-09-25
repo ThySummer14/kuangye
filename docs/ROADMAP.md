@@ -12,7 +12,7 @@
 
 原生存档/备份链路已全部闭环并合入 main；首季系列内容提案已交付（[SERIES-SEASON1-REVIEW](SERIES-SEASON1-REVIEW-2026-09.md)，八族写作卡 + 19 条任务，含四个待用户裁决点）。下一步二选一：
 1. 用户对提案给出反馈后：按裁决修订，进入实现切片（tasks.js + series.js 正式目录 + 结构校验测试）；
-2. 用户未反馈期间：继续 PUBLISHING 待做项中不依赖用户的条目（真机迁移演练需实体 iPhone，暂不可做；隐私数据流审计稿已交付 [PRIVACY-AUDIT](PRIVACY-AUDIT-2026-09.md)，剩"清除全部数据"入口的实现切片）。
+2. 用户未反馈期间：继续 PUBLISHING 待做项中不依赖用户的条目（真机迁移演练需实体 iPhone，暂不可做；隐私数据流审计稿与"清除全部数据"入口均已交付 [PRIVACY-AUDIT](PRIVACY-AUDIT-2026-09.md)）。
 不要先斩后奏把提案内容写进运行时。
 
 每次继续先读本页、RUNLOG 最后一节、git log，并查看工作区差异。机械工作 Luna/max，主代理亲自核验。

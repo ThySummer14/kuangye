@@ -352,6 +352,9 @@ export function importData(json) {
   state.home = s.home;
 }
 export function resetData() {
+  // Purge first so the watcher's fresh-empty save lands after the vault is
+  // cleared; the previous generation is really deleted, not kept as backup.
+  persistence.purge();
   Object.assign(state, emptyState());
 }
 

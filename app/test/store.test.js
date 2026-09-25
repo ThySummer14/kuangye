@@ -5,6 +5,7 @@ const memory = new Map();
 globalThis.localStorage = {
   getItem: (k) => memory.get(k) || null,
   setItem: (k, v) => memory.set(k, v),
+  removeItem: (k) => memory.delete(k),
 };
 const store = await import("../src/store.js");
 const { TASKS } = await import("../src/data/tasks.js");

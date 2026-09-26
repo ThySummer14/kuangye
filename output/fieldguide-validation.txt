@@ -1,0 +1,407 @@
+
+=== Field guide validation 2026-09-26T19:35:02+08:00 ===
+
+$ npm test
+
+> test
+> npm --prefix app test
+
+
+> kuangye@0.1.0 test
+> node --test
+
+TAP version 13
+# Subtest: old light settings migrate to outdoor sync and explicit overrides persist
+ok 1 - old light settings migrate to outdoor sync and explicit overrides persist
+  ---
+  duration_ms: 0.553792
+  type: 'test'
+  ...
+# Subtest: east-eight clock is independent from host timezone and daylight is continuous
+ok 2 - east-eight clock is independent from host timezone and daylight is continuous
+  ---
+  duration_ms: 0.083084
+  type: 'test'
+  ...
+# Subtest: weather codes map to supported scenes without inventing unavailable data
+ok 3 - weather codes map to supported scenes without inventing unavailable data
+  ---
+  duration_ms: 0.174292
+  type: 'test'
+  ...
+# Subtest: blink closes and opens continuously without hard steps
+ok 4 - blink closes and opens continuously without hard steps
+  ---
+  duration_ms: 4.480583
+  type: 'test'
+  ...
+# Subtest: backup bridge falls back to web semantics outside the native shell
+ok 5 - backup bridge falls back to web semantics outside the native shell
+  ---
+  duration_ms: 0.275833
+  type: 'test'
+  ...
+# Subtest: legacy and v3 backups share import cleaning without losing known history
+ok 6 - legacy and v3 backups share import cleaning without losing known history
+  ---
+  duration_ms: 1.48775
+  type: 'test'
+  ...
+# Subtest: import refuses unknown task history instead of silently deleting it
+ok 7 - import refuses unknown task history instead of silently deleting it
+  ---
+  duration_ms: 0.181333
+  type: 'test'
+  ...
+# Subtest: future backup schema cannot overwrite current data through import
+ok 8 - future backup schema cannot overwrite current data through import
+  ---
+  duration_ms: 0.060166
+  type: 'test'
+  ...
+# Subtest: all 196 mood pairs converge; interruption preserves pose and velocity
+ok 9 - all 196 mood pairs converge; interruption preserves pose and velocity
+  ---
+  duration_ms: 89.802083
+  type: 'test'
+  ...
+# Subtest: spring is timestep consistent and resumes safely; closed outlines retain topology
+ok 10 - spring is timestep consistent and resumes safely; closed outlines retain topology
+  ---
+  duration_ms: 1.750208
+  type: 'test'
+  ...
+# Subtest: completion rewards are rounded to five and invalid input never creates currency
+ok 11 - completion rewards are rounded to five and invalid input never creates currency
+  ---
+  duration_ms: 1.196209
+  type: 'test'
+  ...
+# Subtest: unique recorded days yield glimmer once; gaps never remove progress
+ok 12 - unique recorded days yield glimmer once; gaps never remove progress
+  ---
+  duration_ms: 0.347333
+  type: 'test'
+  ...
+# Subtest: first task can buy first furniture and memory binds once per completion
+ok 13 - first task can buy first furniture and memory binds once per completion
+  ---
+  duration_ms: 0.167083
+  type: 'test'
+  ...
+# Subtest: placement enforces rotated footprint, bounds, collisions and can move itself
+ok 14 - placement enforces rotated footprint, bounds, collisions and can move itself
+  ---
+  duration_ms: 0.483584
+  type: 'test'
+  ...
+# Subtest: recycle returns 70 percent of actual paid price only once and removes placement
+ok 15 - recycle returns 70 percent of actual paid price only once and removes placement
+  ---
+  duration_ms: 0.128458
+  type: 'test'
+  ...
+# Subtest: level gifts are idempotent and cannot be bought or recycled
+ok 16 - level gifts are idempotent and cannot be bought or recycled
+  ---
+  duration_ms: 0.142208
+  type: 'test'
+  ...
+# Subtest: v2 migration preserves active, done, abandoned and credits historical completion light
+ok 17 - v2 migration preserves active, done, abandoned and credits historical completion light
+  ---
+  duration_ms: 1.163708
+  type: 'test'
+  ...
+# Subtest: v3 save round trip keeps purchased prices, placements and plaques
+ok 18 - v3 save round trip keeps purchased prices, placements and plaques
+  ---
+  duration_ms: 0.534458
+  type: 'test'
+  ...
+# Subtest: corrupt home data is sanitized without removing task records
+ok 19 - corrupt home data is sanitized without removing task records
+  ---
+  duration_ms: 0.479209
+  type: 'test'
+  ...
+# Subtest: vintage stock is deterministic and independent from purchases
+ok 20 - vintage stock is deterministic and independent from purchases
+  ---
+  duration_ms: 0.614208
+  type: 'test'
+  ...
+# Subtest: all expressions interpolate without overshooting or discontinuity
+ok 21 - all expressions interpolate without overshooting or discontinuity
+  ---
+  duration_ms: 1.546417
+  type: 'test'
+  ...
+# Subtest: idle stays put; explicit furniture actions remain available without hopping
+ok 22 - idle stays put; explicit furniture actions remain available without hopping
+  ---
+  duration_ms: 21.762792
+  type: 'test'
+  ...
+# Subtest: soft corner is a closed volumetric shell with outward normals
+ok 23 - soft corner is a closed volumetric shell with outward normals
+  ---
+  duration_ms: 3.462917
+  type: 'test'
+  ...
+# Subtest: every expression stays on the body; character and shadow use no texture maps
+ok 24 - every expression stays on the body; character and shadow use no texture maps
+  ---
+  duration_ms: 13.921083
+  type: 'test'
+  ...
+# Subtest: release checker accepts isolated inputs without a prior build
+ok 25 - release checker accepts isolated inputs without a prior build
+  ---
+  duration_ms: 187.540917
+  type: 'test'
+  ...
+# Subtest: CLI actually executes on Chinese paths and rejects missing dist index
+ok 26 - CLI actually executes on Chinese paths and rejects missing dist index
+  ---
+  duration_ms: 167.232833
+  type: 'test'
+  ...
+# Subtest: release gate rejects same-length asset changes
+ok 27 - release gate rejects same-length asset changes
+  ---
+  duration_ms: 67.915167
+  type: 'test'
+  ...
+# Subtest: release gate rejects indexed version drift without modifying repository
+ok 28 - release gate rejects indexed version drift without modifying repository
+  ---
+  duration_ms: 69.041333
+  type: 'test'
+  ...
+# Subtest: release gate rejects missing native licenses and fixture code
+ok 29 - release gate rejects missing native licenses and fixture code
+  ---
+  duration_ms: 69.707167
+  type: 'test'
+  ...
+# Subtest: expansion charges once per added strip and never spends unavailable light
+ok 30 - expansion charges once per added strip and never spends unavailable light
+  ---
+  duration_ms: 1.573208
+  type: 'test'
+  ...
+# Subtest: expanded placements survive normalization and old saves start at nine square metres
+ok 31 - expanded placements survive normalization and old saves start at nine square metres
+  ---
+  duration_ms: 0.604584
+  type: 'test'
+  ...
+# Subtest: rugs support furniture while solid furniture cannot overlap
+ok 32 - rugs support furniture while solid furniture cannot overlap
+  ---
+  duration_ms: 0.329792
+  type: 'test'
+  ...
+# Subtest: walking goes around furniture, rejects sealed destinations and finds reachable interaction edge
+ok 33 - walking goes around furniture, rejects sealed destinations and finds reachable interaction edge
+  ---
+  duration_ms: 1.5145
+  type: 'test'
+  ...
+# Subtest: home discoveries are bounded and cannot be farmed into currency
+ok 34 - home discoveries are bounded and cannot be farmed into currency
+  ---
+  duration_ms: 0.968083
+  type: 'test'
+  ...
+# Subtest: wall fixtures share their supporting cutaway group
+ok 35 - wall fixtures share their supporting cutaway group
+  ---
+  duration_ms: 33.071791
+  type: 'test'
+  ...
+# Subtest: static batching keeps rounded boxes, spheres and tubes sharing one material
+ok 36 - static batching keeps rounded boxes, spheres and tubes sharing one material
+  ---
+  duration_ms: 10.989917
+  type: 'test'
+  ...
+# Subtest: native migration copies and verifies v1/v2/v3 keys without removing originals
+ok 37 - native migration copies and verifies v1/v2/v3 keys without removing originals
+  ---
+  duration_ms: 2.026666
+  type: 'test'
+  ...
+# Subtest: native migration readback mismatch refuses startup and leaves old keys intact
+ok 38 - native migration readback mismatch refuses startup and leaves old keys intact
+  ---
+  duration_ms: 0.724375
+  type: 'test'
+  ...
+# Subtest: syntax damage falls back to previous and subsequent writes preserve good backup
+ok 39 - syntax damage falls back to previous and subsequent writes preserve good backup
+  ---
+  duration_ms: 0.955834
+  type: 'test'
+  ...
+# Subtest: unsupported native histories never fall back or overwrite files
+ok 40 - unsupported native histories never fall back or overwrite files
+  ---
+  duration_ms: 0.401792
+  type: 'test'
+  ...
+# Subtest: each failure point retains the last valid generation and retry can save
+ok 41 - each failure point retains the last valid generation and retry can save
+  ---
+  duration_ms: 0.427541
+  type: 'test'
+  ...
+# Subtest: current write corruption reports failure and recovers verified previous on restart
+ok 42 - current write corruption reports failure and recovers verified previous on restart
+  ---
+  duration_ms: 0.108708
+  type: 'test'
+  ...
+# Subtest: overlapping save calls preserve request order and the penultimate generation
+ok 43 - overlapping save calls preserve request order and the penultimate generation
+  ---
+  duration_ms: 0.185666
+  type: 'test'
+  ...
+# Subtest: web driver keeps original keys, QA isolation, and write errors observable
+ok 44 - web driver keeps original keys, QA isolation, and write errors observable
+  ---
+  duration_ms: 0.117875
+  type: 'test'
+  ...
+# Subtest: purge deletes the whole vault and the next save starts fresh
+ok 45 - purge deletes the whole vault and the next save starts fresh
+  ---
+  duration_ms: 0.219875
+  type: 'test'
+  ...
+# Subtest: full store flow pays exactly once, persists v3, and imports home together with tasks
+ok 46 - full store flow pays exactly once, persists v3, and imports home together with tasks
+  ---
+  duration_ms: 1.871416
+  type: 'test'
+  ...
+# Subtest: streak check-in is unique and cannot complete early; abandoning never changes currency
+ok 47 - streak check-in is unique and cannot complete early; abandoning never changes currency
+  ---
+  duration_ms: 0.302667
+  type: 'test'
+  ...
+# Subtest: three concurrent tasks remains the global limit
+ok 48 - three concurrent tasks remains the global limit
+  ---
+  duration_ms: 0.794584
+  type: 'test'
+  ...
+# Subtest: damaged v3 falls back to a legacy save without overwriting the legacy key
+ok 49 - damaged v3 falls back to a legacy save without overwriting the legacy key
+  ---
+  duration_ms: 1.436167
+  type: 'test'
+  ...
+# Subtest: search finds advanced tasks without changing today's suggestions
+ok 50 - search finds advanced tasks without changing today's suggestions
+  ---
+  duration_ms: 1.548833
+  type: 'test'
+  ...
+# Subtest: search covers descriptions, domains, types, and growth lines
+ok 51 - search covers descriptions, domains, types, and growth lines
+  ---
+  duration_ms: 0.223875
+  type: 'test'
+  ...
+# Subtest: search respects chosen domain and existing task history
+ok 52 - search respects chosen domain and existing task history
+  ---
+  duration_ms: 0.553709
+  type: 'test'
+  ...
+1..52
+# tests 52
+# suites 0
+# pass 52
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 677.773209
+[exit code: 0]
+
+$ npm run build
+
+> build
+> npm --prefix app run build && node scripts/stage-site.mjs
+
+
+> kuangye@0.1.0 build
+> vite build
+
+vite v6.4.3 building for production...
+transforming...
+✓ 85 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/emotion-lab.html                             0.86 kB │ gzip:   0.41 kB
+dist/index.html                                   1.12 kB │ gzip:   0.66 kB
+dist/assets/SproutPortrait-DVcrL5WK.css           0.08 kB │ gzip:   0.10 kB
+dist/assets/lab-DyDmiaLS.css                      4.90 kB │ gzip:   1.64 kB
+dist/assets/App-B_98cOg5.css                     14.77 kB │ gzip:   3.53 kB
+dist/assets/main-B2ljlnVd.css                    72.32 kB │ gzip:  15.89 kB
+dist/assets/modulepreload-polyfill-B5Qt9EMX.js    0.71 kB │ gzip:   0.40 kB
+dist/assets/lab-DGH61VvI.js                       9.84 kB │ gzip:   4.49 kB
+dist/assets/SproutPortrait-BHPUKQin.js           15.15 kB │ gzip:   7.13 kB
+dist/assets/main-bhbbyk2j.js                     40.98 kB │ gzip:  16.89 kB
+dist/assets/vue-Dx45t2Vt.js                      67.79 kB │ gzip:  26.88 kB
+dist/assets/App-xQUk1iJw.js                     124.14 kB │ gzip:  52.03 kB
+dist/assets/three-CsyC7ksp.js                   534.86 kB │ gzip: 134.31 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 777ms
+[exit code: 0]
+
+=== Follow-up build after QuestView update 2026-09-26T19:35:56+08:00 ===
+
+$ npm run build
+
+> build
+> npm --prefix app run build && node scripts/stage-site.mjs
+
+
+> kuangye@0.1.0 build
+> vite build
+
+vite v6.4.3 building for production...
+transforming...
+✓ 85 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/emotion-lab.html                             0.86 kB │ gzip:   0.41 kB
+dist/index.html                                   1.12 kB │ gzip:   0.66 kB
+dist/assets/SproutPortrait-DVcrL5WK.css           0.08 kB │ gzip:   0.10 kB
+dist/assets/lab-DyDmiaLS.css                      4.90 kB │ gzip:   1.64 kB
+dist/assets/App-YqYS2qhl.css                     14.77 kB │ gzip:   3.53 kB
+dist/assets/main-B2ljlnVd.css                    72.32 kB │ gzip:  15.89 kB
+dist/assets/modulepreload-polyfill-B5Qt9EMX.js    0.71 kB │ gzip:   0.40 kB
+dist/assets/lab-DGH61VvI.js                       9.84 kB │ gzip:   4.49 kB
+dist/assets/SproutPortrait-BHPUKQin.js           15.15 kB │ gzip:   7.13 kB
+dist/assets/main-xGXE1cYU.js                     40.98 kB │ gzip:  16.89 kB
+dist/assets/vue-Dx45t2Vt.js                      67.79 kB │ gzip:  26.88 kB
+dist/assets/App-40wFOuT3.js                     124.35 kB │ gzip:  52.05 kB
+dist/assets/three-CsyC7ksp.js                   534.86 kB │ gzip: 134.31 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 754ms
+[exit code: 0]

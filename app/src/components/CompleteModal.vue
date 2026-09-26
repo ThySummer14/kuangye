@@ -9,6 +9,7 @@ import {
   state,
   saveWarning,
 } from "../store.js";
+import { fieldGuide } from "../data/field-guides.js";
 import { DIFF } from "../data/tasks.js";
 import { lumenReward } from "../game/home.js";
 import BuddyFace from "./BuddyFace.vue";
@@ -57,11 +58,11 @@ function nextTask() {
       <p class="completion-task">{{ task.title }}</p>
       <label for="quest-review"
         >给未来的自己留一句话 <small>（可选）</small></label
-      ><textarea
+      ><p class="review-prompt">{{ fieldGuide(task).recall }}</p><textarea
         id="quest-review"
         v-model="review"
         maxlength="160"
-        placeholder="这一趟，发生了什么值得记住的事？"
+        :placeholder="fieldGuide(task).recall"
         rows="4"
       />
       <p class="completion-note">它也会成为你下一件家具上的小小铭牌。</p>
@@ -95,13 +96,13 @@ function nextTask() {
         {{ (saveWarning.text || saveWarning.pending) ? "回到地图" : "收好了，回到地图" }}
       </button>
       <button
-        class="text-button"
+        class="text-button completion-shop-link"
         @click="
           emit('shop');
           emit('close');
         "
       >
-        去集市，给小家添一点温暖 ↗</button
+        去集市，把这句话安放到一件家具上 ↗</button
       ><button
         v-if="next && canAccept(next).ok"
         class="text-button"
@@ -113,6 +114,7 @@ function nextTask() {
   >
 </template>
 <style scoped>
+.review-prompt { font-size: 13px; line-height: 1.7; color: var(--ink-2); margin: 8px 0 12px; }
 .completion-saved {
   text-align: center;
   color: #667459;

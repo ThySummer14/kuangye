@@ -1,6 +1,6 @@
 <script setup>
-import { ref, computed, nextTick } from "vue";
-import { CATS, DIFF, TYPES } from "../data/tasks.js";
+import { ref, shallowRef, computed, nextTick } from "vue";
+import { CATS, DIFF, TYPES, CHAINS } from "../data/tasks.js";
 import { selectTasks } from "../game/task-selection.js";
 import {
   state,
@@ -17,14 +17,50 @@ import {
 } from "../store.js";
 import { lumenReward } from "../game/home.js";
 import BuddyFace from "./BuddyFace.vue";
+import QuestTrails from "./QuestTrails.vue";
+import TaskGuide from "./TaskGuide.vue";
+import { TRAILS, fieldGuide } from "../data/field-guides.js";
+const trailId = ref("");
+// Keep canonical task identity for the store’s chain eligibility lookup.
+const inspecting = shallowRef(null);
+const resultsHeading = ref(null);
+const trail = computed(() => TRAILS.find(item => item.id === trailId.value));
+async function selectTrail(id) {
+  trailId.value = id;
+  cat.value = "all";
+  query.value = "";
+  scope.value = "today";
+  await nextTick();
+  resultsHeading.value?.focus({ preventScroll: true });
+  resultsHeading.value?.scrollIntoView({ block: "start", behavior: "instant" });
+}
+async function acceptGuide(task) {
+  if (!canAccept(task).ok) return;
+  inspecting.value = null;
+  await nextTick();
+  await take(task);
+}
 const emit = defineEmits(["complete", "abandon", "toast", "chains"]);
 const cat = ref("all"),
   scope = ref("today"),
   query = ref(""),
   amounts = ref({});
-const list = computed(() => selectTasks(state, {
-  cat: cat.value, scope: scope.value, query: query.value,
-}));
+const list = computed(() => {
+  const tasks = selectTasks(state, {
+    cat: cat.value, scope: trail.value ? "all" : scope.value, query: query.value,
+  });
+  return trail.value ? tasks.filter(task => trail.value.tasks.includes(task.id)) : tasks;
+});
+const scopeLabel = computed(() => scope.value === "today" ? "今天可做" : "任务库");
+function effort(t) {
+  if (t.type === "once") return "一次完成";
+  if (t.type === "streak") return `连续 ${t.target} 天`;
+  return `累计 ${t.target}${t.unit || "次"}`;
+}
+function tierLabel(t) {
+  if (t.chain) return `${CHAINS[t.chain]?.name || "成长线"} · 第 ${t.stage} 阶段`;
+  return t.tier === "chapter" ? `本章 · 第 ${t.chapter + 1} 章` : "赛季任务";
+}
 const activeCards = new Map();
 const searchInput = ref(null);
 function cardRef(id, element) {
@@ -45,6 +81,7 @@ async function take(t) {
   card?.scrollIntoView({ block: "center", behavior: "instant" });
 }
 async function clearFilters() {
+  trailId.value = "";
   query.value = "";
   cat.value = "all";
   scope.value = "today";
@@ -71,7 +108,7 @@ function log(a) {
     <section class="active-section">
       <div class="section-title">
         <h3>
-          手里的小事 <span>{{ state.active.length }} / 3</span>
+          进行中的任务 <span>{{ state.active.length }} / 3</span>
         </h3>
         <span>不赶进度，专心做完一件</span>
       </div>
@@ -88,7 +125,8 @@ function log(a) {
           </div>
           <h3>{{ taskById[a.qid].title }}</h3>
           <p>{{ taskById[a.qid].desc }}</p>
-          <p class="action-reminder">先去生活里做，回来再记录。还没做完，也可以下次继续。</p>
+          <p class="action-reminder"><strong>第一步</strong> {{ fieldGuide(taskById[a.qid]).steps[0] }}</p>
+          <button class="text-button guide-link" @click="inspecting = taskById[a.qid]">打开出发手册 ↗</button>
           <template v-if="taskById[a.qid].type !== 'once'"
             ><div class="task-progress">
               <i
@@ -149,17 +187,19 @@ function log(a) {
         </article>
       </div>
     </section>
+    <QuestTrails :selected="trailId" @select="selectTrail" />
     <div class="quest-filters">
       <div class="place-tabs">
-        <button :class="{ active: scope === 'today' }" @click="scope = 'today'">
-          适合今天</button
-        ><button :class="{ active: scope === 'all' }" @click="scope = 'all'">
-          全部支线</button
+        <button :class="{ active: scope === 'today' }" @click="scope = 'today'; trailId = ''">
+          今天可做</button
+        ><button :class="{ active: scope === 'all' }" @click="scope = 'all'; trailId = ''">
+          任务库</button
         ><button @click="emit('chains')">成长线 ↗</button>
       </div>
       <input
         ref="searchInput"
         v-model="query"
+        @input="trailId = ''"
         aria-label="搜索任务"
         placeholder="搜索一件想做的事…"
         class="search-input"
@@ -177,7 +217,15 @@ function log(a) {
         {{ c.name }}
       </button>
     </div>
-    <p v-if="query.trim()" class="search-scope" role="status">搜索全部难度的支线 · {{ cat === 'all' ? '所有领域' : CATS[cat].name }} · {{ list.length }} 件</p>
+    <p class="search-scope" role="status">
+      {{ trail ? trail.title : scopeLabel }} · {{ cat === 'all' ? '全部领域' : CATS[cat].name }} · {{ list.length }} 条
+      <span v-if="scope === 'today' && !trail">（优先热身与入门任务）</span>
+      <span v-if="query.trim()"> · 搜索“{{ query.trim() }}”</span>
+    </p>
+    <div class="quest-section-heading">
+      <h3 ref="resultsHeading" tabindex="-1">{{ trail ? trail.title : "选择下一件" }}</h3>
+      <span>先选一件做得到的，再慢慢走远。</span>
+    </div>
     <div class="quest-grid">
       <article v-for="t in list" :key="t.id" class="quest-card">
         <div class="task-meta">
@@ -187,31 +235,58 @@ function log(a) {
         </div>
         <h3>{{ t.title }}</h3>
         <p>{{ t.desc }}</p>
+        <button class="text-button guide-link" :aria-label="t.title + '：看看怎么开始'" @click="inspecting = t">看看怎么开始 ↗</button>
+        <div class="task-effort">
+          <span>{{ effort(t) }}</span><span>{{ tierLabel(t) }}</span>
+        </div>
         <div class="quest-card-footer">
           <span class="price"
             >✦ {{ lumenReward(DIFF[t.diff].xp) }} <small>光</small
             ><i>＋{{ DIFF[t.diff].xp }} XP</i></span
-          ><button
-            class="soft-button"
-            :disabled="!canAccept(t).ok"
-            :title="canAccept(t).why"
-            @click="take(t)"
-          >
-            {{ canAccept(t).ok ? "接下这件事 ＋" : canAccept(t).why }}
-          </button>
+          ><div class="quest-card-action">
+            <small v-if="!canAccept(t).ok" class="accept-note">{{ canAccept(t).why }}</small>
+            <button
+              class="soft-button"
+              :disabled="!canAccept(t).ok"
+              :title="canAccept(t).why"
+              @click="take(t)"
+            >
+              {{ canAccept(t).ok ? "接取任务 ＋" : "暂不可接取" }}
+            </button>
+          </div>
         </div>
       </article>
     </div>
     <div v-if="!list.length" class="active-empty">
-      这里暂时没有匹配的任务。换个分类，或清空搜索试试。
+      {{ trail ? "这个方向暂时没有待接的任务。已接下的在上方，也可以换个方向。" : "这里暂时没有匹配的任务。换个分类，或清空搜索试试。" }}
       <button class="soft-button" @click="clearFilters">清空筛选，看看适合今天的事</button>
     </div>
+    <TaskGuide v-if="inspecting" :task="inspecting"
+      :active="state.active.some(a => a.qid === inspecting.id)" :eligibility="canAccept(inspecting)"
+      @close="inspecting = null" @accept="acceptGuide" />
   </div>
 </template>
 <style scoped>
+.guide-link { padding: 0; margin: 3px 0 12px; font-size: 13px; color: var(--primary); text-align: left; }
+.action-reminder strong { display: block; margin-bottom: 4px; }
 .active-card:focus { outline: 2px solid #557252; outline-offset: 4px; }
 .active-section .section-title > span { max-width: none; }
-.active-card .action-reminder { font-size: 13px; color: #64715f; padding-left: 12px; border-left: 2px solid #cbd6ba; }
-.search-scope { color: #64715f; font-size: 13px; margin: 0 0 18px; }
+  .active-card .action-reminder { font-size: 13px; color: #64715f; padding-left: 12px; border-left: 2px solid #cbd6ba; }
+.search-scope { color: #64715f; font-size: 13px; margin: 0 0 12px; }
+.quest-section-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin: 0 0 16px; }
+.quest-section-heading h3 { margin: 0; font-family: var(--serif); font-size: 21px; font-weight: 600; color: #344b38; }
+.quest-section-heading span { color: #84907e; font-size: 12px; }
+.task-effort { display: flex; flex-wrap: wrap; gap: 8px 14px; margin: 13px 0 15px; color: #788473; font-size: 12px; }
+.task-effort span + span { color: #a48a55; }
+.quest-card-action { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; min-width: 122px; }
+.accept-note { max-width: 180px; color: #9b7862; font-size: 11px; line-height: 1.4; text-align: right; }
 .active-empty .soft-button { display: block; margin: 16px auto 0; }
+@media (max-width: 760px) {
+  .quest-section-heading { align-items: flex-start; flex-direction: column; gap: 4px; }
+  .quest-section-heading span { font-size: 11px; }
+  .task-effort { margin-bottom: 12px; }
+  .quest-card-action { align-items: stretch; min-width: 0; width: 100%; }
+  .accept-note { max-width: none; text-align: left; }
+  .quest-card-action .soft-button { width: 100%; }
+}
 </style>

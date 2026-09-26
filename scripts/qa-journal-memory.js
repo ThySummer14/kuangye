@@ -1,0 +1,63 @@
+async (page) => {
+  const results = [], errors = [];
+  page.on('pageerror', e => errors.push(e.message));
+  for (const width of [1280, 375]) {
+    await page.setViewportSize({width, height: width === 375 ? 812 : 900});
+    await page.goto('http://127.0.0.1:5184/?qa#map');
+    await page.waitForFunction(() => window.__KUANGYE__);
+    await page.evaluate(() => window.__KUANGYE__.reset('map-navigation','empty'));
+    await page.locator('[data-place="journal"]').click();
+    await page.waitForURL('**#panel');
+    await page.getByText('第一页，从一件真实的小事开始。', {exact:true}).waitFor();
+    await page.screenshot({path:`output/playwright/journal-empty-${width}.png`,fullPage:true});
+    await page.evaluate(async () => {
+      const { state } = await import('/src/store.js');
+      // Throwaway local QA history, never a production save.
+      state.done = [
+        {qid:'cook-s1',at:'2026-08-02',xp:10,review:'番茄炒蛋有点咸，但我真的做出了自己的晚饭。',units:[],logs:[]},
+        {qid:'read-s1',at:'2026-09-24',xp:10,review:'读到窗外天黑，原来十分钟也能把注意力找回来。',units:[],logs:[]},
+        {qid:'run-s1',at:'2026-09-10',xp:25,review:'绕着操场慢慢跑，晚风比想象中凉。',units:[{metric:'km',v:2}],logs:[]},
+        {qid:'letter10y',at:'2026-08-20',xp:10,review:'',units:[],logs:[]},
+      ];
+      state.abandoned = [{qid:'paint100',at:'2026-09-12',reason:'先画喜欢的一张，不急着凑够数量。'}];
+    });
+    await page.locator('.memory-letter').waitFor();
+    await page.screenshot({path:`output/playwright/journal-memories-${width}.png`,fullPage:true});
+    if (!(await page.locator('.memory-letter').innerText()).includes('注意力找回来')) throw Error('最新回顾排序不符');
+    const entries = page.locator('.memory-entry');
+    if (await entries.count() !== 4) throw Error('历史记录数量不符');
+    await page.getByRole('group',{name:'按生活领域回看'}).getByRole('button',{name:'创造 1',exact:true}).click();
+    if (await entries.count() !== 1 || !(await page.locator('.memory-letter').innerText()).includes('番茄炒蛋')) throw Error('领域筛选不符');
+    await page.getByRole('group',{name:'按生活领域回看'}).getByRole('button',{name:'全部 4',exact:true}).click();
+    await page.getByRole('searchbox',{name:'搜索手记'}).fill('晚风');
+    if (await entries.count() !== 1) throw Error('回顾搜索不符');
+    await page.getByRole('searchbox',{name:'搜索手记'}).fill('没有这段文字');
+    await page.getByRole('button',{name:'查看全部完成记录'}).click();
+    await page.getByRole('checkbox',{name:'只看写过的话'}).check();
+    if (await entries.count() !== 3) throw Error('无文字记录过滤不符');
+    await page.getByRole('button',{name:'暂时放下 · 1',exact:true}).click();
+    if (!(await entries.innerText()).includes('先画喜欢的一张')) throw Error('暂放理由丢失');
+    if (await page.locator('.memory-letter').count() || await page.locator('.memory-next').count()) throw Error('暂放混入完成回顾');
+    await page.getByRole('button',{name:'完成的事 · 4',exact:true}).click();
+    await page.getByRole('button',{name:'看看下一步怎么开始 ↗'}).click();
+    await page.getByRole('dialog').waitFor();
+    if (!(await page.getByRole('dialog').innerText()).includes('连续 14 天，每天读 20 分钟')) throw Error('未衔接阅读下一阶段');
+    await page.getByRole('button',{name:'接下这件事',exact:true}).click();
+    await page.waitForFunction(() => document.activeElement?.textContent.includes('回任务岩壁'));
+    await page.getByRole('link',{name:'回任务岩壁，继续手里的事 ↗'}).click();
+    await page.waitForURL('**#tasks');
+    await page.locator('[data-active-task="read-s2"]').waitFor();
+    await page.reload();
+    await page.waitForFunction(() => window.__KUANGYE__?.snapshot().activeTasks === 1);
+    const snapshot = await page.evaluate(() => window.__KUANGYE__.snapshot());
+    if (snapshot.completedTasks !== 4 || snapshot.home.lumens !== 0 || snapshot.viewport.overflow) throw Error('阅读或接取改写历史/奖励/布局');
+    await page.getByRole('button',{name:'← 回到地图',exact:true}).click();
+    await page.locator('[data-place="journal"]').click();
+    await page.waitForURL('**#panel');
+    if (await page.getByRole('button',{name:'看看下一步怎么开始 ↗'}).count()) throw Error('有进行中仍催接新任务');
+    if (await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)) throw Error('手记横向溢出');
+    results.push({width,status:'PASS',completed: snapshot.completedTasks,active: snapshot.activeTasks,lumens:snapshot.home.lumens});
+  }
+  if (errors.length) throw Error(errors.join('\n'));
+  return {results,errors};
+}

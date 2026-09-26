@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import {
   state,
   taskById,
@@ -13,18 +13,15 @@ import {
 import { CATS, METRICS } from "../data/tasks.js";
 import { furnitureById } from "../data/furniture.js";
 import BuddyFace from "./BuddyFace.vue";
+import JournalMemories from "./JournalMemories.vue";
 import EtchingCabinet from "./EtchingCabinet.vue";
 import { parseImport } from '../game/save.js';
 import { nativePlatform, exportBackup, pickBackup } from "../services/backup.js";
 const view = ref('journal');
 const emit = defineEmits(["toast", "chains"]),
   file = ref(null),
-  filter = ref("done"),
   pendingImport = ref(""),
   importSummary = ref("");
-const records = computed(() =>
-  [...(filter.value === "done" ? state.done : state.abandoned)].reverse(),
-);
 function backupName() {
   return `kuangye-${new Date().toISOString().slice(0, 10)}.json`;
 }
@@ -121,7 +118,7 @@ function report() {
   </div>
   <EtchingCabinet v-if="view==='etchings'" />
   <div v-else class="journal-layout">
-    <aside class="journal-summary">
+    <aside class="journal-summary" aria-label="成长概览">
       <BuddyFace :size="160" mood="proud" /><span class="eyebrow"
         >你走过的路，都在这里</span
       >
@@ -179,43 +176,7 @@ function report() {
         </div>
         <button class="soft-button" @click="report">导出成长报告 ↗</button>
       </div>
-      <div class="place-tabs">
-        <button :class="{ active: filter === 'done' }" @click="filter = 'done'">
-          完成的事 · {{ state.done.length }}</button
-        ><button
-          :class="{ active: filter === 'rest' }"
-          @click="filter = 'rest'"
-        >
-          暂时放下 · {{ state.abandoned.length }}
-        </button>
-      </div>
-      <div v-if="!records.length" class="journal-empty">
-        <span>▤</span>
-        <h3>第一页，留给下一次小小的出发。</h3>
-        <p>完成任务时写下的回顾，会被小芽好好收在这里。</p>
-      </div>
-      <article
-        v-for="(d, i) in records"
-        :key="d.qid + ':' + i"
-        class="journal-entry"
-      >
-        <time>{{ d.at }}</time>
-        <div>
-          <h3>{{ taskById[d.qid]?.title }}</h3>
-          <p>
-            {{
-              d.review ||
-              d.reason ||
-              (filter === "done"
-                ? "那天，我为自己完成了一件事。"
-                : "把手里的事放一放，也是一种选择。")
-            }}
-          </p>
-          <span v-if="filter === 'done'" class="entry-xp"
-            >＋{{ d.xp }} XP · {{ CATS[taskById[d.qid]?.cat]?.name }}</span
-          >
-        </div>
-      </article>
+      <JournalMemories @toast="emit('toast', $event)" />
       <section class="backup-section">
         <div>
           <h3>把小家，好好保存。</h3>
@@ -250,3 +211,9 @@ function report() {
     </section>
   </div>
 </template>
+
+<style scoped>
+@media (max-width: 760px) {
+  .journal-pages { order: -1; }
+}
+</style>

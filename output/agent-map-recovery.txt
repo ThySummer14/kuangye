@@ -1,0 +1,97 @@
+旷野地图恢复定向证据包
+日期：2026-09-26
+范围：仅复现、证据收集与建议；未修改产品代码。
+
+一、复现命令
+
+1. 启动本地 QA 站点（实际使用 5182，直接在 app 目录启动）：
+   cd /Users/thysummer/工作流/code/旷野/app && npx vite --host 127.0.0.1 --port 5182
+
+2. 打开一次性 QA 存档入口：
+   $HOME/.codex/skills/playwright/scripts/playwright_cli.sh -s=map-recovery open 'http://127.0.0.1:5182/?qa#map'
+
+3. 运行现有地图导航脚本（去除脚本末尾分号以适配 run-code）：
+   cd /Users/thysummer/工作流/code/旷野
+   cli="$HOME/.codex/skills/playwright/scripts/playwright_cli.sh"
+   code=$(perl -0pe 's/;\s*\z//' scripts/qa-navigation.js)
+   "$cli" -s=map-recovery run-code "$code"
+
+4. 直接测量 RAF：
+   "$cli" -s=map-recovery eval 'new Promise(resolve=>{let n=0; const t=performance.now(); function f(){n++; if(performance.now()-t>500) resolve({raf:n,elapsed:performance.now()-t,hidden:document.hidden,ready:document.querySelector(".world-canvas")?.dataset.ready}); else requestAnimationFrame(f)} requestAnimationFrame(f)})'
+
+5. 定向 POI 飞行入口复现：
+   "$cli" -s=map-recovery goto 'http://127.0.0.1:5182/?qa#map'
+   "$cli" -s=map-recovery run-code 'async page => { await page.waitForFunction(()=>document.querySelector(".world-canvas")?.dataset.ready==="true"); const before=await page.evaluate(()=>({hidden:document.hidden,ready:document.querySelector(".world-canvas")?.dataset.ready,hash:location.hash})); await page.locator("[data-place=home]").click(); await page.waitForURL("**#home"); return {before,after:await page.evaluate(()=>({hash:location.hash,hidden:document.hidden}))}; }'
+
+二、是否复现
+
+结论：本轮未复现“页面 visible 且有焦点，但 requestAnimationFrame 不回调，地图 flyTo 停住”。
+
+实际结果：
+- 现有 scripts/qa-navigation.js 在 1280 和 375 宽度均通过：home、shop、tasks、panel、woodshop、atelier 全部 pass。
+- 两种视口最终 snapshot 均为 place=map、hash=#map、viewport.overflow=false。
+- 打开地图时：ready="true"、visible=true、document.hidden=false；初始 activeElement 为 body。
+- 从地图点击“小芽的家”后：hash 变为 #home，document.hidden 仍为 false。
+- 额外 500ms RAF 测量：raf=31，elapsed≈507.3ms，hidden=false；说明当前宿主内 RAF 正常调度。
+- 运行期间 Playwright 报告 0 errors；仅有 Three.js 警告。
+
+三、关键日志/堆栈
+
+现有 QA 运行摘要：
+  [{"width":1280,"place":"home","pass":true}, ... {"width":1280,"place":"atelier","pass":true}, ...]
+  [{"width":375,"place":"home","pass":true}, ... {"width":375,"place":"atelier","pass":true}, ...]
+
+RAF 直接测量返回：
+  {"raf":31,"elapsed":507.29999999701977,"hidden":false}
+
+POI 定向入口返回：
+  before={"hidden":false,"ready":"true","hash":"#map"}
+  after={"hash":"#home","hidden":false}
+
+控制台没有异常堆栈。唯一重复警告来自 three：
+  THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.
+  来源为 node_modules/.vite/deps/chunk-LILSE42S.js；不是 flyTo/RAF 异常。
+
+四、代码证据
+
+1. app/src/scenes/world.js
+- 501-515：flyTo(id) 仅在存在目标且未有 flight 时设置 flight；非 reduced-motion 路径不会直接导航。
+- 517-533：render(t) 依赖 RAF 时间推进 flight；progress 到 1 后才执行 onNavigate(id)。若宿主停止 RAF，flight 会停在中间且不会导航。
+- 605-610：每帧执行 onReady、首次设置 el.dataset.ready="true”，随后 requestAnimationFrame(render)。
+- 612：首次启动 render 的 requestAnimationFrame(render)。
+- 786-812：dispose 设置 stopped=true、cancelAnimationFrame(frame)、移除监听并释放 WebGL；这是组件卸载时的预期生命周期。
+
+2. app/src/components/WorldScene.vue
+- 17-67：onMounted 中创建 createWorld(host.value, ...)，异常才设置 failed；webglcontextlost 时 preventDefault 并进入 fallback。
+- 69：onBeforeUnmount 直接 engine?.dispose()。
+- 93-94：POI 按钮点击时调用 engine.flyTo(p.id)；若引擎失败才 emit navigate 直接导航。
+
+3. app/src/App.vue
+- 26-27：tab 从 hash 初始化；?qa 不改变地图挂载逻辑。
+- 38-42：navigate 更新 tab；home/shop 等通过 Vue 条件渲染切换。
+- 125-126：仅 tab=map 时挂载 WorldScene；离开地图会卸载它，回地图会重新创建新 engine。
+- 48-54：watch(tab) 写 hash；hashchange 反向同步 tab。
+
+4. app/src/game/qa.js 与 app/src/game/webmcp.js
+- qa.js:2-5：QA 仅在 DEV、本机 hostname 且 URL 有 qa 参数时启用。
+- webmcp.js:36-79：?qa 下暴露 window.__KUANGYE__.reset/snapshot；reset 会 navigate("map") 并 nextTick，但不控制 RAF。
+
+五、宿主还是产品生命周期原因
+
+本次宿主中未复现，证据更支持“特定宿主/浏览器调度条件”优先排查：document.hidden=false、页面可见，且独立 RAF 计数正常；产品的 render 循环也在当前运行中完成了 flyTo 导航。现有产品生命周期仍存在一个可验证的脆弱点：WorldScene 在 tab 切换时销毁并重建 WebGL engine，flyTo 的完成完全依赖该 engine 的 RAF；如果宿主在 visible/focused 状态下冻结或丢弃 RAF，world.js 没有 visibilitychange/pageshow/超时恢复或状态兜底，flight 会永久保持非空。
+
+因此目前不能把问题归因于已证明的产品 bug；更准确判断是“本轮宿主未复现，代码对 RAF 停调没有恢复机制，需在能稳定制造 RAF 停调的宿主条件下继续验证”。
+
+六、建议验证点
+
+- 在同一 QA 页面点击 POI 前后记录：document.visibilityState、document.hidden、document.hasFocus()、activeElement、world-canvas.dataset.ready、RAF 计数和 hash。
+- 在宿主复现时同时 monkey-patch requestAnimationFrame/cancelAnimationFrame，记录 render 是否被安排、是否被取消、最后一次 t，以及 world.js 的 stopped/flight 状态；区分“宿主不调度”与“产品提前 dispose”。
+- 覆盖 tab 从 map -> home -> map 的卸载/重建窗口，确认旧 engine 的 dispose 不会影响新 canvas 或新 RAF；重点观察 Vue 条件渲染与 nextTick 之间的时序。
+- 在可控测试环境人为暂停 RAF 后恢复，验证地图是否能恢复渲染及完成 flyTo；若不能，产品侧应考虑 visibility/pageshow 恢复、flight 超时兜底或基于当前时间的状态收敛。
+- 重跑现有入口：scripts/qa-navigation.js；其当前只验证最终 URL/页面 snapshot，不验证动画中间态或 RAF 活跃度，建议补充上述观测后再判断回归。
+
+七、相关现有产物
+
+- output/playwright/navigation-verification.txt：现有地图导航 QA 输出。
+- output/playwright/map-navigation-1280.png、map-navigation-375.png：现有地图截图。
+- docs/QA-v3.md:26：历史记录说明地图 draw calls，不等于帧率证明。

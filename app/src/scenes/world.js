@@ -498,6 +498,29 @@ export function createWorld(
   window.addEventListener("pointerup", pointerUp);
   renderer.domElement.addEventListener("wheel", wheel, { passive: false });
   let flight = null;
+  let flightWatchdog = null;
+  let lastFrameAt = performance.now();
+  let rendering = false;
+  function stopFlightWatchdog() {
+    if (flightWatchdog) {
+      clearInterval(flightWatchdog);
+      flightWatchdog = null;
+    }
+  }
+  function wakeFlight() {
+    if (!flight || document.visibilityState === "hidden") return;
+    if (performance.now() - lastFrameAt > 120) render(performance.now());
+  }
+  function startFlightWatchdog() {
+    stopFlightWatchdog();
+    flightWatchdog = setInterval(wakeFlight, 120);
+  }
+  function resumeAfterLifecycle() {
+    if (document.visibilityState !== "hidden") wakeFlight();
+  }
+  document.addEventListener("visibilitychange", resumeAfterLifecycle);
+  window.addEventListener("pageshow", resumeAfterLifecycle);
+  window.addEventListener("focus", resumeAfterLifecycle);
   function flyTo(id) {
     if (flight) return;
     const p = pois.find((p) => p.id === id);
@@ -513,13 +536,16 @@ export function createWorld(
       to: p.point.clone().setY(0.4),
       distance,
     };
+    startFlightWatchdog();
   }
   let frame,
     stopped = false,
     first = true;
   const labels = {};
   function render(t) {
-    if (stopped) return;
+    if (stopped || rendering) return;
+    rendering = true;
+    lastFrameAt = t;
     if (flight) {
       const progress = Math.min(1, (t - flight.start) / 600),
         ease =
@@ -529,6 +555,7 @@ export function createWorld(
       if (progress === 1) {
         const id = flight.id;
         flight = null;
+        stopFlightWatchdog();
         onNavigate?.(id);
       }
     }
@@ -607,6 +634,7 @@ export function createWorld(
       first = false;
       el.dataset.ready = "true";
     }
+    rendering = false;
     frame = requestAnimationFrame(render);
   }
   frame = requestAnimationFrame(render);
@@ -758,6 +786,10 @@ export function createWorld(
     },
     dispose() {
       stopped = true;
+      stopFlightWatchdog();
+      document.removeEventListener("visibilitychange", resumeAfterLifecycle);
+      window.removeEventListener("pageshow", resumeAfterLifecycle);
+      window.removeEventListener("focus", resumeAfterLifecycle);
       cancelAnimationFrame(frame);
       for (const p of furniturePickables) {
         p.geometry.dispose();

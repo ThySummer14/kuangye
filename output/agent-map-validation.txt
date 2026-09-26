@@ -1,0 +1,37 @@
+旷野地图飞行动画机械验证证据包
+时间：2026-09-26
+范围：仅验证主代理对 app/src/scenes/world.js 的飞行动画生命周期修复；本代理未修改产品代码、测试代码、docs。
+
+一、命令与结果
+1. `npm test`
+   结果：失败（退出码 1）。
+   汇总：51 项，49 pass，2 fail，0 skipped。
+   失败详情：
+   - `release checker accepts isolated inputs without a prior build`
+     `tslib published license bytes differ from installed source`
+     堆栈指向 `scripts/check-release-assets.mjs:195:28`，测试位置 `app/test/release.test.js:26:1`。
+   - `CLI actually executes on Chinese paths and rejects missing dist index`
+     同一 release 校验失败：`tslib published license bytes differ from installed source`。
+     测试位置 `app/test/release.test.js:31:1`。
+   其余与地图/场景/存档/移动相关的测试均通过，包括 walking、静态批处理、商店与存档等覆盖项。
+
+2. `npm run build`
+   结果：通过（退出码 0）。
+   证据：Vite v6.4.3，79 modules transformed，产物构建完成；随后执行 `node scripts/stage-site.mjs` 成功。
+   备注：仅有 three.js 产物大于 500 kB 的 Vite warning，不影响构建退出码。
+
+二、浏览器 QA
+尝试：启动 `npm run dev -- --host 127.0.0.1`。
+结果：Vite 可用，但 5173 已被占用，服务自动落到 `http://localhost:5174/`。
+随后按浏览器技能要求初始化浏览器并检查运行时，工具返回：`Browser is not available in subagent`。
+因此本代理无法执行合法的 GUI 黑盒复放，无法采集 pageerror、地图点击→场所跳转后的视觉状态，也无法生成本轮 1280px 桌面与 375px 手机截图。
+
+三、截图路径
+- 本轮桌面 1280：未生成（浏览器运行时不可用）。
+- 本轮手机 375：未生成（浏览器运行时不可用）。
+- 现有历史文件 `/Users/thysummer/工作流/code/旷野/output/playwright/navigation-verification.txt` 仅记录旧 QA 启动状态“browser 'kuangye-batch' is not open”，未作为本轮通过证据。
+
+四、替代证据与结论
+- 替代静态/单元证据：`npm test` 中 49/51 通过，场景移动与渲染相关测试通过；`npm run build` 通过，说明当前源码可完成生产打包。
+- 地图飞行动画的 watchdog、visibility/pageshow/focus 补帧、结束清理，以及飞行后实际 navigate、pageerror 和响应式布局，因浏览器工具不可用未完成动态验收。
+- 当前机械验证结论：构建通过；全量测试因既有 tslib release 资产字节校验失败而未全绿；浏览器动态证据阻塞，不能据此宣称地图跳转验收通过。

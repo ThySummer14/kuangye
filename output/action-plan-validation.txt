@@ -429,3 +429,5 @@ dist/assets/three-CsyC7ksp.js                   534.86 kB │ gzip: 134.31 kB
 - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
 ✓ built in 1.38s
+
+=== final layout npm run build exit: 0 ===

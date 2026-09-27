@@ -8,6 +8,7 @@ async (page) => {
     await page.evaluate(()=>window.__KUANGYE__.reset('map-navigation','empty'));
     await page.locator('[data-place="tasks"]').click();
     await page.waitForURL('**#tasks');
+    await page.getByText('按时间和地点细找',{exact:true}).click();
     await page.getByRole('group',{name:'参考用时'}).getByRole('button',{name:'约 10 分钟内',exact:true}).click();
     await page.getByRole('group',{name:'行动场景'}).getByRole('button',{name:'在室内',exact:true}).click();
     await page.getByRole('button',{name:'生活技能',exact:true}).click();
@@ -37,6 +38,7 @@ async (page) => {
     if(roundTrip!=='small-desk') throw Error('试用存档往返丢记录');
     await page.locator('[data-place="tasks"]').click();
     await page.waitForURL('**#tasks');
+    await page.getByText('按时间和地点细找',{exact:true}).click();
     await page.getByRole('textbox',{name:'搜索任务'}).fill('桌面');
     if(await page.locator('.quest-card').count()) throw Error('已完成小事再次推荐');
     await page.getByRole('button',{name:'清空筛选，看看适合今天的事',exact:true}).click();
@@ -44,7 +46,6 @@ async (page) => {
     await page.getByRole('textbox',{name:'搜索任务'}).fill('连续 3 天');
     if(await page.locator('.quest-card').count()) throw Error('把每日十分钟误当一次十分钟');
     await page.getByRole('button',{name:'清空筛选，看看适合今天的事',exact:true}).click();
-    await page.getByText('还没想好？从一个生活方向找起',{exact:true}).click();
     await page.getByRole('button',{name:'把生活理顺 照顾一顿饭，也照顾自己。'}).click();
     if(await page.locator('.quest-card').count()!==4) throw Error('原方向发现失效');
     results.push({width,status:'PASS',completed:s.completedTasks,lumens:s.home.lumens,roundTrip});

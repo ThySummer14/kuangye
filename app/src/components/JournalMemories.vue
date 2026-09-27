@@ -93,7 +93,8 @@ async function take(task) {
         <h4>{{ entry.task?.title || '一件过去的事' }}</h4>
         <p v-if="entry.record.review || entry.record.reason" class="memory-words">{{ entry.record.review || entry.record.reason }}</p>
         <p v-else class="memory-no-note">{{ filter === 'done' ? '那天没有留下文字，但这件事已经做到了。' : '这次没有留下理由。把手里的事放一放，也是一种选择。' }}</p>
-        <small v-if="filter === 'done'" class="memory-earned">当时获得 ＋{{ entry.record.xp }} XP</small>
+        <p v-if="entry.task?.personal" class="personal-condition">当时约定：{{ entry.task.desc }}</p>
+        <small v-if="filter === 'done' && !entry.task?.personal" class="memory-earned">当时获得 ＋{{ entry.record.xp }} XP</small>
       </article>
     </section>
     <button v-if="records.length > limit" class="soft-button memory-more" @click="limit += 12">再翻 12 条记录 · 还有 {{ records.length - limit }} 条</button>
@@ -131,6 +132,7 @@ button.memory-link { padding: 0; text-align: left; }
 .memory-date { display: flex; flex-wrap: wrap; gap: 12px; font-size: 11px; color: var(--ink-2); }
 .memory-words { font: 400 18px/1.85 var(--serif); white-space: pre-wrap; overflow-wrap: anywhere; margin: 10px 0; }
 .memory-no-note { font-size: 13px; color: var(--ink-2); line-height: 1.8; }
+.personal-condition { font-size: 12px; color: var(--ink-2); line-height: 1.8; overflow-wrap: anywhere; }
 .memory-earned { color: var(--ink-2); font-size: 11px; }
 .memory-empty { padding: 24px 0 35px; }
 .memory-empty h3 { font: 500 22px/1.6 var(--serif); }

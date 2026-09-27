@@ -10,7 +10,7 @@ import {
   saveWarning,
 } from "../store.js";
 import { fieldGuide } from "../data/field-guides.js";
-import { DIFF } from "../data/tasks.js";
+import { taskXp } from "../game/personal-tasks.js";
 import { lumenReward } from "../game/home.js";
 import BuddyFace from "./BuddyFace.vue";
 import ModalFrame from "./ModalFrame.vue";
@@ -18,7 +18,7 @@ const props = defineProps({ active: Object }),
   emit = defineEmits(["close", "done", "shop", "map"]);
 const finishButton = ref(null);
 const task = computed(() => taskById[props.active.qid]),
-  diff = computed(() => DIFF[task.value.diff]),
+  xp = computed(() => taskXp(task.value)),
   review = ref(""),
   result = ref(false),
   glimmer = ref(0);
@@ -34,7 +34,7 @@ async function confirm() {
 const next = computed(() => (result.value ? nextChainStage(task.value) : null));
 function finish() {
   if (result.value)
-    emit("done", `这件事完成了，收获 ${lumenReward(diff.value.xp)} 光`);
+    emit("done", task.value.personal ? "自己写下的事，也认真做到了。" : `这件事完成了，收获 ${lumenReward(xp.value)} 光`);
   emit("close");
 }
 function returnToMap() {
@@ -50,12 +50,12 @@ function nextTask() {
 </script>
 <template>
   <ModalFrame
-    :label="result ? '完成小事，收获光' : '记录完成的任务'"
+    :label="result ? '这一件事，收好了' : '记录完成的任务'"
     @close="finish"
     ><template v-if="!result"
       ><span class="eyebrow">A LITTLE MOMENT TO REMEMBER</span>
       <h2>这一件事，你做到了。</h2>
-      <p class="completion-task">{{ task.title }}</p>
+      <p class="completion-task">{{ task.title }}</p><p v-if="task.personal" class="review-prompt">你定下的完成条件：{{ task.desc }}</p>
       <label for="quest-review"
         >给未来的自己留一句话 <small>（可选）</small></label
       ><p class="review-prompt">{{ fieldGuide(task).recall }}</p><textarea
@@ -69,16 +69,16 @@ function nextTask() {
       <div class="placement-actions">
         <button class="soft-button" @click="emit('close')">再等等</button
         ><button class="primary-button" @click="confirm">
-          完成，收下这束光
+          {{ task.personal ? "完成，记下这一刻" : "完成，收下这束光" }}
         </button>
       </div></template
     ><template v-else
       ><div class="completion-result">
         <BuddyFace :size="175" mood="celebrate" /><span class="eyebrow"
-          >一点努力，一点光</span
+          >{{ task.personal ? "把这一刻留给自己" : "一点努力，一点光" }}</span
         >
-        <h2>＋{{ lumenReward(diff.xp) }} <small>光</small></h2>
-        <span class="completion-xp">＋{{ diff.xp }} XP</span>
+        <h2 v-if="task.personal" class="personal-completion-heading">你想做的，做到了。</h2>
+        <template v-else><h2>＋{{ lumenReward(xp) }} <small>光</small></h2><span class="completion-xp">＋{{ xp }} XP</span></template>
         <h3>{{ task.title }}</h3>
         <p>{{ review || "今天，又为自己完成了一件事。" }}</p>
         <p v-if="glimmer" class="glimmer-gift">
@@ -114,6 +114,7 @@ function nextTask() {
   >
 </template>
 <style scoped>
+.completion-result h2.personal-completion-heading { font-size: 26px; line-height: 1.5; color: var(--primary); }
 .review-prompt { font-size: 13px; line-height: 1.7; color: var(--ink-2); margin: 8px 0 12px; }
 .completion-saved {
   text-align: center;

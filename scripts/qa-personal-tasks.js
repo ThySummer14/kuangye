@@ -1,0 +1,74 @@
+async (page) => {
+  const errors=[], results=[];
+  page.on('pageerror', e=>errors.push(e.message));
+  for(const width of [1280,375]) {
+    await page.setViewportSize({width,height:width===375?812:900});
+    await page.goto('http://127.0.0.1:5185/?qa#map');
+    await page.waitForFunction(()=>window.__KUANGYE__);
+    await page.evaluate(()=>window.__KUANGYE__.reset('map-navigation','empty'));
+    await page.locator('[data-place="tasks"]').click();
+    await page.locator('.wall-welcome').waitFor();
+    await page.locator('.toast').waitFor({state:'hidden'});
+    await page.screenshot({path:`output/playwright/personal-wall-${width}.png`});
+    await page.getByRole('button',{name:'＋ 自己写一件',exact:true}).click();
+    const dialog=page.getByRole('dialog');
+    await dialog.getByLabel('我想做什么',{exact:false}).fill('整理书桌左边的抽屉');
+    await dialog.getByLabel('怎样才算完成',{exact:false}).fill('把文具和票据分开收好，清出一个放本子的位置。');
+    await dialog.getByLabel('什么时候开始',{exact:true}).fill('晚饭后');
+    await dialog.getByLabel('先做哪一个小动作',{exact:true}).fill('把抽屉里的东西拿出来');
+    await dialog.locator('.personal-first-step').evaluate(el=>el.scrollIntoView({block:'center'}));
+    await page.screenshot({path:`output/playwright/personal-writing-${width}.png`});
+    await dialog.getByRole('button',{name:'写好了，接下这件事',exact:true}).click();
+    await page.waitForFunction(()=>document.activeElement?.dataset.activeTask?.startsWith('personal-'));
+    const card=page.locator('[data-active-task]').first();
+    if(!(await card.innerText()).includes('自己写下的事')) throw Error('Missing personal label');
+    await page.getByRole('button',{name:'← 回到地图',exact:true}).click();
+    await page.reload();
+    await page.locator('.map-plan-note').waitFor();
+    if(!(await page.locator('.map-plan-note').innerText()).includes('晚饭后')) throw Error('Lost plan');
+    await page.getByRole('button',{name:'打开进行中'}).click();
+    await card.getByRole('button',{name:'修改这件事'}).click();
+    await dialog.getByLabel('我想做什么',{exact:false}).fill('给书桌腾一个写字的位置');
+    await dialog.getByRole('button',{name:'保存修改',exact:true}).click();
+    await card.getByRole('button',{name:'我完成了',exact:true}).click();
+    await dialog.locator('#quest-review').fill('清出来的位置，终于可以写明天的计划。');
+    await dialog.getByRole('button',{name:'完成，记下这一刻',exact:true}).click();
+    await page.getByText('你想做的，做到了。',{exact:true}).waitFor();
+    await page.screenshot({path:`output/playwright/personal-complete-${width}.png`});
+    await dialog.getByRole('button',{name:'收好了，回到地图',exact:true}).click();
+    await page.locator('[data-place="journal"]').click();
+    await page.getByRole('searchbox',{name:'搜索手记'}).fill('给书桌');
+    await page.locator('.memory-entry').waitFor();
+    if(!(await page.locator('.memory-entry').innerText()).includes('当时约定')) throw Error('Missing completion condition');
+    await page.locator('.memory-entry').scrollIntoViewIfNeeded();
+    await page.screenshot({path:`output/playwright/personal-journal-${width}.png`});
+    const roundTrip=await page.evaluate(async()=>{
+      const s=await import('/src/store.js');
+      const backup=s.exportData();
+      s.resetData(); s.importData(backup);
+      const d=s.state.done[0];
+      return {title:s.taskById[d.qid].title,review:d.review,xp:d.xp,lumens:s.state.home.lumens,days:s.state.home.glimmerDays.length};
+    });
+    if(roundTrip.xp!==0||roundTrip.lumens!==0||roundTrip.days!==1) throw Error(JSON.stringify(roundTrip));
+    await page.evaluate(async()=>{
+      const s=await import('/src/store.js');
+      for(let i=0;i<3;i++) s.createPersonalTask({title:'自己的事'+i,desc:'完成一个明确的小动作',cat:'live'});
+      location.hash='tasks';
+    });
+    await page.getByRole('button',{name:'＋ 自己写一件',exact:true}).click();
+    if(!(await dialog.getByRole('button',{name:'写好了，接下这件事',exact:true}).isDisabled())) throw Error('Capacity not enforced');
+    await dialog.getByRole('button',{name:'先不写了',exact:true}).click();
+    await page.locator('[data-active-task]').first().getByRole('button',{name:'先放一放',exact:true}).click();
+    await dialog.getByRole('button',{name:/确定|放下|放弃/}).last().click();
+    await page.getByRole('button',{name:'把生活理顺 照顾一顿饭，也照顾自己。'}).click();
+    if(!(await page.locator('.quest-card').count())) throw Error('Catalog discovery missing');
+    await page.locator('.wall-discovery').scrollIntoViewIfNeeded();
+    await page.locator('.toast').waitFor({state:'hidden'});
+    await page.screenshot({path:`output/playwright/personal-discovery-${width}.png`});
+    const s=await page.evaluate(()=>window.__KUANGYE__.snapshot());
+    if(s.viewport.overflow) throw Error('Overflow');
+    results.push({width,status:'PASS',roundTrip});
+  }
+  if(errors.length) throw Error(errors.join('\n'));
+  return {results,errors};
+}

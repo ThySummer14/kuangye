@@ -1,3 +1,4 @@
+import { personalTask, taskXp } from "./game/personal-tasks.js";
 import { persistence } from './services/persistence.js';
 import { normalizeActionPlan } from "./game/action-plan.js";
 import { QA } from "./game/qa.js";
@@ -29,6 +30,7 @@ export function buddyMoment(mood, ms = 1500, text = "") {
 
 const emptyState = () => ({
   home: emptyHome(),
+  customTasks: [],
   active: [], // { qid, start, logs:[{d, v?, note?, shield?}], shields }
   done: [], // { qid, xp, at, review, units:[{metric, v}], streak? }
   abandoned: [], // { qid, reason, at }
@@ -65,7 +67,28 @@ watch(
   { deep: true },
 );
 
-export const taskById = Object.fromEntries(TASKS.map((t) => [t.id, t]));
+const catalog = Object.fromEntries(TASKS.map((t) => [t.id, t]));
+export const taskById = new Proxy(catalog, {
+  get(target, id) { return Object.hasOwn(target, id) ? target[id] : state.customTasks?.find(t => t.id === id); },
+});
+export function createPersonalTask(input) {
+  if (state.active.length >= 3) return { ok: false, why: '手里最多放 3 件事，完成或放下一件后再来。' };
+  const task = personalTask({ ...input, id: `personal-${crypto.randomUUID()}` });
+  if (!task) return { ok: false, why: '写下想做的事、完成条件，并选择一个生活领域。' };
+  (state.customTasks ||= []).push(task);
+  accept(task);
+  saveActionPlan(activeOf(task.id), input.plan);
+  return { ok: true, task };
+}
+export function editPersonalTask(id, input) {
+  const current = taskById[id];
+  if (!current?.personal || !activeOf(id)) return { ok: false, why: '这件事已经归档，保留当时的记录。' };
+  const updated = personalTask({ ...input, id });
+  if (!updated) return { ok: false, why: '请写清想做的事与完成条件。' };
+  Object.assign(current, updated);
+  saveActionPlan(activeOf(id), input.plan);
+  return { ok: true, task: current };
+}
 export const activeOf = (qid) => state.active.find((a) => a.qid === qid);
 
 // ———— 时间（支持"时间旅行"调试） ————
@@ -118,6 +141,8 @@ export function acceptState() {
 }
 export function canAccept(task) {
   if (!task || !taskById[task.id]) return { ok: false, why: "任务不存在" };
+  if (task.personal && state.abandoned.some(a => a.qid === task.id))
+    return { ok: false, why: '这件事已归档，需要时可以重新写一件。' };
   if (activeOf(task.id)) return { ok: false, why: "已在进行中" };
   if (state.done.some((d) => d.qid === task.id && !task.repeatable))
     return { ok: false, why: "已完成过这条支线" };
@@ -228,7 +253,7 @@ export function complete(a, review = "") {
   }
   state.done.push({
     qid: t.id,
-    xp: DIFF[t.diff].xp,
+    xp: taskXp(t),
     at: today(),
     review,
     units,
@@ -236,10 +261,10 @@ export function complete(a, review = "") {
     ...(t.type === "streak" ? { streak: p.cur } : {}),
   });
   state.active = state.active.filter((x) => x !== a);
-  rewardCompletion(state.home, DIFF[t.diff].xp);
+  rewardCompletion(state.home, taskXp(t));
   recordGlimmer(state.home, today());
   unlockGifts(state.home, levelInfo.value.level, today());
-  buddyMoment("celebrate", 2000, "这一点光，也照进我们家啦。");
+  buddyMoment("celebrate", 2000, t.personal ? "自己想做的事，你做到了。" : "这一点光，也照进我们家啦。");
   return true;
 }
 export function abandon(a, reason = "") {
@@ -354,6 +379,7 @@ export function exportData() {
 }
 export function importData(json) {
   const s = parseImport(json);
+  state.customTasks = s.customTasks;
   state.active = s.active;
   state.done = s.done;
   state.abandoned = s.abandoned;

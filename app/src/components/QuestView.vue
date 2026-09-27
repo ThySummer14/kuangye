@@ -18,11 +18,21 @@ import {
   canUseShield,
 } from "../store.js";
 import { lumenReward } from "../game/home.js";
-import BuddyFace from "./BuddyFace.vue";
 import QuestTrails from "./QuestTrails.vue";
+import PersonalTaskForm from "./PersonalTaskForm.vue";
 import ActionPlan from "./ActionPlan.vue";
 import TaskGuide from "./TaskGuide.vue";
 import { TRAILS, fieldGuide } from "../data/field-guides.js";
+const writing = ref(false), editingTask = shallowRef(null);
+async function personalSaved(task) {
+  writing.value = false;
+  editingTask.value = null;
+  emit('toast', '这件事，按你自己的安排开始。');
+  await nextTick();
+  const card = activeCards.get(task.id);
+  card?.focus({ preventScroll: true });
+  card?.scrollIntoView({ block: 'center', behavior: 'instant' });
+}
 const trailId = ref("");
 const minutes = ref(0), place = ref("all");
 // Keep canonical task identity for the store’s chain eligibility lookup.
@@ -104,19 +114,16 @@ function log(a) {
 }
 </script>
 <template>
-  <div class="quests">
-    <section class="quest-intro">
-      <div>
-        <span class="eyebrow">SMALL STEPS INTO REAL LIFE</span>
-        <h2>今天，给自己一件做得到的事。</h2>
-        <p>在生活里完成它，带着一点光回来。诚实记录，就已经很好。</p>
-      </div>
-      <BuddyFace :size="125" />
+  <div class="quests" :class="{ 'has-active': state.active.length }">
+    <section class="wall-welcome">
+      <div><span class="eyebrow">任务岩壁 · 把想法带进生活</span><h2>下一件事，<br />由你来决定。</h2><p>找一个想试的方向，或写下已经放在心里的那件事。</p>
+        <button class="primary-button" @click="editingTask = null; writing = true">＋ 自己写一件</button></div>
+      <aside class="wall-note"><span>手里留一点余地</span><strong>{{ state.active.length }}<small> / 3 件</small></strong><p>{{ state.active.length ? '先照顾正在做的事。改变安排也没关系。' : '从一件做得到的小事开始。不必先把人生安排好。' }}</p></aside>
     </section>
-    <section class="active-section">
+    <section v-if="state.active.length" class="active-section">
       <div class="section-title">
         <h3>
-          进行中的任务 <span>{{ state.active.length }} / 3</span>
+          手里的事 <span>{{ state.active.length }} / 3</span>
         </h3>
         <span>不赶进度，专心做完一件</span>
       </div>
@@ -129,12 +136,13 @@ function log(a) {
           tabindex="-1" :aria-label="'已接下：' + taskById[a.qid].title">
           <div class="task-meta">
             <span>{{ CATS[taskById[a.qid].cat].name }}</span
-            ><span>✦ {{ lumenReward(DIFF[taskById[a.qid].diff].xp) }} 光</span>
+            ><span v-if="taskById[a.qid].personal">自己写下的事</span><span v-else>✦ {{ lumenReward(DIFF[taskById[a.qid].diff].xp) }} 光</span>
           </div>
           <h3>{{ taskById[a.qid].title }}</h3>
-          <p>{{ taskById[a.qid].desc }}</p>
+          <p><strong v-if="taskById[a.qid].personal" class="personal-criterion">我的完成条件</strong>{{ taskById[a.qid].desc }}</p>
           <ActionPlan :active="a" :suggestion="fieldGuide(taskById[a.qid]).steps[0]" />
-          <button class="text-button guide-link" @click="inspecting = taskById[a.qid]">打开出发手册 ↗</button>
+          <button v-if="taskById[a.qid].personal" class="text-button guide-link" @click="editingTask = taskById[a.qid]; writing = true">修改这件事 ↗</button>
+          <button v-else class="text-button guide-link" @click="inspecting = taskById[a.qid]">打开出发手册 ↗</button>
           <template v-if="taskById[a.qid].type !== 'once'"
             ><div class="task-progress">
               <i
@@ -195,6 +203,10 @@ function log(a) {
         </article>
       </div>
     </section>
+    <section class="wall-discovery" aria-label="寻找下一件事"><div class="discovery-heading"><span class="eyebrow">给生活一个新的尝试</span><h2>从一个方向，走出去。</h2><p>先看看怎么开始，再决定要不要接下。想走得更远，也有完整的成长线。</p><button class="text-button" @click="emit('chains')">去看五条成长线 ↗</button></div>
+    <QuestTrails compact :selected="trailId" @select="selectTrail" />
+    </section>
+    <details class="refine-disclosure"><summary>按时间和地点细找</summary>
     <section class="task-context-picker" aria-label="按时间和场景找任务">
       <div><strong>今天，留多少时间给自己？</strong><p>一次完成的参考用时，不是倒计时。选“都看看”可以找长期任务。</p></div>
       <div class="context-options" role="group" aria-label="参考用时">
@@ -207,9 +219,6 @@ function log(a) {
       </div>
       <p v-if="QA" class="draft-note">试用任务库 · 含 15 件待审小事，仅使用独立试用存档。</p>
     </section>
-    <details class="trail-disclosure">
-      <summary>还没想好？从一个生活方向找起</summary>
-      <QuestTrails :selected="trailId" @select="selectTrail" />
     </details>
     <div class="quest-filters">
       <div class="place-tabs">
@@ -217,7 +226,7 @@ function log(a) {
           今天可做</button
         ><button :class="{ active: scope === 'all' }" @click="scope = 'all'; trailId = ''">
           任务库</button
-        ><button @click="emit('chains')">成长线 ↗</button>
+        >
       </div>
       <input
         ref="searchInput"
@@ -286,12 +295,40 @@ function log(a) {
       {{ trail ? "这个方向暂时没有待接的任务。已接下的在上方，也可以换个方向。" : "这里暂时没有匹配的任务。换个分类，或清空搜索试试。" }}
       <button class="soft-button" @click="clearFilters">清空筛选，看看适合今天的事</button>
     </div>
+    <PersonalTaskForm v-if="writing" :task="editingTask" @close="writing = false; editingTask = null" @saved="personalSaved" />
     <TaskGuide v-if="inspecting" :task="inspecting"
       :active="state.active.some(a => a.qid === inspecting.id)" :eligibility="canAccept(inspecting)"
       @close="inspecting = null" @accept="acceptGuide" />
   </div>
 </template>
 <style scoped>
+.personal-criterion { display: block; font-size: 12px; margin-bottom: 6px; color: var(--primary); }
+.quests:not(.has-active) .wall-welcome { border-bottom: 0; margin-bottom: 0; }
+.quests:not(.has-active) .wall-discovery { margin-top: 0; padding-top: 24px; }
+.wall-welcome { display: grid; grid-template-columns: 1fr 240px; gap: 36px; padding: 18px 0 28px; border-bottom: 1px solid #cbd7c3; margin-bottom: 32px; }
+.wall-welcome h2 { font: 500 clamp(30px, 3.5vw, 42px)/1.3 var(--serif); margin: 18px 0; color: #314d39; }
+.wall-welcome p { font-size: 14px; line-height: 1.9; color: #6a7c65; }
+.wall-welcome .primary-button { margin-top: 12px; }
+.wall-note { align-self: center; padding: 24px; border-radius: 3px 22px 22px 3px; background: #e9efdf; border-left: 3px solid #9caf86; }
+.wall-note > span { font-size: 12px; color: #647457; }
+.wall-note strong { display: block; font: 500 48px var(--serif); color: #3e5c38; margin: 16px 0; }
+.wall-note small { font: 400 13px var(--sans); }
+.wall-note p { white-space: pre-line; font-size: 13px; margin: 0; }
+.wall-discovery { margin: 36px 0 22px; padding-top: 30px; border-top: 1px solid #cbd7c3; }
+.discovery-heading { margin-bottom: 24px; }
+.discovery-heading h2 { font: 500 28px/1.4 var(--serif); margin: 12px 0; }
+.discovery-heading p { font-size: 14px; line-height: 1.8; color: var(--ink-2); }
+.refine-disclosure { margin-bottom: 24px; border-block: 1px solid var(--line); }
+.refine-disclosure summary { padding: 16px 0; cursor: pointer; font-size: 14px; color: var(--primary); }
+.active-card h3, .active-card > p { overflow-wrap: anywhere; }
+@media (max-width: 600px) {
+  .wall-welcome { grid-template-columns: 1fr; gap: 22px; padding: 20px 0 28px; }
+  .wall-note { display: none; }
+  .wall-welcome h2 { font-size: 36px; }
+  .wall-welcome .primary-button { width: 100%; }
+  .discovery-heading h2 { font-size: 25px; }
+}
+
 .trail-disclosure { margin-bottom: 24px; }
 .trail-disclosure summary { cursor: pointer; color: var(--primary); font-size: 14px; padding: 12px 0; }
 .task-context-picker { padding: 20px; border: 1px solid var(--line); border-radius: 14px; background: #f1f3eb; margin: 0 0 22px; }

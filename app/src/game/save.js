@@ -1,3 +1,4 @@
+import { normalizePersonalTasks, isPersonalId } from "./personal-tasks.js";
 import { normalizeActionPlan } from "./action-plan.js";
 import { TASKS } from "../data/tasks.js";
 import { dateStr } from "../data/season.js";
@@ -11,9 +12,11 @@ export function parseImport(json) {
   const source = raw?.state || raw;
   if (!source || !Array.isArray(source.active))
     throw new Error('数据格式不对：缺少 active 数组');
+  const customTasks = normalizePersonalTasks(source.customTasks);
+  const taskIds = new Set([...TASK_IDS, ...customTasks.map(t => t.id)]);
   const unknown = ['active','done','abandoned'].flatMap(key =>
     Array.isArray(source[key]) ? source[key].filter(record =>
-      record && typeof record.qid === 'string' && !TASK_IDS.has(record.qid)
+      record && typeof record.qid === 'string' && !taskIds.has(record.qid)
     ) : []);
   if (unknown.length)
     throw new Error(`备份中有 ${unknown.length} 条当前任务库无法识别的记录。为保留这些经历，本次未导入；请保留原备份`);
@@ -22,11 +25,18 @@ export function parseImport(json) {
 export function normalizeState(raw) {
   const source = raw?.state || raw;
   if (!source || !Array.isArray(source.active)) return null;
+  const customTasks = normalizePersonalTasks(source.customTasks);
+  const taskIds = new Set([...TASK_IDS, ...customTasks.map(t => t.id)]);
+  for (const key of ['active', 'done', 'abandoned']) {
+    if (Array.isArray(source[key]) && source[key].some(r => isPersonalId(r?.qid) && !taskIds.has(r.qid)))
+      throw new Error('自己的任务记录缺少原始内容，请保留原备份');
+  }
   const cleanNumber = (v, fallback = 0) =>
     Number.isFinite(Number(v)) ? Number(v) : fallback;
   return {
+    customTasks,
     active: source.active
-      .filter((a) => a && typeof a.qid === "string" && TASK_IDS.has(a.qid))
+      .filter((a) => a && typeof a.qid === "string" && taskIds.has(a.qid))
       .map((a) => ({
         qid: a.qid,
         ...(normalizeActionPlan(a.plan) ? { plan: normalizeActionPlan(a.plan) } : {}),
@@ -47,10 +57,10 @@ export function normalizeState(raw) {
       })),
     done: Array.isArray(source.done)
       ? source.done
-          .filter((d) => d && typeof d.qid === "string" && TASK_IDS.has(d.qid))
+          .filter((d) => d && typeof d.qid === "string" && taskIds.has(d.qid))
           .map((d) => ({
             qid: d.qid,
-            xp: Math.max(0, cleanNumber(d.xp)),
+            xp: isPersonalId(d.qid) ? 0 : Math.max(0, cleanNumber(d.xp)),
             at: typeof d.at === "string" ? d.at : dateStr(new Date()),
             review: typeof d.review === "string" ? d.review.slice(0, 160) : "",
             units: Array.isArray(d.units)
@@ -76,7 +86,7 @@ export function normalizeState(raw) {
       : [],
     abandoned: Array.isArray(source.abandoned)
       ? source.abandoned
-          .filter((a) => a && typeof a.qid === "string" && TASK_IDS.has(a.qid))
+          .filter((a) => a && typeof a.qid === "string" && taskIds.has(a.qid))
           .map((a) => ({
             qid: a.qid,
             reason: typeof a.reason === "string" ? a.reason.slice(0, 160) : "",
@@ -86,7 +96,7 @@ export function normalizeState(raw) {
     home: normalizeHome(
       source.home,
       Array.isArray(source.done)
-        ? source.done.filter((d) => d && TASK_IDS.has(d.qid))
+        ? source.done.filter((d) => d && taskIds.has(d.qid)).map(d => isPersonalId(d.qid) ? { ...d, xp: 0 } : d)
         : [],
     ),
     settings: {

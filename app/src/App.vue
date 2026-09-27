@@ -79,7 +79,7 @@ onBeforeUnmount(() => {
 });
 const nav = [
   ["map", "⌘", "旷野地图"],
-  ["tasks", "☷", "今日任务"],
+  ["tasks", "☷", "任务岩壁"],
   ["home", "⌂", "小芽的家"],
   ["shop", "♧", "林间集市"],
   ["panel", "◷", "成长手记"],
@@ -184,7 +184,7 @@ async function takeMapTask() {
             <p v-else>{{ nextAction.task.desc }}</p>
             <div class="little-task-meta">
               <span>{{ nextAction.kind === 'active' ? '已经接下' : '适合现在开始' }}</span>
-              <span>＋{{ DIFF[nextAction.task.diff].xp }} XP</span>
+              <span>{{ nextAction.task.personal ? "自己写下的事" : "＋" + DIFF[nextAction.task.diff].xp + " XP" }}</span>
             </div>
             <button class="primary-button" @click="takeMapTask">
               {{ nextAction.kind === 'active' ? '打开进行中' : '接下这一步' }} <span aria-hidden="true">→</span>

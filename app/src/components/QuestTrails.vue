@@ -1,11 +1,11 @@
 <script setup>
 import { TRAILS } from '../data/field-guides.js';
-defineProps({ selected: String });
+defineProps({ selected: String, compact: Boolean });
 defineEmits(['select']);
 </script>
 <template>
   <section class="quest-trails" aria-labelledby="trails-title">
-    <div class="trails-heading"><h3 id="trails-title">今天，想从哪里开始？</h3><p>不用先想好远方。从眼前的生活选一个方向。</p></div>
+    <div v-if="!compact" class="trails-heading"><h3 id="trails-title">今天，想从哪里开始？</h3><p>不用先想好远方。从眼前的生活选一个方向。</p></div>
     <div class="trail-options">
       <button v-for="trail in TRAILS" :key="trail.id" :aria-pressed="selected === trail.id"
         @click="$emit('select', selected === trail.id ? '' : trail.id)">

@@ -4,7 +4,7 @@ async (page) => {
   const enter = async () => {
     await page.locator('[data-place="tasks"]').click();
     await page.waitForURL('**#tasks');
-    await page.getByRole('button',{name:'成长线 ↗',exact:true}).click();
+    await page.getByRole('button',{name:'去看五条成长线 ↗',exact:true}).click();
     await page.waitForURL('**#chains');
   };
   for (const width of [1280,375]) {
@@ -29,7 +29,7 @@ async (page) => {
       state.done = [{qid:'read-s1',at:'2026-09-20',xp:10,review:'每天十分钟，我把一直没翻开的书读了下去。',units:[],logs:[]}];
       state.active = [{qid:'read-s2',start:today(),logs:[{d:today()}],shields:2}];
     });
-    await page.getByRole('button',{name:'成长线 ↗',exact:true}).click();
+    await page.getByRole('button',{name:'去看五条成长线 ↗',exact:true}).click();
     await page.waitForURL('**#chains');
     if (!(await page.locator('[data-stage="read-s1"]').innerText()).includes('一直没翻开')) throw Error('完成回顾未出现');
     if (!(await page.locator('[data-stage="read-s2"]').innerText()).includes('已记录 1 / 14 天')) throw Error('进行中进度不符');

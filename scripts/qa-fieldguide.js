@@ -8,7 +8,6 @@ async (page) => {
     await page.evaluate(() => window.__KUANGYE__.reset('map-navigation', 'empty'));
     await page.locator('[data-place="tasks"]').click();
     await page.waitForURL('**#tasks');
-    await page.getByText('还没想好？从一个生活方向找起', {exact:true}).click();
     await page.locator('.quest-trails').scrollIntoViewIfNeeded();
     await page.screenshot({path:`output/playwright/fieldguide-discovery-${width}.png`});
     await page.getByRole('button', {name:'把生活理顺 照顾一顿饭，也照顾自己。'}).click();

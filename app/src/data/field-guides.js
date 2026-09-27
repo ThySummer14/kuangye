@@ -156,7 +156,7 @@ export const FIELD_GUIDES = {
 };
 
 export function fieldGuide(task) {
-  return FIELD_GUIDES[task.id] || {
+  return task.guide || FIELD_GUIDES[task.id] || {
     time: task.type === 'once' ? '按自己的节奏完成' : '可以分次推进',
     prepare: '先读清任务要求，选一个适合开始的时间和地方。',
     steps: ['把这件事拆到今天能开始的一步，先备好会用到的东西。', task.desc,

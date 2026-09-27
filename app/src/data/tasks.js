@@ -1,3 +1,6 @@
+import { QA } from "../game/qa.js";
+import { SMALL_TASKS } from "./small-tasks.js";
+
 // 任务库 v0.1（~70 个，中国语境草稿，来源：DESIGN.md §4.4）
 // 字段：cat 领域 / diff 难度 / type 类型(once一次性 streak连击 total累积) / tier 层级(season赛季级 chapter本章)
 // chapter: 0翻土 1播种 2发芽；target: streak=天数 total=数量；metric/mv: 完成后计入人生累计卡的量
@@ -45,6 +48,8 @@ export const CHAINS = {
 }
 
 export const TASKS = [
+  // Drafts only use the isolated local QA save; production never loads them.
+  ...(import.meta.env?.DEV && QA ? SMALL_TASKS : []),
   // ———— 身体（赛季级） ————
   { id: 'run-s1', cat: 'body', diff: 'D', type: 'once', tier: 'season', chain: 'run', stage: 1, title: '完成第一次 2 公里慢跑', desc: '不用快，跑完就算。', metric: 'km', mv: 2 },
   { id: 'run5k', cat: 'body', diff: 'C', type: 'once', tier: 'season', chain: 'run', stage: 2, title: '连续跑完 5 公里不停歇', desc: '中途可以慢，但不能停。', metric: 'km', mv: 5 },
@@ -61,6 +66,8 @@ export const TASKS = [
   { id: 'sleep30', cat: 'body', diff: 'A', type: 'streak', tier: 'season', target: 30, title: '连续 30 天 23:30 前睡觉', desc: '熬夜借来的，白天都要还。' },
   { id: 'run10k', cat: 'body', diff: 'A', type: 'once', tier: 'season', chain: 'run', stage: 3, title: '完成一次 10 公里跑', desc: '从 5 公里到 10 公里，中间隔着一个不肯放弃的人。', metric: 'km', mv: 10 },
   { id: 'earlyclass', cat: 'body', diff: 'B', type: 'once', tier: 'season', title: '一学期早八全勤', desc: '学期末自评：一次都没迟到，才算完成。' },
+  { id: 'body-walk3', cat: 'body', diff: 'E', type: 'total', tier: 'season', target: 3, unit: '次', title: '完成 3 次 20 分钟散步', desc: '不用赶路，走到身体重新有一点温度。' },
+  { id: 'body-mobility7', cat: 'body', diff: 'E', type: 'streak', tier: 'season', target: 7, title: '连续 7 天做 5 分钟拉伸', desc: '起床后或睡前都可以，找到适合自己的动作。' },
 
   // ———— 头脑（赛季级） ————
   { id: 'read-s1', cat: 'mind', diff: 'E', type: 'streak', tier: 'season', chain: 'read', stage: 1, target: 3, title: '连续 3 天，每天读 10 分钟', desc: '先让书出现在每一天里。' },
@@ -94,6 +101,8 @@ export const TASKS = [
   { id: 'design1', cat: 'create', diff: 'D', type: 'once', tier: 'season', title: '从无到有设计一样东西', desc: '哪怕很小，从 0 到 1。' },
   { id: 'newword', cat: 'create', diff: 'E', type: 'once', tier: 'season', title: '发明一个新词，使用它 10 次', desc: '让它被至少一个人听懂。' },
   { id: 'shipweb', cat: 'create', diff: 'B', type: 'once', tier: 'season', title: '做一个网站或小游戏并上线', desc: '有公开链接才算。', metric: 'pieces', mv: 1 },
+  { id: 'create-sketch14', cat: 'create', diff: 'C', type: 'streak', tier: 'season', target: 14, title: '连续 14 天完成一张草图', desc: '构图、手稿、分镜或随手画都行，先让手每天动起来。' },
+  { id: 'create-remix', cat: 'create', diff: 'C', type: 'once', tier: 'season', title: '把一个旧作品重新做一版', desc: '可以是文章、照片、代码或手作，写下这次改了什么。' },
 
   // ———— 生活技能（赛季级） ————
   { id: 'nocook30', cat: 'live', diff: 'B', type: 'streak', tier: 'season', target: 30, title: '连续 30 天不点外卖', desc: '自己做饭，或去食堂。' },
@@ -102,6 +111,9 @@ export const TASKS = [
   { id: 'solotrip', cat: 'live', diff: 'C', type: 'once', tier: 'season', title: '独自完成一次全流程旅行', desc: '自己做攻略、订票、住宿，一个人走。' },
   { id: 'license', cat: 'live', diff: 'B', type: 'once', tier: 'season', title: '考下驾照', desc: '趁学生时代便宜。' },
   { id: 'movehouse', cat: 'live', diff: 'A', type: 'once', tier: 'season', title: '搬一次家，全程自己搞定', desc: '打包、搬运、复原，一个人。' },
+  { id: 'live-repair', cat: 'live', diff: 'E', type: 'once', tier: 'season', title: '完成一次小修复', desc: '补一颗纽扣、换灯泡或处理一个小故障，把东西继续用下去。' },
+  { id: 'live-laundry7', cat: 'live', diff: 'D', type: 'streak', tier: 'season', target: 7, title: '连续 7 天洗好、晾好并收好衣服', desc: '每天处理一点，让明天不用面对一篮子衣服。' },
+  { id: 'live-admin3', cat: 'live', diff: 'C', type: 'total', tier: 'season', target: 3, unit: '件', title: '处理 3 件拖了很久的生活事务', desc: '挂号、报修、缴费或证件办理，完成哪三件由你决定。' },
 
   // ———— 勇气与连接（赛季级） ————
   { id: 'meal4parents', cat: 'courage', diff: 'C', type: 'once', tier: 'season', title: '给爸妈做一顿完整的饭', desc: '三菜一汤，他们在座。' },
@@ -112,6 +124,9 @@ export const TASKS = [
   { id: 'letter10y', cat: 'courage', diff: 'E', type: 'once', tier: 'season', title: '给 10 年后的自己写一封信', desc: '封好，设定一个打开的日子。' },
   { id: 'volunteer', cat: 'courage', diff: 'D', type: 'once', tier: 'season', title: '参加一次志愿活动', desc: '半天以上。' },
   { id: 'strangerchat', cat: 'courage', diff: 'B', type: 'once', tier: 'season', title: '和陌生人深聊 30 分钟以上', desc: '聊真的东西，不是寒暄。' },
+  { id: 'courage-thanks7', cat: 'courage', diff: 'E', type: 'streak', tier: 'season', target: 7, title: '连续 7 天向一个人明确表达感谢', desc: '可以发消息、当面说或打电话，说清楚谢的是什么。' },
+  { id: 'courage-checkin7', cat: 'courage', diff: 'D', type: 'streak', tier: 'season', target: 7, title: '连续 7 天认真问一位重要的人近况', desc: '不求长聊，先把“最近过得怎么样”问出口。' },
+  { id: 'courage-meet3', cat: 'courage', diff: 'D', type: 'total', tier: 'season', target: 3, unit: '次', title: '主动约 3 次见面、通话或共同活动', desc: '对象和方式由你决定，真正发出邀请才算。' },
 
   // ———— 第一章「翻土」 ————
   { id: 'c0-walk14', cat: 'body', diff: 'D', type: 'streak', tier: 'chapter', chapter: 0, target: 14, title: '连续 14 天每天走 8000 步', desc: '本章热身，先把身体摇醒。' },

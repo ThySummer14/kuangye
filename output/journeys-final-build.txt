@@ -1,0 +1,32 @@
+
+> build
+> npm --prefix app run build && node scripts/stage-site.mjs
+
+
+> kuangye@0.1.0 build
+> vite build
+
+vite v6.4.3 building for production...
+transforming...
+✓ 91 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/emotion-lab.html                             0.86 kB │ gzip:   0.41 kB
+dist/index.html                                   1.12 kB │ gzip:   0.66 kB
+dist/assets/SproutPortrait-DVcrL5WK.css           0.08 kB │ gzip:   0.10 kB
+dist/assets/lab-DyDmiaLS.css                      4.90 kB │ gzip:   1.64 kB
+dist/assets/App-vkzGO628.css                     24.37 kB │ gzip:   5.18 kB
+dist/assets/main-B2ljlnVd.css                    72.32 kB │ gzip:  15.89 kB
+dist/assets/modulepreload-polyfill-B5Qt9EMX.js    0.71 kB │ gzip:   0.40 kB
+dist/assets/lab-BFDhT1KQ.js                       9.84 kB │ gzip:   4.50 kB
+dist/assets/SproutPortrait-CR1SCFSj.js           15.15 kB │ gzip:   7.13 kB
+dist/assets/main-dyGVo4ZU.js                     40.98 kB │ gzip:  16.89 kB
+dist/assets/vue-DdWcLuv4.js                      67.83 kB │ gzip:  26.88 kB
+dist/assets/App-53KUqd3z.js                     142.41 kB │ gzip:  58.43 kB
+dist/assets/three-CsyC7ksp.js                   534.86 kB │ gzip: 134.31 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 824ms

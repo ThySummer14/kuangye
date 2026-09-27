@@ -1,0 +1,68 @@
+async (page) => {
+  const results = [], errors = [];
+  page.on('pageerror', e => errors.push(e.message));
+  const enter = async () => {
+    await page.locator('[data-place="tasks"]').click();
+    await page.waitForURL('**#tasks');
+    await page.getByRole('button',{name:'成长线 ↗',exact:true}).click();
+    await page.waitForURL('**#chains');
+  };
+  for (const width of [1280,375]) {
+    await page.setViewportSize({width,height:width===375?812:900});
+    await page.goto('http://127.0.0.1:5184/?qa#map');
+    await page.waitForFunction(() => window.__KUANGYE__);
+    await page.evaluate(() => window.__KUANGYE__.reset('map-navigation','empty'));
+    await enter();
+    if (await page.locator('.journey-menu button').count() !== 5) throw Error('成长线缺失');
+    await page.screenshot({path:`output/playwright/journeys-new-${width}.png`,fullPage:true});
+    await page.locator('[data-stage="run5k"]').getByRole('button').click();
+    if (!await page.getByRole('button',{name:'接下这件事',exact:true}).isDisabled()) throw Error('未解锁阶段可接取');
+    await page.keyboard.press('Escape');
+    await page.locator('[data-stage="run-s1"]').getByRole('button').click();
+    await page.getByRole('button',{name:'接下这件事',exact:true}).click();
+    await page.waitForFunction(() => document.activeElement?.dataset.stage === 'run-s1');
+    await page.getByRole('link',{name:'回任务岩壁，记录进度 ↗',exact:true}).click();
+    await page.waitForURL('**#tasks');
+    await page.locator('[data-active-task="run-s1"]').waitFor();
+    await page.evaluate(async () => {
+      const {state,today} = await import('/src/store.js');
+      state.done = [{qid:'read-s1',at:'2026-09-20',xp:10,review:'每天十分钟，我把一直没翻开的书读了下去。',units:[],logs:[]}];
+      state.active = [{qid:'read-s2',start:today(),logs:[{d:today()}],shields:2}];
+    });
+    await page.getByRole('button',{name:'成长线 ↗',exact:true}).click();
+    await page.waitForURL('**#chains');
+    if (!(await page.locator('[data-stage="read-s1"]').innerText()).includes('一直没翻开')) throw Error('完成回顾未出现');
+    if (!(await page.locator('[data-stage="read-s2"]').innerText()).includes('已记录 1 / 14 天')) throw Error('进行中进度不符');
+    await page.locator('.toast').waitFor({state:'detached'});
+    await page.screenshot({path:`output/playwright/journeys-active-${width}.png`,fullPage:true});
+    await page.reload();
+    await page.locator('[data-stage="read-s2"]').waitFor();
+    const current = await page.evaluate(() => window.__KUANGYE__.snapshot());
+    if (current.activeTasks !== 1 || current.completedTasks !== 1 || current.home.lumens !== 0 || current.viewport.overflow) throw Error('刷新改变进度或布局溢出');
+    await page.evaluate(async () => {
+      const {state,today} = await import('/src/store.js');
+      state.done=[];
+      state.active=[{qid:'soloEat',start:today(),logs:[],shields:2},{qid:'selfrec',start:today(),logs:[],shields:2}];
+    });
+    await page.getByRole('navigation',{name:'选择成长线'}).getByRole('button',{name:/跑步/}).click();
+    if (!(await page.locator('[data-stage="run-s1"]').innerText()).includes('赛季级任务最多同时 2 个')) throw Error('容量原因未展示');
+    await page.locator('[data-stage="run-s1"]').getByRole('button').click();
+    if (!await page.getByRole('button',{name:'接下这件事',exact:true}).isDisabled()) throw Error('绕过容量限制');
+    await page.keyboard.press('Escape');
+    await page.evaluate(async () => {
+      const {state,chainStages} = await import('/src/store.js');
+      state.active=[];
+      state.done=chainStages.cook.map((t,i)=>({qid:t.id,at:`2026-09-${20+i}`,xp:10,review:i===2?'朋友说，下次还想来吃饭。':'这道菜，有了自己的味道。',units:[],logs:[]}));
+    });
+    await page.getByRole('navigation',{name:'选择成长线'}).getByRole('button',{name:/厨艺/}).click();
+    await page.getByText('这条路上的每个阶段，你都走过了。',{exact:true}).waitFor();
+    if (await page.locator('.journey-stage button').count()) throw Error('全完成仍可重复接取');
+    await page.screenshot({path:`output/playwright/journeys-complete-${width}.png`,fullPage:true});
+    if (await page.evaluate(() => document.documentElement.scrollWidth>innerWidth)) throw Error('完成页横向溢出');
+    await page.getByRole('link',{name:'去成长手记，回望这些经历 ↗'}).click();
+    await page.waitForURL('**#panel');
+    results.push({width,status:'PASS',restoredActive:current.activeTasks,restoredDone:current.completedTasks,lumens:current.home.lumens});
+  }
+  if(errors.length) throw Error(errors.join('\n'));
+  return {results,errors};
+}

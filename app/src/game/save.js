@@ -1,3 +1,4 @@
+import { normalizeActionPlan } from "./action-plan.js";
 import { TASKS } from "../data/tasks.js";
 import { dateStr } from "../data/season.js";
 import { normalizeHome } from "./home.js";
@@ -28,6 +29,7 @@ export function normalizeState(raw) {
       .filter((a) => a && typeof a.qid === "string" && TASK_IDS.has(a.qid))
       .map((a) => ({
         qid: a.qid,
+        ...(normalizeActionPlan(a.plan) ? { plan: normalizeActionPlan(a.plan) } : {}),
         start: typeof a.start === "string" ? a.start : dateStr(new Date()),
         logs: Array.isArray(a.logs)
           ? a.logs

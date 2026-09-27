@@ -1,4 +1,5 @@
 import { persistence } from './services/persistence.js';
+import { normalizeActionPlan } from "./game/action-plan.js";
 import { QA } from "./game/qa.js";
 import { expandRoom, addHomeMoment, normalizeDecor } from "./game/room.js";
 import { parseImport } from "./game/save.js";
@@ -135,6 +136,14 @@ export function accept(task) {
   if (!canAccept(task).ok) return false;
   state.active.push({ qid: task.id, start: today(), logs: [], shields: 2 });
   buddyMoment("excited", 1300, "新任务，冲！");
+  return true;
+}
+
+export function saveActionPlan(a, value) {
+  if (!state.active.includes(a)) return false;
+  const plan = normalizeActionPlan(value);
+  if (plan) a.plan = plan;
+  else delete a.plan;
   return true;
 }
 

@@ -20,6 +20,7 @@ import {
 import { lumenReward } from "../game/home.js";
 import BuddyFace from "./BuddyFace.vue";
 import QuestTrails from "./QuestTrails.vue";
+import ActionPlan from "./ActionPlan.vue";
 import TaskGuide from "./TaskGuide.vue";
 import { TRAILS, fieldGuide } from "../data/field-guides.js";
 const trailId = ref("");
@@ -132,7 +133,7 @@ function log(a) {
           </div>
           <h3>{{ taskById[a.qid].title }}</h3>
           <p>{{ taskById[a.qid].desc }}</p>
-          <p class="action-reminder"><strong>第一步</strong> {{ fieldGuide(taskById[a.qid]).steps[0] }}</p>
+          <ActionPlan :active="a" :suggestion="fieldGuide(taskById[a.qid]).steps[0]" />
           <button class="text-button guide-link" @click="inspecting = taskById[a.qid]">打开出发手册 ↗</button>
           <template v-if="taskById[a.qid].type !== 'once'"
             ><div class="task-progress">
@@ -303,6 +304,8 @@ function log(a) {
 
 .guide-link { padding: 0; margin: 3px 0 12px; font-size: 13px; color: var(--primary); text-align: left; }
 .action-reminder strong { display: block; margin-bottom: 4px; }
+.active-grid { align-items: start; }
+.active-card > p { flex: none; }
 .active-card:focus { outline: 2px solid #557252; outline-offset: 4px; }
 .active-section .section-title > span { max-width: none; }
   .active-card .action-reminder { font-size: 13px; color: #64715f; padding-left: 12px; border-left: 2px solid #cbd6ba; }

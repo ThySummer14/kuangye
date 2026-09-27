@@ -14,6 +14,9 @@ import JournalView from "./components/JournalView.vue";
 import { registerGameTools } from "./game/webmcp.js";
 import { disposeThumbnails } from "./scenes/furniture.js";
 import { nativePlatform } from "./services/native.js";
+import { selectTasks } from "./game/task-selection.js";
+import { accept, canAccept, taskById } from "./store.js";
+import { DIFF } from "./data/tasks.js";
 const validTabs = [
   "map",
   "tasks",
@@ -82,6 +85,38 @@ const nav = [
   ["panel", "◷", "成长手记"],
   ["woodshop", "⌑", "木器铺"],
 ];
+const selectedAction = ref("");
+const nextAction = computed(() => {
+  const active = state.active.find(a => a.qid === selectedAction.value) || state.active.find(a => a.plan) || state.active[0];
+  if (active) return { kind: "active", task: taskById[active.qid], active };
+  const task = selectTasks(state, { scope: "today" })[0];
+  return task ? { kind: "suggested", task } : null;
+});
+const latestDone = computed(() => {
+  const record = [...state.done].reverse()[0];
+  if (!record) return null;
+  return {
+    record,
+    task: taskById[record.qid] || null,
+  };
+});
+async function takeMapTask() {
+  const action = nextAction.value;
+  if (!action) return;
+  if (action.kind === "active") {
+    navigate("tasks");
+    await nextTick();
+    const card = [...document.querySelectorAll('[data-active-task]')].find(el => el.dataset.activeTask === action.active.qid);
+    card?.focus({ preventScroll: true });
+    card?.scrollIntoView({ block: "center", behavior: "instant" });
+    return;
+  }
+  const result = canAccept(action.task);
+  if (!result.ok) return navigate("tasks");
+  accept(action.task);
+  toast(`已接下「${action.task.title}」，按自己的节奏来。`);
+  navigate("tasks");
+}
 </script>
 <template>
   <div class="wilderness-app">
@@ -136,18 +171,43 @@ const nav = [
               }}
             </p>
           </section>
-          <section class="little-task">
-            <span class="eyebrow">今天，从这里开始</span>
-            <h3>
-              {{
-                state.active.length
-                  ? "手里有 " + state.active.length + " 件小事"
-                  : "给真实的生活"
-              }}<br />{{
-                state.active.length ? "按自己的节奏来" : "留一点小冒险"
-              }}
-            </h3>
-            <p>接一件事 → 收集光 → 布置小家</p>
+          <section class="little-task" v-if="nextAction">
+            <span class="eyebrow">{{ nextAction.kind === 'active' ? '今天继续这一件' : '今天先做这一件' }}</span>
+            <h3>{{ nextAction.task.title }}</h3>
+            <div v-if="state.active.length > 1" class="map-plan-choices" role="group" aria-label="选择要继续的任务">
+              <button v-for="a in state.active" :key="a.qid" :aria-label="taskById[a.qid].title" :aria-pressed="nextAction.active?.qid === a.qid" @click="selectedAction = a.qid">{{ taskById[a.qid].title }}</button>
+            </div>
+            <div v-if="nextAction.active?.plan" class="map-plan-note">
+              <strong>{{ nextAction.active.plan.cue || '留一会儿给自己' }}</strong>
+              <p>{{ nextAction.active.plan.step || nextAction.task.desc }}</p>
+            </div>
+            <p v-else>{{ nextAction.task.desc }}</p>
+            <div class="little-task-meta">
+              <span>{{ nextAction.kind === 'active' ? '已经接下' : '适合现在开始' }}</span>
+              <span>＋{{ DIFF[nextAction.task.diff].xp }} XP</span>
+            </div>
+            <button class="primary-button" @click="takeMapTask">
+              {{ nextAction.kind === 'active' ? '打开进行中' : '接下这一步' }} <span aria-hidden="true">→</span>
+            </button>
+          </section>
+          <section class="little-task little-task-empty" v-else>
+            <span class="eyebrow">今天已经有安排</span>
+            <h3>把手里的事，慢慢做完。</h3>
+            <p>完成一件，再从任务岩壁挑下一件。旷野不会催你。</p>
+            <button class="primary-button" @click="navigate('tasks')">去看手里的事 <span aria-hidden="true">→</span></button>
+          </section>
+          <section v-if="latestDone" class="lookback-card" aria-labelledby="lookback-title">
+            <span class="eyebrow">最近完成 · 回头看一眼</span>
+            <h3 id="lookback-title">{{ latestDone.task?.title || '一件已经完成的小事' }}</h3>
+            <time>{{ latestDone.record.at }}</time>
+            <p>{{ latestDone.record.review || '那天，我为自己完成了一件事。' }}</p>
+            <button
+              class="text-button lookback-link"
+              aria-label="打开成长手记查看最近完成记录"
+              @click="navigate('journal')"
+            >
+              去成长手记看看 <span aria-hidden="true">↗</span>
+            </button>
           </section>
           <div class="rail-note">不用赶路。每一步，都算数。</div>
         </aside>
@@ -211,3 +271,16 @@ const nav = [
     <div v-if="toastMsg" class="toast" role="status">{{ toastMsg }}</div>
   </div>
 </template>
+
+<style scoped>
+.map-plan-choices { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.map-plan-choices button { max-width: 100%; padding: 8px 10px; font: inherit; font-size: 12px; text-align: left; overflow-wrap: anywhere; border: 1px solid #bdcbb6; border-radius: 7px; background: transparent; color: #42583c; cursor: pointer; }
+.map-plan-choices button[aria-pressed="true"] { background: #42583c; color: white; }
+.map-plan-note { border-left: 2px solid #91a77d; padding-left: 14px; margin: 16px 0; overflow-wrap: anywhere; }
+.map-plan-note strong { font-size: 13px; color: #42583c; }
+.map-plan-note p { margin-bottom: 0; }
+@media (max-width: 600px) {
+  .today-rail { display: flex; }
+  .today-rail > .little-task { order: -1; }
+}
+</style>

@@ -1,0 +1,58 @@
+async (page) => {
+  const results = [], errors = [];
+  page.on('pageerror', e => errors.push(e.message));
+  for (const width of [1280, 375]) {
+    await page.setViewportSize({ width, height: width === 375 ? 812 : 900 });
+    await page.goto('http://127.0.0.1:5184/?qa#map');
+    await page.waitForFunction(() => window.__KUANGYE__);
+    await page.evaluate(async () => {
+      window.__KUANGYE__.reset('map-navigation', 'empty');
+      const s = await import('/src/store.js');
+      s.accept(s.taskById['run-s1']);
+      s.accept(s.taskById['climb']);
+    });
+    await page.locator('[data-place="tasks"]').click();
+    const card = page.locator('[data-active-task="climb"]');
+    await card.getByRole('button', { name: '写下我的安排' }).click();
+    await card.getByRole('button', { name: '吃过饭以后', exact: true }).click();
+    await card.getByRole('textbox', { name: '我的第一步', exact: true }).fill('装好水，和室友一起走到山脚。');
+    await card.locator('.action-plan').scrollIntoViewIfNeeded();
+    await page.locator('.toast').waitFor({ state: 'hidden' });
+    await page.screenshot({ path: `output/playwright/action-plan-edit-${width}.png` });
+    await card.getByRole('button', { name: '收好便笺', exact: true }).click();
+    await page.getByRole('button', { name: '← 回到地图', exact: true }).click();
+    await page.locator('.map-plan-note').waitFor();
+    if (!(await page.locator('.map-plan-note').innerText()).includes('装好水')) throw Error('Map lost plan');
+    const choices = page.getByRole('group', { name: '选择要继续的任务' }).getByRole('button');
+    await choices.first().click();
+    if (await page.locator('.map-plan-note').count()) throw Error('Task switch failed');
+    await choices.last().click();
+    await page.locator('.little-task').first().scrollIntoViewIfNeeded();
+    await page.screenshot({ path: `output/playwright/action-plan-map-${width}.png` });
+    await page.reload();
+    await page.locator('.map-plan-note').waitFor();
+    await page.getByRole('button', { name: '打开进行中' }).click();
+    await page.waitForFunction(() => document.activeElement?.dataset.activeTask === 'climb');
+    await card.getByRole('button', { name: '改一改安排' }).click();
+    await card.getByRole('textbox', { name: '我的第一步', exact: true }).fill('取消的内容');
+    await card.getByRole('button', { name: '取消', exact: true }).click();
+    if (!(await card.innerText()).includes('装好水')) throw Error('Cancel changed saved plan');
+    const result = await page.evaluate(async () => {
+      const s = await import('/src/store.js');
+      const { parseImport } = await import('/src/game/save.js');
+      const b = parseImport(s.exportData());
+      return { plan: b.active.find(a => a.qid === 'climb').plan, lumens: b.home.lumens, days: b.home.glimmerDays.length, overflow: document.documentElement.scrollWidth > innerWidth };
+    });
+    if (result.lumens || result.days || result.overflow || result.plan.cue !== '吃过饭以后') throw Error(JSON.stringify(result));
+    await card.getByRole('button', { name: '改一改安排' }).click();
+    await card.getByRole('button', { name: '清除便笺', exact: true }).click();
+    if (await card.getByRole('button', { name: '改一改安排' }).count()) throw Error('Clear failed');
+    await card.getByRole('button', { name: '我完成了', exact: true }).click();
+    await page.getByRole('button', { name: '完成，收下这束光', exact: true }).click();
+    await page.getByRole('button', { name: '收好了，回到地图', exact: true }).click();
+    if (await page.locator('.map-plan-note').count()) throw Error('Stale completed plan');
+    results.push({ width, ...result, status: 'PASS' });
+  }
+  if (errors.length) throw Error(errors.join('\n'));
+  return { results, errors };
+}

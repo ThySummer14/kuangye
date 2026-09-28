@@ -1,0 +1,41 @@
+### Result
+{"results":[{"width":1280,"status":"PASS","books":2,"notes":1,"economy":"unchanged"},{"width":375,"status":"PASS","books":2,"notes":1,"economy":"unchanged"}],"errors":[]}
+### Ran Playwright code
+```js
+await (async (page) => {
+ const errors=[], results=[];page.on('pageerror',e=>errors.push(e.message));
+ for(const width of [1280,375]) {
+  await page.setViewportSize({width,height:width===375?812:900});
+  await page.goto('http://127.0.0.1:5189/?qa#library');await page.waitForFunction(()=>window.__KUANGYE__);
+  await page.evaluate(()=>window.__KUANGYE__.reset('map-navigation','empty'));
+  await page.locator('[data-place=library]').click();await page.getByRole('button',{name:'记下第一本书',exact:true}).click();
+  await page.getByLabel('书名',{exact:true}).fill('山间的一天');await page.getByLabel('作者（选填）').fill('阅读试用');
+  await page.getByLabel('读到哪里了').fill('第 32 页');await page.getByLabel('下次从这里开始').fill('读下一节，看看作者怎样描写清晨。');
+  await page.getByLabel('关联阅读旅程').selectOption('read-s1');await page.getByRole('button',{name:'保存书签',exact:true}).click();
+  await page.getByLabel('夹一张纸条').fill('树影落在书页上。\n想起了那次一个人走过的山路。');await page.getByRole('button',{name:'收下这段摘记',exact:true}).click();
+  await page.reload();await page.getByRole('button',{name:'更新书签',exact:true}).click();
+  await page.getByLabel('读到哪里了').fill('第三章');await page.getByRole('button',{name:'保存书签',exact:true}).click();
+  await page.locator('.reading-desk').scrollIntoViewIfNeeded();await page.screenshot({path:`output/playwright/reading-desk-${width}.png`,timeout:10000});
+  await page.getByRole('button',{name:'这本读完了',exact:true}).click();
+  await page.getByRole('button',{name:'打开一本书 ＋',exact:true}).click();await page.getByLabel('书名',{exact:true}).fill('另一段旅程');await page.getByRole('button',{name:'保存书签',exact:true}).click();
+  await page.getByRole('button',{name:'先放回书架',exact:true}).click();await page.locator('.book-spine').filter({hasText:'山间的一天'}).click();
+  await page.getByRole('button',{name:'继续读这本',exact:true}).click();
+  const state=await page.evaluate(async()=>{const s=await import('/src/store.js');const before=s.exportData();s.importData(before);return {reading:s.state.home.reading,light:s.state.home.lumens,active:s.state.active.length,done:s.state.done.length,glimmer:s.state.home.glimmerDays.length,overflow:document.documentElement.scrollWidth>innerWidth};});
+  const book=state.reading.books.find(b=>b.title==='山间的一天');
+  if(book.status!=='reading'||book.bookmark!=='第三章'||book.notes[0].bookmark!=='第 32 页'||state.light||state.active||state.done||state.glimmer||state.overflow)throw Error('Reading round trip/economy failed');
+  await page.getByRole('button',{name:'← 回到地图',exact:true}).click();await page.locator('[data-place=journal]').click();
+  await page.getByRole('button',{name:'去书屋翻开书签与摘记 ↗',exact:true}).click();await page.waitForURL('**#library');
+  await page.locator('.reading-task').click();await page.getByRole('button',{name:'接下这件事',exact:true}).click();await page.waitForURL('**#tasks');
+  await page.getByRole('button',{name:'← 回到地图',exact:true}).click();await page.locator('[data-place=library]').click();
+  await page.locator('.reading-task').click();await page.waitForURL('**#tasks');
+  results.push({width,status:'PASS',books:state.reading.books.length,notes:book.notes.length,economy:'unchanged'});
+ }
+ if(errors.length)throw Error(errors.join('\n'));return {results,errors};
+})(page);
+```
+### Page
+- Page URL: http://127.0.0.1:5189/?qa#tasks
+- Page Title: 旷野 · 小芽的家
+- Console: 0 errors, 5 warnings
+### Events
+- New console entries: .playwright-cli/console-2026-09-28T09-24-35-060Z.log#L8-L23

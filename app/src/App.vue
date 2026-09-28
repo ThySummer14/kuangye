@@ -239,7 +239,7 @@ async function takeMapTask() {
         @home="tab = 'home'"
         @toast="toast"
       />
-      <JournalView
+      <JournalView @library="tab = 'library'"
         v-else-if="tab === 'panel'"
         @toast="toast"
         @chains="tab = 'chains'"

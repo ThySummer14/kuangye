@@ -3,12 +3,35 @@ import { EXTERIOR } from '../data/town.js';
 import { yardFootprint } from '../game/town.js';
 function warm(mesh, intensity = .7) { mesh.material.emissive.copy(mesh.material.color); mesh.material.emissiveIntensity = intensity; return mesh; }
 
+// Pitched roof with a real gable, separate eaves, ridge caps and tile courses.
+function cottageRoof(e, g, wall, color, width=3, depth=2.25, base=1.88, rise=.92) {
+  const shape=new THREE.Shape(); shape.moveTo(-width/2,0);shape.lineTo(width/2,0);shape.lineTo(0,rise);shape.closePath();
+  const face=e.box(1,1,1,wall,0,base,-depth/2,g);
+  face.geometry.dispose();face.geometry=new THREE.ExtrudeGeometry(shape,{depth,bevelEnabled:false,steps:1});
+  const run=width/2+.2, angle=Math.atan2(rise,run), slope=Math.hypot(run,rise);
+  for(const sign of [-1,1]) {
+    const panel=e.box(slope+.12,.12,depth+.45,color,sign*run/2,base+rise/2,0,g);panel.rotation.z=-sign*angle;
+    for(let i=1;i<5;i++) {
+      const t=i/5;
+      const seam=e.box(.045,.035,depth+.46,color,sign*run*t,base+rise*(1-t)+.078,0,g);seam.rotation.z=-sign*angle;
+    }
+    for(let i=0;i<7;i++) {
+      const joint=e.box(slope,.018,.02,color,sign*run/2,base+rise/2+.075,-depth/2-.15+i*(depth+.3)/6,g);joint.rotation.z=-sign*angle;
+    }
+    for(const z of [-depth/2-.24,depth/2+.24]) {
+      const fascia=e.box(slope+.2,.14,.1,'#e4d2ac',sign*run/2,base+rise/2-.06,z,g);fascia.rotation.z=-sign*angle;
+    }
+    e.box(.12,.13,depth+.5,'#b29c77',sign*run,base-.015,0,g);
+  }
+  for(let i=0;i<8;i++)e.box(.21,.12,(depth+.5)/8-.012,color,0,base+rise+.07,-(depth+.5)/2+(i+.5)*(depth+.5)/8,g);
+}
+
 export function buildExterior(e, parent, exterior, x = 0, z = -2.1) {
   const g = new THREE.Group(); g.position.set(x, 0, z); parent.add(g);
   const wall = EXTERIOR.wall[exterior.wall].color, roof = EXTERIOR.roof[exterior.roof].color;
   e.box(3, 1.85, 2.25, wall, 0, .96, 0, g);
   e.box(3.25, .16, 2.5, '#bdad8a', 0, .09, 0, g);
-  const top = e.cyl(0, 2.43, 1.12, roof, 0, 2.4, 0, g, 4); top.rotation.y = Math.PI / 4; top.scale.z = .83;
+  cottageRoof(e,g,wall,roof);
   e.box(.6, 1.13, .08, EXTERIOR.door[exterior.door].color, 0, .67, 1.17, g);
   e.ball(.045, '#e4c889', .21, .65, 1.24, g);
   for (const wx of [-.94, .94]) {
@@ -18,7 +41,21 @@ export function buildExterior(e, parent, exterior, x = 0, z = -2.1) {
     e.box(.57, .035, .14, '#fff2d5', wx, 1.13, 1.27, g);
     e.box(.8, .13, .27, '#a57f57', wx, .74, 1.3, g);
   }
-  e.box(.4, .78, .4, '#dfceb0', .95, 2.5, -.4, g);
+  // Recessed door panels, stone plinth, shutters and a planted window box.
+  for(const y of [.43,.91])e.box(.44,.35,.035,'#b4b89a',0,y,1.224,g);
+  for(const x of [-1.46,1.46])e.box(.13,1.82,.13,'#eee0bf',x,1,1.13,g);
+  for(let i=0;i<7;i++)e.box(.39,.2,.07,i%2?'#b5aa92':'#c8bba2',-1.27+i*.42,.22,1.15,g);
+  for(const wx of [-.94,.94]) {
+    for(const sign of [-1,1])for(let i=0;i<5;i++)e.box(.17,.08,.06,EXTERIOR.door[exterior.door].color,wx+sign*.43,.91+i*.11,1.23,g);
+    for(let i=0;i<4;i++) {
+      e.ball(.09,'#829667',wx-.27+i*.18,.86,1.35,g);
+      e.ball(.055,i%2?'#e7b39d':'#f0da98',wx-.27+i*.18,.94,1.35,g);
+    }
+  }
+  e.box(.4,.92,.4,'#dfceb0',.95,2.52,-.4,g);
+  for(const y of [2.26,2.5,2.74])e.box(.415,.03,.415,'#bda785',.95,y,-.4,g);
+  e.box(.51,.12,.51,'#bca180',.95,3,-.4,g);
+  e.box(.3,.015,.3,'#726650',.95,3.067,-.4,g);
   e.box(1.6, .15, .75, '#d1b58a', 0, .12, 1.49, g);
   if (exterior.porch === 'canopy') {
     for (const px of [-.83,.83]) e.box(.09, 1.55, .09, '#b39c74', px, .82, 1.93, g);
@@ -73,7 +110,7 @@ export function buildLibrary(e, parent, level, x=0, z=0) {
   const wall=level ? '#e6d8b5':'#b9b49a', roof=level===3?'#688b7d':'#87968a';
   e.box(3.4,.16,2.8,'#b8b09a',0,.09,0,g);
   e.box(3,1.8,2.3,wall,0,1,0,g);
-  const top=e.cyl(0,2.5,.9,roof,0,2.34,0,g,4);top.rotation.y=Math.PI/4;top.scale.z=.82;
+  cottageRoof(e,g,wall,roof,3,2.3,1.92,.88);
   e.box(.76,1.26,.08,level?'#6e8e7d':'#8d8875',0,.73,1.18,g);
   for(const wx of [-1,1]) {
     e.box(.72,.78,.1,'#f3e7c8',wx,1.13,1.18,g);
@@ -87,6 +124,7 @@ export function buildLibrary(e, parent, level, x=0, z=0) {
   if(!level) {
     for(let i=0;i<3;i++)e.box(.7,.12,.2,'#a08a67',-.6+i*.4,.2,1.6,g).rotation.y=.4+i*.3;
   }
+  for(const x of [-1.46,1.46])e.box(.13,1.83,.13,'#d8c6a1',x,1,1.15,g);
   if(level>=2) {
     e.box(.75,.92,.38,'#a68960',-1.04,.48,1.55,g);
     for(const y of [.27,.59]) for(let i=0;i<5;i++)e.box(.075,.23,.2,['#aabe9b','#dab992','#8cacba'][i%3],-1.31+i*.13,y,1.68,g);

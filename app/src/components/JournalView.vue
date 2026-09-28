@@ -18,7 +18,7 @@ import EtchingCabinet from "./EtchingCabinet.vue";
 import { parseImport } from '../game/save.js';
 import { nativePlatform, exportBackup, pickBackup } from "../services/backup.js";
 const view = ref('journal');
-const emit = defineEmits(["toast", "chains"]),
+const emit = defineEmits(["toast", "chains", "library"]),
   file = ref(null),
   pendingImport = ref(""),
   importSummary = ref("");
@@ -176,6 +176,7 @@ function report() {
         </div>
         <button class="soft-button" @click="report">导出成长报告 ↗</button>
       </div>
+      <section v-if="state.home.reading?.books.length" class="home-renovation"><span class="eyebrow">书页里的日子</span><h3>我的阅读书架</h3><p v-for="book in state.home.reading.books.slice(0,4)" :key="book.id">《{{ book.title }}》 · {{ book.status==='reading'?'正在读':book.finished?'已读完':'暂放书架' }} · {{ book.notes.length }} 段摘记</p><button class="soft-button" @click="emit('library')">去书屋翻开书签与摘记 ↗</button></section>
       <JournalMemories @toast="emit('toast', $event)" />
       <section class="backup-section">
         <div>

@@ -4,6 +4,7 @@ import { state, taskById, activeOf, canAccept, accept, progressOf, restoreLibrar
 import { emptyTown, readingMilestones } from '../game/town.js';
 import { LIBRARY_STAGES } from '../data/town.js';
 import TownScene from './TownScene.vue';
+import ReadingDesk from './ReadingDesk.vue';
 import TaskGuide from './TaskGuide.vue';
 const emit=defineEmits(['tasks','journal','toast']);
 const town=computed(()=>state.home.town||emptyTown());
@@ -20,6 +21,8 @@ function record(qid) {return state.done.find(d=>d.qid===qid);}
 <template>
   <div class="library-page">
     <header><span class="eyebrow">家门外的第一条街</span><h2>{{ town.library===3?'书屋开门了，进来坐坐。':'让街角的书屋，慢慢亮起来。' }}</h2><p>每走完一段阅读旅程，就为这里修好一点。那些读过的日子，会留在这条街上。</p></header>
+    <ReadingDesk @task="inspecting=$event" @tasks="emit('tasks')" />
+    <h3 class="library-place-title">街角，因那些阅读而变化。</h3>
     <div class="library-layout">
       <div><TownScene mode="library" :town="town" :light="light" /><div class="library-light" role="group" aria-label="书屋预览光线"><button :aria-pressed="light==='day'" @click="light='day'">日间</button><button :aria-pressed="light==='night'" @click="light='night'">夜间</button></div></div>
       <section class="library-current" aria-label="书屋的下一步">
@@ -43,6 +46,7 @@ function record(qid) {return state.done.find(d=>d.qid===qid);}
 .library-page > header { margin:24px 0 30px; }
 .library-page h2 { font:500 32px/1.5 var(--serif); margin:14px 0; }
 .library-page p { font-size:14px; line-height:1.9; color:var(--ink-2); }
+.library-place-title { font:500 24px/1.6 var(--serif); margin:24px 0; }
 .library-layout { display:grid; grid-template-columns:minmax(0,1.4fr) minmax(300px,1fr); gap:26px; align-items:start; }
 .library-current { background:#fffdf5; border:1px solid var(--line); border-radius:18px; padding:28px; }
 .library-current h3 { font:500 25px/1.6 var(--serif); margin:15px 0; }

@@ -1,3 +1,4 @@
+import { emptyReading, startBook, updateBook, noteBook, shelveBook, reopenBook } from "./game/reading.js";
 import { emptyTown, changeExterior, placeYard, repairLibrary } from "./game/town.js";
 import { personalTask, taskXp } from "./game/personal-tasks.js";
 import { persistence } from './services/persistence.js';
@@ -459,3 +460,10 @@ export function restoreLibrary() {
   if (result.ok) buddyMoment('happy', 2500, '街角又多了一个可以坐坐的地方。');
   return result;
 }
+
+const readingState = () => (state.home.reading ||= emptyReading());
+export const openReadingBook = fields => startBook(readingState(), fields, crypto.randomUUID(), today());
+export const saveReadingBook = (id, fields) => updateBook(readingState(), id, fields);
+export const addReadingNote = (id, text) => noteBook(readingState(), id, text, today());
+export const putReadingBookAway = (id, finished) => shelveBook(readingState(), id, finished, today());
+export const continueReadingBook = id => reopenBook(readingState(), id);

@@ -12,6 +12,15 @@ export function furnitureModel(f, api) {
   const b = (w, h, d, col, x, y, z) => box(w, h, d, col, x, y, z, g),
     s = (r, col, x, y, z) => ball(r, col, x, y, z, g),
     cy = (a, r, h, col, x, y, z, n = 12) => cyl(a, r, h, col, x, y, z, g, n);
+  const soft = (w,h,d,col,x,y,z) => {
+    const m=b(w,h,d,col,x,y,z);m.geometry.dispose();
+    m.geometry=new RoundedBoxGeometry(w,h,d,3,Math.min(w,h,d)*.36);return m;
+  };
+  const book = (x,y,z,w,h,d,color) => {
+    b(w,h*.7,d*.94,cream,x,y,z);
+    for(const sign of [-1,1])b(w+.02,h*.15,d,color,x,y+sign*h*.43,z);
+    b(.045,h,d,color,x-w/2,y,z);
+  };
   const legs = (w, d, h) => {
     for (const x of [-w / 2, w / 2])
       for (const z of [-d / 2, d / 2]) b(0.1, h, 0.1, dark, x, h / 2, z);
@@ -44,16 +53,18 @@ export function furnitureModel(f, api) {
       b(1.72, 0.77, 0.3, c, 0, 0.93, -0.67);
       b(0.26, 0.6, 1.6, c, -0.73, 0.72, 0);
       b(0.26, 0.6, 1.6, c, 0.73, 0.72, 0);
-      b(1.2, 0.18, 1.15, "#b0c3a1", 0, 0.75, 0.12);
-      b(0.57, 0.55, 0.22, cream, 0.28, 1, -0.4).rotation.z = 0.18;
+      soft(1.2, 0.23, 1.15, "#b0c3a1", 0, 0.76, 0.12);
+      soft(1.15,.5,.25,c,0,1,-.42);
+      soft(0.48, 0.48, 0.22, cream, 0.28, 1, -.18).rotation.z = 0.18;
+      soft(.38,.38,.2,"#c6ab83",-.3,.96,-.15).rotation.z=-.2;
       legs(1.3, 1.3, 0.2);
       break;
     case "bed":
       b(1.8, 0.3, 2.8, wood, 0, 0.32, 0);
       b(1.86, 0.85, 0.16, wood, 0, 0.67, -1.35);
-      b(1.7, 0.25, 2.6, cream, 0, 0.6, 0);
+      soft(1.7, 0.28, 2.6, cream, 0, 0.6, 0);
       b(1.7, 0.12, 1.65, c, 0, 0.78, 0.43);
-      b(1.2, 0.2, 0.6, "#fff6df", 0, 0.81, -0.8);
+      for(const x of [-.4,.4])soft(.73,.22,.58,"#fff6df",x,.82,-.81);
       legs(1.4, 2.4, 0.22);
       break;
     case "shelf":
@@ -162,7 +173,8 @@ export function furnitureModel(f, api) {
   if (["table", "desk"].includes(f.model)) {
     cy(0.12, 0.1, 0.17, cream, 0.25, 1.14, 0.12, 20);
     cy(0.09, 0.09, 0.012, "#75624c", 0.25, 1.23, 0.12, 20);
-    b(0.4, 0.045, 0.3, "#8caa99", -0.3, 1.1, -0.1);
+    book(-.3,1.105,-.1,.42,.07,.33,"#8caa99");
+    for(let i=0;i<8;i++){const a=i*Math.PI/4;s(.025,cream,.39+Math.cos(a)*.07,1.15+Math.sin(a)*.07,.12);}
   }
   if (f.model === "bed")
     for (let i = 0; i < 8; i++)
@@ -178,6 +190,76 @@ export function furnitureModel(f, api) {
   if (f.model === "radio") {
     b(0.5, 0.045, 0.09, dark, 0, 0.8, 0);
     for (const x of [-0.25, 0.25]) b(0.04, 0.13, 0.09, dark, x, 0.74, 0);
+  }
+  // Fine silhouettes and material construction remain inside existing footprints.
+  if(f.model==='bed') {
+    for(const x of [-.82,.82]) {
+      cy(.075,.08,.97,wood,x,.63,-1.34);s(.09,wood,x,1.15,-1.34);
+    }
+    for(let i=0;i<5;i++)b(.06,.51,.04,'#d2ad7f',-.6+i*.3,.79,-1.245);
+    soft(1.73,.13,.34,'#eee0bb',0,.84,-.27);
+    for(const x of [-.84,.84])b(.04,.25,1.68,c,x,.68,.43);
+  }
+  if(f.model==='sofa') {
+    for(const x of [-.59,.59])b(.02,.02,1.03,'#d4dec8',x,.87,.12);
+    b(1.17,.025,.025,'#d4dec8',0,.875,.65);
+    for(let i=0;i<6;i++)b(.1,.025,.4,'#c8b690',-.47+i*.1,.89,.41);
+  }
+  if(f.model==='shelf') {
+    b(1.98,.12,.94,'#cba77b',0,1.91,0);
+    for(const y of [.15,.85,1.55])b(1.65,.045,.045,'#d6b88d',0,y+.045,.435);
+    for(let i=0;i<5;i++) {
+      const x=-.63+i*.15, h=.36+(i%3)*.065;
+      b(.11,h,.38,['#8fa699','#c5a57e','#ad8470'][i%3],x,1.6+h/2,0);
+      for(const y of [1.68,1.83])b(.085,.025,.015,'#eee0bc',x,y,.2);
+    }
+    book(.35,.985,.05,.55,.12,.4,'#8fa8ae');book(.35,1.115,.05,.5,.12,.38,'#c5a17d');
+    cy(.16,.12,.2,'#d9c5a1',.55,1.75,.03);s(.16,'#88a274',.55,1.94,.03).scale.set(1,.6,1);
+  }
+  if(f.model==='desk') {
+    for(const z of [-.27,0,.27])b(2.65,.012,.016,'#c99d70',0,1.073,z);
+    b(2.5,.1,.08,dark,0,.35,-.28);
+    cy(.11,.09,.24,'#a5b4a0',-.94,1.19,-.15);
+    for(let i=0;i<3;i++)b(.02,.32,.02,['#b68965','#778e76','#d4b37e'][i],-1+i*.06,1.36,-.15).rotation.z=(i-1)*.12;
+  }
+  if(f.model==='stool') {
+    for(const z of [-.22,.22])b(.47,.07,.06,wood,0,.23,z);
+    for(const x of [-.22,.22])b(.06,.07,.47,wood,x,.23,0);
+    for(const z of [-.15,.12])b(.66,.014,.012,'#cda878',0,.587,z);
+  }
+  if(f.model==='table') {
+    cy(.82,.82,.04,'#d4b184',0,1.065,0,32);
+    for(const angle of [0,Math.PI/2])b(1.3,.11,.2,dark,0,.07,0).rotation.y=angle;
+  }
+  if(['plant','flowers','stand','moss'].includes(f.model)) {
+    const base=f.model==='stand'?.55:0, count=f.model==='stand'?3:1;
+    for(let j=0;j<count;j++) {
+      const x=(j-(count-1)/2)*.55;
+      cy(.275,.275,.075,'#d3a083',x,base+.39,0);
+      cy(.25,.28,.055,'#a97e63',x,base+.035,0);
+      for(let i=0;i<5;i++) {
+        const a=i*Math.PI*2/5,leaf=s(.18,f.model==='flowers'?'#7d9969':c,x+Math.cos(a)*.19,base+.62+(i%2)*.12,Math.sin(a)*.18);
+        leaf.scale.set(.55,.25,1.5);leaf.rotation.y=-a;leaf.rotation.z=.35;
+      }
+    }
+  }
+  if(['lamp','lantern'].includes(f.model)) {
+    cy(.23,.23,.025,'#d6b580',0,1.065,0,24);
+    cy(.4,.4,.025,'#d6b580',0,.685,0,24);
+    for(let i=0;i<12;i++) {
+      const a=i*Math.PI/6,m=b(.018,.37,.025,'#e1cfaa',Math.cos(a)*.31,.865,Math.sin(a)*.31);m.rotation.y=-a;
+    }
+  }
+  if(f.model==='books') {
+    for(let i=0;i<3;i++)b(.51,.045,.025,cream,.055,.42+i*.12,.307);
+    for(const x of [-.32,.32])b(.045,.24,.82,'#c9a77a',x,.26,0);
+  }
+  if(f.model==='mat')for(let i=0;i<12;i++)b(.018,.014,1.84,'#e4d19f',-.82+i*.15,.083,0);
+  if(f.model==='rug')for(let i=0;i<24;i++){const a=i*Math.PI/12;s(.025,'#f3e4c7',Math.cos(a)*.88,.078,Math.sin(a)*.88).scale.y=.3;}
+  if(f.model==='fireplace') {
+    b(1.94,.13,.98,'#b5a68f',0,.08,.04);
+    for(const x of [-.73,.73])for(let i=0;i<4;i++)b(.28,.02,.9,'#b2a38e',x,.35+i*.32,0);
+    for(const x of [-.25,.25])cy(.07,.08,.63,wood,x,.24,.55).rotation.z=1.1;
   }
   return g;
 }

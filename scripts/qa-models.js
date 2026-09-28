@@ -1,0 +1,19 @@
+async (page) => {
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:1280,height:900});await page.goto('http://127.0.0.1:5189/?qa#yard');
+ await page.waitForFunction(()=>window.__KUANGYE__);await page.locator('.town-canvas[data-ready=true]').waitFor();
+ await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:'output/playwright/models-exterior-1280.png',timeout:10000});
+ await page.setViewportSize({width:375,height:812});await page.screenshot({path:'output/playwright/models-exterior-375.png',timeout:10000});
+ await page.getByRole('button',{name:'← 回到地图',exact:true}).click();
+ await page.evaluate(async()=>{const s=await import('/src/store.js');const fixtures=[['bed',0,0],['shelf',3,0],['desk',4,2],['sofa',0,4],['table',3,4],['plant',6,0],['lamp',5,0],['stool',6,4],['rug',2,6]];s.state.home.room={w:8,d:8};s.state.home.inventory=fixtures.map(([fid],i)=>({fid,uid:`detail-${i}`,paid:0}));s.state.home.placed=fixtures.map(([,x,z],i)=>({uid:`detail-${i}`,x,z,rotation:0}));});
+ await page.locator('[data-place=home]').click();await page.locator('.home-canvas[data-ready=true]').waitFor();
+ for(const width of [1280,375]) {
+  await page.setViewportSize({width,height:width===375?812:900});
+  for(const light of ['day','night']) {
+   await page.evaluate(async light=>{const s=await import('/src/store.js');s.changeHomeDecor('light',light);},light);
+   await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:`output/playwright/models-home-${light}-${width}.png`,timeout:10000});
+  }
+ }
+ if(errors.length)throw Error(errors.join('\n'));
+ return {errors,overflow:await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),fixtures:9};
+}

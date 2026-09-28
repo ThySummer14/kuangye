@@ -1,3 +1,4 @@
+import { emptyTown, changeExterior, placeYard, repairLibrary } from "./game/town.js";
 import { personalTask, taskXp } from "./game/personal-tasks.js";
 import { persistence } from './services/persistence.js';
 import { normalizeActionPlan } from "./game/action-plan.js";
@@ -437,4 +438,24 @@ export function changeHomeDecor(key, value) {
 }
 export function rememberHomeInteraction(model, text) {
   return addHomeMoment(state.home, "discovery", text, `discovery:${model}`);
+}
+
+// Town changes share the persistence facade; rendering never unlocks a building.
+export function setExterior(key, value) {
+  state.home.town ||= emptyTown();
+  return changeExterior(state.home.town, key, value);
+}
+export function arrangeYard(id, at) {
+  state.home.town ||= emptyTown();
+  return placeYard(state.home.town, id, at);
+}
+export function removeYard(id) {
+  if (!state.home.town) return;
+  state.home.town.yard = state.home.town.yard.filter(p => p.id !== id);
+}
+export function restoreLibrary() {
+  state.home.town ||= emptyTown();
+  const result = repairLibrary(state.home.town, state.done);
+  if (result.ok) buddyMoment('happy', 2500, '街角又多了一个可以坐坐的地方。');
+  return result;
 }

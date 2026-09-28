@@ -1,3 +1,5 @@
+import { buildExterior, buildYardItem, buildYardPath, buildFence, buildLibrary } from "./town-models.js";
+import { emptyTown } from "../game/town.js";
 import { makeSoftCorner } from "./mascot-model.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import * as THREE from "three";
@@ -64,6 +66,7 @@ export function createWorld(
     onReady,
     getMood = () => "idle",
     mode = "map",
+    town = emptyTown(),
   } = {},
 ) {
   const scene = new THREE.Scene();
@@ -77,8 +80,8 @@ export function createWorld(
   el.appendChild(renderer.domElement);
   const camera = new THREE.PerspectiveCamera(36, 1, 0.1, 100);
   let angle = 0.73,
-    distance = 18,
-    elevation = 11;
+    distance = mode === "map" ? 24 : 18,
+    elevation = mode === "map" ? 15 : 11;
   const target = new THREE.Vector3(0, 0.1, 0);
   const world = new THREE.Group();
   scene.add(world);
@@ -124,6 +127,7 @@ export function createWorld(
   sun.shadow.bias = -0.0003;
   sun.shadow.normalBias = 0.025;
   scene.add(sun);
+  const mapGroups = [];
   const pois = [],
     interactables = [],
     animated = [];
@@ -265,6 +269,7 @@ export function createWorld(
         interactables.push(o);
       }
     });
+    mapGroups.push({ id, group: g });
     poi(id, x, z, kind === "home" ? 2.7 : 2.3);
   }
   function makeBuddy(x, z, scale = 1) {
@@ -286,9 +291,9 @@ export function createWorld(
   const cutawayWalls = [];
   const furniturePickables = [];
   if (mode === "map") {
-    cyl(5.6, 4.8, 0.65, "#bfac83", 0, -0.48, 0, world, 48);
-    cyl(5.65, 5.6, 0.22, "#9aba7a", 0, -0.065, 0, world, 48);
-    cyl(5.35, 5.55, 0.12, "#b4cd8d", 0, 0.03, 0, world, 48);
+    cyl(5.6, 4.8, 0.65, "#bfac83", 0, -0.48, 0, world, 48).scale.x = 1.48;
+    cyl(5.65, 5.6, 0.22, "#9aba7a", 0, -0.065, 0, world, 48).scale.x = 1.48;
+    cyl(5.35, 5.55, 0.12, "#b4cd8d", 0, 0.03, 0, world, 48).scale.x = 1.48;
     // Organic paths and a small pond keep the island readable from any angle.
     for (let i = 0; i < 13; i++) {
       const t = i / 12;
@@ -305,50 +310,63 @@ export function createWorld(
       );
       p.scale.x = 1.3;
     }
-    for (let i = 0; i < 9; i++)
+    for (let i = 0; i < 16; i++)
       cyl(
         0.35,
         0.36,
         0.034,
         "#e0d3ab",
-        -3 + i * 0.73,
+        -5.5 + i * 0.73,
         0.106,
-        0.7 + Math.sin(i * 0.6) * 0.3,
+        1 + Math.sin(i * 0.6) * 0.18,
         world,
         10,
       );
-    const pond = cyl(1.2, 1.25, 0.03, "#8dbfb6", 2.2, 0.11, 2.15, world, 28);
+    const pond = cyl(1.2, 1.25, 0.03, "#8dbfb6", 4.5, 0.11, 3.15, world, 28);
     pond.scale.set(1.35, 1, 0.75);
-    const water = cyl(1.05, 1.08, 0.04, "#a4d2cb", 2.2, 0.13, 2.15, world, 28);
+    const water = cyl(1.05, 1.08, 0.04, "#a4d2cb", 4.5, 0.13, 3.15, world, 28);
     water.scale.set(1.35, 1, 0.74);
     for (let i = 0; i < 4; i++) {
       const stone = ball(
         0.16,
         "#d3d5bc",
-        1.1 + i * 0.48,
+        3.4 + i * 0.48,
         0.19,
-        2.65 + Math.sin(i) * 0.1,
+        3.65 + Math.sin(i) * 0.1,
       );
       stone.scale.y = 0.45;
     }
-    building("atelier", 3.1, -3.3, "atelier");
-    building("home", -2, -1.6, "home");
-    building("shop", 2.65, -0.9, "shop");
-    building("woodshop", -3.25, 0.7, "woodshop");
-    building("tasks", -0.9, 2.15, "tasks");
-    building("journal", 1, -3.65, "journal");
+    building("atelier", 1.7, -3.4, "atelier");
+    building("shop", 2.3, 2, "shop");
+    building("woodshop", -4.4, 2.7, "woodshop");
+    building("tasks", -1.1, 2.4, "tasks");
+    building("journal", -.8, -3.7, "journal");
+    const kit = { box, ball, cyl };
+    const house = buildExterior(kit, world, town.exterior, -3.6, -2.5);
+    house.scale.setScalar(.78);
+    mapGroups.push({ id: 'home', group: house }); poi('home', -3.6, -2.5, 2.3);
+    const yard = new THREE.Group(); yard.position.set(-3.6, .13, -1.45); yard.scale.setScalar(.6); world.add(yard);
+    box(6.8,.07,4.7,'#a3bf81',0,0,2,yard);
+    buildYardPath(kit,yard,town.exterior); buildFence(kit,yard);
+    for (const p of town.yard) buildYardItem(kit,yard,p);
+    mapGroups.push({ id: 'yard', group: yard }); poi('yard', -3.6, -.25, .5);
+    const library = buildLibrary(kit,world,town.library,4.3,-.95);
+    library.scale.setScalar(.85);
+    mapGroups.push({ id: 'library', group: library }); poi('library',4.3,-.95,2.5);
+    // A short boardwalk joins the old square to the new street.
+    for(let i=0;i<6;i++)box(.8,.055,.23,'#c7af84',3.9,.15,.4+i*.25);
     [
-      [-4, -1, 1.15],
-      [-4.1, 2.2, 0.65],
-      [-2.9, -3.5, 1],
+      [-6.5, -1, 1.15],
+      [-6.1, 2.2, 0.65],
+      [-4.6, -3.8, .8],
       [-0.4, -4.5, 0.9],
-      [3.8, 1, 0.75],
+      [6.3, 1, .9],
     ].forEach((a) => tree(...a));
     [
-      [-4.25, -2.6, 0.85],
+      [-6, -2.6, 0.85],
       [0.1, -3.5, 0.85],
-      [4, -1.9, 0.8],
-      [-2.5, 3.3, 0.65],
+      [6.2, -2.3, 1],
+      [-2.5, 4.1, .65],
     ].forEach((a) => pine(...a));
     for (let i = 0; i < 23; i++) {
       const a = i * 2.399;
@@ -359,9 +377,14 @@ export function createWorld(
     }
     buddy = makeBuddy(0.0, 1.3, 1.15);
     interactables.length = 0;
-    interactables.push(
-      ...mergeStatic(world, [], true).filter((m) => m.userData.poi),
-    );
+    world.updateMatrixWorld(true);
+    for(const {id,group} of mapGroups) {
+      const bounds=new THREE.Box3().setFromObject(group), size=bounds.getSize(new THREE.Vector3());
+      const proxy=new THREE.Mesh(new THREE.BoxGeometry(size.x,Math.max(.2,size.y),size.z),new THREE.MeshBasicMaterial());
+      proxy.position.copy(bounds.getCenter(new THREE.Vector3())); proxy.userData.poi=id; proxy.updateMatrixWorld();
+      interactables.push(proxy);
+    }
+    mergeStatic(world);
   }
   function resize() {
     const w = el.clientWidth,
@@ -778,11 +801,11 @@ export function createWorld(
     reset() {
       angle = 0.73;
       elevation =
-        mode === "home" ? Math.max(roomSize.w, roomSize.d) * 1.65 : 11;
+        mode === "home" ? Math.max(roomSize.w, roomSize.d) * 1.65 : 15;
       distance =
         mode === "home"
           ? Math.max(roomSize.w, roomSize.d) * (innerWidth < 600 ? 2.2 : 2)
-          : 18;
+          : 24;
     },
     dispose() {
       stopped = true;
@@ -811,6 +834,8 @@ export function createWorld(
           }
         }
       });
+      for (const m of mats.values()) m.dispose();
+      if (mode === "map") for (const p of interactables) { p.geometry.dispose(); p.material.dispose(); }
       sun.shadow.dispose();
       renderer.dispose();
       renderer.forceContextLoss();

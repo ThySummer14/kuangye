@@ -9,13 +9,14 @@ import {
   state,
   saveWarning,
 } from "../store.js";
+import { readingMilestones } from "../game/town.js";
 import { fieldGuide } from "../data/field-guides.js";
 import { taskXp } from "../game/personal-tasks.js";
 import { lumenReward } from "../game/home.js";
 import BuddyFace from "./BuddyFace.vue";
 import ModalFrame from "./ModalFrame.vue";
 const props = defineProps({ active: Object }),
-  emit = defineEmits(["close", "done", "shop", "map"]);
+  emit = defineEmits(["close", "done", "shop", "map", "library"]);
 const finishButton = ref(null);
 const task = computed(() => taskById[props.active.qid]),
   xp = computed(() => taskXp(task.value)),
@@ -95,6 +96,7 @@ function nextTask() {
       >
         {{ (saveWarning.text || saveWarning.pending) ? "回到地图" : "收好了，回到地图" }}
       </button>
+      <button v-if="task.chain === 'read' && readingMilestones(state.done) > (state.home.town?.library || 0)" class="text-button completion-shop-link" @click="emit('close'); emit('library')">去街角书屋，留下一点变化 ↗</button>
       <button
         class="text-button completion-shop-link"
         @click="

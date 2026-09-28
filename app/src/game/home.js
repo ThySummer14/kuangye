@@ -1,3 +1,4 @@
+import { emptyTown, normalizeTown } from "./town.js";
 import { furnitureById } from "../data/furniture.js";
 import { roomOf, normalizeDecor } from "./room.js";
 import { placementCheck } from "./placement.js";
@@ -9,6 +10,7 @@ export const refundFor = (price) =>
   Math.floor(Math.max(0, Number(price) || 0) * 0.7);
 export const emptyHome = () => ({
   room: { w: 6, d: 6 },
+  town: emptyTown(),
   decor: normalizeDecor(),
   moments: [],
   lumens: 0,
@@ -32,6 +34,7 @@ export function normalizeHome(raw, done = []) {
     h.earned = h.lumens;
     return h;
   }
+  h.town = normalizeTown(raw.town, done);
   h.room = roomOf(raw);
   h.decor = normalizeDecor(raw.decor);
   h.moments = (Array.isArray(raw.moments) ? raw.moments : [])

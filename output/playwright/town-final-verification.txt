@@ -1,0 +1,12 @@
+### Result
+{"checks":[{"id":"home","inside":true},{"id":"yard","inside":true},{"id":"library","inside":true},{"id":"tasks","inside":true},{"id":"shop","inside":true},{"id":"woodshop","inside":true},{"id":"journal","inside":true},{"id":"atelier","inside":true}],"fallback":"PASS","overflow":false}
+### Ran Playwright code
+```js
+await (async (page) => { await page.reload(); await page.locator(".world-canvas[data-ready=true]").waitFor(); await page.evaluate(()=>scrollTo(0,0)); await page.screenshot({path:"output/playwright/town-map-final-1280.png",timeout:10000}); const checks=await page.locator(".world-map").evaluate(el=>{const r=el.querySelector(".world-stage").getBoundingClientRect();return [...el.querySelectorAll(".poi-label")].map(b=>{const a=b.getBoundingClientRect();return {id:b.dataset.place,inside:a.left>=r.left&&a.right<=r.right&&a.top>=r.top&&a.bottom<=r.bottom};});}); if(checks.some(c=>!c.inside))throw Error(JSON.stringify(checks)); await page.setViewportSize({width:375,height:812}); await page.screenshot({path:"output/playwright/town-map-final-375.png",timeout:10000}); await page.evaluate(()=>document.querySelector(".world-canvas canvas").dispatchEvent(new Event("webglcontextlost",{cancelable:true}))); await page.locator(".world-map.map-offline").waitFor(); await page.locator("[data-place=library]").click(); await page.waitForURL("**#library"); await page.locator(".library-light").getByRole("button",{name:"夜间",exact:true}).click(); await page.locator(".town-canvas[data-ready=true]").waitFor(); await page.evaluate(()=>scrollTo(0,0)); await page.screenshot({path:"output/playwright/town-library-final-375.png",timeout:10000}); return {checks,fallback:"PASS",overflow:await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)}; })(page);
+```
+### Page
+- Page URL: http://127.0.0.1:5187/?qa#library
+- Page Title: 旷野 · 小芽的家
+- Console: 0 errors, 2 warnings
+### Events
+- New console entries: .playwright-cli/console-2026-09-28T02-45-11-168Z.log#L3-L6

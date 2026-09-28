@@ -162,3 +162,20 @@ test('a personal completion can become a furniture memory and survive backup', (
   assert.equal(store.taskById[store.state.home.inventory[0].memory.qid].title,'清出书桌');
   assert.equal(store.state.home.inventory[0].memory.review,'这是我自己决定的一步');
 });
+test('town changes persist with tasks and repair never changes the economy',()=>{
+  store.resetData();
+  const before=store.state.home.lumens;
+  store.setExterior('roof','blue');
+  assert.equal(store.arrangeYard('bench',{x:0,z:0,rotation:0}).ok,true);
+  assert.equal(store.restoreLibrary().ok,false);
+  store.state.done.push({qid:'read-s1',xp:10,at:'2026-09-28',review:'读了三天',units:[],logs:[]});
+  assert.equal(store.restoreLibrary().ok,true);
+  assert.equal(store.restoreLibrary().ok,false);
+  assert.equal(store.state.home.lumens,before);
+  assert.equal(store.state.home.glimmerDays.length,0);
+  const backup=store.exportData(); store.resetData();store.importData(backup);
+  assert.equal(store.state.home.town.library,1);
+  assert.equal(store.state.home.town.exterior.roof,'blue');
+  assert.equal(store.state.home.town.yard.length,1);
+  store.removeYard('bench');assert.equal(store.state.home.town.yard.length,0);
+});

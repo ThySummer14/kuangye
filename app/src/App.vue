@@ -1,6 +1,8 @@
 <script setup>
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { state, levelInfo, now, buddyBus, saveWarning } from "./store.js";
+import YardView from "./components/YardView.vue";
+import LibraryView from "./components/LibraryView.vue";
 import WorldScene from "./components/WorldScene.vue";
 import ChainsView from "./components/ChainsView.vue";
 import CompleteModal from "./components/CompleteModal.vue";
@@ -26,6 +28,8 @@ const validTabs = [
   "quest",
   "chains",
   "woodshop",
+  "yard",
+  "library",
 ];
 const tab = ref(
     validTabs.includes(location.hash.slice(1)) ? location.hash.slice(1) : "map",
@@ -84,6 +88,8 @@ const nav = [
   ["shop", "♧", "林间集市"],
   ["panel", "◷", "成长手记"],
   ["woodshop", "⌑", "木器铺"],
+  ["yard", "♧", "家门前的院子"],
+  ["library", "▤", "街角书屋"],
 ];
 const selectedAction = ref("");
 const nextAction = computed(() => {
@@ -159,7 +165,7 @@ async function takeMapTask() {
         }}</span>
       </div>
       <div v-if="tab === 'map'" class="explore-layout">
-        <WorldScene @navigate="navigate" />
+        <WorldScene :key="JSON.stringify(state.home.town)" @navigate="navigate" />
         <aside class="today-rail">
           <section class="buddy-card">
             <span class="eyebrow">小芽在等你</span>
@@ -226,6 +232,8 @@ async function takeMapTask() {
         @toast="toast"
       />
       <WoodshopView v-else-if="tab === 'woodshop'" @toast="toast" />
+      <YardView v-else-if="tab === 'yard'" @home="tab = 'home'" />
+      <LibraryView v-else-if="tab === 'library'" @tasks="tab = 'tasks'" @journal="tab = 'panel'" @toast="toast" />
       <ShopView
         v-else-if="tab === 'shop'"
         @home="tab = 'home'"
@@ -262,6 +270,7 @@ async function takeMapTask() {
       @done="toast"
       @shop="tab = 'shop'"
       @map="finishToMap"
+      @library="tab = 'library'"
     /><AbandonModal
       v-if="abandoning"
       :active="abandoning"

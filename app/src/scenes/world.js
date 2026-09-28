@@ -64,6 +64,7 @@ export function createWorld(
     onCell,
     onPet,
     onReady,
+    onHover,
     getMood = () => "idle",
     mode = "map",
     town = emptyTown(),
@@ -80,8 +81,8 @@ export function createWorld(
   el.appendChild(renderer.domElement);
   const camera = new THREE.PerspectiveCamera(36, 1, 0.1, 100);
   let angle = 0.73,
-    distance = mode === "map" ? 24 : 18,
-    elevation = mode === "map" ? 15 : 11;
+    distance = mode === "map" ? 26 : 18,
+    elevation = mode === "map" ? 17 : 11;
   const target = new THREE.Vector3(0, 0.1, 0);
   const world = new THREE.Group();
   scene.add(world);
@@ -291,9 +292,9 @@ export function createWorld(
   const cutawayWalls = [];
   const furniturePickables = [];
   if (mode === "map") {
-    cyl(5.6, 4.8, 0.65, "#bfac83", 0, -0.48, 0, world, 48).scale.x = 1.48;
-    cyl(5.65, 5.6, 0.22, "#9aba7a", 0, -0.065, 0, world, 48).scale.x = 1.48;
-    cyl(5.35, 5.55, 0.12, "#b4cd8d", 0, 0.03, 0, world, 48).scale.x = 1.48;
+    cyl(5.6, 4.8, 0.65, "#bfac83", 0, -0.48, 0, world, 48).scale.set(1.68, 1, 1.22);
+    cyl(5.65, 5.6, 0.22, "#9aba7a", 0, -0.065, 0, world, 48).scale.set(1.68, 1, 1.22);
+    cyl(5.35, 5.55, 0.12, "#b4cd8d", 0, 0.03, 0, world, 48).scale.set(1.68, 1, 1.22);
     // Organic paths and a small pond keep the island readable from any angle.
     for (let i = 0; i < 13; i++) {
       const t = i / 12;
@@ -322,51 +323,51 @@ export function createWorld(
         world,
         10,
       );
-    const pond = cyl(1.2, 1.25, 0.03, "#8dbfb6", 4.5, 0.11, 3.15, world, 28);
+    const pond = cyl(1.2, 1.25, 0.03, "#8dbfb6", 6, 0.11, 2.5, world, 28);
     pond.scale.set(1.35, 1, 0.75);
-    const water = cyl(1.05, 1.08, 0.04, "#a4d2cb", 4.5, 0.13, 3.15, world, 28);
+    const water = cyl(1.05, 1.08, 0.04, "#a4d2cb", 6, 0.13, 2.5, world, 28);
     water.scale.set(1.35, 1, 0.74);
     for (let i = 0; i < 4; i++) {
       const stone = ball(
         0.16,
         "#d3d5bc",
-        3.4 + i * 0.48,
+        4.9 + i * 0.48,
         0.19,
-        3.65 + Math.sin(i) * 0.1,
+        3 + Math.sin(i) * 0.1,
       );
       stone.scale.y = 0.45;
     }
-    building("atelier", 1.7, -3.4, "atelier");
-    building("shop", 2.3, 2, "shop");
-    building("woodshop", -4.4, 2.7, "woodshop");
-    building("tasks", -1.1, 2.4, "tasks");
-    building("journal", -.8, -3.7, "journal");
+    building("atelier", 1.9, -4.3, "atelier");
+    building("shop", 3.2, 3.4, "shop");
+    building("woodshop", -4.6, 3.6, "woodshop");
+    building("tasks", -.6, 3.4, "tasks");
+    building("journal", -1.7, -4.4, "journal");
     const kit = { box, ball, cyl };
-    const house = buildExterior(kit, world, town.exterior, -3.6, -2.5);
-    house.scale.setScalar(.78);
-    mapGroups.push({ id: 'home', group: house }); poi('home', -3.6, -2.5, 2.3);
-    const yard = new THREE.Group(); yard.position.set(-3.6, .13, -1.45); yard.scale.setScalar(.6); world.add(yard);
+    const house = buildExterior(kit, world, town.exterior, -4.8, -2.5);
+    house.scale.setScalar(.72);
+    mapGroups.push({ id: 'home', group: house }); poi('home', -4.8, -2.5, 2.3);
+    const yard = new THREE.Group(); yard.position.set(-4.8, .13, -1.45); yard.scale.setScalar(.52); world.add(yard);
     box(6.8,.07,4.7,'#a3bf81',0,0,2,yard);
     buildYardPath(kit,yard,town.exterior); buildFence(kit,yard);
     for (const p of town.yard) buildYardItem(kit,yard,p);
-    mapGroups.push({ id: 'yard', group: yard }); poi('yard', -3.6, -.25, .5);
-    const library = buildLibrary(kit,world,town.library,4.3,-.95);
-    library.scale.setScalar(.85);
-    mapGroups.push({ id: 'library', group: library }); poi('library',4.3,-.95,2.5);
+    mapGroups.push({ id: 'yard', group: yard }); poi('yard', -4.8, -.25, .5);
+    const library = buildLibrary(kit,world,town.library,5.3,-.95);
+    library.scale.setScalar(.78);
+    mapGroups.push({ id: 'library', group: library }); poi('library',5.3,-.95,2.5);
     // A short boardwalk joins the old square to the new street.
-    for(let i=0;i<6;i++)box(.8,.055,.23,'#c7af84',3.9,.15,.4+i*.25);
+    for(let i=0;i<6;i++)box(.8,.055,.23,'#c7af84',5,.15,.4+i*.25);
     [
-      [-6.5, -1, 1.15],
-      [-6.1, 2.2, 0.65],
-      [-4.6, -3.8, .8],
-      [-0.4, -4.5, 0.9],
-      [6.3, 1, .9],
+      [-7.8, -1, 1.15],
+      [-7, 2.7, 0.65],
+      [-5.3, -4.7, .8],
+      [-.2, -5.8, .8],
+      [7.7, .5, .9],
     ].forEach((a) => tree(...a));
     [
-      [-6, -2.6, 0.85],
-      [0.1, -3.5, 0.85],
-      [6.2, -2.3, 1],
-      [-2.5, 4.1, .65],
+      [-7, -3.2, .85],
+      [.2, -4.9, .65],
+      [7, -3.1, 1],
+      [-2.8, 5, .65],
     ].forEach((a) => pine(...a));
     for (let i = 0; i < 23; i++) {
       const a = i * 2.399;
@@ -452,6 +453,11 @@ export function createWorld(
           Math.min(22, down.elevation + (e.clientY - down.y) * 0.045),
         );
     }
+    if (mode === "map" && onHover && (e.target === renderer.domElement || down)) {
+      const bounds=renderer.domElement.getBoundingClientRect();
+      if(down || e.clientX<bounds.left || e.clientX>bounds.right || e.clientY<bounds.top || e.clientY>bounds.bottom)onHover('');
+      else {updateRay(e);onHover(ray.intersectObjects(interactables)[0]?.object.userData.poi || '');}
+    }
     if (mode === "home") {
       const bounds = renderer.domElement.getBoundingClientRect();
       if (
@@ -516,6 +522,8 @@ export function createWorld(
       Math.min(30, distance + e.deltaY * 0.012),
     );
   }
+  const clearHover = () => onHover?.('');
+  renderer.domElement.addEventListener("pointerleave", clearHover);
   renderer.domElement.addEventListener("pointerdown", pointerDown);
   window.addEventListener("pointermove", pointerMove);
   window.addEventListener("pointerup", pointerUp);
@@ -801,11 +809,11 @@ export function createWorld(
     reset() {
       angle = 0.73;
       elevation =
-        mode === "home" ? Math.max(roomSize.w, roomSize.d) * 1.65 : 15;
+        mode === "home" ? Math.max(roomSize.w, roomSize.d) * 1.65 : 17;
       distance =
         mode === "home"
           ? Math.max(roomSize.w, roomSize.d) * (innerWidth < 600 ? 2.2 : 2)
-          : 24;
+          : 26;
     },
     dispose() {
       stopped = true;
@@ -821,6 +829,7 @@ export function createWorld(
       observer.disconnect();
       window.removeEventListener("pointermove", pointerMove);
       window.removeEventListener("pointerup", pointerUp);
+      renderer.domElement.removeEventListener("pointerleave", clearHover);
       renderer.domElement.removeEventListener("pointerdown", pointerDown);
       renderer.domElement.removeEventListener("wheel", wheel);
       scene.traverse((o) => {

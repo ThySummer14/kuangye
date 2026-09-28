@@ -1,0 +1,12 @@
+### Result
+{"buildingHover":"home","directClick":"PASS"}
+### Ran Playwright code
+```js
+await (async (page)=>{await page.setViewportSize({width:1280,height:1000});await page.goto("http://127.0.0.1:5190/?qa#map");await page.locator(".world-canvas[data-ready=true]").waitFor();await page.mouse.move(430,470);const hovered=await page.locator(".place-link.highlighted").getAttribute("data-place");if(hovered!=="home")throw Error("Unexpected picked building: "+hovered);await page.mouse.click(430,470);await page.waitForURL("**#home");return {buildingHover:hovered,directClick:"PASS"};})(page);
+```
+### Page
+- Page URL: http://127.0.0.1:5190/?qa#home
+- Page Title: 旷野 · 小芽的家
+- Console: 0 errors, 10 warnings
+### Events
+- New console entries: .playwright-cli/console-2026-09-28T09-39-18-339Z.log#L11-L12

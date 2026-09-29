@@ -1,6 +1,7 @@
 <script setup>
-import { computed, reactive, ref } from 'vue';
+import { computed, nextTick, reactive, ref } from 'vue';
 import { state, taskById, activeOf, openReadingBook, saveReadingBook, addReadingNote, putReadingBookAway, continueReadingBook } from '../store.js';
+import ReadingRetrospect from './ReadingRetrospect.vue';
 import { READING_TASKS } from '../game/reading.js';
 const emit = defineEmits(['task','tasks']);
 const books = computed(() => state.home.reading?.books || []);
@@ -18,6 +19,8 @@ function save() {
 function addNote() { const r = addReadingNote(shown.value.id, note.value); notice.value = r.ok ? '这句话已夹进书里。' : r.why; if(r.ok) note.value = ''; }
 function shelve(finished) { const id=current.value.id; const r=putReadingBookAway(id,finished); if(r.ok) { selected.value=id; editing.value=false; } notice.value=r.ok ? (finished?'读完的日子，留在书架上了。':'先放回书架，想读时再拿起来。') : r.why; }
 function resume(book) { const r=continueReadingBook(book.id); notice.value=r.ok?'翻回上次的书签。':r.why; if(r.ok)selected.value=''; }
+const paper = ref(null);
+async function revisit(id) { select(id); await nextTick(); paper.value?.focus(); paper.value?.scrollIntoView({block:'start'}); }
 function select(id) { selected.value=id; note.value=''; notice.value=''; editing.value=false; }
 </script>
 <template>
@@ -30,7 +33,7 @@ function select(id) { selected.value=id; note.value=''; notice.value=''; editing
         <button v-if="!current" class="soft-button" @click="selected='';edit()">打开一本书 ＋</button>
         <p>摘记随备份保存。这里不计时，也不用每天来报到。</p>
       </aside>
-      <div class="reading-paper">
+      <div ref="paper" class="reading-paper" tabindex="-1" aria-label="书签与摘记">
         <form v-if="editing" class="reading-form" @submit.prevent="save">
           <h4>{{ current?'整理这本书的书签':'今天想翻哪一本？' }}</h4>
           <label>书名<input v-model="draft.title" maxlength="80" required placeholder="书的名字" /></label>
@@ -55,6 +58,7 @@ function select(id) { selected.value=id; note.value=''; notice.value=''; editing
       </div>
     </div>
   </section>
+  <ReadingRetrospect :books="books" @open="revisit" />
 </template>
 <style scoped>
 .reading-desk{margin:28px 0 44px;color:var(--ink)}.reading-heading{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:20px}.reading-heading h3{font:500 29px/1.5 var(--serif);margin:9px 0}.reading-count{font-size:12px;color:var(--ink-2)}.reading-columns{display:grid;grid-template-columns:235px minmax(0,1fr);border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fffdf5}.reading-shelf{background:#e9eee3;padding:22px;display:flex;flex-direction:column;gap:12px}.reading-shelf>p,.reading-disclaimer{font-size:12px;line-height:1.8;color:var(--ink-2)}.book-spine{text-align:left;background:#faf6e8;border:1px solid #d9d9c7;border-left:6px solid #b5bd9a;padding:13px 14px;color:var(--ink);border-radius:3px 8px 8px 3px;overflow-wrap:anywhere}.book-spine[aria-pressed=true]{border-left-color:#466f58;background:#fffdf5;outline:1px solid #8da086}.book-spine strong,.book-spine span{display:block;margin-top:7px}.book-spine strong{font:500 18px/1.5 var(--serif)}.book-spine small,.book-spine span{font-size:11px;color:var(--ink-2)}.reading-paper{padding:30px 36px;min-width:0}.reading-paper h4{font:500 27px/1.6 var(--serif);margin:10px 0;overflow-wrap:anywhere}.book-author{font-size:13px;color:var(--ink-2)}.reading-bookmark{border-left:3px solid #ba925e;padding:10px 18px;background:#f5efdd;margin:22px 0;overflow-wrap:anywhere}.reading-bookmark span{font-size:12px;color:#8d6d40}.reading-bookmark p{font:400 18px/1.7 var(--serif);margin:8px 0}.reading-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.reading-task{display:block;background:none;border:0;color:var(--primary);padding:16px 0 0;text-align:left;line-height:1.8}.reading-form{display:grid;gap:14px}.reading-form label,.note-form label{display:grid;gap:8px;font-size:13px;color:var(--ink-2)}.reading-desk input,.reading-desk textarea,.reading-desk select{box-sizing:border-box;width:100%;min-width:0;border:1px solid #d3d9ca;background:#fffef8;border-radius:6px;padding:11px;color:var(--ink);font:inherit}.reading-desk textarea{resize:vertical}.note-form{border-top:1px solid var(--line);padding-top:22px;margin-top:24px}.note-form button{margin-top:12px}.reading-notes{padding:0;list-style:none}.reading-notes li{border-top:1px solid var(--line);padding:20px 0}.reading-notes small{font-size:11px;color:var(--ink-2)}.reading-notes p{white-space:pre-wrap;overflow-wrap:anywhere;font:400 17px/1.9 var(--serif);margin-bottom:0}.reading-empty{padding:15px 0 25px}.paper-mark{font-size:40px;color:#9ca982}.reading-empty p{font-size:14px;line-height:1.9;color:var(--ink-2);margin-bottom:24px}.reading-notice{font-size:13px;color:var(--primary);line-height:1.8}.reading-desk button:focus-visible{outline:2px solid var(--primary);outline-offset:3px}.reading-desk button:disabled{opacity:.45}

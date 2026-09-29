@@ -1,0 +1,37 @@
+[
+  {
+    "file": "SproutPortrait-BbTPSbdE.js",
+    "bytes": 15147,
+    "gzip": 7030
+  },
+  {
+    "file": "App-6mtxV-YF.js",
+    "bytes": 195396,
+    "gzip": 76849
+  },
+  {
+    "file": "main-DxqKd8BQ.js",
+    "bytes": 47845,
+    "gzip": 19072
+  },
+  {
+    "file": "three-8p_k5omv.js",
+    "bytes": 552400,
+    "gzip": 139084
+  },
+  {
+    "file": "lab-DlGuGs5R.js",
+    "bytes": 9843,
+    "gzip": 4427
+  },
+  {
+    "file": "vue-BkGWlxxo.js",
+    "bytes": 68330,
+    "gzip": 26983
+  },
+  {
+    "file": "modulepreload-polyfill-B5Qt9EMX.js",
+    "bytes": 711,
+    "gzip": 401
+  }
+]

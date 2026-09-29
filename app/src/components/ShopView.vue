@@ -1,9 +1,12 @@
 <script setup>
-import { ref, computed } from "vue";
+import { defineAsyncComponent, ref, computed } from "vue";
 import { state, purchase, today } from "../store.js";
 import { FURNITURE, STALLS, vintageStock } from "../data/furniture.js";
 import FurnitureImage from "./FurnitureImage.vue";
 import BuddyFace from "./BuddyFace.vue";
+import SceneLoading from "./SceneLoading.vue";
+const FurnitureDetail = defineAsyncComponent({ loader: () => import("./FurnitureDetail.vue"), loadingComponent: SceneLoading, errorComponent: SceneLoading, delay:120, timeout:20000 });
+const inspecting = ref(null);
 const emit = defineEmits(["home", "toast"]),
   stall = ref("general"),
   recent = ref(null);
@@ -21,6 +24,7 @@ function buy(f) {
 }
 </script>
 <template>
+  <FurnitureDetail v-if="inspecting" :item="inspecting" @close="inspecting=null" @buy="buy(inspecting)" @home="emit('home')" />
   <div class="shop-layout">
     <section>
       <div class="shop-banner">
@@ -58,6 +62,7 @@ function buy(f) {
           <div class="product-content">
             <h3>{{ f.name }}</h3>
             <p>{{ f.description }}</p>
+            <button class="detail-entry" :aria-label="`近看${f.name}与尺寸`" @click="inspecting=f">近看与尺寸 ↗</button>
             <div class="product-bottom">
               <span class="price">✦ {{ f.price }}</span
               ><button
@@ -112,3 +117,8 @@ function buy(f) {
     </aside>
   </div>
 </template>
+
+<style scoped>
+.detail-entry { background:none; border:0; border-bottom:1px solid #cbd6bd; padding:7px 0; margin:3px 0 14px; color:var(--primary); font-size:12px; min-height:36px; }
+.detail-entry:focus-visible { outline:2px solid var(--primary); outline-offset:3px; }
+</style>

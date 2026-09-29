@@ -5,9 +5,16 @@ function warm(mesh, intensity = .7) { mesh.material.emissive.copy(mesh.material.
 
 // Pitched roof with a real gable, separate eaves, ridge caps and tile courses.
 function cottageRoof(e, g, wall, color, width=3, depth=2.25, base=1.88, rise=.92) {
-  const shape=new THREE.Shape(); shape.moveTo(-width/2,0);shape.lineTo(width/2,0);shape.lineTo(0,rise);shape.closePath();
+  // A triangular prism needs eight faces, not the full extrusion/triangulation pipeline.
+  const points=[[-width/2,0,0],[width/2,0,0],[0,rise,0],[-width/2,0,depth],[width/2,0,depth],[0,rise,depth]];
+  const indices=[0,2,1,3,4,5,0,1,4,0,4,3,0,3,5,0,5,2,1,2,5,1,5,4];
+  const positions=indices.flatMap(i=>points[i]);
+  const geometry=new THREE.BufferGeometry();
+  geometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));
+  geometry.setAttribute('uv',new THREE.Float32BufferAttribute(indices.flatMap(i=>[points[i][0]/width+.5,points[i][1]/rise]),2));
+  geometry.computeVertexNormals();
   const face=e.box(1,1,1,wall,0,base,-depth/2,g);
-  face.geometry.dispose();face.geometry=new THREE.ExtrudeGeometry(shape,{depth,bevelEnabled:false,steps:1});
+  face.geometry.dispose();face.geometry=geometry;
   const run=width/2+.2, angle=Math.atan2(rise,run), slope=Math.hypot(run,rise);
   for(const sign of [-1,1]) {
     const panel=e.box(slope+.12,.12,depth+.45,color,sign*run/2,base+rise/2,0,g);panel.rotation.z=-sign*angle;

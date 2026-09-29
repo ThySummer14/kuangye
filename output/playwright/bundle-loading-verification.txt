@@ -1,0 +1,25 @@
+### Result
+{"taskPage":{"scripts":[{"file":"main-ab5zqGWU.js","decodedBytes":47802},{"file":"modulepreload-polyfill-B5Qt9EMX.js","decodedBytes":711},{"file":"vue-DaP6g3Di.js","decodedBytes":70299},{"file":"App-DkV53BL6.js","decodedBytes":106952},{"file":"SproutPortrait-1L3j7IOO.js","decodedBytes":8716}],"totalDecodedBytes":234480,"threeRequests":0},"mapThree":[{"file":"three-core-CsfVZgAZ.js","decodedBytes":188700},{"file":"three-renderer-Bp8AMcOd.js","decodedBytes":349800}],"revisitedThreeRequests":2,"errors":[]}
+### Ran Playwright code
+```js
+await (async (page) => {
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.waitForSelector('.app-main');
+ const resources=()=>page.evaluate(()=>performance.getEntriesByType('resource').filter(e=>new URL(e.name).pathname.endsWith('.js')).map(e=>({file:new URL(e.name).pathname.split('/').pop(),decodedBytes:e.decodedBodySize})));
+ const textOnly=await resources();if(textOnly.some(r=>r.file.startsWith('three-')))throw Error('Task entry downloaded Three');
+ await page.getByRole('button',{name:'← 回到地图',exact:true}).click();await page.locator('.world-canvas[data-ready=true]').waitFor();
+ const map=await resources();const three=map.filter(r=>r.file.startsWith('three-'));if(three.length!==2)throw Error('Three chunks not loaded exactly once');
+ await page.screenshot({path:'output/playwright/bundle-production-map.png',timeout:10000});
+ await page.locator('[data-place=shop]').click();await page.getByRole('button',{name:'近看栗木小凳与尺寸',exact:true}).click();
+ await page.locator('.detail-canvas[data-ready=true]').waitFor();await page.getByRole('button',{name:'关闭弹窗',exact:true}).click();
+ await page.getByRole('button',{name:'← 回到地图',exact:true}).click();await page.locator('.world-canvas[data-ready=true]').waitFor();
+ const revisit=await resources();if(revisit.filter(r=>r.file.startsWith('three-')).length!==2)throw Error('Three fetched twice');
+ if(errors.length)throw Error(errors.join('\n'));return {taskPage:{scripts:textOnly,totalDecodedBytes:textOnly.reduce((n,r)=>n+r.decodedBytes,0),threeRequests:0},mapThree:three,revisitedThreeRequests:2,errors};
+})(page);
+```
+### Page
+- Page URL: http://127.0.0.1:5192/#map
+- Page Title: 旷野 · 小芽的家
+- Console: 0 errors, 3 warnings
+### Events
+- New console entries: .playwright-cli/console-2026-09-28T10-03-13-851Z.log#L1-L3

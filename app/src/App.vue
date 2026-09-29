@@ -1,20 +1,22 @@
 <script setup>
-import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from "vue";
+import { defineAsyncComponent, ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { state, levelInfo, now, buddyBus, saveWarning } from "./store.js";
-import YardView from "./components/YardView.vue";
-import LibraryView from "./components/LibraryView.vue";
-import WorldScene from "./components/WorldScene.vue";
 import ChainsView from "./components/ChainsView.vue";
 import CompleteModal from "./components/CompleteModal.vue";
 import AbandonModal from "./components/AbandonModal.vue";
 import BuddyFace from "./components/BuddyFace.vue";
 import QuestView from "./components/QuestView.vue";
-import ShopView from "./components/ShopView.vue";
-import WoodshopView from "./components/WoodshopView.vue";
-import HomeView from "./components/HomeView.vue";
 import JournalView from "./components/JournalView.vue";
 import { registerGameTools } from "./game/webmcp.js";
-import { disposeThumbnails } from "./scenes/furniture.js";
+import { disposeFurnitureImages } from "./services/furniture-images.js";
+import SceneLoading from "./components/SceneLoading.vue";
+const scenePage = loader => defineAsyncComponent({ loader, loadingComponent: SceneLoading, errorComponent: SceneLoading, delay: 120, timeout: 20000 });
+const YardView = scenePage(() => import("./components/YardView.vue"));
+const LibraryView = scenePage(() => import("./components/LibraryView.vue"));
+const WorldScene = scenePage(() => import("./components/WorldScene.vue"));
+const ShopView = scenePage(() => import("./components/ShopView.vue"));
+const WoodshopView = scenePage(() => import("./components/WoodshopView.vue"));
+const HomeView = scenePage(() => import("./components/HomeView.vue"));
 import { nativePlatform } from "./services/native.js";
 import { selectTasks } from "./game/task-selection.js";
 import { accept, canAccept, taskById } from "./store.js";
@@ -77,7 +79,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
   unregisterTools?.();
   clearTimeout(toastTimer);
-  disposeThumbnails();
+  disposeFurnitureImages();
   window.removeEventListener("hashchange", hashChange);
   window.removeEventListener("keydown", escape);
 });

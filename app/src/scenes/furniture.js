@@ -476,6 +476,7 @@ export function furnitureThumbnail(f) {
 }
 export function disposeThumbnails() {
   thumbnailRenderer?.dispose();
+  thumbnailRenderer?.forceContextLoss();
   thumbnailRenderer = null;
   thumbScene = null;
   cache.clear();

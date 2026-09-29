@@ -1,0 +1,24 @@
+{
+  "beforeThree": [
+    {
+      "file": "three-8p_k5omv.js",
+      "bytes": 552400,
+      "gzip": 139084
+    }
+  ],
+  "afterThree": [
+    {
+      "file": "three-core-CsfVZgAZ.js",
+      "bytes": 188700,
+      "gzip": 50048
+    },
+    {
+      "file": "three-renderer-Bp8AMcOd.js",
+      "bytes": 349800,
+      "gzip": 85403
+    }
+  ],
+  "beforeTotalJS": 889672,
+  "afterTotalJS": 889880,
+  "maxChunkBytes": 349800
+}

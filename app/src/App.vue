@@ -46,6 +46,7 @@ function toast(t) {
   toastTimer = setTimeout(() => (toastMsg.value = ""), 3000);
 }
 function navigate(id) {
+  if (id==='journal' || id==='panel') memoryTarget.value=null;
   if (id === "atelier") { location.href = "./emotion-lab.html" + location.search; return; }
   const next = id === "journal" ? "panel" : id;
   tab.value = validTabs.includes(next) ? next : "map";
@@ -55,7 +56,9 @@ async function finishToMap() {
   await nextTick();
   document.querySelector(".brand")?.focus();
 }
-watch(tab, (t) => {
+watch(tab, (t, previous) => {
+  if (t !== 'panel' && !(previous === 'panel' && t === 'home')) memoryTarget.value=null;
+  if (t !== 'home') returnFurniture.value='';
   location.hash = t;
   window.scrollTo({ top: 0, behavior: "instant" });
 });
@@ -94,6 +97,9 @@ const nav = [
   ["library", "▤", "街角书屋"],
 ];
 const selectedAction = ref("");
+const memoryTarget=ref(null), returnFurniture=ref('');
+function openFurnitureMemory(memory) { memoryTarget.value=memory;tab.value='panel'; }
+function backToFurniture() { returnFurniture.value=memoryTarget.value?.uid||'';tab.value='home'; }
 const nextAction = computed(() => {
   const active = state.active.find(a => a.qid === selectedAction.value) || state.active.find(a => a.plan) || state.active[0];
   if (active) return { kind: "active", task: taskById[active.qid], active };
@@ -227,21 +233,21 @@ async function takeMapTask() {
         @toast="toast"
         @chains="tab = 'chains'"
       />
-      <HomeView
+      <HomeView :return-furniture="returnFurniture" @memory="openFurnitureMemory"
         v-else-if="tab === 'home'"
         @shop="tab = 'shop'"
-        @journal="tab = 'panel'"
+        @journal="memoryTarget=null; tab = 'panel'"
         @toast="toast"
       />
       <WoodshopView v-else-if="tab === 'woodshop'" @toast="toast" />
       <YardView v-else-if="tab === 'yard'" @home="tab = 'home'" />
-      <LibraryView v-else-if="tab === 'library'" @tasks="tab = 'tasks'" @journal="tab = 'panel'" @toast="toast" />
+      <LibraryView v-else-if="tab === 'library'" @tasks="tab = 'tasks'" @journal="memoryTarget=null; tab = 'panel'" @toast="toast" />
       <ShopView
         v-else-if="tab === 'shop'"
         @home="tab = 'home'"
         @toast="toast"
       />
-      <JournalView @library="tab = 'library'"
+      <JournalView :focus-memory="memoryTarget" @back-furniture="backToFurniture" @library="tab = 'library'"
         v-else-if="tab === 'panel'"
         @toast="toast"
         @chains="tab = 'chains'"

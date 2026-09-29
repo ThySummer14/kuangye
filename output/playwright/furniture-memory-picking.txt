@@ -1,0 +1,10 @@
+### Result
+{"direct3DPick":"PASS","linkedRecord":"read-s1"}
+### Ran Playwright code
+```js
+await (async(page)=>{await page.mouse.click(535,520);const card=page.getByRole("region",{name:"家具里的记忆"});await card.waitFor();await card.getByRole("button",{name:"翻到那一天的手记 ↗",exact:true}).click();const linked=page.locator(".memory-linked");await linked.waitFor();for(const width of [1280,375]){await page.setViewportSize({width,height:width===375?812:1000});await linked.screenshot({path:`output/playwright/furniture-memory-journal-${width}.png`,timeout:10000});}return {direct3DPick:"PASS",linkedRecord:await linked.getAttribute("data-memory-qid")};})(page);
+```
+### Page
+- Page URL: http://127.0.0.1:5193/?qa#panel
+- Page Title: 旷野 · 小芽的家
+- Console: 0 errors, 1 warnings

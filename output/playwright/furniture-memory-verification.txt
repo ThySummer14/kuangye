@@ -1,0 +1,39 @@
+### Result
+{"results":[{"width":1280,"olderRecord":"PASS","focus":"PASS","return":"PASS","state":"unchanged","overflow":false},{"width":375,"olderRecord":"PASS","focus":"PASS","return":"PASS","state":"unchanged","overflow":false}],"errors":[]}
+### Ran Playwright code
+```js
+await (async (page) => {
+ const errors=[],results=[];page.on('pageerror',e=>errors.push(e.message));
+ for(const width of [1280,375]) {
+  await page.setViewportSize({width,height:width===375?812:1000});await page.goto('http://127.0.0.1:5193/?qa#map');await page.reload();await page.waitForFunction(()=>window.__KUANGYE__);
+  await page.evaluate(async()=>{
+   await window.__KUANGYE__.reset('map-navigation','empty');const s=await import('/src/store.js');const {TASKS}=await import('/src/data/tasks.js');
+   s.state.done=[{qid:'read-s1',at:'2026-01-01',xp:10,review:'终于给睡前留出了十分钟。',logs:[],units:[]},...TASKS.filter(t=>t.id!=='read-s1').slice(0,15).map(t=>({qid:t.id,at:'2026-09-29',xp:0,review:'之后的一件小事',logs:[],units:[]}))];
+   s.state.home.inventory=[{uid:'memory-desk',fid:'desk',paid:130,memory:{qid:'read-s1',date:'2026-01-01',review:'终于给睡前留出了十分钟。'}}];s.state.home.placed=[{uid:'memory-desk',x:2,z:2,rotation:0}];
+  });
+  await page.locator('[data-place=home]').click();await page.locator('.home-canvas[data-ready=true]').waitFor();
+  await page.getByRole('button',{name:'全部家具',exact:true}).click();await page.locator('.inventory-item').click();
+  const card=page.getByRole('region',{name:'家具里的记忆'});await card.waitFor();
+  await card.screenshot({path:`output/playwright/furniture-memory-card-${width}.png`,timeout:10000});
+  const before=await page.evaluate(()=>JSON.stringify(window.__KUANGYE__.snapshot().home));
+  await card.getByRole('button',{name:'翻到那一天的手记 ↗',exact:true}).click();await page.waitForURL('**#panel');
+  const linked=page.locator('.memory-linked');await linked.waitFor();
+  if(await linked.getAttribute('data-memory-qid')!=='read-s1'||!await linked.evaluate(e=>e===document.activeElement))throw Error('Wrong memory focus');
+  if(await page.locator('.memory-entry').count()!==16)throw Error('Old memory pagination not expanded');
+  await linked.screenshot({path:`output/playwright/furniture-memory-journal-${width}.png`,timeout:10000});
+  await linked.getByRole('button',{name:'回到这件家具 ↗',exact:true}).click();await page.waitForURL('**#home');await card.waitFor();
+  if(!await card.getByText('终于给睡前留出了十分钟。',{exact:true}).count())throw Error('Return selection lost');
+  const after=await page.evaluate(()=>JSON.stringify(window.__KUANGYE__.snapshot().home));if(before!==after)throw Error('Viewing changed furniture/save');
+  await page.getByRole('button',{name:'← 回到地图',exact:true}).click();await page.locator('[data-place=journal]').click();
+  if(await page.locator('.memory-linked').count())throw Error('Stale memory target');
+  results.push({width,olderRecord:'PASS',focus:'PASS',return:'PASS',state:'unchanged',overflow:await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)});
+ }
+ if(errors.length)throw Error(errors.join('\n'));return {results,errors};
+})(page);
+```
+### Page
+- Page URL: http://127.0.0.1:5193/?qa#map
+- Page Title: 旷野 · 小芽的家
+- Console: 0 errors, 4 warnings
+### Events
+- New console entries: .playwright-cli/console-2026-09-29T02-51-10-576Z.log#L5-L13

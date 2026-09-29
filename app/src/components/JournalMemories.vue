@@ -3,9 +3,12 @@ import { computed, ref, shallowRef, watch, nextTick } from 'vue';
 import { state, taskById, canAccept, accept, nextChainStage } from '../store.js';
 import { CATS, TASKS } from '../data/tasks.js';
 import { fieldGuide } from '../data/field-guides.js';
-import { journalRecords, journalMonths } from '../game/journal.js';
+import { journalRecords, journalMonths, linkedMemoryRecord } from '../game/journal.js';
 import TaskGuide from './TaskGuide.vue';
-const emit = defineEmits(['toast']);
+const props=defineProps({focusMemory:Object});
+const emit = defineEmits(['toast','back-furniture']);
+const linkedElement=ref(null);
+const linkedRecord=computed(()=>linkedMemoryRecord(state.done,props.focusMemory));
 const filter = ref('done'), cat = ref('all'), query = ref(''), onlyNotes = ref(false), limit = ref(12);
 const inspecting = shallowRef(null);
 const continuationLink = ref(null);
@@ -34,9 +37,20 @@ async function take(task) {
   await nextTick();
   continuationLink.value?.focus();
 }
+watch(()=>props.focusMemory,async memory=>{
+  if(!memory)return;
+  filter.value='done';clearFilters();await nextTick();
+  const index=records.value.findIndex(entry=>entry.record===linkedRecord.value);
+  if(index<0)return;
+  limit.value=Math.max(12,index+1);await nextTick();
+  linkedElement.value?.scrollIntoView({block:'center'});
+  linkedElement.value?.focus({preventScroll:true});
+},{immediate:true});
+function linkElement(el,record) { if(record===linkedRecord.value)linkedElement.value=el; }
 </script>
 <template>
   <div class="memory-notebook">
+    <div v-if="focusMemory" class="memory-return"><p>{{ linkedRecord?'从「'+focusMemory.name+'」翻来的这一页，已在下方标记。':'这件家具的铭牌仍在，暂时没有找到对应记录。' }}</p><button v-if="!linkedRecord" class="soft-button" @click="emit('back-furniture')">回到这件家具 ↗</button></div>
     <section v-if="allDone.length" class="memory-overview" aria-label="走过的路">
       <div><span>已经走过的路</span><h3>{{ allDone.length }} 件事，成为了你的经历。</h3>
         <p>从 {{ first.record.at }} 的第一次记录开始，你尝试过 {{ domains }} 个生活领域。</p></div>
@@ -88,13 +102,15 @@ async function take(task) {
     </div>
     <section v-for="group in months" :key="group.month" class="memory-month" :aria-label="monthLabel(group.month)">
       <h3 class="memory-month-title">{{ monthLabel(group.month) }} <small>{{ group.entries.length }} 条</small></h3>
-      <article v-for="entry in group.entries" :key="entry.index" class="memory-entry">
+      <article v-for="entry in group.entries" :key="entry.index" class="memory-entry" :class="{'memory-linked':entry.record===linkedRecord}" :ref="el=>linkElement(el,entry.record)" tabindex="-1" :data-memory-qid="entry.record.qid">
+        <span v-if="entry.record===linkedRecord" class="memory-kicker">这段经历，留在了「{{ focusMemory.name }}」里。</span>
         <div class="memory-date"><time>{{ entry.record.at }}</time><span>{{ CATS[entry.task?.cat]?.name || '生活片段' }}</span></div>
         <h4>{{ entry.task?.title || '一件过去的事' }}</h4>
         <p v-if="entry.record.review || entry.record.reason" class="memory-words">{{ entry.record.review || entry.record.reason }}</p>
         <p v-else class="memory-no-note">{{ filter === 'done' ? '那天没有留下文字，但这件事已经做到了。' : '这次没有留下理由。把手里的事放一放，也是一种选择。' }}</p>
         <p v-if="entry.task?.personal" class="personal-condition">当时约定：{{ entry.task.desc }}</p>
         <small v-if="filter === 'done' && !entry.task?.personal" class="memory-earned">当时获得 ＋{{ entry.record.xp }} XP</small>
+        <button v-if="entry.record===linkedRecord" class="soft-button" @click="emit('back-furniture')">回到这件家具 ↗</button>
       </article>
     </section>
     <button v-if="records.length > limit" class="soft-button memory-more" @click="limit += 12">再翻 12 条记录 · 还有 {{ records.length - limit }} 条</button>
@@ -102,6 +118,11 @@ async function take(task) {
   </div>
 </template>
 <style scoped>
+.memory-return{padding:18px;background:#edf2e7;border-radius:12px;margin-bottom:22px;font-size:13px;color:var(--ink-2)}
+.memory-linked{background:#fff9e7;border-left:3px solid #b39b61!important;padding:20px!important;border-radius:0 12px 12px 0;outline:none}
+.memory-linked>.soft-button{display:block;margin-top:16px}
+.memory-linked:focus-visible{outline:2px solid #9b8755;outline-offset:3px}
+
 .memory-overview { display: flex; align-items: center; gap: 24px; padding: 22px 0; border-top: 1px solid var(--line); }
 .memory-overview span, .memory-kicker { font-size: 12px; color: var(--ink-2); }
 .memory-overview h3 { font: 600 24px/1.5 var(--serif); margin: 8px 0; }

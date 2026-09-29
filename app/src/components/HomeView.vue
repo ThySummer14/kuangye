@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick } from "vue";
 import * as THREE from "three";
 import {
   state,
@@ -20,6 +20,9 @@ import { createAtmosphere } from "../scenes/atmosphere.js";
 import FurnitureImage from "./FurnitureImage.vue";
 import BuddyFace from "./BuddyFace.vue";
 import ModalFrame from "./ModalFrame.vue";
+import FurnitureMemoryCard from "./FurnitureMemoryCard.vue";
+const props=defineProps({ returnFurniture: String });
+const memoryOpen=ref(false);
 import { roomOf } from "../game/room.js";
 import { homeLife } from "../scenes/home-life.js";
 import { INTERACTIONS } from "../game/buddy-walk.js";
@@ -35,7 +38,7 @@ function setAtmosphere(v) {
   atmosphere?.set(v);
 }
 
-const emit = defineEmits(["shop", "toast", "journal"]);
+const emit = defineEmits(["shop", "toast", "journal", "memory"]);
 const host = ref(null),
   failed = ref(false),
   selected = ref(""),
@@ -83,6 +86,8 @@ function select(i) {
   rotation.value =
     state.home.placed.find((p) => p.uid === i.uid)?.rotation || 0;
   editing.value = !state.home.placed.some((p) => p.uid === i.uid);
+  memoryOpen.value = !editing.value;
+  if(memoryOpen.value)nextTick(()=>document.querySelector('.furniture-memory-card')?.scrollIntoView({block:'nearest'}));
   if (editing.value) buddyMoment("curious", 1800, "你想把它放在哪里？");
 }
 function sync() {
@@ -238,6 +243,13 @@ watch(
 watch(() => state.home.placed, sync, { deep: true });
 watch(() => state.home.inventory, sync, { deep: true });
 watch([editing, item, rotation, cell, check], ghost, { deep: true });
+onMounted(async () => {
+  const saved=state.home.inventory.find(i=>i.uid===props.returnFurniture);
+  if(saved && state.home.placed.some(p=>p.uid===saved.uid)) {
+    select(saved);await nextTick();
+    document.querySelector('.furniture-memory-card')?.scrollIntoView({block:'center'});
+  }
+});
 onBeforeUnmount(() => {
   engine?.dispose();
   window.removeEventListener("keydown", key);
@@ -292,6 +304,7 @@ onBeforeUnmount(() => {
           >{{ check.why }} · 点击地面放下</span
         >
       </div>
+      <FurnitureMemoryCard v-if="current && memoryOpen && !editing" :inventory-item="current" @close="memoryOpen=false" @journal="emit('memory',{...$event,uid:current.uid,name:item.name})" @move="editing=true" />
       <div class="home-controls">
         <p class="life-speech" role="status">🌱 {{ speech }}</p>
         <div class="placement-actions">
@@ -428,6 +441,7 @@ onBeforeUnmount(() => {
               {{ current.memory.review || "那天，我为自己完成了一件事。" }}
             </blockquote>
             <time>{{ current.memory.date }}</time>
+            <button class="text-button" @click="emit('memory',{...current.memory,uid:current.uid,name:item.name})">翻到那一天的手记 ↗</button>
           </div>
           <div v-else class="memory-plaque">
             {{

@@ -20,3 +20,10 @@ export function journalMonths(entries) {
   }
   return [...groups].map(([month, entries]) => ({ month, entries }));
 }
+
+// Match the original completion, never an unrelated record with a similar title.
+export function linkedMemoryRecord(done, memory) {
+  if (!memory?.qid) return null;
+  const matches = done.filter(d => d.qid === memory.qid);
+  return matches.find(d => d.at === memory.date) || (matches.length === 1 ? matches[0] : null);
+}

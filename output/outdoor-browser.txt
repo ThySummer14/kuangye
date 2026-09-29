@@ -1,0 +1,61 @@
+### Result
+{"results":[{"width":1280,"status":"PASS","drafts":6,"completionLight":5,"recallSaved":true},{"width":375,"status":"PASS","drafts":6,"completionLight":5,"recallSaved":true}],"normalPool":"drafts excluded","errors":[]}
+### Ran Playwright code
+```js
+await (async (page) => {
+ const errors=[],results=[];page.on('pageerror',e=>errors.push(e.message));
+ for(const width of [1280,375]) {
+  await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:5193/?qa#map');await page.reload();
+  await page.waitForFunction(()=>window.__KUANGYE__);await page.evaluate(()=>window.__KUANGYE__.reset('map-navigation','empty'));
+  await page.locator('[data-place=tasks]').click();await page.getByRole('button',{name:'出去透口气 从熟悉的路，走回身体里。',exact:true}).click();
+  const booklet=page.getByRole('region',{name:'走出门，观察身边',exact:true});await booklet.waitFor();
+  if(await booklet.locator('article').count()!==6)throw Error('missing outdoor content');
+  if(!await page.evaluate(()=>document.activeElement.classList.contains('outdoor-section')))throw Error('entry focus');
+  await booklet.screenshot({path:`output/playwright/outdoor-booklet-${width}.png`});
+  await booklet.getByRole('button',{name:'约 10 分钟',exact:true}).click();
+  if(await booklet.locator('article').count()!==2)throw Error('10 minute selection');
+  await page.getByRole('button',{name:'给附近的声音画一张小地图：翻开探索手册',exact:true}).click();
+  await page.getByText('周围好像只有车声',{exact:true}).click();
+  await page.locator('dialog').screenshot({path:`output/playwright/outdoor-guide-${width}.png`});
+  await page.getByRole('button',{name:'接下这件事',exact:true}).click();
+  const active=page.locator('.active-card').filter({hasText:'给附近的声音画一张小地图'});
+  await active.getByRole('button',{name:'打开出发手册 ↗',exact:true}).click();
+  await page.getByText('周围好像只有车声',{exact:true}).click();
+  await page.getByRole('button',{name:'把这一步写进便笺 ↗',exact:true}).click();
+  await page.getByRole('button',{name:'记住第一步，去试试看',exact:true}).click();
+  const step=await page.evaluate(async()=>(await import('/src/store.js')).state.active[0].plan.step);
+  if(!step.includes('分别听近处'))throw Error('first step not saved');
+  await active.getByRole('button',{name:'我完成了',exact:true}).click();
+  await page.getByPlaceholder('哪一种声音最先被你听见？哪一种是后来才发现的？').fill('先听见路口的车轮声，后来听见左边树叶在响。');
+  await page.getByRole('button',{name:'完成，收下这束光',exact:true}).click();
+  await page.getByRole('heading',{name:'＋5 光',exact:true}).waitFor();
+  await page.locator('dialog').screenshot({path:`output/playwright/outdoor-complete-${width}.png`});
+  await page.getByRole('button',{name:'收好了，回到地图',exact:true}).click();
+  await page.locator('[data-place=tasks]').click();
+  await page.getByLabel('搜索任务',{exact:true}).fill('声音');
+  if(await page.locator('.quest-card').filter({hasText:'给附近的声音画一张小地图'}).count())throw Error('completed task available again');
+  await page.reload();await page.waitForFunction(()=>window.__KUANGYE__);
+  const saved=await page.evaluate(async()=>{const {state}=await import('/src/store.js');return {lumens:state.home.lumens,done:state.done,overflow:document.documentElement.scrollWidth>innerWidth};});
+  if(saved.lumens!==5||saved.done.length!==1||!saved.done[0].review.includes('树叶')||saved.overflow)throw Error('completion save');
+  await page.getByRole('button',{name:'出去透口气 从熟悉的路，走回身体里。',exact:true}).click();
+  const completed=booklet.locator('article').filter({hasText:'给附近的声音画一张小地图'});
+  if(!await completed.getByText('已经走过 · 再翻翻手册 ↗',{exact:true}).isVisible())throw Error('completed booklet state');
+  await completed.getByRole('button').click();
+  if(!await page.getByRole('button',{name:'接下这件事',exact:true}).isDisabled())throw Error('repeat rewards possible');
+  await page.keyboard.press('Escape');
+  await page.evaluate(async()=>{const {state}=await import('/src/store.js');state.home.decor.light='night';});
+  await booklet.screenshot({path:`output/playwright/outdoor-night-${width}.png`});
+  results.push({width,status:'PASS',drafts:6,completionLight:5,recallSaved:true});
+ }
+ await page.goto('http://127.0.0.1:5193/#tasks');await page.reload();await page.waitForFunction(()=>window.__KUANGYE__);
+ const normal=await page.evaluate(async()=>{const {TASKS}=await import('/src/data/tasks.js');return TASKS.some(t=>t.id.startsWith('outside-'));});
+ if(normal||await page.locator('.outdoor-notes').count())throw Error('draft leaked into normal save');
+ if(errors.length)throw Error(errors.join('\n'));return {results,normalPool:'drafts excluded',errors};
+}
+)(page);
+```
+### Page
+- Page URL: http://127.0.0.1:5193/#tasks
+- Page Title: 旷野 · 小芽的家
+### Events
+- New console entries: .playwright-cli/console-2026-09-29T14-32-10-397Z.log#L1-L4

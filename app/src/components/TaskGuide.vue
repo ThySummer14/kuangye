@@ -9,7 +9,7 @@ import { lumenReward } from '../game/home.js';
 const props = defineProps({ task: Object, active: Boolean, eligibility: Object });
 defineEmits(['close', 'accept']);
 const guide = computed(() => fieldGuide(props.task));
-const startingPoints = computed(() => STARTING_POINTS[props.task.id] || []);
+const startingPoints = computed(() => guide.value.startingPoints || STARTING_POINTS[props.task.id] || []);
 const chosenStep = ref('');
 function useStep(step) {
   const active = activeOf(props.task.id);

@@ -18,6 +18,7 @@ import {
   canUseShield,
 } from "../store.js";
 import { lumenReward } from "../game/home.js";
+import OutdoorFieldNotes from "./OutdoorFieldNotes.vue";
 import QuestTrails from "./QuestTrails.vue";
 import PersonalTaskForm from "./PersonalTaskForm.vue";
 import ActionPlan from "./ActionPlan.vue";
@@ -37,7 +38,7 @@ const trailId = ref("");
 const minutes = ref(0), place = ref("all");
 // Keep canonical task identity for the store’s chain eligibility lookup.
 const inspecting = shallowRef(null);
-const resultsHeading = ref(null);
+const resultsHeading = ref(null), outdoorSection = ref(null);
 const trail = computed(() => TRAILS.find(item => item.id === trailId.value));
 async function selectTrail(id) {
   minutes.value = 0;
@@ -47,8 +48,9 @@ async function selectTrail(id) {
   query.value = "";
   scope.value = "today";
   await nextTick();
-  resultsHeading.value?.focus({ preventScroll: true });
-  resultsHeading.value?.scrollIntoView({ block: "start", behavior: "instant" });
+  const destination = outdoorSection.value || resultsHeading.value;
+  destination?.focus({ preventScroll: true });
+  destination?.scrollIntoView({ block: "start", behavior: "instant" });
 }
 async function acceptGuide(task) {
   if (!canAccept(task).ok) return;
@@ -206,6 +208,7 @@ function log(a) {
     <section class="wall-discovery" aria-label="寻找下一件事"><div class="discovery-heading"><span class="eyebrow">给生活一个新的尝试</span><h2>从一个方向，走出去。</h2><p>先看看怎么开始，再决定要不要接下。想走得更远，也有完整的成长线。</p><button class="text-button" @click="emit('chains')">去看五条成长线 ↗</button></div>
     <QuestTrails compact :selected="trailId" @select="selectTrail" />
     </section>
+    <div v-if="QA && trailId === 'outside'" ref="outdoorSection" tabindex="-1" class="outdoor-section"><OutdoorFieldNotes @inspect="inspecting = $event" /></div>
     <details class="refine-disclosure"><summary>按时间和地点细找</summary>
     <section class="task-context-picker" aria-label="按时间和场景找任务">
       <div><strong>今天，留多少时间给自己？</strong><p>一次完成的参考用时，不是倒计时。选“都看看”可以找长期任务。</p></div>
@@ -217,7 +220,7 @@ function log(a) {
         <button v-for="option in [{value:'all',label:'地点不限'},{value:'inside',label:'在室内'},{value:'outside',label:'去户外'}]" :key="option.value"
           :aria-pressed="place === option.value" @click="place = option.value; trailId = ''">{{ option.label }}</button>
       </div>
-      <p v-if="QA" class="draft-note">试用任务库 · 含 15 件待审小事，仅使用独立试用存档。</p>
+      <p v-if="QA" class="draft-note">试用任务库 · 含 21 件待审小事，仅使用独立试用存档。</p>
     </section>
     </details>
     <div class="quest-filters">
@@ -257,7 +260,7 @@ function log(a) {
       <span v-if="query.trim()"> · 搜索“{{ query.trim() }}”</span>
     </p>
     <div class="quest-section-heading">
-      <h3 ref="resultsHeading" tabindex="-1">{{ trail ? trail.title : "选择下一件" }}</h3>
+      <h3 ref="resultsHeading" tabindex="-1">{{ QA && trailId === 'outside' ? "想再走远一点" : trail ? trail.title : "选择下一件" }}</h3>
       <span>先选一件做得到的，再慢慢走远。</span>
     </div>
     <div class="quest-grid">
@@ -302,6 +305,7 @@ function log(a) {
   </div>
 </template>
 <style scoped>
+.outdoor-section:focus-visible { outline: 2px solid var(--primary); outline-offset: 4px; }
 .personal-criterion { display: block; font-size: 12px; margin-bottom: 6px; color: var(--primary); }
 .quests:not(.has-active) .wall-welcome { border-bottom: 0; margin-bottom: 0; }
 .quests:not(.has-active) .wall-discovery { margin-top: 0; padding-top: 24px; }

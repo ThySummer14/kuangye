@@ -1,0 +1,6 @@
+### Result
+{"picking":["庭院路灯","浅水鸟盆","花箱","小枫树","晾衣架","木长椅"]}
+### Ran Playwright code
+```js
+await (async page => {await page.getByRole("button",{name:"放大场景",exact:true}).click({clickCount:3});const results=[];for(const [name,x,y] of [["庭院路灯",156,213],["浅水鸟盆",160,266],["花箱",84,215],["小枫树",100,155],["晾衣架",190,216],["木长椅",95,189]]){await page.locator(".town-canvas canvas").click({position:{x,y}});const selected=await page.locator(".yard-materials button[aria-pressed=true] strong").innerText();if(selected!==name)throw Error(`${name}: got ${selected}`);results.push(name);}return {picking:results};})(page);
+```

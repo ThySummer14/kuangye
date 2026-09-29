@@ -1,0 +1,45 @@
+{
+  "rotationsChecked": 24,
+  "footprints": "PASS",
+  "finiteGeometry": "PASS",
+  "materialBatching": "PASS",
+  "totalTriangles": 10008,
+  "models": [
+    {
+      "id": "bench",
+      "triangles": 3024,
+      "mergedMeshes": 4,
+      "height": 1.083
+    },
+    {
+      "id": "tree",
+      "triangles": 1496,
+      "mergedMeshes": 5,
+      "height": 2.014
+    },
+    {
+      "id": "flowers",
+      "triangles": 3208,
+      "mergedMeshes": 9,
+      "height": 0.715
+    },
+    {
+      "id": "lamp",
+      "triangles": 704,
+      "mergedMeshes": 2,
+      "height": 2.3
+    },
+    {
+      "id": "laundry",
+      "triangles": 976,
+      "mergedMeshes": 6,
+      "height": 1.737
+    },
+    {
+      "id": "birdbath",
+      "triangles": 600,
+      "mergedMeshes": 4,
+      "height": 0.8
+    }
+  ]
+}

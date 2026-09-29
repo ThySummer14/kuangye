@@ -1,0 +1,43 @@
+### Result
+{"results":[{"width":1280,"dayNight":"PASS","rotation":"PASS","plans":"PASS","mapReentry":"PASS","state":"unchanged","overflow":false},{"width":375,"dayNight":"PASS","rotation":"PASS","plans":"PASS","mapReentry":"PASS","state":"unchanged","overflow":false}],"errors":[]}
+### Ran Playwright code
+```js
+await (async page => {
+ const errors=[],results=[];page.on('pageerror',e=>errors.push(e.message));
+ for(const width of [1280,375]) {
+  await page.setViewportSize({width,height:width===375?812:1000});await page.goto('http://127.0.0.1:5195/?qa#map');await page.reload();await page.waitForFunction(()=>window.__KUANGYE__);
+  await page.evaluate(async()=>{await window.__KUANGYE__.reset('map-navigation','empty');const s=await import('/src/store.js');s.adoptYardPlan('shade');});
+  await page.locator('[data-place=yard]').click();await page.locator('.town-canvas canvas').waitFor();
+  const before=await page.evaluate(()=>JSON.stringify(window.__KUANGYE__.snapshot().home));
+  await page.getByRole('button',{name:'布局方案',exact:true}).click();
+  await page.getByRole('button',{name:'放大场景',exact:true}).click({clickCount:3});
+  await page.locator('.town-scene').screenshot({path:`output/playwright/yard-models-day-${width}.png`});
+  await page.getByRole('button',{name:'夜间',exact:true}).click();
+  await page.locator('.town-scene').screenshot({path:`output/playwright/yard-models-night-${width}.png`});
+  await page.getByRole('button',{name:'日间',exact:true}).click();
+  const canvas=page.locator('.town-canvas canvas'),rect=await canvas.boundingBox();
+  await page.mouse.move(rect.x+rect.width*.5,rect.y+rect.height*.6);await page.mouse.down();await page.mouse.move(rect.x+rect.width*.8,rect.y+rect.height*.6,{steps:12});await page.mouse.up();
+  await page.locator('.town-scene').screenshot({path:`output/playwright/yard-models-rotated-${width}.png`});
+  if(before!==await page.evaluate(()=>JSON.stringify(window.__KUANGYE__.snapshot().home)))throw Error('Viewing changed save');
+  for(const name of ['晴日生活','等鸟来访']){
+   await page.getByRole('button',{name:`预览${name}`,exact:true}).click();
+   await page.locator('.town-scene').screenshot({path:`output/playwright/yard-models-${name==='晴日生活'?'sunny':'birds'}-${width}.png`});
+  }
+  await page.getByRole('button',{name:'取消预览',exact:true}).click();
+  await page.getByRole('button',{name:'← 回到地图',exact:true}).click();
+  await page.locator('[data-place=yard]').waitFor();
+  await page.screenshot({path:`output/playwright/yard-models-map-${width}.png`});
+  await page.locator('[data-place=yard]').click();await page.locator('.town-canvas canvas').waitFor();
+  if(before!==await page.evaluate(()=>JSON.stringify(window.__KUANGYE__.snapshot().home)))throw Error('Reentry changed save');
+  const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth);if(overflow)throw Error('Overflow');
+  results.push({width,dayNight:'PASS',rotation:'PASS',plans:'PASS',mapReentry:'PASS',state:'unchanged',overflow});
+ }
+ if(errors.length)throw Error(errors.join('\n'));return {results,errors};
+})(page);
+```
+### Page
+- Page URL: http://127.0.0.1:5195/?qa#yard
+- Page Title: 旷野 · 小芽的家
+- Console: 0 errors, 6 warnings
+### Events
+- New console entries: .playwright-cli/console-2026-09-29T14-10-29-284Z.log#L4-L15

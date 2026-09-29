@@ -1,0 +1,49 @@
+
+> build
+> npm --prefix app run build && node scripts/stage-site.mjs
+
+
+> kuangye@0.1.0 build
+> vite build
+
+vite v6.4.3 building for production...
+transforming...
+✓ 129 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/emotion-lab.html                             1.04 kB │ gzip:  0.45 kB
+dist/index.html                                   1.12 kB │ gzip:  0.66 kB
+dist/assets/SproutPortrait-DVcrL5WK.css           0.08 kB │ gzip:  0.10 kB
+dist/assets/TownScene-JL2MVluc.css                0.98 kB │ gzip:  0.43 kB
+dist/assets/HomeView-DuF5ZBWB.css                 1.14 kB │ gzip:  0.48 kB
+dist/assets/ShopView-BhYSV5nn.css                 1.25 kB │ gzip:  0.48 kB
+dist/assets/WorldScene-DBtHVd_s.css               1.43 kB │ gzip:  0.60 kB
+dist/assets/FurnitureDetail-B2RLF9mi.css          2.38 kB │ gzip:  0.82 kB
+dist/assets/lab-DyDmiaLS.css                      4.90 kB │ gzip:  1.64 kB
+dist/assets/WoodshopView-DmUMzyID.css             4.91 kB │ gzip:  1.44 kB
+dist/assets/YardView-CeEbEFIE.css                 5.37 kB │ gzip:  1.37 kB
+dist/assets/LibraryView-l0Oeyhgr.css             11.97 kB │ gzip:  2.54 kB
+dist/assets/App-DqJZCXp-.css                     33.40 kB │ gzip:  6.49 kB
+dist/assets/main-B2ljlnVd.css                    72.32 kB │ gzip: 15.89 kB
+dist/assets/FurnitureImage-B2fUTarx.js            0.59 kB │ gzip:  0.39 kB
+dist/assets/modulepreload-polyfill-B5Qt9EMX.js    0.71 kB │ gzip:  0.40 kB
+dist/assets/RoundedBoxGeometry-6UTJbuec.js        1.76 kB │ gzip:  0.83 kB
+dist/assets/TownScene-ldb6BQFT.js                 2.78 kB │ gzip:  1.64 kB
+dist/assets/WorldScene-BUkOjLvo.js                3.97 kB │ gzip:  2.25 kB
+dist/assets/FurnitureDetail-BZEPSo-U.js           4.24 kB │ gzip:  2.31 kB
+dist/assets/WoodshopView-5OveCp-K.js              4.96 kB │ gzip:  2.42 kB
+dist/assets/ShopView-m-H1pni5.js                  5.34 kB │ gzip:  2.76 kB
+dist/assets/mascot-model-BWyrl3qh.js              6.58 kB │ gzip:  3.03 kB
+dist/assets/SproutPortrait-1L3j7IOO.js            8.72 kB │ gzip:  4.44 kB
+dist/assets/YardView-DC_iFWg-.js                  9.07 kB │ gzip:  4.13 kB
+dist/assets/lab-C2pczyMx.js                       9.93 kB │ gzip:  4.53 kB
+dist/assets/furniture-CYDdS-Kg.js                10.16 kB │ gzip:  4.48 kB
+dist/assets/LibraryView-BqJRJku-.js              17.49 kB │ gzip:  6.96 kB
+dist/assets/HomeView-DdYF183t.js                 27.08 kB │ gzip: 12.10 kB
+dist/assets/world-iQzmdhcQ.js                    28.62 kB │ gzip: 11.50 kB
+dist/assets/main-BDq4PECi.js                     49.07 kB │ gzip: 20.07 kB
+dist/assets/vue-DaP6g3Di.js                      70.30 kB │ gzip: 27.93 kB
+dist/assets/App-FQ8x5ljy.js                     125.90 kB │ gzip: 50.08 kB
+dist/assets/three-core-B7N8kGPX.js              191.26 kB │ gzip: 51.60 kB
+dist/assets/three-renderer-DhOE9TzU.js          349.80 kB │ gzip: 86.16 kB
+✓ built in 911ms

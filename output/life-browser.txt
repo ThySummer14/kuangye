@@ -1,0 +1,62 @@
+### Result
+{"results":[{"width":1280,"status":"PASS","situations":3,"choicesPerSituation":2,"light":5,"recallSaved":true},{"width":375,"status":"PASS","situations":3,"choicesPerSituation":2,"light":5,"recallSaved":true}],"ordinaryTaskPool":"drafts excluded","errors":[]}
+### Ran Playwright code
+```js
+await (async (page) => {
+ const errors=[],results=[];page.on('pageerror',e=>errors.push(e.message));
+ for(const width of [1280,375]) {
+  await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:5194/?qa#map');await page.reload();
+  await page.waitForFunction(()=>window.__KUANGYE__);await page.evaluate(()=>window.__KUANGYE__.reset('map-navigation','empty'));
+  await page.locator('[data-place=tasks]').click();
+  await page.getByRole('button',{name:'把生活理顺 照顾一顿饭，也照顾自己。',exact:true}).click();
+  const book=page.getByRole('region',{name:'把眼前的生活理顺',exact:true});await book.waitFor();
+  if(await book.locator('article').count()!==2)throw Error('initial choices');
+  if(!await page.evaluate(()=>document.activeElement.contains(document.querySelector('.life-notes'))))throw Error('entry focus');
+  await book.screenshot({path:`output/playwright/life-find-${width}.png`});
+  await book.getByRole('button',{name:/临出门才忙/}).click();
+  if(!await book.getByRole('heading',{name:'把出门前的几步试走一遍',exact:true}).isVisible())throw Error('departure selection');
+  await book.getByRole('button',{name:/到饭点没主意/}).click();
+  await book.screenshot({path:`output/playwright/life-meal-${width}.png`});
+  await book.getByRole('button',{name:'给下次吃饭留两个不用纠结的选项：打开生活手册',exact:true}).click();
+  await page.getByText('宿舍不能做饭',{exact:true}).click();
+  await page.locator('dialog').screenshot({path:`output/playwright/life-guide-${width}.png`});
+  await page.getByRole('button',{name:'接下这件事',exact:true}).click();
+  const active=page.locator('.active-card').filter({hasText:'给下次吃饭留两个不用纠结的选项'});
+  await active.getByRole('button',{name:'打开出发手册 ↗',exact:true}).click();
+  await page.getByText('宿舍不能做饭',{exact:true}).click();
+  await page.getByRole('button',{name:'把这一步写进便笺 ↗',exact:true}).click();
+  await page.getByRole('button',{name:'记住第一步，去试试看',exact:true}).click();
+  if(!await page.evaluate(async()=>(await import('/src/store.js')).state.active[0].plan.step.includes('食堂窗口')))throw Error('plan step');
+  await active.getByRole('button',{name:'我完成了',exact:true}).click();
+  await page.getByPlaceholder('下次到了饭点，你更可能先选哪一个？为什么？').fill('先去食堂二楼，已经核对晚饭开放时间；另一个选项是校门口的面馆。');
+  await page.getByRole('button',{name:'完成，收下这束光',exact:true}).click();
+  await page.getByRole('heading',{name:'＋5 光',exact:true}).waitFor();
+  await page.locator('dialog').screenshot({path:`output/playwright/life-complete-${width}.png`});
+  await page.getByRole('button',{name:'收好了，回到地图',exact:true}).click();
+  await page.reload();await page.waitForFunction(()=>window.__KUANGYE__);
+  const save=await page.evaluate(async()=>{const {state}=await import('/src/store.js');return {light:state.home.lumens,done:state.done};});
+  if(save.light!==5||save.done.length!==1||!save.done[0].review.includes('食堂二楼'))throw Error('save after completion');
+  await page.locator('[data-place=tasks]').click();await page.getByRole('button',{name:'把生活理顺 照顾一顿饭，也照顾自己。',exact:true}).click();
+  await book.getByRole('button',{name:/到饭点没主意/}).click();
+  if(!await book.getByText('已做过，翻回这份手册 ↗',{exact:true}).isVisible())throw Error('completed state');
+  await book.getByRole('button',{name:'给下次吃饭留两个不用纠结的选项：打开生活手册',exact:true}).click();
+  if(!await page.getByRole('button',{name:'接下这件事',exact:true}).isDisabled())throw Error('repeat completion');
+  await page.keyboard.press('Escape');
+  await page.evaluate(async()=>{(await import('/src/store.js')).state.home.decor.light='night';});
+  await book.screenshot({path:`output/playwright/life-night-${width}.png`});
+  await page.getByLabel('搜索任务',{exact:true}).fill('重要纸张');
+  if(await page.locator('.quest-card').filter({hasText:'做一张重要纸张的位置索引'}).count()!==1)throw Error('search discovery');
+  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('overflow');
+  results.push({width,status:'PASS',situations:3,choicesPerSituation:2,light:5,recallSaved:true});
+ }
+ await page.goto('http://127.0.0.1:5194/#tasks');await page.reload();await page.waitForFunction(()=>window.__KUANGYE__);
+ if(await page.evaluate(async()=>(await import('/src/data/tasks.js')).TASKS.some(t=>t.id.startsWith('life-'))))throw Error('draft leaked');
+ if(errors.length)throw Error(errors.join('\n'));return {results,ordinaryTaskPool:'drafts excluded',errors};
+}
+)(page);
+```
+### Page
+- Page URL: http://127.0.0.1:5194/#tasks
+- Page Title: 旷野 · 小芽的家
+### Events
+- New console entries: .playwright-cli/console-2026-09-29T14-41-39-761Z.log#L1-L7

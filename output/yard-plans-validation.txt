@@ -1,0 +1,488 @@
+=== npm test ===
+
+> test
+> npm --prefix app test
+
+
+> kuangye@0.1.0 test
+> node --test
+
+TAP version 13
+# Subtest: old light settings migrate to outdoor sync and explicit overrides persist
+ok 1 - old light settings migrate to outdoor sync and explicit overrides persist
+  ---
+  duration_ms: 1.209917
+  type: 'test'
+  ...
+# Subtest: east-eight clock is independent from host timezone and daylight is continuous
+ok 2 - east-eight clock is independent from host timezone and daylight is continuous
+  ---
+  duration_ms: 0.221125
+  type: 'test'
+  ...
+# Subtest: weather codes map to supported scenes without inventing unavailable data
+ok 3 - weather codes map to supported scenes without inventing unavailable data
+  ---
+  duration_ms: 0.477166
+  type: 'test'
+  ...
+# Subtest: blink closes and opens continuously without hard steps
+ok 4 - blink closes and opens continuously without hard steps
+  ---
+  duration_ms: 3.805208
+  type: 'test'
+  ...
+# Subtest: backup bridge falls back to web semantics outside the native shell
+ok 5 - backup bridge falls back to web semantics outside the native shell
+  ---
+  duration_ms: 0.290292
+  type: 'test'
+  ...
+# Subtest: legacy and v3 backups share import cleaning without losing known history
+ok 6 - legacy and v3 backups share import cleaning without losing known history
+  ---
+  duration_ms: 1.489667
+  type: 'test'
+  ...
+# Subtest: import refuses unknown task history instead of silently deleting it
+ok 7 - import refuses unknown task history instead of silently deleting it
+  ---
+  duration_ms: 0.843791
+  type: 'test'
+  ...
+# Subtest: future backup schema cannot overwrite current data through import
+ok 8 - future backup schema cannot overwrite current data through import
+  ---
+  duration_ms: 0.090791
+  type: 'test'
+  ...
+# Subtest: all 196 mood pairs converge; interruption preserves pose and velocity
+ok 9 - all 196 mood pairs converge; interruption preserves pose and velocity
+  ---
+  duration_ms: 120.175291
+  type: 'test'
+  ...
+# Subtest: spring is timestep consistent and resumes safely; closed outlines retain topology
+ok 10 - spring is timestep consistent and resumes safely; closed outlines retain topology
+  ---
+  duration_ms: 2.895792
+  type: 'test'
+  ...
+# Subtest: furniture memories find exact original dates and avoid ambiguous imported completions
+ok 11 - furniture memories find exact original dates and avoid ambiguous imported completions
+  ---
+  duration_ms: 0.905958
+  type: 'test'
+  ...
+# Subtest: completion rewards are rounded to five and invalid input never creates currency
+ok 12 - completion rewards are rounded to five and invalid input never creates currency
+  ---
+  duration_ms: 0.894083
+  type: 'test'
+  ...
+# Subtest: unique recorded days yield glimmer once; gaps never remove progress
+ok 13 - unique recorded days yield glimmer once; gaps never remove progress
+  ---
+  duration_ms: 0.164625
+  type: 'test'
+  ...
+# Subtest: first task can buy first furniture and memory binds once per completion
+ok 14 - first task can buy first furniture and memory binds once per completion
+  ---
+  duration_ms: 0.090875
+  type: 'test'
+  ...
+# Subtest: placement enforces rotated footprint, bounds, collisions and can move itself
+ok 15 - placement enforces rotated footprint, bounds, collisions and can move itself
+  ---
+  duration_ms: 0.200667
+  type: 'test'
+  ...
+# Subtest: recycle returns 70 percent of actual paid price only once and removes placement
+ok 16 - recycle returns 70 percent of actual paid price only once and removes placement
+  ---
+  duration_ms: 0.08075
+  type: 'test'
+  ...
+# Subtest: level gifts are idempotent and cannot be bought or recycled
+ok 17 - level gifts are idempotent and cannot be bought or recycled
+  ---
+  duration_ms: 0.11275
+  type: 'test'
+  ...
+# Subtest: v2 migration preserves active, done, abandoned and credits historical completion light
+ok 18 - v2 migration preserves active, done, abandoned and credits historical completion light
+  ---
+  duration_ms: 0.882209
+  type: 'test'
+  ...
+# Subtest: v3 save round trip keeps purchased prices, placements and plaques
+ok 19 - v3 save round trip keeps purchased prices, placements and plaques
+  ---
+  duration_ms: 0.718417
+  type: 'test'
+  ...
+# Subtest: corrupt home data is sanitized without removing task records
+ok 20 - corrupt home data is sanitized without removing task records
+  ---
+  duration_ms: 0.6595
+  type: 'test'
+  ...
+# Subtest: vintage stock is deterministic and independent from purchases
+ok 21 - vintage stock is deterministic and independent from purchases
+  ---
+  duration_ms: 0.647667
+  type: 'test'
+  ...
+# Subtest: all expressions interpolate without overshooting or discontinuity
+ok 22 - all expressions interpolate without overshooting or discontinuity
+  ---
+  duration_ms: 1.792458
+  type: 'test'
+  ...
+# Subtest: idle stays put; explicit furniture actions remain available without hopping
+ok 23 - idle stays put; explicit furniture actions remain available without hopping
+  ---
+  duration_ms: 25.233667
+  type: 'test'
+  ...
+# Subtest: journal sorts imported dates and same-day records without mutating stored history
+ok 24 - journal sorts imported dates and same-day records without mutating stored history
+  ---
+  duration_ms: 8.617917
+  type: 'test'
+  ...
+# Subtest: journal combines domain, personal words, and notes filters; missing legacy task stays readable
+ok 25 - journal combines domain, personal words, and notes filters; missing legacy task stays readable
+  ---
+  duration_ms: 0.177917
+  type: 'test'
+  ...
+# Subtest: soft corner is a closed volumetric shell with outward normals
+ok 26 - soft corner is a closed volumetric shell with outward normals
+  ---
+  duration_ms: 6.295333
+  type: 'test'
+  ...
+# Subtest: every expression stays on the body; character and shadow use no texture maps
+ok 27 - every expression stays on the body; character and shadow use no texture maps
+  ---
+  duration_ms: 14.92925
+  type: 'test'
+  ...
+# Subtest: reading keeps bookmarks and notes across shelving, rereading and save normalization
+ok 28 - reading keeps bookmarks and notes across shelving, rereading and save normalization
+  ---
+  duration_ms: 3.049083
+  type: 'test'
+  ...
+# Subtest: reading import validates fields, keeps all notes, and never treats a book as a task reward
+ok 29 - reading import validates fields, keeps all notes, and never treats a book as a task reward
+  ---
+  duration_ms: 0.16
+  type: 'test'
+  ...
+# Subtest: release checker accepts isolated inputs without a prior build
+ok 30 - release checker accepts isolated inputs without a prior build
+  ---
+  duration_ms: 199.727041
+  type: 'test'
+  ...
+# Subtest: CLI actually executes on Chinese paths and rejects missing dist index
+ok 31 - CLI actually executes on Chinese paths and rejects missing dist index
+  ---
+  duration_ms: 197.328625
+  type: 'test'
+  ...
+# Subtest: release gate rejects same-length asset changes
+ok 32 - release gate rejects same-length asset changes
+  ---
+  duration_ms: 80.96575
+  type: 'test'
+  ...
+# Subtest: release gate rejects indexed version drift without modifying repository
+ok 33 - release gate rejects indexed version drift without modifying repository
+  ---
+  duration_ms: 74.277958
+  type: 'test'
+  ...
+# Subtest: release gate rejects missing native licenses and fixture code
+ok 34 - release gate rejects missing native licenses and fixture code
+  ---
+  duration_ms: 74.374584
+  type: 'test'
+  ...
+# Subtest: expansion charges once per added strip and never spends unavailable light
+ok 35 - expansion charges once per added strip and never spends unavailable light
+  ---
+  duration_ms: 1.387041
+  type: 'test'
+  ...
+# Subtest: expanded placements survive normalization and old saves start at nine square metres
+ok 36 - expanded placements survive normalization and old saves start at nine square metres
+  ---
+  duration_ms: 0.384208
+  type: 'test'
+  ...
+# Subtest: rugs support furniture while solid furniture cannot overlap
+ok 37 - rugs support furniture while solid furniture cannot overlap
+  ---
+  duration_ms: 0.100542
+  type: 'test'
+  ...
+# Subtest: walking goes around furniture, rejects sealed destinations and finds reachable interaction edge
+ok 38 - walking goes around furniture, rejects sealed destinations and finds reachable interaction edge
+  ---
+  duration_ms: 1.114458
+  type: 'test'
+  ...
+# Subtest: home discoveries are bounded and cannot be farmed into currency
+ok 39 - home discoveries are bounded and cannot be farmed into currency
+  ---
+  duration_ms: 1.163333
+  type: 'test'
+  ...
+# Subtest: wall fixtures share their supporting cutaway group
+ok 40 - wall fixtures share their supporting cutaway group
+  ---
+  duration_ms: 47.054875
+  type: 'test'
+  ...
+# Subtest: static batching keeps rounded boxes, spheres and tubes sharing one material
+ok 41 - static batching keeps rounded boxes, spheres and tubes sharing one material
+  ---
+  duration_ms: 14.74925
+  type: 'test'
+  ...
+# Subtest: short-task drafts stay isolated and have a bounded one-time reward budget
+ok 42 - short-task drafts stay isolated and have a bounded one-time reward budget
+  ---
+  duration_ms: 1.977167
+  type: 'test'
+  ...
+# Subtest: time and place filter before suggestion limits, respecting history and search
+ok 43 - time and place filter before suggestion limits, respecting history and search
+  ---
+  duration_ms: 1.48325
+  type: 'test'
+  ...
+# Subtest: native migration copies and verifies v1/v2/v3 keys without removing originals
+ok 44 - native migration copies and verifies v1/v2/v3 keys without removing originals
+  ---
+  duration_ms: 2.905958
+  type: 'test'
+  ...
+# Subtest: native migration readback mismatch refuses startup and leaves old keys intact
+ok 45 - native migration readback mismatch refuses startup and leaves old keys intact
+  ---
+  duration_ms: 1.257
+  type: 'test'
+  ...
+# Subtest: syntax damage falls back to previous and subsequent writes preserve good backup
+ok 46 - syntax damage falls back to previous and subsequent writes preserve good backup
+  ---
+  duration_ms: 0.352875
+  type: 'test'
+  ...
+# Subtest: unsupported native histories never fall back or overwrite files
+ok 47 - unsupported native histories never fall back or overwrite files
+  ---
+  duration_ms: 0.740208
+  type: 'test'
+  ...
+# Subtest: each failure point retains the last valid generation and retry can save
+ok 48 - each failure point retains the last valid generation and retry can save
+  ---
+  duration_ms: 0.3725
+  type: 'test'
+  ...
+# Subtest: current write corruption reports failure and recovers verified previous on restart
+ok 49 - current write corruption reports failure and recovers verified previous on restart
+  ---
+  duration_ms: 0.375208
+  type: 'test'
+  ...
+# Subtest: overlapping save calls preserve request order and the penultimate generation
+ok 50 - overlapping save calls preserve request order and the penultimate generation
+  ---
+  duration_ms: 0.221458
+  type: 'test'
+  ...
+# Subtest: web driver keeps original keys, QA isolation, and write errors observable
+ok 51 - web driver keeps original keys, QA isolation, and write errors observable
+  ---
+  duration_ms: 0.258209
+  type: 'test'
+  ...
+# Subtest: purge deletes the whole vault and the next save starts fresh
+ok 52 - purge deletes the whole vault and the next save starts fresh
+  ---
+  duration_ms: 0.297667
+  type: 'test'
+  ...
+# Subtest: full store flow pays exactly once, persists v3, and imports home together with tasks
+ok 53 - full store flow pays exactly once, persists v3, and imports home together with tasks
+  ---
+  duration_ms: 3.008625
+  type: 'test'
+  ...
+# Subtest: streak check-in is unique and cannot complete early; abandoning never changes currency
+ok 54 - streak check-in is unique and cannot complete early; abandoning never changes currency
+  ---
+  duration_ms: 0.899916
+  type: 'test'
+  ...
+# Subtest: three concurrent tasks remains the global limit
+ok 55 - three concurrent tasks remains the global limit
+  ---
+  duration_ms: 2.142333
+  type: 'test'
+  ...
+# Subtest: damaged v3 falls back to a legacy save without overwriting the legacy key
+ok 56 - damaged v3 falls back to a legacy save without overwriting the legacy key
+  ---
+  duration_ms: 2.471166
+  type: 'test'
+  ...
+# Subtest: action plans round-trip safely without affecting rewards or legacy records
+ok 57 - action plans round-trip safely without affecting rewards or legacy records
+  ---
+  duration_ms: 1.648583
+  type: 'test'
+  ...
+# Subtest: personal tasks share capacity, preserve their content, and cannot mint completion rewards
+ok 58 - personal tasks share capacity, preserve their content, and cannot mint completion rewards
+  ---
+  duration_ms: 1.869958
+  type: 'test'
+  ...
+# Subtest: personal backup definitions cannot collide or inject rewards; missing content is rejected
+ok 59 - personal backup definitions cannot collide or inject rewards; missing content is rejected
+  ---
+  duration_ms: 0.308125
+  type: 'test'
+  ...
+# Subtest: a personal completion can become a furniture memory and survive backup
+ok 60 - a personal completion can become a furniture memory and survive backup
+  ---
+  duration_ms: 1.054583
+  type: 'test'
+  ...
+# Subtest: town changes persist with tasks and repair never changes the economy
+ok 61 - town changes persist with tasks and repair never changes the economy
+  ---
+  duration_ms: 0.759625
+  type: 'test'
+  ...
+# Subtest: search finds advanced tasks without changing today's suggestions
+ok 62 - search finds advanced tasks without changing today's suggestions
+  ---
+  duration_ms: 1.912584
+  type: 'test'
+  ...
+# Subtest: search covers descriptions, domains, types, and growth lines
+ok 63 - search covers descriptions, domains, types, and growth lines
+  ---
+  duration_ms: 0.418917
+  type: 'test'
+  ...
+# Subtest: search respects chosen domain and existing task history
+ok 64 - search respects chosen domain and existing task history
+  ---
+  duration_ms: 0.372708
+  type: 'test'
+  ...
+# Subtest: yard placement respects boundary, reserved path, rotation and collisions without consuming items
+ok 65 - yard placement respects boundary, reserved path, rotation and collisions without consuming items
+  ---
+  duration_ms: 0.882959
+  type: 'test'
+  ...
+# Subtest: library repair is sequential, tied to real reading milestones, and idempotent at each stage
+ok 66 - library repair is sequential, tied to real reading milestones, and idempotent at each stage
+  ---
+  duration_ms: 0.140417
+  type: 'test'
+  ...
+# Subtest: v3 town backup preserves custom house and legal layout, old saves get defaults, unearned repairs are cleaned
+ok 67 - v3 town backup preserves custom house and legal layout, old saves get defaults, unearned repairs are cleaned
+  ---
+  duration_ms: 2.389208
+  type: 'test'
+  ...
+# Subtest: yard plans are legal, distinct, independent previews and preserve other town settings
+ok 68 - yard plans are legal, distinct, independent previews and preserve other town settings
+  ---
+  duration_ms: 1.1135
+  type: 'test'
+  ...
+# Subtest: invalid preset fails atomically rather than partially replacing a saved yard
+ok 69 - invalid preset fails atomically rather than partially replacing a saved yard
+  ---
+  duration_ms: 1.282625
+  type: 'test'
+  ...
+1..69
+# tests 69
+# suites 0
+# pass 69
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 809.5675
+
+=== npm test exit status: 0 ===
+
+=== npm run build ===
+
+> build
+> npm --prefix app run build && node scripts/stage-site.mjs
+
+
+> kuangye@0.1.0 build
+> vite build
+
+vite v6.4.3 building for production...
+transforming...
+✓ 121 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/emotion-lab.html                             1.04 kB │ gzip:  0.45 kB
+dist/index.html                                   1.12 kB │ gzip:  0.66 kB
+dist/assets/SproutPortrait-DVcrL5WK.css           0.08 kB │ gzip:  0.10 kB
+dist/assets/TownScene-CnZeXqWM.css                0.98 kB │ gzip:  0.43 kB
+dist/assets/HomeView-DuF5ZBWB.css                 1.14 kB │ gzip:  0.48 kB
+dist/assets/ShopView-BhYSV5nn.css                 1.25 kB │ gzip:  0.48 kB
+dist/assets/WorldScene-DBtHVd_s.css               1.43 kB │ gzip:  0.60 kB
+dist/assets/FurnitureDetail-B2RLF9mi.css          2.38 kB │ gzip:  0.82 kB
+dist/assets/lab-DyDmiaLS.css                      4.90 kB │ gzip:  1.64 kB
+dist/assets/WoodshopView-DmUMzyID.css             4.91 kB │ gzip:  1.44 kB
+dist/assets/YardView-BX5tId36.css                 5.37 kB │ gzip:  1.37 kB
+dist/assets/LibraryView-pi8AvMTV.css              6.62 kB │ gzip:  1.60 kB
+dist/assets/App-CMPaBRRG.css                     27.85 kB │ gzip:  5.69 kB
+dist/assets/main-B2ljlnVd.css                    72.32 kB │ gzip: 15.89 kB
+dist/assets/FurnitureImage-w-pX6pKq.js            0.59 kB │ gzip:  0.39 kB
+dist/assets/modulepreload-polyfill-B5Qt9EMX.js    0.71 kB │ gzip:  0.40 kB
+dist/assets/RoundedBoxGeometry-C2Ks3FIk.js        1.76 kB │ gzip:  0.83 kB
+dist/assets/TownScene-D3fZmfY-.js                 2.71 kB │ gzip:  1.61 kB
+dist/assets/WorldScene-B7b0P-G1.js                3.97 kB │ gzip:  2.25 kB
+dist/assets/FurnitureDetail-8L15FcSa.js           4.24 kB │ gzip:  2.31 kB
+dist/assets/WoodshopView-CpzJ9TZM.js              4.96 kB │ gzip:  2.42 kB
+dist/assets/ShopView-lvTZ1NfH.js                  5.34 kB │ gzip:  2.76 kB
+dist/assets/mascot-model-CgtAuMML.js              6.58 kB │ gzip:  3.03 kB
+dist/assets/YardView-Dc_Mt55E.js                  8.58 kB │ gzip:  3.95 kB
+dist/assets/SproutPortrait-1L3j7IOO.js            8.72 kB │ gzip:  4.44 kB
+dist/assets/lab-DL4z3Ka2.js                       9.93 kB │ gzip:  4.53 kB
+dist/assets/furniture-CRwv6Kco.js                10.16 kB │ gzip:  4.48 kB
+dist/assets/LibraryView-LLdqrhBQ.js              11.46 kB │ gzip:  4.88 kB
+dist/assets/world-BLSvHtJO.js                    24.57 kB │ gzip:  9.82 kB
+dist/assets/HomeView-BLBxQw6b.js                 27.08 kB │ gzip: 12.10 kB
+dist/assets/main-Y22pjcuo.js                     49.07 kB │ gzip: 20.07 kB
+dist/assets/vue-DaP6g3Di.js                      70.30 kB │ gzip: 27.93 kB
+dist/assets/App-C59UKi2P.js                     109.08 kB │ gzip: 43.48 kB
+dist/assets/three-core-CsfVZgAZ.js              188.70 kB │ gzip: 50.63 kB
+dist/assets/three-renderer-Bp8AMcOd.js          349.80 kB │ gzip: 86.16 kB
+✓ built in 1.12s
+
+=== npm run build exit status: 0 ===

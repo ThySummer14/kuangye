@@ -1,12 +1,31 @@
 <script setup>
-import { computed, ref } from 'vue';
-import { state, setExterior, arrangeYard, removeYard } from '../store.js';
-import { EXTERIOR, YARD_ITEMS } from '../data/town.js';
-import { emptyTown, yardCheck, yardFootprint } from '../game/town.js';
+import { computed, ref, nextTick } from 'vue';
+import { state, setExterior, arrangeYard, removeYard, adoptYardPlan } from '../store.js';
+import { EXTERIOR, YARD_ITEMS, YARD_PLANS } from '../data/town.js';
+import { emptyTown, yardCheck, yardFootprint, previewYardPlan } from '../game/town.js';
 import TownScene from './TownScene.vue';
 const emit=defineEmits(['home']);
 const town=computed(()=>state.home.town||emptyTown());
 const tab=ref('yard'), selected=ref('bench'), rotation=ref(0), cell=ref({x:0,z:0}), message=ref(''), light=ref('day');
+const preview=ref(null), previewHost=ref(null), previewHeading=ref(null), editor=ref(null);
+const previewTown=computed(()=>preview.value?{...town.value,yard:preview.value.yard}:town.value);
+function switchTab(value) { tab.value=value; preview.value=null; message.value=''; }
+async function tryPlan(plan) {
+  const result=previewYardPlan(plan.id);
+  if(!result.ok){message.value=result.why;return;}
+  preview.value={...plan,yard:result.yard}; message.value='';
+  await nextTick(); previewHeading.value?.focus({preventScroll:true});
+  previewHost.value?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+async function cancelPlan() { const id=preview.value.id; preview.value=null; message.value='已回到原来的院子。'; await nextTick(); editor.value?.querySelector(`[data-plan="${id}"]`)?.focus(); }
+async function adoptPlan() {
+  const result=adoptYardPlan(preview.value?.id);
+  if(!result.ok){message.value=result.why;return;}
+  const name=preview.value.name; preview.value=null; tab.value='yard'; select(selected.value);
+  message.value=`已采用「${name}」，还可以逐件调整。`;
+  await nextTick(); editor.value?.querySelector('.yard-materials button[aria-pressed=true]')?.focus();
+}
+function planOccupant(plan,c) {return plan.yard.find(p=>{const f=yardFootprint(p.id,p.rotation);return c.x>=p.x&&c.x<p.x+f.w&&c.z>=p.z&&c.z<p.z+f.d;});}
 const check=computed(()=>yardCheck(town.value.yard,selected.value,{...cell.value,rotation:rotation.value}));
 const ghost=computed(()=>selected.value?{id:selected.value,...cell.value,rotation:rotation.value,ok:check.value.ok}:null);
 const current=computed(()=>YARD_ITEMS.find(i=>i.id===selected.value));
@@ -23,11 +42,15 @@ function key(e,c) {const delta={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1]
   <div class="yard-page">
     <header class="town-intro"><div><span class="eyebrow">从门口开始，住成喜欢的样子</span><h2>给家，留一个院子。</h2><p>第一批材料已经备好。试着放一张长椅，或为窗外种一棵树。</p></div><button class="soft-button" @click="emit('home')">进屋看看 ↗</button></header>
     <div class="yard-workbench">
-      <div class="yard-preview"><TownScene :town="town" :ghost="tab==='yard'?ghost:null" :light="light" @cell="choose" @select="select" />
+      <div ref="previewHost" class="yard-preview"><TownScene :editable="tab==='yard'" :town="previewTown" :ghost="tab==='yard'?ghost:null" :light="light" @cell="choose" @select="select" />
         <div class="yard-light" role="group" aria-label="预览光线"><button :aria-pressed="light==='day'" @click="light='day'">日间</button><button :aria-pressed="light==='night'" @click="light='night'">夜间</button><span>仅切换预览光线</span></div>
+        <div v-if="preview" class="plan-confirm" aria-label="确认院落布局">
+          <div><span class="eyebrow">正在试摆 · 尚未保存</span><h3 ref="previewHeading" tabindex="-1">{{ preview.name }}</h3><p>采用后替换当前六件材料的位置，房屋配色保持原样。</p></div>
+          <div class="yard-actions"><button class="primary-button" @click="adoptPlan">采用这个布局</button><button class="text-button" @click="cancelPlan">取消预览</button></div>
+        </div>
       </div>
-      <section class="yard-editor">
-        <div class="place-tabs" role="group" aria-label="布置方式"><button :class="{active:tab==='yard'}" :aria-pressed="tab==='yard'" @click="tab='yard'">布置院子</button><button :class="{active:tab==='house'}" :aria-pressed="tab==='house'" @click="tab='house'">搭配房屋</button></div>
+      <section ref="editor" class="yard-editor">
+        <div class="place-tabs" role="group" aria-label="布置方式"><button :class="{active:tab==='yard'}" :aria-pressed="tab==='yard'" @click="switchTab('yard')">布置院子</button><button :class="{active:tab==='house'}" :aria-pressed="tab==='house'" @click="switchTab('house')">搭配房屋</button><button :class="{active:tab==='plans'}" :aria-pressed="tab==='plans'" @click="switchTab('plans')">布局方案</button></div>
         <template v-if="tab==='yard'">
           <p class="yard-explain">六件材料各一份，自由摆放，不花光。中间的小径留给进出。</p>
           <div class="yard-materials" role="group" aria-label="院落材料"><button v-for="item in YARD_ITEMS" :key="item.id" :aria-pressed="selected===item.id" @click="select(item.id)"><strong>{{ item.name }}</strong><small>{{ town.yard.some(p=>p.id===item.id)?'已摆放 · 可移动':item.note }}</small></button></div>
@@ -39,6 +62,16 @@ function key(e,c) {const delta={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1]
           <p class="yard-check" role="status">{{ message || (check.ok?'这里放得下。':check.why) }}</p>
           <div class="yard-actions"><button class="primary-button" :disabled="!check.ok" @click="place">{{ placed?'移到这里':'放在这里' }}</button><button v-if="placed" class="text-button" @click="remove">收回材料栏</button></div>
         </template>
+        <template v-else-if="tab==='plans'">
+          <p class="yard-explain">不必从空地开始。六件免费材料，三种生活的样子；先试摆，喜欢再留下。</p>
+          <div class="yard-plans">
+            <button v-for="(plan,index) in YARD_PLANS" :key="plan.id" :data-plan="plan.id" class="yard-plan" :aria-pressed="preview?.id===plan.id" :aria-label="`预览${plan.name}`" @click="tryPlan(plan)">
+              <span class="plan-drawing" aria-hidden="true"><i v-for="c in cells" :key="`${c.x}-${c.z}`" :class="[planOccupant(plan,c)?.id,{path:c.x===2||c.x===3}]">{{ planOccupant(plan,c)?YARD_ITEMS.find(i=>i.id===planOccupant(plan,c).id).symbol:'' }}</i></span>
+              <span class="plan-copy"><small>0{{ index+1 }} / {{ plan.mood }}</small><strong>{{ plan.name }}</strong><span>{{ plan.note }}</span><b>{{ preview?.id===plan.id?'正在上方预览':'试摆看看 ↗' }}</b></span>
+            </button>
+          </div>
+          <p class="yard-check" role="status">{{ message || (preview?'预览不会改动存档。可以切换方案对比，或取消回到原样。':'原来的院子会一直保留到你点击「采用这个布局」。') }}</p>
+        </template>
         <template v-else>
           <p class="yard-explain">选一种屋顶、一扇门，搭配出自己的家。所有组合都可以随时更换。</p>
           <fieldset v-for="(options,key) in EXTERIOR" :key="key" class="exterior-options"><legend>{{ {wall:'外墙',roof:'屋顶',door:'门',porch:'门廊',path:'入户小径'}[key] }}</legend><div><button v-for="(option,value) in options" :key="value" :aria-pressed="town.exterior[key]===value" @click="setExterior(key,value)"><i v-if="option.color" :style="{background:option.color}" />{{ option.name }}</button></div></fieldset>
@@ -49,6 +82,27 @@ function key(e,c) {const delta={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1]
   </div>
 </template>
 <style scoped>
+.plan-confirm { padding:18px 20px; background:#f1f4e8; border:1px solid #c6d2b9; border-radius:12px; }
+.plan-confirm h3 { font:500 23px var(--serif); margin:8px 0; }
+.plan-confirm p { font-size:12px; line-height:1.8; color:var(--ink-2); margin:0; }
+.yard-preview { scroll-margin-top:18px; }
+.yard-plans { display:grid; gap:12px; }
+.yard-plan { display:flex; align-items:center; gap:16px; width:100%; padding:16px 12px; border:1px solid var(--line); background:#faf9f0; border-radius:10px; text-align:left; color:var(--ink); }
+.yard-plan[aria-pressed=true] { border-color:var(--primary); background:#edf2e5; }
+.plan-copy { flex:1; min-width:0; }
+.plan-copy strong,.plan-copy span,.plan-copy b,.plan-copy small { display:block; }
+.plan-copy strong { font:500 21px var(--serif); margin:7px 0; }
+.plan-copy span { font-size:12px; line-height:1.8; color:var(--ink-2); }
+.plan-copy small { font-size:10px; line-height:1.6; color:var(--ink-2); }
+.plan-copy b { font-size:12px; color:var(--primary); margin-top:10px; font-weight:500; }
+.plan-drawing { display:grid; grid-template-columns:repeat(6,12px); gap:2px; flex:none; padding:7px; background:#e4ebd8; border-radius:5px; border-top:4px solid #ac8b69; }
+.plan-drawing i { height:14px; font-style:normal; font-size:12px; text-align:center; line-height:14px; color:#556e48; border-radius:2px; }
+.plan-drawing .path { background:#d6ccb3; }
+.plan-drawing .bench,.plan-drawing .laundry { background:#c7aa83; color:#765b3a; }
+.plan-drawing .tree { background:#99b57f; }
+.plan-drawing .flowers { background:#d8b69b; }
+.plan-drawing .birdbath { background:#b7ceca; }
+.plan-drawing .lamp { background:#e0ce87; }
 .town-intro { display:flex; align-items:center; justify-content:space-between; gap:20px; margin:20px 0 28px; }
 .town-intro h2 { font:500 32px/1.5 var(--serif); margin:12px 0; }
 .town-intro p,.yard-explain { color:var(--ink-2); font-size:13px; line-height:1.8; }

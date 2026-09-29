@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { createWorld } from '../scenes/world.js';
 import { buildExterior, buildYardItem, buildYardPath, buildFence, buildLibrary } from '../scenes/town-models.js';
 import { yardFootprint } from '../game/town.js';
-const props=defineProps({ town: Object, mode: { type: String, default: 'yard' }, ghost: Object, light: {type:String,default:'day'} });
+const props=defineProps({ town: Object, mode: { type: String, default: 'yard' }, ghost: Object, editable: {type:Boolean,default:true}, light: {type:String,default:'day'} });
 const emit=defineEmits(['cell','select']);
 const host=ref(null), failed=ref(false);
 let engine;
@@ -29,7 +29,7 @@ function preview() {
 }
 onMounted(()=>{
   try {
-    engine=createWorld(host.value,{mode:'home',onPick:id=>{if(props.mode==='yard'){emit('select',id);return true;}},onCell:(cell,commit)=>{if(commit && props.mode==='yard')emit('cell',{x:cell.x-1,z:cell.z-5});}});
+    engine=createWorld(host.value,{mode:'home',onPick:id=>{if(props.mode==='yard' && props.editable){emit('select',id);return true;}},onCell:(cell,commit)=>{if(commit && props.mode==='yard' && props.editable)emit('cell',{x:cell.x-1,z:cell.z-5});}});
     const size=props.mode==='yard'?{w:8,d:10}:{w:6,d:7};
     engine.setRoomSize(size);
     engine.setHome(({box})=>{
@@ -55,7 +55,7 @@ onBeforeUnmount(()=>engine?.dispose());
     <div ref="host" class="town-canvas" :aria-label="mode==='yard'?'可旋转的房屋与院落预览':'街角书屋修复预览'" />
     <p v-if="failed" class="town-fallback">暂时无法显示立体预览，仍可使用下方的平面布局和选项。</p>
     <div class="town-view-controls"><button aria-label="放大场景" @click="engine?.zoom(-2)">＋</button><button aria-label="缩小场景" @click="engine?.zoom(2)">−</button><button aria-label="恢复场景视角" @click="engine?.reset()">⟳</button></div>
-    <p class="town-scene-hint">拖动转一转 · 滚动缩放{{ mode==='yard'?' · 点地面选择位置':'' }}</p>
+    <p class="town-scene-hint">拖动转一转 · 滚动缩放{{ mode==='yard' && editable?' · 点地面选择位置':'' }}</p>
   </div>
 </template>
 <style scoped>

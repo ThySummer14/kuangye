@@ -1,4 +1,4 @@
-import { EXTERIOR, YARD_ITEMS, LIBRARY_STAGES } from '../data/town.js';
+import { EXTERIOR, YARD_ITEMS, LIBRARY_STAGES, YARD_PLANS } from '../data/town.js';
 export const YARD_SIZE = { w: 6, d: 4 };
 export const yardItem = id => YARD_ITEMS.find(item => item.id === id);
 export function yardFootprint(id, rotation = 0) {
@@ -57,4 +57,24 @@ export function repairLibrary(town, done) {
   if (town.library >= readingMilestones(done)) return { ok: false, why: '先完成这一阶段的阅读，再把变化留在街角。' };
   town.library++;
   return { ok: true, stage: town.library };
+}
+
+// Build a fresh, validated layout before touching the saved town.
+export function previewYardPlan(id) {
+  const plan = YARD_PLANS.find(plan => plan.id === id);
+  if (!plan) return { ok: false, why: '这个布局方案暂不可用。' };
+  const yard = [];
+  for (const item of plan.yard) {
+    if (yard.some(p => p.id === item.id)) return { ok: false, why: '布局里有重复的材料。' };
+    const check = yardCheck(yard, item.id, item);
+    if (!check.ok) return check;
+    yard.push({ ...item });
+  }
+  return { ok: true, yard };
+}
+export function applyYardPlan(town, id) {
+  const result = previewYardPlan(id);
+  if (!result.ok) return result;
+  town.yard = result.yard;
+  return { ok: true };
 }

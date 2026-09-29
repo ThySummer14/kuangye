@@ -1,5 +1,5 @@
 import { emptyReading, startBook, updateBook, noteBook, shelveBook, reopenBook } from "./game/reading.js";
-import { emptyTown, changeExterior, placeYard, repairLibrary } from "./game/town.js";
+import { emptyTown, changeExterior, placeYard, repairLibrary, applyYardPlan } from "./game/town.js";
 import { personalTask, taskXp } from "./game/personal-tasks.js";
 import { persistence } from './services/persistence.js';
 import { normalizeActionPlan } from "./game/action-plan.js";
@@ -449,6 +449,10 @@ export function setExterior(key, value) {
 export function arrangeYard(id, at) {
   state.home.town ||= emptyTown();
   return placeYard(state.home.town, id, at);
+}
+export function adoptYardPlan(id) {
+  state.home.town ||= emptyTown();
+  return applyYardPlan(state.home.town, id);
 }
 export function removeYard(id) {
   if (!state.home.town) return;

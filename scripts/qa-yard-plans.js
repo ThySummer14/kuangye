@@ -1,0 +1,53 @@
+async (page) => {
+ const errors=[],results=[];page.on('pageerror',e=>errors.push(e.message));
+ const saved=()=>page.evaluate(()=>JSON.stringify(window.__KUANGYE__.snapshot().home));
+ for(const width of [1280,375]) {
+  await page.setViewportSize({width,height:width===375?812:1000});
+  await page.goto('http://127.0.0.1:5194/?qa#map');await page.reload();await page.waitForFunction(()=>window.__KUANGYE__);
+  await page.evaluate(async()=>{await window.__KUANGYE__.reset('map-navigation','empty');const s=await import('/src/store.js');s.setExterior('roof','blue');s.arrangeYard('flowers',{x:0,z:0,rotation:0});});
+  await page.locator('[data-place=yard]').click();await page.locator('.town-canvas canvas').waitFor();
+  const before=await saved();
+  await page.getByRole('button',{name:'布局方案',exact:true}).click();
+  await page.locator('.yard-editor').screenshot({path:`output/playwright/yard-plans-options-${width}.png`});
+  for(const name of ['树下小坐','晴日生活','等鸟来访']) {
+   await page.getByRole('button',{name:`预览${name}`,exact:true}).click();
+   await page.getByRole('button',{name:'采用这个布局',exact:true}).waitFor();
+   if(await saved()!==before)throw Error('Preview mutated save');
+  }
+  await page.getByRole('button',{name:'取消预览',exact:true}).click();
+  if(await saved()!==before)throw Error('Cancel mutated save');
+  await page.getByRole('button',{name:'预览晴日生活',exact:true}).click();
+  await page.getByRole('button',{name:'搭配房屋',exact:true}).click();
+  if(await page.locator('.plan-confirm').count()||await saved()!==before)throw Error('Tab exit retained preview');
+  await page.getByRole('button',{name:'布局方案',exact:true}).click();
+  await page.getByRole('button',{name:'预览树下小坐',exact:true}).click();
+  await page.getByRole('button',{name:'← 回到地图',exact:true}).click();
+  if(await saved()!==before)throw Error('Navigation saved preview');
+  await page.locator('[data-place=yard]').click();await page.locator('.town-canvas canvas').waitFor();
+  await page.getByRole('button',{name:'布局方案',exact:true}).click();
+  await page.getByRole('button',{name:'预览树下小坐',exact:true}).click();
+  await page.locator('.yard-preview').scrollIntoViewIfNeeded();
+  await page.locator('.yard-preview').screenshot({path:`output/playwright/yard-plans-day-${width}.png`});
+  await page.getByRole('button',{name:'夜间',exact:true}).click();
+  await page.locator('.yard-preview').screenshot({path:`output/playwright/yard-plans-night-${width}.png`});
+  await page.getByRole('button',{name:'采用这个布局',exact:true}).click();
+  const after=JSON.parse(await saved());
+  if(after.town.yard.length!==6)throw Error('Not applied');
+  const original=JSON.parse(before);original.town.yard=after.town.yard;
+  if(JSON.stringify(original)!==JSON.stringify(after))throw Error('Apply changed other state');
+  await page.getByRole('button',{name:'收回材料栏',exact:true}).click();
+  if(JSON.parse(await saved()).town.yard.some(p=>p.id==='bench'))throw Error('Manual removal failed');
+  await page.locator('[data-cell="0-3"]').click();
+  // Flowers occupy this row: a collision must not be saved.
+  if(!await page.getByRole('button',{name:'放在这里',exact:true}).isDisabled())throw Error('Collision enabled');
+  await page.locator('[data-cell="0-2"]').click();
+  await page.getByRole('button',{name:'放在这里',exact:true}).click();
+  const final=await saved();
+  await page.waitForTimeout(500);await page.reload();await page.locator('.town-canvas canvas').waitFor();
+  if(await saved()!==final)throw Error('Reload lost layout');
+  const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth);
+  if(overflow)throw Error('Horizontal overflow');
+  results.push({width,preview:'unchanged',cancel:'unchanged',navigation:'unchanged',apply:'yard only',manual:'collision and placement passed',reload:'preserved',overflow});
+ }
+ if(errors.length)throw Error(errors.join('\n'));return {results,errors};
+}

@@ -1,0 +1,58 @@
+async (page) => {
+ const errors=[],results=[];page.on('pageerror',e=>errors.push(e.message));
+ for(const width of [1280,375]) {
+  await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:5195/?qa#map');await page.reload();
+  await page.waitForFunction(()=>window.__KUANGYE__);await page.evaluate(()=>window.__KUANGYE__.reset('map-navigation','empty'));
+  await page.locator('[data-place=tasks]').click();
+  await page.getByRole('button',{name:'做点自己的东西 先有一个粗糙的开始。',exact:true}).click();
+  const book=page.getByRole('region',{name:'做出一件自己的小作品',exact:true});await book.waitFor();
+  if(await book.locator('article').count()!==2)throw Error('idea choices');
+  if(!await page.evaluate(()=>document.activeElement.contains(document.querySelector('[aria-label="做出一件自己的小作品"]'))))throw Error('entry focus');
+  await book.screenshot({path:`output/playwright/creative-idea-${width}.png`});
+  await book.getByRole('button',{name:/不太会工具/}).click();
+  if(!await book.getByRole('heading',{name:'用三格讲清一个小动作',exact:true}).isVisible())throw Error('tools choices');
+  await book.getByRole('button',{name:/总想再改改/}).click();
+  await book.screenshot({path:`output/playwright/creative-finish-${width}.png`});
+  await book.getByRole('button',{name:'给一段停在半路的文字写个结尾：打开创作手册',exact:true}).click();
+  await page.getByText('结尾怎么看都不够好',{exact:true}).click();
+  await page.locator('dialog').screenshot({path:`output/playwright/creative-guide-${width}.png`});
+  await page.getByRole('button',{name:'接下这件事',exact:true}).click();
+  const active=page.locator('.active-card').filter({hasText:'给一段停在半路的文字写个结尾'});
+  await active.getByRole('button',{name:'打开出发手册 ↗',exact:true}).click();
+  await page.getByText('结尾怎么看都不够好',{exact:true}).click();
+  await page.getByRole('button',{name:'把这一步写进便笺 ↗',exact:true}).click();
+  await page.getByRole('button',{name:'记住第一步，去试试看',exact:true}).click();
+  if(!await page.evaluate(async()=>(await import('/src/store.js')).state.active[0].plan.step.includes('接下来发生')))throw Error('plan step');
+  await active.getByRole('button',{name:'我完成了',exact:true}).click();
+  await page.getByPlaceholder('你最后让这一段停在哪个动作或画面上？').fill('我让故事停在她把窗关上的时候，给这一段起名叫《晚风》。');
+  await page.getByRole('button',{name:'完成，收下这束光',exact:true}).click();
+  await page.getByRole('heading',{name:'＋5 光',exact:true}).waitFor();
+  await page.locator('dialog').screenshot({path:`output/playwright/creative-complete-${width}.png`});
+  await page.getByRole('button',{name:'收好了，回到地图',exact:true}).click();
+  await page.reload();await page.waitForFunction(()=>window.__KUANGYE__);
+  const save=await page.evaluate(async()=>{const {state}=await import('/src/store.js');return {light:state.home.lumens,done:state.done};});
+  if(save.light!==5||save.done.length!==1||!save.done[0].review.includes('晚风'))throw Error('completion save');
+  await page.locator('[data-place=tasks]').click();await page.getByRole('button',{name:'做点自己的东西 先有一个粗糙的开始。',exact:true}).click();
+  await book.getByRole('button',{name:/总想再改改/}).click();
+  if(!await book.getByText('已做过，翻回这份手册 ↗',{exact:true}).isVisible())throw Error('completed state');
+  await book.getByRole('button',{name:'给一段停在半路的文字写个结尾：打开创作手册',exact:true}).click();
+  if(!await page.getByRole('button',{name:'接下这件事',exact:true}).isDisabled())throw Error('repeat completion');
+  await page.keyboard.press('Escape');
+  await page.evaluate(async()=>{(await import('/src/store.js')).state.home.decor.light='night';});
+  await book.screenshot({path:`output/playwright/creative-night-${width}.png`});
+  await page.getByLabel('搜索任务',{exact:true}).fill('三句故事');
+  if(await page.locator('.quest-card').filter({hasText:'用三个词，写一个三句故事'}).count()!==1)throw Error('search');
+  await page.getByRole('button',{name:'把生活理顺 照顾一顿饭，也照顾自己。',exact:true}).click();
+  const life=page.getByRole('region',{name:'把眼前的生活理顺',exact:true});
+  await life.getByRole('button',{name:/到饭点没主意/}).click();
+  if(await life.locator('article').count()!==2||!await life.getByRole('heading',{name:'给下次吃饭留两个不用纠结的选项',exact:true}).isVisible())throw Error('life shared regression');
+  await life.getByRole('button',{name:'给下次吃饭留两个不用纠结的选项：打开生活手册',exact:true}).click();
+  await page.getByText('宿舍不能做饭',{exact:true}).click();await page.keyboard.press('Escape');
+  await life.screenshot({path:`output/playwright/creative-life-regression-${width}.png`});
+  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('overflow');
+  results.push({width,status:'PASS',situations:3,choicesPerSituation:2,light:5,recallSaved:true,lifeRegression:true});
+ }
+ await page.goto('http://127.0.0.1:5195/#tasks');await page.reload();await page.waitForFunction(()=>window.__KUANGYE__);
+ if(await page.evaluate(async()=>(await import('/src/data/tasks.js')).TASKS.some(t=>t.id.startsWith('make-'))))throw Error('draft leaked');
+ if(errors.length)throw Error(errors.join('\n'));return {results,ordinaryTaskPool:'drafts excluded',errors};
+}

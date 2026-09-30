@@ -53,3 +53,11 @@ export const LIFE_TASKS = [
     '这次盘点让你决定少买什么，或先用起什么？',
     [['没有厨房，也没存多少食材','看看自己的早餐食品、饮品或零食放在哪里。','不用为了凑数去买东西；按实际库存列单即可。']]),
 ];
+
+export const LIFE_NOTEBOOK = {
+  label:'把眼前的生活理顺', eyebrow:'生活小册 · 试用草稿', title:'先理顺一个小地方。',
+  intro:'不必从大扫除开始。挑一个最近让你费劲的时刻，\n给下一次的自己，少留一点忙乱。',
+  question:'最近，哪一幕更像你？', groupLabel:'最近卡在哪件小事上', actionLabel:'打开生活手册',
+  timeNote:'用手边已有的东西', footer:'不需要买收纳工具，也不检查房间整不整齐。按你真实的生活来。',
+  situations:LIFE_SITUATIONS, tasks:LIFE_TASKS,
+};

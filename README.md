@@ -41,6 +41,8 @@
 
 **不同网址不能直接读取彼此的浏览器存档。** 从旧 GitHub Pages 迁移到 Sites 时，先在旧网站导出，再在新网站的「成长手记 → 导入备份」恢复。导入会拒绝当前任务库无法识别的历史记录与高于 v3 的未来版本，保留原备份，不静默丢失；无痕浏览、清理浏览器数据或换设备前也应备份。
 
+本地 `?qa` 独立试用存档另有 33 件待审短任务，含 [户外探索](docs/OUTDOOR-NOTES.md)、[生活小册](docs/LIFE-NOTES.md) 与 [创作小册](docs/CREATIVE-NOTES.md)。它们不进入普通模式或正式任务池。生活与创作的场景展示共用 `SituationFieldNotes.vue`，任务规则仍由 store/game 层负责。
+
 ## 开发与检查
 
 运行时依赖仍只有 Vue 3 与 three.js；无外部模型或贴图。场所与缩略图按需加载，任务入口不加载 three；分包边界与验证见 [场景加载](docs/SCENE-LOADING-AND-PREVIEW.md)。家具图来自同一套 3D 模型的本地渲染。

@@ -18,6 +18,8 @@ import {
   canUseShield,
 } from "../store.js";
 import { lumenReward } from "../game/home.js";
+import SituationFieldNotes from "./SituationFieldNotes.vue";
+import { CREATIVE_NOTEBOOK } from "../data/creative-tasks.js";
 import LifeFieldNotes from "./LifeFieldNotes.vue";
 import OutdoorFieldNotes from "./OutdoorFieldNotes.vue";
 import QuestTrails from "./QuestTrails.vue";
@@ -39,7 +41,7 @@ const trailId = ref("");
 const minutes = ref(0), place = ref("all");
 // Keep canonical task identity for the store’s chain eligibility lookup.
 const inspecting = shallowRef(null);
-const resultsHeading = ref(null), outdoorSection = ref(null), lifeSection = ref(null);
+const resultsHeading = ref(null), outdoorSection = ref(null), lifeSection = ref(null), creativeSection = ref(null);
 const trail = computed(() => TRAILS.find(item => item.id === trailId.value));
 async function selectTrail(id) {
   minutes.value = 0;
@@ -49,7 +51,7 @@ async function selectTrail(id) {
   query.value = "";
   scope.value = "today";
   await nextTick();
-  const destination = outdoorSection.value || lifeSection.value || resultsHeading.value;
+  const destination = outdoorSection.value || lifeSection.value || creativeSection.value || resultsHeading.value;
   destination?.focus({ preventScroll: true });
   destination?.scrollIntoView({ block: "start", behavior: "instant" });
 }
@@ -211,6 +213,7 @@ function log(a) {
     </section>
     <div v-if="QA && trailId === 'outside'" ref="outdoorSection" tabindex="-1" class="outdoor-section"><OutdoorFieldNotes @inspect="inspecting = $event" /></div>
     <div v-if="QA && trailId === 'settle'" ref="lifeSection" tabindex="-1" class="outdoor-section"><LifeFieldNotes @inspect="inspecting = $event" /></div>
+    <div v-if="QA && trailId === 'make'" ref="creativeSection" tabindex="-1" class="outdoor-section"><SituationFieldNotes :notebook="CREATIVE_NOTEBOOK" @inspect="inspecting = $event" /></div>
     <details class="refine-disclosure"><summary>按时间和地点细找</summary>
     <section class="task-context-picker" aria-label="按时间和场景找任务">
       <div><strong>今天，留多少时间给自己？</strong><p>一次完成的参考用时，不是倒计时。选“都看看”可以找长期任务。</p></div>
@@ -222,7 +225,7 @@ function log(a) {
         <button v-for="option in [{value:'all',label:'地点不限'},{value:'inside',label:'在室内'},{value:'outside',label:'去户外'}]" :key="option.value"
           :aria-pressed="place === option.value" @click="place = option.value; trailId = ''">{{ option.label }}</button>
       </div>
-      <p v-if="QA" class="draft-note">试用任务库 · 含 27 件待审小事，仅使用独立试用存档。</p>
+      <p v-if="QA" class="draft-note">试用任务库 · 含 33 件待审小事，仅使用独立试用存档。</p>
     </section>
     </details>
     <div class="quest-filters">
@@ -262,7 +265,7 @@ function log(a) {
       <span v-if="query.trim()"> · 搜索“{{ query.trim() }}”</span>
     </p>
     <div class="quest-section-heading">
-      <h3 ref="resultsHeading" tabindex="-1">{{ QA && trailId === 'outside' ? "想再走远一点" : QA && trailId === 'settle' ? "还想试试这些生活本领" : trail ? trail.title : "选择下一件" }}</h3>
+      <h3 ref="resultsHeading" tabindex="-1">{{ QA && trailId === 'outside' ? "想再走远一点" : QA && trailId === 'settle' ? "还想试试这些生活本领" : QA && trailId === 'make' ? "想做更长一点的创作" : trail ? trail.title : "选择下一件" }}</h3>
       <span>先选一件做得到的，再慢慢走远。</span>
     </div>
     <div class="quest-grid">

@@ -1,6 +1,6 @@
 <script setup>
 import { defineAsyncComponent, ref, computed } from "vue";
-import { state, purchase, today } from "../store.js";
+import { state, purchase, today, taskById } from "../store.js";
 import { FURNITURE, STALLS, vintageStock } from "../data/furniture.js";
 import FurnitureImage from "./FurnitureImage.vue";
 import BuddyFace from "./BuddyFace.vue";
@@ -15,10 +15,12 @@ const items = computed(() =>
     ? vintageStock(today())
     : FURNITURE.filter((f) => f.stall === stall.value),
 );
+const latestDone = computed(() => state.done.at(-1) || null);
+const latestTask = computed(() => latestDone.value ? taskById[latestDone.value.qid] : null);
 function buy(f) {
   const item = purchase(f.id);
   if (item) {
-    recent.value = f;
+    recent.value = { furniture: f, item };
     emit("toast", `「${f.name}」装进背包了`);
   }
 }
@@ -101,11 +103,22 @@ function buy(f) {
       </div>
       <div v-if="recent" class="purchase-success" role="status">
         <span>✓ 已装进背包</span>
-        <h3>{{ recent.name }}</h3>
+        <h3>{{ recent.furniture.name }}</h3>
         <p>小芽已经在想放在哪里了。</p>
+        <div v-if="recent.item.memory" class="memory-set-card">
+          <span class="eyebrow">这件家具替你收好了一句话</span>
+          <strong>{{ latestTask?.title || "最近完成的一件事" }}</strong>
+          <blockquote>{{ recent.item.memory.review || "那天，我为自己完成了一件事。" }}</blockquote>
+        </div>
         <button class="primary-button" @click="emit('home')">
           回家布置 ↗
         </button>
+      </div>
+      <div v-else-if="latestDone" class="shop-memory-invite">
+        <span class="eyebrow">最近完成 · 可以安放</span>
+        <h3>{{ latestTask?.title || "一件已经完成的小事" }}</h3>
+        <p>{{ latestDone.review || "这段回忆，会成为小家里的一块铭牌。" }}</p>
+        <small>下一件购买的家具，会替你收好这句话。</small>
       </div>
       <div v-else class="shop-story">
         <h3>家，慢慢变成你的样子。</h3>
@@ -117,8 +130,49 @@ function buy(f) {
     </aside>
   </div>
 </template>
-
 <style scoped>
 .detail-entry { background:none; border:0; border-bottom:1px solid #cbd6bd; padding:7px 0; margin:3px 0 14px; color:var(--primary); font-size:12px; min-height:36px; }
 .detail-entry:focus-visible { outline:2px solid var(--primary); outline-offset:3px; }
+.shop-memory-invite,
+.memory-set-card {
+  margin-top: 18px;
+  padding: 18px;
+  border: 1px solid #e3dfca;
+  border-radius: 15px;
+  background: #f7f5e9;
+}
+.shop-memory-invite h3,
+.memory-set-card strong {
+  display: block;
+  margin: 8px 0 6px;
+  color: #4c6047;
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 600;
+}
+.shop-memory-invite p,
+.memory-set-card blockquote {
+  margin: 0 0 9px;
+  color: #788473;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.shop-memory-invite small {
+  color: #a0875d;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.memory-set-card blockquote {
+  padding-left: 10px;
+  border-left: 2px solid #d1b873;
+  font-family: var(--serif);
+  font-size: 15px;
+}
+@media (max-width: 760px) {
+  .shop-memory-invite,
+  .memory-set-card { padding: 14px; }
+  .shop-memory-invite h3,
+  .memory-set-card strong { font-size: 15px; }
+  .purchase-success .primary-button { width: 100%; }
+}
 </style>

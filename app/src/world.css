@@ -311,7 +311,27 @@ body {
 .little-task p {
   font-size: 12px;
   color: #84907e;
-  margin: 10px 0 20px;
+  margin: 10px 0 14px;
+  line-height: 1.7;
+}
+.little-task-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 16px;
+  color: #83907f;
+  font-size: 11px;
+}
+.little-task-meta span:last-child {
+  color: #a47b28;
+  font-weight: 700;
+}
+.little-task-empty {
+  background: #f7f8ef;
+}
+.little-task-empty .primary-button {
+  background: #6c805a;
+  border-color: #6c805a;
 }
 .primary-button {
   display: flex;
@@ -336,6 +356,40 @@ body {
 }
 .little-task .primary-button {
   width: 100%;
+}
+.lookback-card {
+  padding: 18px 20px 17px;
+  background: #f5f3e8;
+  border: 1px solid #e3dfca;
+  border-radius: 18px;
+}
+.lookback-card h3 {
+  margin: 9px 0 4px;
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+.lookback-card time {
+  display: block;
+  color: #9b8b62;
+  font-size: 11px;
+}
+.lookback-card p {
+  display: -webkit-box;
+  overflow: hidden;
+  margin: 9px 0 8px;
+  color: #77816f;
+  font-size: 12px;
+  line-height: 1.65;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.lookback-link {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 12px;
 }
 .rail-note {
   font-size: 12px;
@@ -530,6 +584,18 @@ body {
     font-size: 12px;
     padding: 10px;
     gap: 3px;
+  }
+  .lookback-card {
+    padding: 15px 13px;
+  }
+  .lookback-card h3 {
+    font-size: 16px;
+  }
+  .lookback-card p {
+    font-size: 11px;
+  }
+  .lookback-link {
+    font-size: 11px;
   }
   .rail-note {
     grid-column: span 2;

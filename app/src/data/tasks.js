@@ -1,4 +1,5 @@
 import { QA } from "../game/qa.js";
+import { CONNECTION_TASKS } from "./connection-tasks.js";
 import { CREATIVE_TASKS } from "./creative-tasks.js";
 import { LIFE_TASKS } from "./life-tasks.js";
 import { OUTDOOR_TASKS } from "./outdoor-tasks.js";
@@ -52,7 +53,7 @@ export const CHAINS = {
 
 export const TASKS = [
   // Drafts only use the isolated local QA save; production never loads them.
-  ...(import.meta.env?.DEV && QA ? [...SMALL_TASKS, ...OUTDOOR_TASKS, ...LIFE_TASKS, ...CREATIVE_TASKS] : []),
+  ...(import.meta.env?.DEV && QA ? [...SMALL_TASKS, ...OUTDOOR_TASKS, ...LIFE_TASKS, ...CREATIVE_TASKS, ...CONNECTION_TASKS] : []),
   // ———— 身体（赛季级） ————
   { id: 'run-s1', cat: 'body', diff: 'D', type: 'once', tier: 'season', chain: 'run', stage: 1, title: '完成第一次 2 公里慢跑', desc: '不用快，跑完就算。', metric: 'km', mv: 2 },
   { id: 'run5k', cat: 'body', diff: 'C', type: 'once', tier: 'season', chain: 'run', stage: 2, title: '连续跑完 5 公里不停歇', desc: '中途可以慢，但不能停。', metric: 'km', mv: 5 },

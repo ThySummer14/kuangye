@@ -1,0 +1,61 @@
+### Result
+{"results":[{"width":1280,"status":"PASS","situations":3,"choicesPerSituation":2,"light":5,"recallSaved":true},{"width":375,"status":"PASS","situations":3,"choicesPerSituation":2,"light":5,"recallSaved":true}],"ordinaryTaskPool":"drafts excluded","errors":[]}
+### Ran Playwright code
+```js
+await (async (page) => {
+ const errors=[],results=[];page.on('pageerror',e=>errors.push(e.message));
+ for(const width of [1280,375]) {
+  await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:5197/?qa#map');await page.reload();
+  await page.waitForFunction(()=>window.__KUANGYE__);await page.evaluate(()=>window.__KUANGYE__.reset('map-navigation','empty'));
+  await page.locator('[data-place=tasks]').click();
+  await page.getByRole('button',{name:'靠近一个人 一句真心话，就能是起点。',exact:true}).click();
+  const book=page.getByRole('region',{name:'把自己的话说清楚',exact:true});await book.waitFor();
+  if(await book.locator('article').count()!==2)throw Error('idea choices');
+  if(!await page.evaluate(()=>document.activeElement.contains(document.querySelector('[aria-label="把自己的话说清楚"]'))))throw Error('entry focus');
+  await book.screenshot({path:`output/playwright/trail-connection-idea-${width}.png`});
+  await book.getByRole('button',{name:/想认真回应/}).click();
+  if(!await book.getByRole('heading',{name:'认真回复一条搁置的消息',exact:true}).isVisible())throw Error('tools choices');
+  await book.getByRole('button',{name:/需要些边界/}).click();
+  await book.screenshot({path:`output/playwright/trail-connection-finish-${width}.png`});
+  await book.getByRole('button',{name:'把一次小拒绝说清楚：打开相处手册',exact:true}).click();
+  await page.getByText('总想用也许或再看看代替拒绝',{exact:true}).click();
+  await page.locator('dialog').screenshot({path:`output/playwright/trail-connection-guide-${width}.png`});
+  await page.getByRole('button',{name:'接下这件事',exact:true}).click();
+  const active=page.locator('.active-card').filter({hasText:'把一次小拒绝说清楚'});
+  await active.getByRole('button',{name:'打开出发手册 ↗',exact:true}).click();
+  await page.getByText('总想用也许或再看看代替拒绝',{exact:true}).click();
+  await page.getByRole('button',{name:'把这一步写进便笺 ↗',exact:true}).click();
+  await page.getByRole('button',{name:'记住第一步，去试试看',exact:true}).click();
+  if(!await page.evaluate(async()=>(await import('/src/store.js')).state.active[0].plan.step.includes('这次我不能')))throw Error('plan step');
+  await active.getByRole('button',{name:'我完成了',exact:true}).click();
+  await page.getByPlaceholder('这次，你把哪一件不能答应的事说清楚了？').fill('这次我没有答应临时帮忙，清楚说明自己已经有安排。');
+  await page.getByRole('button',{name:'完成，收下这束光',exact:true}).click();
+  await page.getByRole('heading',{name:'＋5 光',exact:true}).waitFor();
+  await page.locator('dialog').screenshot({path:`output/playwright/trail-connection-complete-${width}.png`});
+  await page.getByRole('button',{name:'收好了，回到地图',exact:true}).click();
+  await page.reload();await page.waitForFunction(()=>window.__KUANGYE__);
+  const save=await page.evaluate(async()=>{const {state}=await import('/src/store.js');return {light:state.home.lumens,done:state.done};});
+  if(save.light!==5||save.done.length!==1||!save.done[0].review.includes('已经有安排'))throw Error('completion save');
+  await page.locator('[data-place=tasks]').click();await page.getByRole('button',{name:'靠近一个人 一句真心话，就能是起点。',exact:true}).click();
+  await book.getByRole('button',{name:/需要些边界/}).click();
+  if(!await book.getByText('已做过，翻回这份手册 ↗',{exact:true}).isVisible())throw Error('completed state');
+  await book.getByRole('button',{name:'把一次小拒绝说清楚：打开相处手册',exact:true}).click();
+  if(!await page.getByRole('button',{name:'接下这件事',exact:true}).isDisabled())throw Error('repeat completion');
+  await page.keyboard.press('Escape');
+  await page.evaluate(async()=>{(await import('/src/store.js')).state.home.decor.light='night';});
+  await book.screenshot({path:`output/playwright/trail-connection-night-${width}.png`});
+  await page.getByLabel('搜索任务',{exact:true}).fill('自己的偏好');
+  if(await page.locator('.quest-card').filter({hasText:'在一次小选择里，说出自己的偏好'}).count()!==1)throw Error('search');
+  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('overflow');
+  results.push({width,status:'PASS',situations:3,choicesPerSituation:2,light:5,recallSaved:true});
+ }
+ await page.goto('http://127.0.0.1:5197/#tasks');await page.reload();await page.waitForFunction(()=>window.__KUANGYE__);
+ if(await page.evaluate(async()=>(await import('/src/data/tasks.js')).TASKS.some(t=>t.id.startsWith('connect-'))))throw Error('draft leaked');
+ if(errors.length)throw Error(errors.join('\n'));return {results,ordinaryTaskPool:'drafts excluded',errors};
+})(page);
+```
+### Page
+- Page URL: http://127.0.0.1:5197/#tasks
+- Page Title: 旷野 · 小芽的家
+### Events
+- New console entries: .playwright-cli/console-2026-10-03T03-00-01-700Z.log#L14-L20

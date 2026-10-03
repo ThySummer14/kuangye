@@ -19,18 +19,26 @@ import {
 } from "../store.js";
 import { lumenReward } from "../game/home.js";
 import SituationFieldNotes from "./SituationFieldNotes.vue";
+import { CONNECTION_NOTEBOOK } from "../data/connection-tasks.js";
 import { CREATIVE_NOTEBOOK } from "../data/creative-tasks.js";
 import LifeFieldNotes from "./LifeFieldNotes.vue";
 import OutdoorFieldNotes from "./OutdoorFieldNotes.vue";
 import QuestTrails from "./QuestTrails.vue";
+import TrailNotebook from "./TrailNotebook.vue";
 import PersonalTaskForm from "./PersonalTaskForm.vue";
 import ActionPlan from "./ActionPlan.vue";
 import TaskGuide from "./TaskGuide.vue";
 import { TRAILS, fieldGuide } from "../data/field-guides.js";
-const writing = ref(false), editingTask = shallowRef(null);
+const writing = ref(false), editingTask = shallowRef(null), writingSuggestion = shallowRef(null);
+function writeOwn(suggestion = null) {
+  editingTask.value = null;
+  writingSuggestion.value = suggestion;
+  writing.value = true;
+}
 async function personalSaved(task) {
   writing.value = false;
   editingTask.value = null;
+  writingSuggestion.value = null;
   emit('toast', '这件事，按你自己的安排开始。');
   await nextTick();
   const card = activeCards.get(task.id);
@@ -38,22 +46,36 @@ async function personalSaved(task) {
   card?.scrollIntoView({ block: 'center', behavior: 'instant' });
 }
 const trailId = ref("");
+const browsingTrail = ref(false), notebookSection = ref(null);
 const minutes = ref(0), place = ref("all");
 // Keep canonical task identity for the store’s chain eligibility lookup.
 const inspecting = shallowRef(null);
-const resultsHeading = ref(null), outdoorSection = ref(null), lifeSection = ref(null), creativeSection = ref(null);
+const resultsHeading = ref(null), outdoorSection = ref(null), lifeSection = ref(null), creativeSection = ref(null), connectionSection = ref(null);
 const trail = computed(() => TRAILS.find(item => item.id === trailId.value));
 async function selectTrail(id) {
   minutes.value = 0;
   place.value = "all";
   trailId.value = id;
+  browsingTrail.value = false;
   cat.value = "all";
   query.value = "";
   scope.value = "today";
   await nextTick();
-  const destination = outdoorSection.value || lifeSection.value || creativeSection.value || resultsHeading.value;
+  const destination = notebookSection.value || outdoorSection.value || lifeSection.value || creativeSection.value || connectionSection.value || resultsHeading.value;
   destination?.focus({ preventScroll: true });
   destination?.scrollIntoView({ block: "start", behavior: "instant" });
+}
+async function browseTrail() {
+  browsingTrail.value = !browsingTrail.value;
+  if (!browsingTrail.value) return;
+  await nextTick();
+  resultsHeading.value?.focus({ preventScroll: true });
+  resultsHeading.value?.scrollIntoView({ block: 'start', behavior: 'instant' });
+}
+function resumeTask(id) {
+  const card = activeCards.get(id);
+  card?.focus({ preventScroll: true });
+  card?.scrollIntoView({ block: 'center', behavior: 'instant' });
 }
 async function acceptGuide(task) {
   if (!canAccept(task).ok) return;
@@ -122,7 +144,7 @@ function log(a) {
   <div class="quests" :class="{ 'has-active': state.active.length }">
     <section class="wall-welcome">
       <div><span class="eyebrow">任务岩壁 · 把想法带进生活</span><h2>下一件事，<br />由你来决定。</h2><p>找一个想试的方向，或写下已经放在心里的那件事。</p>
-        <button class="primary-button" @click="editingTask = null; writing = true">＋ 自己写一件</button></div>
+        <button class="primary-button" @click="writeOwn()">＋ 自己写一件</button></div>
       <aside class="wall-note"><span>手里留一点余地</span><strong>{{ state.active.length }}<small> / 3 件</small></strong><p>{{ state.active.length ? '先照顾正在做的事。改变安排也没关系。' : '从一件做得到的小事开始。不必先把人生安排好。' }}</p></aside>
     </section>
     <section v-if="state.active.length" class="active-section">
@@ -146,7 +168,7 @@ function log(a) {
           <h3>{{ taskById[a.qid].title }}</h3>
           <p><strong v-if="taskById[a.qid].personal" class="personal-criterion">我的完成条件</strong>{{ taskById[a.qid].desc }}</p>
           <ActionPlan :active="a" :suggestion="fieldGuide(taskById[a.qid]).steps[0]" />
-          <button v-if="taskById[a.qid].personal" class="text-button guide-link" @click="editingTask = taskById[a.qid]; writing = true">修改这件事 ↗</button>
+          <button v-if="taskById[a.qid].personal" class="text-button guide-link" @click="editingTask = taskById[a.qid]; writingSuggestion = null; writing = true">修改这件事 ↗</button>
           <button v-else class="text-button guide-link" @click="inspecting = taskById[a.qid]">打开出发手册 ↗</button>
           <template v-if="taskById[a.qid].type !== 'once'"
             ><div class="task-progress">
@@ -211,9 +233,12 @@ function log(a) {
     <section class="wall-discovery" aria-label="寻找下一件事"><div class="discovery-heading"><span class="eyebrow">给生活一个新的尝试</span><h2>从一个方向，走出去。</h2><p>先看看怎么开始，再决定要不要接下。想走得更远，也有完整的成长线。</p><button class="text-button" @click="emit('chains')">去看五条成长线 ↗</button></div>
     <QuestTrails compact :selected="trailId" @select="selectTrail" />
     </section>
+    <div v-if="trail && !QA" ref="notebookSection" class="notebook-section" tabindex="-1"><TrailNotebook :key="trail.id" :trail="trail" :expanded="browsingTrail" @inspect="inspecting = $event" @resume="resumeTask" @write="writeOwn" @browse="browseTrail" /></div>
     <div v-if="QA && trailId === 'outside'" ref="outdoorSection" tabindex="-1" class="outdoor-section"><OutdoorFieldNotes @inspect="inspecting = $event" /></div>
     <div v-if="QA && trailId === 'settle'" ref="lifeSection" tabindex="-1" class="outdoor-section"><LifeFieldNotes @inspect="inspecting = $event" /></div>
     <div v-if="QA && trailId === 'make'" ref="creativeSection" tabindex="-1" class="outdoor-section"><SituationFieldNotes :notebook="CREATIVE_NOTEBOOK" @inspect="inspecting = $event" /></div>
+    <div v-if="QA && trailId === 'connect'" ref="connectionSection" tabindex="-1" class="outdoor-section"><SituationFieldNotes :notebook="CONNECTION_NOTEBOOK" @inspect="inspecting = $event" /></div>
+    <section v-show="!trail || QA || browsingTrail" id="task-library" aria-label="可接取的任务">
     <details class="refine-disclosure"><summary>按时间和地点细找</summary>
     <section class="task-context-picker" aria-label="按时间和场景找任务">
       <div><strong>今天，留多少时间给自己？</strong><p>一次完成的参考用时，不是倒计时。选“都看看”可以找长期任务。</p></div>
@@ -225,7 +250,7 @@ function log(a) {
         <button v-for="option in [{value:'all',label:'地点不限'},{value:'inside',label:'在室内'},{value:'outside',label:'去户外'}]" :key="option.value"
           :aria-pressed="place === option.value" @click="place = option.value; trailId = ''">{{ option.label }}</button>
       </div>
-      <p v-if="QA" class="draft-note">试用任务库 · 含 33 件待审小事，仅使用独立试用存档。</p>
+      <p v-if="QA" class="draft-note">试用任务库 · 含 39 件待审小事，仅使用独立试用存档。</p>
     </section>
     </details>
     <div class="quest-filters">
@@ -265,7 +290,7 @@ function log(a) {
       <span v-if="query.trim()"> · 搜索“{{ query.trim() }}”</span>
     </p>
     <div class="quest-section-heading">
-      <h3 ref="resultsHeading" tabindex="-1">{{ QA && trailId === 'outside' ? "想再走远一点" : QA && trailId === 'settle' ? "还想试试这些生活本领" : QA && trailId === 'make' ? "想做更长一点的创作" : trail ? trail.title : "选择下一件" }}</h3>
+      <h3 ref="resultsHeading" tabindex="-1">{{ QA && trailId === 'outside' ? "想再走远一点" : QA && trailId === 'settle' ? "还想试试这些生活本领" : QA && trailId === 'make' ? "想做更长一点的创作" : QA && trailId === 'connect' ? "还可以这样靠近" : trail ? trail.title : "选择下一件" }}</h3>
       <span>先选一件做得到的，再慢慢走远。</span>
     </div>
     <div class="quest-grid">
@@ -303,7 +328,8 @@ function log(a) {
       {{ trail ? "这个方向暂时没有待接的任务。已接下的在上方，也可以换个方向。" : "这里暂时没有匹配的任务。换个分类，或清空搜索试试。" }}
       <button class="soft-button" @click="clearFilters">清空筛选，看看适合今天的事</button>
     </div>
-    <PersonalTaskForm v-if="writing" :task="editingTask" @close="writing = false; editingTask = null" @saved="personalSaved" />
+    </section>
+    <PersonalTaskForm v-if="writing" :task="editingTask" :suggestion="writingSuggestion" @close="writing = false; editingTask = null; writingSuggestion = null" @saved="personalSaved" />
     <TaskGuide v-if="inspecting" :task="inspecting"
       :active="state.active.some(a => a.qid === inspecting.id)" :eligibility="canAccept(inspecting)"
       @close="inspecting = null" @accept="acceptGuide" />
@@ -311,6 +337,7 @@ function log(a) {
 </template>
 <style scoped>
 .outdoor-section:focus-visible { outline: 2px solid var(--primary); outline-offset: 4px; }
+.notebook-section:focus-visible { outline: 2px solid var(--primary); outline-offset: 4px; }
 .personal-criterion { display: block; font-size: 12px; margin-bottom: 6px; color: var(--primary); }
 .quests:not(.has-active) .wall-welcome { border-bottom: 0; margin-bottom: 0; }
 .quests:not(.has-active) .wall-discovery { margin-top: 0; padding-top: 24px; }

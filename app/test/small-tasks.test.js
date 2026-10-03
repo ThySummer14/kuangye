@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { CONNECTION_TASKS } from '../src/data/connection-tasks.js';
 import { CREATIVE_TASKS } from '../src/data/creative-tasks.js';
 import { LIFE_TASKS } from '../src/data/life-tasks.js';
 import { OUTDOOR_TASKS } from '../src/data/outdoor-tasks.js';
@@ -33,7 +34,7 @@ test('time and place filter before suggestion limits, respecting history and sea
 });
 
 test('themed drafts cannot enter the ordinary task pool or overwrite an existing task identity', () => {
-  const drafts = [...SMALL_TASKS, ...OUTDOOR_TASKS, ...LIFE_TASKS, ...CREATIVE_TASKS];
+  const drafts = [...SMALL_TASKS, ...OUTDOOR_TASKS, ...LIFE_TASKS, ...CREATIVE_TASKS, ...CONNECTION_TASKS];
   assert.equal(new Set([...TASKS, ...drafts].map(t => t.id)).size, TASKS.length + drafts.length);
   for (const task of drafts) {
     assert.equal(task.reviewStatus, 'pending-review');

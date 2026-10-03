@@ -1,0 +1,39 @@
+### Result
+{"mode":"disposable QA save only","results":[{"width":1280,"count":1,"columns":1,"cardWidth":760,"overflow":false},{"width":1280,"count":2,"columns":2,"cardWidth":579.8046875,"overflow":false},{"width":1280,"count":3,"columns":3,"cardWidth":380.53125,"overflow":false},{"width":375,"count":1,"columns":1,"cardWidth":343,"overflow":false},{"width":375,"count":2,"columns":1,"cardWidth":343,"overflow":false},{"width":375,"count":3,"columns":1,"cardWidth":343,"overflow":false}]}
+### Ran Playwright code
+```js
+await (async (page) => {
+  const results=[];
+  for (const width of [1280,375]) {
+    await page.setViewportSize({width,height:900});
+    await page.goto('http://127.0.0.1:5197/?qa#tasks');
+    await page.locator('[data-active-task=selfrec]').waitFor();
+    const url=await page.evaluate(()=>performance.getEntriesByType('resource').find(e=>new URL(e.name).pathname==='/src/store.js').name);
+    const saved=await page.evaluate(async u=>JSON.parse(JSON.stringify((await import(u)).state.active)),url);
+    try {
+      for (const count of [1,2,3]) {
+        await page.evaluate(async ({url,count})=>{
+          const {state,accept}=await import(url),{TASKS}=await import('/src/data/tasks.js');
+          if(count===2)accept(TASKS.find(t=>t.id==='c2-thanks'));
+          if(count===3)accept(TASKS.find(t=>t.id==='live-repair'));
+          if(state.active.length!==count)throw Error('fixture count');
+        },{url,count});
+        await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
+        const layout=await page.locator('.active-grid').evaluate(e=>({columns:getComputedStyle(e).gridTemplateColumns.split(' ').length,cardWidth:e.querySelector('.active-card').getBoundingClientRect().width,overflow:document.documentElement.scrollWidth>innerWidth}));
+        const expected=width===375?1:count;
+        if(layout.columns!==expected||layout.overflow||(count===1&&layout.cardWidth<(width===375?260:600)))throw Error(JSON.stringify({width,count,layout}));
+        if(count===1)await page.screenshot({path:`output/playwright/journal-ui-tasks-${width}.png`,fullPage:true});
+        if(count===1)await page.locator('.active-grid').screenshot({path:`output/playwright/journal-ui-task-${width}.png`});
+        results.push({width,count,...layout});
+      }
+    } finally {
+      await page.evaluate(async ({url,saved})=>{(await import(url)).state.active=saved;},{url,saved});
+    }
+  }
+  return {mode:'disposable QA save only',results};
+})(page);
+```
+### Page
+- Page URL: http://127.0.0.1:5197/?qa#tasks
+- Page Title: 旷野 · 小芽的家
+- Console: 0 errors, 14 warnings

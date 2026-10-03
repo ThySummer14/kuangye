@@ -28,6 +28,7 @@ import TrailNotebook from "./TrailNotebook.vue";
 import PersonalTaskForm from "./PersonalTaskForm.vue";
 import ActionPlan from "./ActionPlan.vue";
 import TaskGuide from "./TaskGuide.vue";
+import PlaceIcon from "./PlaceIcon.vue";
 import { TRAILS, fieldGuide } from "../data/field-guides.js";
 const props = defineProps({ initialTrail: String, focusTask: String, initialSuggestion: Object });
 const writing = ref(false), editingTask = shallowRef(null), writingSuggestion = shallowRef(null);
@@ -158,7 +159,9 @@ function log(a) {
     <section class="wall-welcome">
       <div><span class="eyebrow">任务岩壁 · 把想法带进生活</span><h2>下一件事，<br />由你来决定。</h2><p>找一个想试的方向，或写下已经放在心里的那件事。</p>
         <button class="primary-button" @click="writeOwn()">＋ 自己写一件</button></div>
-      <aside class="wall-note"><span>手里留一点余地</span><strong>{{ state.active.length }}<small> / 3 件</small></strong><p>{{ state.active.length ? '先照顾正在做的事。改变安排也没关系。' : '从一件做得到的小事开始。不必先把人生安排好。' }}</p></aside>
+      <aside class="wall-note"><span>手里留一点余地</span>
+        <div class="wall-slots" aria-hidden="true"><i v-for="n in 3" :key="n" :class="{ filled: n <= state.active.length }"><PlaceIcon v-if="n <= state.active.length" name="tasks" :size="18" /></i></div>
+        <strong>{{ state.active.length }}<small> / 3 件</small></strong><p>{{ state.active.length ? '先照顾正在做的事。改变安排也没关系。' : '从一件做得到的小事开始。不必先把人生安排好。' }}</p></aside>
     </section>
     <section v-if="state.active.length" class="active-section">
       <div class="section-title">
@@ -307,7 +310,7 @@ function log(a) {
       <span>先选一件做得到的，再慢慢走远。</span>
     </div>
     <div class="quest-grid">
-      <article v-for="t in list" :key="t.id" class="quest-card">
+      <article v-for="t in list" :key="t.id" class="quest-card" :style="{ '--cat': CATS[t.cat].color }">
         <div class="task-meta">
           <span :style="{ color: CATS[t.cat].color }"
             >{{ CATS[t.cat].name }} · {{ DIFF[t.diff].name }}</span
@@ -354,16 +357,19 @@ function log(a) {
 .personal-criterion { display: block; font-size: 12px; margin-bottom: 6px; color: var(--primary); }
 .quests:not(.has-active) .wall-welcome { border-bottom: 0; margin-bottom: 0; }
 .quests:not(.has-active) .wall-discovery { margin-top: 0; padding-top: 24px; }
-.wall-welcome { display: grid; grid-template-columns: 1fr 240px; gap: 36px; padding: 18px 0 28px; border-bottom: 1px solid #cbd7c3; margin-bottom: 32px; }
-.wall-welcome h2 { font: 500 clamp(30px, 3.5vw, 42px)/1.3 var(--serif); margin: 18px 0; color: #314d39; }
-.wall-welcome p { font-size: 14px; line-height: 1.9; color: #6a7c65; }
-.wall-welcome .primary-button { margin-top: 12px; }
-.wall-note { align-self: center; padding: 24px; border-radius: 3px 22px 22px 3px; background: #e9efdf; border-left: 3px solid #9caf86; }
-.wall-note > span { font-size: 12px; color: #647457; }
-.wall-note strong { display: block; font: 500 48px var(--serif); color: #3e5c38; margin: 16px 0; }
-.wall-note small { font: 400 13px var(--sans); }
-.wall-note p { white-space: pre-line; font-size: 13px; margin: 0; }
-.wall-discovery { margin: 36px 0 22px; padding-top: 30px; border-top: 1px solid #cbd7c3; }
+.wall-welcome { display: grid; grid-template-columns: 1fr 260px; gap: 36px; padding: 10px 0 28px; border-bottom: 1px dashed var(--line-2); margin-bottom: 32px; }
+.wall-welcome h2 { font: 600 clamp(30px, 3.5vw, 44px)/1.3 var(--serif); margin: 16px 0; color: var(--ink); letter-spacing: 1px; }
+.wall-welcome p { font-size: 14px; line-height: 1.9; color: var(--ink-2); }
+.wall-welcome .primary-button { margin-top: 14px; }
+.wall-note { align-self: center; padding: 22px 24px; border-radius: 18px; background: var(--card); border: 1px solid var(--line); box-shadow: var(--lift-1); }
+.wall-note > span { font-size: 12px; color: var(--ink-3); letter-spacing: 1px; }
+.wall-slots { display: flex; gap: 8px; margin: 16px 0 4px; }
+.wall-slots i { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; border: 1.5px dashed var(--line-2); background: var(--paper); color: #fffdf6; transition: background .3s, border-color .3s; }
+.wall-slots i.filled { border: 1.5px solid var(--moss-deep); background: linear-gradient(180deg, color-mix(in srgb, var(--moss) 85%, white), var(--moss)); box-shadow: 0 6px 12px -8px var(--moss); }
+.wall-note strong { display: block; font: 600 20px var(--serif); color: var(--moss-deep); margin: 10px 0 6px; }
+.wall-note small { font: 400 13px var(--sans); color: var(--ink-3); }
+.wall-note p { white-space: pre-line; font-size: 13px; margin: 0; color: var(--ink-2); line-height: 1.7; }
+.wall-discovery { margin: 36px 0 22px; padding-top: 30px; border-top: 1px dashed var(--line-2); }
 .discovery-heading { margin-bottom: 24px; }
 .discovery-heading h2 { font: 500 28px/1.4 var(--serif); margin: 12px 0; }
 .discovery-heading p { font-size: 14px; line-height: 1.8; color: var(--ink-2); }

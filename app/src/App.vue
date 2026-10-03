@@ -1,6 +1,6 @@
 <script setup>
 import { defineAsyncComponent, ref, shallowRef, computed, watch, onMounted, onBeforeUnmount, nextTick } from "vue";
-import { state, levelInfo, now, buddyBus, saveWarning } from "./store.js";
+import { state, levelInfo, now, today, buddyBus, saveWarning } from "./store.js";
 import ChainsView from "./components/ChainsView.vue";
 import CompleteModal from "./components/CompleteModal.vue";
 import AbandonModal from "./components/AbandonModal.vue";
@@ -18,9 +18,14 @@ const ShopView = scenePage(() => import("./components/ShopView.vue"));
 const WoodshopView = scenePage(() => import("./components/WoodshopView.vue"));
 const HomeView = scenePage(() => import("./components/HomeView.vue"));
 import { nativePlatform } from "./services/native.js";
-import { selectTasks } from "./game/task-selection.js";
+import { recommendMapTask } from "./game/map-recommendation.js";
 import { accept, canAccept, taskById } from "./store.js";
-import { DIFF } from "./data/tasks.js";
+import { DIFF, CATS } from "./data/tasks.js";
+import { taskContext, PLACES } from "./data/task-context.js";
+import { PLACE_TITLES } from "./data/places.js";
+import { lumenReward } from "./game/home.js";
+import PlaceIcon from "./components/PlaceIcon.vue";
+import { TRAILS, fieldGuide } from "./data/field-guides.js";
 const validTabs = [
   "map",
   "tasks",
@@ -107,24 +112,37 @@ onBeforeUnmount(() => {
   window.removeEventListener("hashchange", hashChange);
   window.removeEventListener("keydown", escape);
 });
-const nav = [
-  ["map", "⌘", "旷野地图"],
-  ["tasks", "☷", "任务岩壁"],
-  ["home", "⌂", "小芽的家"],
-  ["shop", "♧", "林间集市"],
-  ["panel", "◷", "成长手记"],
-  ["woodshop", "⌑", "木器铺"],
-  ["yard", "♧", "家门前的院子"],
-  ["library", "▤", "街角书屋"],
-];
+const nav = PLACE_TITLES;
+const currentPlace = computed(() => nav[tab.value] || ["我的旅程", "map"]);
+const dateLabel = computed(() => new Intl.DateTimeFormat("zh-CN", { month: "long", day: "numeric", weekday: "short" }).format(now()));
+const daypart = computed(() => {
+  const h = new Date(now()).getHours();
+  return h < 5 ? "夜深了" : h < 11 ? "早上好" : h < 14 ? "中午好" : h < 18 ? "午后好" : h < 22 ? "晚上好" : "夜深了";
+});
+const levelPct = computed(() => Math.max(0, Math.min(1, levelInfo.value.cur / (levelInfo.value.need || 1))));
+const ticketMeta = computed(() => {
+  const t = nextAction.value?.task;
+  if (!t) return "";
+  const ctx = taskContext(t);
+  return [t.personal ? "自己写下的事" : DIFF[t.diff]?.name, CATS[t.cat]?.name, ctx ? `约 ${ctx.minutes} 分钟 · ${PLACES[ctx.place]}` : ""].filter(Boolean).join(" · ");
+});
 const selectedAction = ref("");
+const startingTrail = ref(''), startingMinutes = ref(0), suggestionTurn = ref(0);
+const recommendation = computed(() => recommendMapTask(state, {trail:startingTrail.value,minutes:startingMinutes.value,day:today(),offset:suggestionTurn.value}));
+const startingLabel = computed(() => [TRAILS.find(t=>t.id===startingTrail.value)?.title || '方向不限',startingMinutes.value?`${startingMinutes.value} 分钟内`:'时间不限'].join(' · '));
+watch([startingTrail,startingMinutes],()=>{suggestionTurn.value=0;});
+function resetStartingPoint() { startingTrail.value='';startingMinutes.value=0;suggestionTurn.value=0; }
+function openStartingNotebook() {
+  questEntry.value={trail:startingTrail.value,task:'',suggestion:null};
+  tab.value='tasks';
+}
 const memoryTarget=ref(null), returnFurniture=ref('');
 function openFurnitureMemory(memory) { memoryTarget.value=memory;tab.value='panel'; }
 function backToFurniture() { returnFurniture.value=memoryTarget.value?.uid||'';tab.value='home'; }
 const nextAction = computed(() => {
   const active = state.active.find(a => a.qid === selectedAction.value) || state.active.find(a => a.plan) || state.active[0];
   if (active) return { kind: "active", task: taskById[active.qid], active };
-  const task = selectTasks(state, { scope: "today" })[0];
+  const task = recommendation.value.task;
   return task ? { kind: "suggested", task } : null;
 });
 const latestDone = computed(() => {
@@ -150,65 +168,74 @@ async function takeMapTask() {
   if (!result.ok) return navigate("tasks");
   accept(action.task);
   toast(`已接下「${action.task.title}」，按自己的节奏来。`);
-  navigate("tasks");
+  questEntry.value={trail:startingTrail.value,task:action.task.id,suggestion:null};
+  tab.value='tasks';
 }
 </script>
 <template>
-  <div class="wilderness-app">
+  <div class="wilderness-app" :class="'at-' + tab">
     <header class="topbar">
-      <button class="brand" @click="tab = 'map'">
-        <span class="brand-symbol">✳</span
-        ><span>旷野<small>KUANGYE</small></span>
+      <button class="brand" aria-label="旷野 · 回到地图" @click="tab = 'map'">
+        <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
+          <circle cx="20" cy="20" r="19" class="seal" />
+          <circle cx="20" cy="17.2" r="5.2" class="sun" />
+          <path d="M3.6 26.5c3.8-4.6 8-6.6 12.3-3.7 3.4-4.4 9-5.4 14.6-1.6 2.3 1.6 4.4 3.3 6 5.3A19 19 0 0 1 3.6 26.5z" class="hill" />
+          <path d="M9 31.5h22" class="trail" />
+        </svg>
+        <span class="brand-word">旷野<small>KUANGYE</small></span>
       </button>
-      <button
-        v-if="tab !== 'map'"
-        class="soft-button map-return"
-        @click="navigate('map')"
-      >
-        ← 回到地图
-      </button>
+      <template v-if="tab !== 'map'">
+        <button class="map-return" @click="navigate('map')"><span class="map-return-arrow">←</span> 回到地图</button>
+        <div class="place-crumb">
+          <PlaceIcon :name="currentPlace[1]" :size="18" />
+          <h1>{{ currentPlace[0] }}</h1>
+        </div>
+      </template>
       <div class="top-stats">
-        <span class="wallet"
-          >✦ <b>{{ state.home.lumens }}</b> <small>光</small></span
-        ><span class="avatar">芽</span>
+        <span class="level-chip" :title="`Lv.${levelInfo.level} ${levelInfo.name} · ${levelInfo.cur}/${levelInfo.need} XP`">
+          <svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15" class="track" /><circle cx="18" cy="18" r="15" class="fill" :style="{ strokeDashoffset: 94.25 * (1 - levelPct) }" /></svg>
+          <b>{{ levelInfo.level }}</b>
+          <span class="level-name">{{ levelInfo.name }}</span>
+        </span>
+        <span class="wallet" :aria-label="`口袋里有 ${state.home.lumens} 光`"><PlaceIcon name="light" :size="16" /><b>{{ state.home.lumens }}</b><small>光</small></span>
       </div>
     </header>
     <main class="app-main">
-      <div class="page-heading">
+      <div v-if="tab === 'map'" class="page-heading map-heading">
         <div>
-          <div class="eyebrow">A LITTLE PROGRESS, A LITTLE HOME</div>
-          <h1>
-            {{
-              tab === "map"
-                ? "今天，想去哪里？"
-                : nav.find((n) => n[0] === tab)?.[2] || "我的旅程"
-            }}
-          </h1>
+          <div class="eyebrow">{{ dateLabel }} · {{ daypart }}</div>
+          <h1>今天，想去哪里？</h1>
         </div>
-        <span class="date-label">{{
-          new Intl.DateTimeFormat("zh-CN", {
-            month: "long",
-            day: "numeric",
-            weekday: "short",
-          }).format(now())
-        }}</span>
+        <p class="heading-aside">不用赶路。每一步，都算数。</p>
       </div>
       <div v-if="tab === 'map'" class="explore-layout">
         <WorldScene :key="JSON.stringify(state.home.town)" @navigate="navigate" />
         <aside class="today-rail">
           <section class="buddy-card">
-            <span class="eyebrow">小芽在等你</span>
-            <div class="buddy-portrait"><BuddyFace :size="155" /></div>
-            <h3>你来啦，一起慢慢长大。</h3>
-            <p class="buddy-speech" aria-live="polite">
-              {{
-                buddyBus.text || "今天的每一点努力，都会让我们的小家暖一点。"
-              }}
-            </p>
+            <div class="buddy-portrait"><BuddyFace :size="96" /></div>
+            <div class="buddy-bubble">
+              <span class="eyebrow">小芽</span>
+              <p class="buddy-speech" aria-live="polite">{{ buddyBus.text || "你来啦。今天的每一点努力，都会让我们的小家暖一点。" }}</p>
+            </div>
           </section>
-          <section class="little-task" v-if="nextAction">
-            <span class="eyebrow">{{ nextAction.kind === 'active' ? '今天继续这一件' : '今天先做这一件' }}</span>
-            <h3>{{ nextAction.task.title }}</h3>
+          <section class="little-task ticket" aria-label="今天的行动便笺">
+            <div class="ticket-head">
+              <span class="eyebrow">{{ nextAction?.kind === 'active' ? '今天继续这一件' : '今天先做这一件' }}</span>
+              <span class="ticket-seal" aria-hidden="true">{{ nextAction?.kind === 'active' ? '进行' : '今日' }}</span>
+            </div>
+            <details v-if="!state.active.length" class="starting-choices">
+              <summary>{{ startingLabel }}<span aria-hidden="true">⌄</span></summary>
+              <fieldset><legend>今天想试哪个方向？</legend><div class="starting-directions" role="group" aria-label="出发方向">
+                <button :aria-pressed="!startingTrail" @click="startingTrail=''">都可以</button>
+                <button v-for="t in TRAILS" :key="t.id" :aria-pressed="startingTrail===t.id" @click="startingTrail=t.id"><PlaceIcon :name="t.id" :size="14" />{{ t.title }}</button>
+              </div></fieldset>
+              <fieldset><legend>这次能留多久？</legend><div class="starting-times" role="group" aria-label="出发时间">
+                <button v-for="m in [15,30,0]" :key="m" :aria-pressed="startingMinutes===m" @click="startingMinutes=m">{{ m?m+' 分钟内':'时间不限' }}</button>
+              </div></fieldset>
+              <p class="starting-explain">短时筛选只看有估时的一次性任务。时间供安排参考，具体做到什么仍看任务说明。</p>
+            </details>
+            <template v-if="nextAction">
+            <h3 class="map-action-title" aria-live="polite">{{ nextAction.task.title }}</h3>
             <div v-if="state.active.length > 1" class="map-plan-choices" role="group" aria-label="选择要继续的任务">
               <button v-for="a in state.active" :key="a.qid" :aria-label="taskById[a.qid].title" :aria-pressed="nextAction.active?.qid === a.qid" @click="selectedAction = a.qid">{{ taskById[a.qid].title }}</button>
             </div>
@@ -217,19 +244,22 @@ async function takeMapTask() {
               <p>{{ nextAction.active.plan.step || nextAction.task.desc }}</p>
             </div>
             <p v-else>{{ nextAction.task.desc }}</p>
+            <div v-if="nextAction.kind==='suggested'" class="map-first-step"><strong>可以先这样开始</strong><p>{{ fieldGuide(nextAction.task).steps[0] }}</p></div>
+            <div class="ticket-tear" aria-hidden="true" />
             <div class="little-task-meta">
-              <span>{{ nextAction.kind === 'active' ? '已经接下' : '适合现在开始' }}</span>
-              <span>{{ nextAction.task.personal ? "自己写下的事" : "＋" + DIFF[nextAction.task.diff].xp + " XP" }}</span>
+              <span>{{ ticketMeta }}</span>
+              <span v-if="!nextAction.task.personal"><PlaceIcon name="light" :size="12" />{{ lumenReward(DIFF[nextAction.task.diff].xp) }} 光 · ＋{{ DIFF[nextAction.task.diff].xp }} XP</span>
             </div>
             <button class="primary-button" @click="takeMapTask">
               {{ nextAction.kind === 'active' ? '打开进行中' : '接下这一步' }} <span aria-hidden="true">→</span>
             </button>
-          </section>
-          <section class="little-task little-task-empty" v-else>
-            <span class="eyebrow">今天已经有安排</span>
-            <h3>把手里的事，慢慢做完。</h3>
-            <p>完成一件，再从任务岩壁挑下一件。旷野不会催你。</p>
-            <button class="primary-button" @click="navigate('tasks')">去看手里的事 <span aria-hidden="true">→</span></button>
+            <button v-if="nextAction.kind==='suggested' && recommendation.count>1" class="text-button map-another" @click="suggestionTurn++">换一件看看</button>
+            </template>
+            <template v-else>
+              <h3>先留一点余地。</h3>
+              <p>{{ startingMinutes?'这个组合暂时没有合适的短时任务。可以换个时间，或到小册里找一个准备动作。':'这个方向的入门任务已经翻过了。可以换个方向，或写下自己想做的事。' }}</p>
+              <div class="starting-empty-actions"><button class="soft-button" @click="resetStartingPoint">重新挑选</button><button class="text-button" @click="openStartingNotebook">去岩壁找起点 ↗</button></div>
+            </template>
           </section>
           <section v-if="latestDone" class="lookback-card" aria-labelledby="lookback-title">
             <span class="eyebrow">最近完成 · 回头看一眼</span>
@@ -244,7 +274,6 @@ async function takeMapTask() {
               去成长手记看看 <span aria-hidden="true">↗</span>
             </button>
           </section>
-          <div class="rail-note">不用赶路。每一步，都算数。</div>
         </aside>
       </div>
       <QuestView
@@ -285,15 +314,12 @@ async function takeMapTask() {
         {{ saveWarning.text }}
       </p>
 
-      <div class="bottom-note">
-        <span>✳ 把日子过成喜欢的样子</span
-        ><span
-          >Lv.{{ levelInfo.level }} {{ levelInfo.name }} · 已完成
-          {{ state.done.length }} 件小事</span
-        ><span>{{
-          nativePlatform ? "你的进度保存在这台设备里" : "你的进度保存在此浏览器"
-        }}</span>
-      </div>
+      <footer class="bottom-note">
+        <span class="colophon-mark" aria-hidden="true">旷</span>
+        <span>把日子过成喜欢的样子</span>
+        <span>Lv.{{ levelInfo.level }} {{ levelInfo.name }} · 已完成 {{ state.done.length }} 件小事</span>
+        <span>{{ nativePlatform ? "你的进度保存在这台设备里" : "你的进度保存在此浏览器" }}</span>
+      </footer>
     </main>
     <CompleteModal
       v-if="completing"
@@ -314,14 +340,10 @@ async function takeMapTask() {
 </template>
 
 <style scoped>
-.map-plan-choices { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
-.map-plan-choices button { max-width: 100%; padding: 8px 10px; font: inherit; font-size: 12px; text-align: left; overflow-wrap: anywhere; border: 1px solid #bdcbb6; border-radius: 7px; background: transparent; color: #42583c; cursor: pointer; }
-.map-plan-choices button[aria-pressed="true"] { background: #42583c; color: white; }
-.map-plan-note { border-left: 2px solid #91a77d; padding-left: 14px; margin: 16px 0; overflow-wrap: anywhere; }
-.map-plan-note strong { font-size: 13px; color: #42583c; }
+.map-plan-choices { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+.map-plan-choices button { max-width: 100%; padding: 7px 11px; font: inherit; font-size: 12px; text-align: left; overflow-wrap: anywhere; border: 1px solid var(--line-2); border-radius: 999px; background: var(--card); color: var(--ink-2); cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
+.map-plan-choices button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.map-plan-note { border-left: 2px solid var(--sage); padding-left: 14px; margin: 14px 0; overflow-wrap: anywhere; }
+.map-plan-note strong { font-size: 13px; color: var(--moss-deep); }
 .map-plan-note p { margin-bottom: 0; }
-@media (max-width: 600px) {
-  .today-rail { display: flex; }
-  .today-rail > .little-task { order: -1; }
-}
 </style>

@@ -1,0 +1,24 @@
+### Result
+{"screenshots":6,"transientToast":false,"productChecks":"see the existing main-path result"}
+### Ran Playwright code
+```js
+await (async (page) => {
+  for (const width of [1280, 375]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('http://127.0.0.1:5197/#tasks');
+    await page.reload();
+    await page.getByRole('button', { name: '给头脑留点时间 从一个问题，读懂一点世界。', exact: true }).click();
+    await page.locator('.toast').waitFor({ state: 'hidden' });
+    const book = page.locator('[data-notebook=think]');
+    const options = book.locator('.notebook-situations button');
+    for (let index = 0; index < 3; index++) {
+      await options.nth(index).click();
+      await book.screenshot({ path: `output/playwright/brain-notebook-${['read','question','keep'][index]}-${width}.png` });
+    }
+  }
+  return { screenshots: 6, transientToast: false, productChecks: 'see the existing main-path result' };
+})(page);
+```
+### Page
+- Page URL: http://127.0.0.1:5197/#tasks
+- Page Title: 旷野 · 小芽的家

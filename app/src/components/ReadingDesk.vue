@@ -48,7 +48,7 @@ function select(id) { selected.value=id; note.value=''; notice.value=''; editing
           <div class="reading-bookmark"><span>{{ shown.bookmark || '还没夹上书签' }}</span><p>{{ shown.next || '下次想读的时候，从喜欢的一页开始。' }}</p></div>
           <div class="reading-actions" v-if="shown.status==='reading'"><button class="soft-button" @click="edit(shown)">更新书签</button><button class="text-button" @click="shelve(true)">这本读完了</button><button class="text-button" @click="shelve(false)">先放回书架</button></div>
           <button v-else-if="!current" class="soft-button" @click="resume(shown)">继续读这本</button>
-          <button v-if="shown.qid" class="reading-task" @click="activeOf(shown.qid)?emit('tasks'):emit('task',taskById[shown.qid])">{{ taskById[shown.qid].title }} · {{ activeOf(shown.qid)?'回岩壁记录阅读':'查看旅程' }} ↗</button>
+          <button v-if="shown.qid" class="reading-task" @click="activeOf(shown.qid)?emit('tasks',shown.qid):emit('task',taskById[shown.qid])">{{ taskById[shown.qid].title }} · {{ activeOf(shown.qid)?'回岩壁记录阅读':'查看旅程' }} ↗</button>
           <p class="reading-disclaimer">书签与摘记是自己的记录；任务打卡和完成仍在对应旅程中确认。</p>
           <form class="note-form" @submit.prevent="addNote"><label for="reading-note">夹一张纸条<textarea id="reading-note" v-model="note" maxlength="1500" rows="3" placeholder="一句摘录、一个问题，或读到这里的想法。" /></label><button class="soft-button" :disabled="!note.trim()">收下这段摘记</button></form>
           <ol class="reading-notes"><li v-for="(entry,index) in shown.notes" :key="index"><small>{{ entry.at }}{{ entry.bookmark?' · '+entry.bookmark:'' }}</small><p>{{ entry.text }}</p></li></ol>

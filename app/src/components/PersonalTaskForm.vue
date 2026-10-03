@@ -6,7 +6,7 @@ import { state, activeOf, createPersonalTask, editPersonalTask } from '../store.
 const props = defineProps({ task: Object, suggestion: Object });
 const emit = defineEmits(['close', 'saved']);
 const existing = props.task && activeOf(props.task.id);
-const draft = reactive({ title: props.task?.title || '', desc: props.task?.desc || '', cat: props.task?.cat || props.suggestion?.cat || 'live', cue: existing?.plan?.cue || '', step: existing?.plan?.step || '' });
+const draft = reactive({ title: props.task?.title || '', desc: props.task?.desc || '', cat: props.task?.cat || props.suggestion?.cat || 'live', cue: existing?.plan?.cue || '', step: existing?.plan?.step || props.suggestion?.step || '' });
 const error = ref('');
 const full = computed(() => !props.task && state.active.length >= 3);
 function save() {

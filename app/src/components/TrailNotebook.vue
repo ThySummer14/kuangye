@@ -5,11 +5,13 @@ import { fieldGuide } from '../data/field-guides.js';
 import { state, taskById, canAccept } from '../store.js';
 
 const props = defineProps({ trail: { type: Object, required: true }, expanded: Boolean });
-const emit = defineEmits(['inspect', 'resume', 'write', 'browse']);
+const emit = defineEmits(['inspect', 'resume', 'write', 'browse', 'library']);
 const notebook = computed(() => TRAIL_NOTEBOOKS[props.trail.id]);
 const selected = ref(notebook.value.situations[0].id);
 const situation = computed(() => notebook.value.situations.find(item => item.id === selected.value));
 const pages = computed(() => situation.value.tasks.map(id => taskById[id]).filter(Boolean));
+const currentBook = computed(() => state.home.reading?.books.find(book => book.status === 'reading'));
+const currentInquiry = computed(() => state.home.inquiry?.pages.find(page => page.status === 'exploring'));
 const status = task => state.active.some(a => a.qid === task.id) ? 'active'
   : state.done.some(d => d.qid === task.id && !task.repeatable) ? 'done' : 'ready';
 function effort(task) {
@@ -50,6 +52,12 @@ function write() {
         </div>
       </div>
     </div>
+    <section v-if="notebook.library" class="notebook-place" aria-label="从小册接到书屋">
+      <span aria-hidden="true">▤</span>
+      <div v-if="situation.desk === 'reading'"><span>街角书屋 · 阅读桌</span><h4>{{ currentBook ? currentBook.title : '给手里的这本书，留一个位置。' }}</h4><p>{{ currentBook ? (currentBook.bookmark || '书签还空着') + ' · ' + (currentBook.next || '下次从喜欢的一页继续。') : '记书名、留书签、夹摘记。实际读过的日子，在这里接着走。' }}</p></div>
+      <div v-else><span>街角书屋 · 问号夹页</span><h4>{{ currentInquiry ? currentInquiry.question : '让一个小问题，有一段来路。' }}</h4><p>{{ currentInquiry ? (currentInquiry.next || '接着已有的线索，去确认下一点。') : '留下最初的想法，带回真实的线索，再用自己的话说明。' }}</p></div>
+      <button class="soft-button" @click="emit('library', situation.desk)">{{ situation.desk === 'reading' ? (currentBook ? '回到上次的书签' : '把书放上阅读桌') : (currentInquiry ? '打开这张问题夹页' : '给问题留一张夹页') }} ↗</button>
+    </section>
     <footer class="notebook-footer">
       <div><strong>也可以从你自己的生活里选一件。</strong><p>沿着「{{ situation.title }}」写具体的目标和完成条件。</p><button class="text-button" @click="write">按这个情境，自己写一件 <span aria-hidden="true">↗</span></button></div>
       <button class="text-button notebook-browse" :aria-expanded="expanded" aria-controls="task-library" @click="emit('browse')">{{ expanded ? '收起这个方向的任务' : '再看看这个方向的任务' }} <span aria-hidden="true">{{ expanded ? '↑' : '↓' }}</span></button>
@@ -87,6 +95,12 @@ function write() {
 .page-action { margin-top: auto; width: 100%; display: flex; justify-content: space-between; gap: 12px; font-size: 13px; line-height: 1.7; text-align: left; }
 .page-eligibility { font-size: 11px; line-height: 1.8; color: var(--ink-2); margin-top: 10px; }
 .page-done { border-color: #cad5be!important; }
+.notebook-place { display: grid; grid-template-columns: 34px minmax(0,1fr) auto; align-items: center; gap: 18px; margin-top: 24px; padding: 22px; background: #e1e9dd; border: 1px solid #bfceb4; border-radius: 8px; }
+.notebook-place > span { font-size: 30px; color: #72876b; }
+.notebook-place div > span { font-size: 11px; color: var(--ink-2); }
+.notebook-place h4 { font: 500 20px/1.65 var(--serif); margin: 8px 0; overflow-wrap: anywhere; }
+.notebook-place p { font-size: 12px; line-height: 1.9; color: var(--ink-2); margin: 0; overflow-wrap: anywhere; }
+.notebook-place button { font-size: 12px; line-height: 1.8; }
 .notebook-footer { display: flex; gap: 24px; justify-content: space-between; align-items: flex-end; border-top: 1px solid #ccd7c2; margin-top: 28px; padding-top: 22px; }
 .notebook-footer strong { font-weight: 500; font-size: 14px; line-height: 1.8; }
 .notebook-footer p { color: var(--ink-2); font-size: 12px; line-height: 1.8; margin: 7px 0 10px; }
@@ -115,5 +129,8 @@ function write() {
   .notebook-current > strong { display: none; }
   .notebook-footer { display: block; margin-top: 22px; padding-top: 20px; }
   .notebook-footer .notebook-browse { margin-top: 22px; }
+  .notebook-place { grid-template-columns: 1fr; padding: 18px; gap: 14px; }
+  .notebook-place > span { display: none; }
+  .notebook-place button { width: 100%; }
 }
 </style>

@@ -1,5 +1,21 @@
 // Editorial routes through existing tasks. These pages never create tasks or rewards.
 export const TRAIL_NOTEBOOKS = {
+  think: {
+    label: '头脑行动小册', title: '给一个问号，留点时间。',
+    intro: '从一页愿意读的书，或一个真的好奇的问题开始。读过、试过、用自己的话说明，都是看懂一点世界的来路。',
+    question: '这次，想从哪一处开始？', cat: 'mind', library: true,
+    situations: [
+      { id: 'read', title: '读不进去', note: '先翻开愿意读的一页，为下一次留一个书签。', desk: 'reading',
+        tasks: ['read-s1', 'c0-book1'],
+        writing: { titlePlaceholder: '例如：读完手边这本书的第一节', conditionPlaceholder: '例如：实际读完第一节，用自己的话写一句理解，并记下下次从哪页继续。', stepPlaceholder: '例如：把书放到今晚会坐下的地方' } },
+      { id: 'question', title: '想弄懂一点', note: '把大方向缩成一个问题，去找一条能解释它的线索。', desk: 'inquiry',
+        tasks: ['research', 'c1-demo'],
+        writing: { titlePlaceholder: '例如：弄清照片为什么会拍得很暗', conditionPlaceholder: '例如：查清一个影响明暗的设置，实际对比拍两张，并用自己的话说明差别。', stepPlaceholder: '例如：先找一张自己觉得太暗的照片' } },
+      { id: 'keep', title: '想把学的留下', note: '记住一首诗、一组新词，也留下它们对自己意味着什么。', desk: 'inquiry',
+        tasks: ['poems10', 'words500'],
+        writing: { titlePlaceholder: '例如：把今天学到的一个概念讲清楚', conditionPlaceholder: '例如：不用抄原文，写三句自己的解释，再举一个生活中的例子，保存下来。', stepPlaceholder: '例如：先写下最想留下的那个概念' } },
+    ],
+  },
   outside: {
     label: '出门行动小册', title: '给今天留一段路。',
     intro: '不用每一次出门都去远方。选一种现在想要的体验，把注意力放回正在过的生活。',

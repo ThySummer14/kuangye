@@ -1,5 +1,5 @@
 <script setup>
-import { ref, shallowRef, computed, nextTick } from "vue";
+import { ref, shallowRef, computed, nextTick, onMounted } from "vue";
 import { CATS, DIFF, TYPES, CHAINS } from "../data/tasks.js";
 import { taskContext, PLACES } from "../data/task-context.js";
 import { QA } from "../game/qa.js";
@@ -29,6 +29,7 @@ import PersonalTaskForm from "./PersonalTaskForm.vue";
 import ActionPlan from "./ActionPlan.vue";
 import TaskGuide from "./TaskGuide.vue";
 import { TRAILS, fieldGuide } from "../data/field-guides.js";
+const props = defineProps({ initialTrail: String, focusTask: String, initialSuggestion: Object });
 const writing = ref(false), editingTask = shallowRef(null), writingSuggestion = shallowRef(null);
 function writeOwn(suggestion = null) {
   editingTask.value = null;
@@ -45,7 +46,7 @@ async function personalSaved(task) {
   card?.focus({ preventScroll: true });
   card?.scrollIntoView({ block: 'center', behavior: 'instant' });
 }
-const trailId = ref("");
+const trailId = ref(TRAILS.some(trail => trail.id === props.initialTrail) ? props.initialTrail : '');
 const browsingTrail = ref(false), notebookSection = ref(null);
 const minutes = ref(0), place = ref("all");
 // Keep canonical task identity for the store’s chain eligibility lookup.
@@ -83,7 +84,7 @@ async function acceptGuide(task) {
   await nextTick();
   await take(task);
 }
-const emit = defineEmits(["complete", "abandon", "toast", "chains"]);
+const emit = defineEmits(["complete", "abandon", "toast", "chains", "library", "entry-used"]);
 const cat = ref("all"),
   scope = ref("today"),
   query = ref(""),
@@ -105,6 +106,18 @@ function tierLabel(t) {
   return t.tier === "chapter" ? `本章 · 第 ${t.chapter + 1} 章` : "赛季任务";
 }
 const activeCards = new Map();
+onMounted(async () => {
+  await nextTick();
+  if (props.focusTask) resumeTask(props.focusTask);
+  else if (trail.value && notebookSection.value) {
+    notebookSection.value.focus({ preventScroll: true });
+    notebookSection.value.scrollIntoView({ block: 'start', behavior: 'instant' });
+  }
+  if (props.initialSuggestion) {
+    writeOwn(props.initialSuggestion);
+    emit('entry-used');
+  }
+});
 const searchInput = ref(null);
 function cardRef(id, element) {
   if (element) activeCards.set(id, element);
@@ -233,12 +246,12 @@ function log(a) {
     <section class="wall-discovery" aria-label="寻找下一件事"><div class="discovery-heading"><span class="eyebrow">给生活一个新的尝试</span><h2>从一个方向，走出去。</h2><p>先看看怎么开始，再决定要不要接下。想走得更远，也有完整的成长线。</p><button class="text-button" @click="emit('chains')">去看五条成长线 ↗</button></div>
     <QuestTrails compact :selected="trailId" @select="selectTrail" />
     </section>
-    <div v-if="trail && !QA" ref="notebookSection" class="notebook-section" tabindex="-1"><TrailNotebook :key="trail.id" :trail="trail" :expanded="browsingTrail" @inspect="inspecting = $event" @resume="resumeTask" @write="writeOwn" @browse="browseTrail" /></div>
+    <div v-if="trail && (!QA || trailId === 'think')" ref="notebookSection" class="notebook-section" tabindex="-1"><TrailNotebook :key="trail.id" :trail="trail" :expanded="browsingTrail" @inspect="inspecting = $event" @resume="resumeTask" @write="writeOwn" @browse="browseTrail" @library="emit('library',$event)" /></div>
     <div v-if="QA && trailId === 'outside'" ref="outdoorSection" tabindex="-1" class="outdoor-section"><OutdoorFieldNotes @inspect="inspecting = $event" /></div>
     <div v-if="QA && trailId === 'settle'" ref="lifeSection" tabindex="-1" class="outdoor-section"><LifeFieldNotes @inspect="inspecting = $event" /></div>
     <div v-if="QA && trailId === 'make'" ref="creativeSection" tabindex="-1" class="outdoor-section"><SituationFieldNotes :notebook="CREATIVE_NOTEBOOK" @inspect="inspecting = $event" /></div>
     <div v-if="QA && trailId === 'connect'" ref="connectionSection" tabindex="-1" class="outdoor-section"><SituationFieldNotes :notebook="CONNECTION_NOTEBOOK" @inspect="inspecting = $event" /></div>
-    <section v-show="!trail || QA || browsingTrail" id="task-library" aria-label="可接取的任务">
+    <section v-show="!trail || (QA && trailId !== 'think') || browsingTrail" id="task-library" aria-label="可接取的任务">
     <details class="refine-disclosure"><summary>按时间和地点细找</summary>
     <section class="task-context-picker" aria-label="按时间和场景找任务">
       <div><strong>今天，留多少时间给自己？</strong><p>一次完成的参考用时，不是倒计时。选“都看看”可以找长期任务。</p></div>

@@ -1,5 +1,5 @@
 <script setup>
-import { defineAsyncComponent, ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from "vue";
+import { defineAsyncComponent, ref, shallowRef, computed, watch, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { state, levelInfo, now, buddyBus, saveWarning } from "./store.js";
 import ChainsView from "./components/ChainsView.vue";
 import CompleteModal from "./components/CompleteModal.vue";
@@ -40,16 +40,37 @@ const tab = ref(
   abandoning = ref(null),
   toastMsg = ref("");
 let toastTimer, unregisterTools;
+const libraryDesk = ref('reading'), questEntry = shallowRef({ trail: '', task: '', suggestion: null });
 function toast(t) {
   toastMsg.value = t;
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => (toastMsg.value = ""), 3000);
 }
 function navigate(id) {
+  if (id === 'tasks' || id === 'quest') questEntry.value = { trail: '', task: '', suggestion: null };
+  if (id === 'library') libraryDesk.value = 'reading';
   if (id==='journal' || id==='panel') memoryTarget.value=null;
   if (id === "atelier") { location.href = "./emotion-lab.html" + location.search; return; }
   const next = id === "journal" ? "panel" : id;
   tab.value = validTabs.includes(next) ? next : "map";
+}
+function openLibrary(desk = 'reading') {
+  libraryDesk.value = desk === 'inquiry' ? 'inquiry' : 'reading';
+  tab.value = 'library';
+}
+function returnFromLibrary(qid = '') {
+  questEntry.value = { trail: 'think', task: typeof qid === 'string' && taskById[qid] ? qid : '', suggestion: null };
+  tab.value = 'tasks';
+}
+function writeInquiryStep(page) {
+  questEntry.value = { trail: 'think', task: '', suggestion: {
+    cat: 'mind', label: '问号夹页', note: page.question, step: page.next,
+    titlePlaceholder: '给下一步起一个具体的名字', conditionPlaceholder: '写清实际做出什么结果，就可以收尾。', stepPlaceholder: page.next,
+  } };
+  tab.value = 'tasks';
+}
+function consumeQuestSuggestion() {
+  questEntry.value = { ...questEntry.value, suggestion: null };
 }
 async function finishToMap() {
   navigate("map");
@@ -228,10 +249,13 @@ async function takeMapTask() {
       </div>
       <QuestView
         v-else-if="tab === 'tasks' || tab === 'quest'"
+        :initial-trail="questEntry.trail" :focus-task="questEntry.task" :initial-suggestion="questEntry.suggestion"
         @complete="completing = $event"
         @abandon="abandoning = $event"
         @toast="toast"
         @chains="tab = 'chains'"
+        @library="openLibrary"
+        @entry-used="consumeQuestSuggestion"
       />
       <HomeView :return-furniture="returnFurniture" @memory="openFurnitureMemory"
         v-else-if="tab === 'home'"
@@ -241,13 +265,13 @@ async function takeMapTask() {
       />
       <WoodshopView v-else-if="tab === 'woodshop'" @toast="toast" />
       <YardView v-else-if="tab === 'yard'" @home="tab = 'home'" />
-      <LibraryView v-else-if="tab === 'library'" @tasks="tab = 'tasks'" @journal="memoryTarget=null; tab = 'panel'" @toast="toast" />
+      <LibraryView v-else-if="tab === 'library'" :desk="libraryDesk" @desk="libraryDesk=$event" @tasks="returnFromLibrary" @notebook="returnFromLibrary()" @write="writeInquiryStep" @journal="memoryTarget=null; tab = 'panel'" @toast="toast" />
       <ShopView
         v-else-if="tab === 'shop'"
         @home="tab = 'home'"
         @toast="toast"
       />
-      <JournalView :focus-memory="memoryTarget" @back-furniture="backToFurniture" @library="tab = 'library'"
+      <JournalView :focus-memory="memoryTarget" @back-furniture="backToFurniture" @library="openLibrary('reading')"
         v-else-if="tab === 'panel'"
         @toast="toast"
         @chains="tab = 'chains'"
@@ -278,7 +302,7 @@ async function takeMapTask() {
       @done="toast"
       @shop="tab = 'shop'"
       @map="finishToMap"
-      @library="tab = 'library'"
+      @library="openLibrary('reading')"
     /><AbandonModal
       v-if="abandoning"
       :active="abandoning"

@@ -1,4 +1,5 @@
 import { emptyReading, normalizeReading } from "./reading.js";
+import { emptyInquiry, normalizeInquiry } from "./inquiry.js";
 import { emptyTown, normalizeTown } from "./town.js";
 import { furnitureById } from "../data/furniture.js";
 import { roomOf, normalizeDecor } from "./room.js";
@@ -13,6 +14,7 @@ export const emptyHome = () => ({
   room: { w: 6, d: 6 },
   town: emptyTown(),
   reading: emptyReading(),
+  inquiry: emptyInquiry(),
   decor: normalizeDecor(),
   moments: [],
   lumens: 0,
@@ -38,6 +40,7 @@ export function normalizeHome(raw, done = []) {
   }
   h.town = normalizeTown(raw.town, done);
   h.reading = normalizeReading(raw.reading);
+  h.inquiry = normalizeInquiry(raw.inquiry);
   h.room = roomOf(raw);
   h.decor = normalizeDecor(raw.decor);
   h.moments = (Array.isArray(raw.moments) ? raw.moments : [])

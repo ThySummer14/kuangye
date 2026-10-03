@@ -7,7 +7,7 @@ defineEmits(['select']);
   <section class="quest-trails" aria-labelledby="trails-title">
     <div v-if="!compact" class="trails-heading"><h3 id="trails-title">今天，想从哪里开始？</h3><p>不用先想好远方。从眼前的生活选一个方向。</p></div>
     <div class="trail-options">
-      <button v-for="trail in TRAILS" :key="trail.id" :aria-pressed="selected === trail.id"
+      <button v-for="trail in TRAILS" :key="trail.id" :data-trail="trail.id" :aria-pressed="selected === trail.id"
         @click="$emit('select', selected === trail.id ? '' : trail.id)">
         <span class="trail-symbol" aria-hidden="true">{{ trail.symbol }}</span>
         <span><strong>{{ trail.title }}</strong><small>{{ trail.note }}</small></span>
@@ -25,6 +25,7 @@ defineEmits(['select']);
 .trail-options button:nth-child(2) { background: #f3efe5; }
 .trail-options button:nth-child(3) { background: #ebeff3; }
 .trail-options button:nth-child(4) { background: #f2ebe8; }
+.trail-options button[data-trail=think] { grid-column: 1/-1; background: #e9eeeb; }
 .trail-options button[aria-pressed="true"] { border-color: var(--primary); box-shadow: inset 0 0 0 1px var(--primary); }
 .trail-options button:hover { border-color: var(--primary); }
 .trail-options button:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }

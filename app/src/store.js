@@ -1,4 +1,5 @@
 import { emptyReading, startBook, updateBook, noteBook, shelveBook, reopenBook } from "./game/reading.js";
+import { emptyInquiry, startInquiry, updateInquiry, noteInquiry, keepInquiry, reopenInquiry } from "./game/inquiry.js";
 import { emptyTown, changeExterior, placeYard, repairLibrary, applyYardPlan } from "./game/town.js";
 import { personalTask, taskXp } from "./game/personal-tasks.js";
 import { persistence } from './services/persistence.js';
@@ -471,3 +472,9 @@ export const saveReadingBook = (id, fields) => updateBook(readingState(), id, fi
 export const addReadingNote = (id, text) => noteBook(readingState(), id, text, today());
 export const putReadingBookAway = (id, finished) => shelveBook(readingState(), id, finished, today());
 export const continueReadingBook = id => reopenBook(readingState(), id);
+const inquiryState = () => (state.home.inquiry ||= emptyInquiry());
+export const openInquiryPage = fields => startInquiry(inquiryState(), fields, crypto.randomUUID(), today());
+export const saveInquiryPage = (id, fields) => updateInquiry(inquiryState(), id, fields);
+export const addInquiryClue = (id, fields) => noteInquiry(inquiryState(), id, fields, today());
+export const keepInquiryPage = id => keepInquiry(inquiryState(), id, today());
+export const continueInquiryPage = id => reopenInquiry(inquiryState(), id);

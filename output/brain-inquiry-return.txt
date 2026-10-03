@@ -1,0 +1,27 @@
+### Result
+{"results":[{"width":1280,"nextStepRetainedInInitialForm":true,"transferFormReopened":false},{"width":375,"nextStepRetainedInInitialForm":true,"transferFormReopened":false}]}
+### Ran Playwright code
+```js
+await (async (page) => {
+  const results=[];
+  for (const width of [1280,375]) {
+    await page.setViewportSize({ width, height:900 });
+    await page.goto('http://127.0.0.1:5197/#map');
+    await page.reload();
+    await page.locator('[data-place=library]').click();
+    await page.getByRole('tab', { name: '问号夹页 一个问题，一段来路', exact:true }).click();
+    await page.locator('.inquiry-next button').click();
+    await page.locator('dialog').waitFor();
+    const step=await page.locator('#personal-step').inputValue();
+    await page.keyboard.press('Escape');
+    await page.getByRole('button', { name:'← 回到地图', exact:true }).click();
+    await page.goBack();
+    await page.locator('[data-notebook=think]').waitFor();
+    if(await page.locator('dialog').count()) throw Error('Transfer form reopened');
+    results.push({width, nextStepRetainedInInitialForm:!!step, transferFormReopened:false});
+  }
+  return {results};
+})(page);
+```
+### Events
+- New console entries: .playwright-cli/console-2026-10-03T03-28-56-947Z.log#L23-L28

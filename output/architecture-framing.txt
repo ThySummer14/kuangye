@@ -1,0 +1,39 @@
+### Result
+{"results":[{"width":1280,"libraryNearView":true,"stages":4,"lightingAndResetDoNotWrite":true},{"width":375,"libraryNearView":true,"stages":4,"lightingAndResetDoNotWrite":true}],"errors":[]}
+### Ran Playwright code
+```js
+await (async (page) => {
+  const results=[],errors=[];
+  page.on('pageerror',e=>errors.push(e.message));
+  for (const width of [1280,375]) {
+    await page.setViewportSize({width,height:900});
+    await page.goto('http://127.0.0.1:5197/?qa#library');
+    await page.reload();
+    await page.locator('.town-canvas[data-ready=true]').waitFor();
+    const url=await page.evaluate(()=>performance.getEntriesByType('resource').find(e=>new URL(e.name).pathname==='/src/store.js').name);
+    const scene=page.locator('.town-scene'),lights=page.getByRole('group',{name:'书屋预览光线'});
+    for (let level=0;level<=3;level++) {
+      await page.evaluate(async ({level,url})=>{(await import(url)).state.home.town.library=level;},{level,url});
+      await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+      await scene.screenshot({path:`output/playwright/architecture-library-${level}-${width}.png`});
+    }
+    const before=await page.evaluate(async url=>JSON.stringify((await import(url)).state),url);
+    await lights.getByRole('button',{name:'夜间',exact:true}).click();
+    await scene.screenshot({path:`output/playwright/architecture-library-night-${width}.png`});
+    await page.getByRole('button',{name:'放大场景',exact:true}).click();
+    await page.getByRole('button',{name:'恢复场景视角',exact:true}).click();
+    const after=await page.evaluate(async url=>JSON.stringify((await import(url)).state),url);
+    if(before!==after) throw Error('framing wrote state');
+    if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)) throw Error('overflow');
+    results.push({width,libraryNearView:true,stages:4,lightingAndResetDoNotWrite:true});
+  }
+  if(errors.length) throw Error(errors.join('\n'));
+  return {results,errors};
+})(page);
+```
+### Page
+- Page URL: http://127.0.0.1:5197/?qa#library
+- Page Title: 旷野 · 小芽的家
+- Console: 0 errors, 1 warnings
+### Events
+- New console entries: .playwright-cli/console-2026-10-03T04-08-13-854Z.log#L27-L28

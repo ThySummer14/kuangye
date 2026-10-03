@@ -1,4 +1,4 @@
-import { buildExterior, buildYardItem, buildYardPath, buildFence, buildLibrary } from "./town-models.js";
+import { buildExterior, buildYardItem, buildYardPath, buildFence, buildLibrary, buildAtelier, buildWoodshop } from "./town-models.js";
 import { emptyTown } from "../game/town.js";
 import { makeSoftCorner } from "./mascot-model.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
@@ -158,29 +158,10 @@ export function createWorld(
     const g = new THREE.Group();
     g.position.set(x, 0, z);
     world.add(g);
-    if (kind === "home" || kind === "atelier") {
-      box(1.9, 1.5, 1.65, "#fff2ce", 0, 0.8, 0, g);
-      const roof = cyl(
-        0,
-        1.75,
-        1.05,
-        kind === "atelier" ? "#789794" : "#c77553",
-        0,
-        2.05,
-        0,
-        g,
-        4,
-      );
-      roof.rotation.y = Math.PI / 4;
-      box(0.45, 0.9, 0.07, "#8a664b", 0.38, 0.5, 0.86, g);
-      box(0.48, 0.52, 0.08, "#93cbd0", -0.47, 1, 0.86, g);
-      box(0.57, 0.06, 0.13, "#fff3d9", -0.47, 1, 0.92, g);
-      box(0.05, 0.54, 0.13, "#fff3d9", -0.47, 1, 0.92, g);
-      box(0.32, 0.83, 0.33, "#eedabd", 0.6, 2.05, -0.35, g);
-      box(2.2, 0.12, 0.65, "#d8b68a", 0, 0.04, 1.1, g);
-      for (let i = 0; i < 4; i++)
-        box(0.08, 0.44, 0.08, "#fff3d6", -1.3 + i * 0.31, 0.22, 1.5, g);
-      box(1.04, 0.07, 0.07, "#fff3d6", -0.84, 0.32, 1.5, g);
+    if (kind === "home") {
+      buildExterior({ box, ball, cyl }, g, town.exterior, 0, 0);
+    } else if (kind === "atelier") {
+      buildAtelier({ box, ball, cyl }, g);
     } else if (kind === "shop") {
       box(2, 0.65, 1.05, "#ae7951", 0, 0.34, 0, g);
       for (const a of [-0.9, 0.9])
@@ -214,26 +195,7 @@ export function createWorld(
         ball(0.23, "#6d9e69", -0.6 + i * 0.55, 1.03, 0.05, g);
       }
     } else if (kind === "woodshop") {
-      box(1.65, 1.25, 1.3, "#dbc49b", 0, 0.68, 0, g);
-      for (let i = 0; i < 7; i++)
-        box(1.68, 0.035, 0.035, "#b7956c", 0, 0.18 + i * 0.16, 0.66, g);
-      const roof = cyl(0, 1.45, 0.75, "#698476", 0, 1.65, 0, g, 4);
-      roof.rotation.y = Math.PI / 4;
-      box(0.48, 0.85, 0.06, "#6f5941", 0.35, 0.47, 0.68, g);
-      box(0.6, 0.48, 0.07, "#bad1c6", -0.43, 0.91, 0.68, g);
-      box(0.04, 0.51, 0.1, "#f4e3bb", -0.43, 0.91, 0.73, g);
-      box(0.65, 0.04, 0.1, "#f4e3bb", -0.43, 0.91, 0.73, g);
-      // Workbench, clamped board, tools and stacked timber identify the workshop.
-      box(1.2, 0.11, 0.5, "#a87d4f", 0, 0.63, 1.12, g);
-      for (const x of [-0.48, 0.48])
-        box(0.08, 0.58, 0.35, "#735b40", x, 0.3, 1.12, g);
-      box(0.72, 0.04, 0.18, "#ead6ac", -0.1, 0.72, 1.1, g);
-      box(0.045, 0.3, 0.045, "#78573d", 0.37, 0.88, 1.1, g);
-      box(0.23, 0.09, 0.09, "#667367", 0.37, 1.03, 1.1, g);
-      for (let i = 0; i < 3; i++)
-        box(0.2, 0.13, 0.95, "#bf9a68", -0.99, 0.13 + i * 0.14, 0.1, g);
-      box(0.56, 0.3, 0.07, "#f0ddb0", 0, 1.42, 0.8, g);
-      box(0.3, 0.035, 0.08, "#7e6547", 0, 1.42, 0.85, g);
+      buildWoodshop({ box, ball, cyl }, g);
     } else if (kind === "tasks") {
       for (const a of [-0.7, 0.7])
         box(0.12, 1.65, 0.12, "#86674f", a, 0.83, 0, g);
@@ -814,6 +776,12 @@ export function createWorld(
         mode === "home"
           ? Math.max(roomSize.w, roomSize.d) * (innerWidth < 600 ? 2.2 : 2)
           : 26;
+    },
+    setView(view) {
+      target.set(...view.target);
+      angle = view.angle;
+      distance = view.distance;
+      elevation = view.elevation;
     },
     dispose() {
       stopped = true;

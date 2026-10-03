@@ -1,0 +1,34 @@
+### Result
+{"mode":"temporary source-model preview, no save mutation","results":[{"kind":"atelier","sourceModelCloseView":true,"disposed":true},{"kind":"woodshop","sourceModelCloseView":true,"disposed":true}]}
+### Ran Playwright code
+```js
+await (async (page) => {
+  await page.setViewportSize({width:760,height:580});
+  const results=[];
+  for(const kind of ['atelier','woodshop']) {
+    await page.evaluate(async kind=>{
+      const {createWorld}=await import('/src/scenes/world.js');
+      const {buildAtelier,buildWoodshop}=await import('/src/scenes/town-models.js');
+      const host=document.createElement('div');host.id='architecture-craft-preview';
+      host.style.cssText='position:fixed;inset:0;z-index:10000;background:#e8efdf';document.body.append(host);
+      const engine=createWorld(host,{mode:'home'});
+      engine.setRoomSize({w:4,d:4});
+      engine.setHome(({box})=>box(4,.1,4,'#b7cb98',0,-.05,0));
+      engine.setFurniture(parent=>(kind==='atelier'?buildAtelier:buildWoodshop)(engine,parent));
+      engine.setView({target:[0,1.1,0],angle:.72,distance:5.6,elevation:4.3});
+      window.__architecturePreview={engine,host};
+    },kind);
+    await page.locator('#architecture-craft-preview[data-ready=true]').waitFor();
+    await page.locator('#architecture-craft-preview').screenshot({path:`output/playwright/architecture-${kind}-detail.png`});
+    await page.evaluate(()=>{window.__architecturePreview.engine.dispose();window.__architecturePreview.host.remove();delete window.__architecturePreview;});
+    results.push({kind,sourceModelCloseView:true,disposed:true});
+  }
+  return {mode:'temporary source-model preview, no save mutation',results};
+})(page);
+```
+### Page
+- Page URL: http://127.0.0.1:5197/?qa#library
+- Page Title: 旷野 · 小芽的家
+- Console: 0 errors, 3 warnings
+### Events
+- New console entries: .playwright-cli/console-2026-10-03T04-08-13-854Z.log#L29-L30

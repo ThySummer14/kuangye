@@ -1,0 +1,94 @@
+### Result
+{"mode":"local QA, disposable fixture","results":[{"width":1280,"houseDetailAndWholeYard":true,"dayNight":true,"rotationAndReset":true,"appearancePersisted":true,"mapDrawCalls":195,"mapBuildingEntries":true,"libraryStages":4,"previewDidNotWriteState":true},{"width":375,"houseDetailAndWholeYard":true,"dayNight":true,"rotationAndReset":true,"appearancePersisted":true,"mapDrawCalls":195,"mapBuildingEntries":true,"libraryStages":4,"previewDidNotWriteState":true}],"errors":[]}
+### Ran Playwright code
+```js
+await (async (page) => {
+  const origin = 'http://127.0.0.1:5197', errors = [], results = [];
+  page.on('pageerror', error => errors.push(error.message));
+  const button = name => page.getByRole('button', {name,exact:true});
+  const check = (condition, message) => { if (!condition) throw Error(message); };
+  let storeURL;
+  // Vite may retain an HMR timestamp. Use the module actually loaded by the UI,
+  // rather than creating a second reactive store via an unversioned import.
+  const locateStore = () => page.evaluate(() => performance.getEntriesByType('resource').find(e=>new URL(e.name).pathname==='/src/store.js')?.name);
+  const snapshot = () => page.evaluate(async url => JSON.stringify((await import(url)).state),storeURL);
+  const rendered = () => page.evaluate(() => new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+  for (const width of [1280,375]) {
+    await page.setViewportSize({width,height:900});
+    await page.goto(origin + '/?qa#yard');
+    await page.reload();
+    await page.locator('.town-canvas[data-ready=true]').waitFor();
+    storeURL = await locateStore();
+    check(storeURL, `${width}: UI store not loaded`);
+    // The dedicated QA browser owns this synthetic save; real saves are separate.
+    await page.evaluate(async url => {
+      const { state } = await import(url);
+      Object.assign(state.home.town.exterior,{wall:'cream',roof:'clay',door:'oak',porch:'canopy',path:'stone'});
+    },storeURL);
+    await button('搭配房屋').click();
+    const before = await snapshot();
+    const canvas = page.locator('.town-canvas'), scene = page.locator('.town-scene');
+    await rendered();
+    await scene.screenshot({path:`output/playwright/architecture-house-day-${width}.png`});
+    await button('夜间').click();
+    await scene.screenshot({path:`output/playwright/architecture-house-night-${width}.png`});
+    await button('日间').click();
+    const bounds = await canvas.boundingBox();
+    await page.mouse.move(bounds.x+bounds.width*.35,bounds.y+bounds.height*.6);
+    await page.mouse.down();
+    await page.mouse.move(bounds.x+bounds.width*.8,bounds.y+bounds.height*.6,{steps:14});
+    await page.mouse.up();
+    await scene.screenshot({path:`output/playwright/architecture-house-reverse-${width}.png`});
+    await button('恢复场景视角').click();
+    await button('布置院子').click();
+    await scene.screenshot({path:`output/playwright/architecture-yard-${width}.png`});
+    await button('搭配房屋').click();
+    check(await snapshot() === before, 'camera or lighting changed the save');
+    for (const name of ['鼠尾草','苔绿瓦','深绿门','露天门阶']) await button(name).click();
+    await page.waitForFunction(() => {
+      const e=JSON.parse(localStorage.getItem('kuangye.qa.v3'))?.home.town.exterior;
+      return e?.wall==='sage' && e.roof==='moss' && e.door==='green' && e.porch==='open';
+    });
+    await scene.screenshot({path:`output/playwright/architecture-house-sage-${width}.png`});
+    await page.reload();
+    await page.locator('.town-canvas[data-ready=true]').waitFor();
+    storeURL = await locateStore();
+    check(storeURL, `${width}: UI store not loaded after refresh`);
+    await button('搭配房屋').click();
+    check(await button('鼠尾草').getAttribute('aria-pressed') === 'true', `${width}: wall choice not persisted`);
+    check(await button('苔绿瓦').getAttribute('aria-pressed') === 'true', `${width}: roof choice not persisted`);
+    await button('← 回到地图').click();
+    await page.locator('.world-canvas[data-ready=true]').waitFor();
+    const mapBefore = await snapshot();
+    await page.locator('.world-stage').screenshot({path:`output/playwright/architecture-map-${width}.png`});
+    const calls = Number(await page.locator('.world-canvas').getAttribute('data-draw-calls'));
+    await page.locator('[data-place=woodshop]').click();
+    await page.getByRole('heading',{name:'木器铺',exact:true}).waitFor();
+    await button('← 回到地图').click();
+    await page.locator('[data-place=library]').click();
+    await page.locator('.town-canvas[data-ready=true]').waitFor();
+    check(await snapshot() === mapBefore, 'building navigation changed the save');
+    const libraryScene = page.locator('.town-scene');
+    // Controlled stage previews do not invoke repair or create rewards.
+    for (let level=0;level<=3;level++) {
+      await page.evaluate(async ({level,url})=>{(await import(url)).state.home.town.library=level;},{level,url:storeURL});
+      await rendered();
+      await libraryScene.screenshot({path:`output/playwright/architecture-library-${level}-${width}.png`});
+    }
+    await page.getByRole('group',{name:'书屋预览光线'}).getByRole('button',{name:'夜间',exact:true}).click();
+    await libraryScene.screenshot({path:`output/playwright/architecture-library-night-${width}.png`});
+    check(!await page.locator('.town-fallback').count(), 'WebGL preview failed');
+    check(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth), 'horizontal overflow');
+    results.push({width,houseDetailAndWholeYard:true,dayNight:true,rotationAndReset:true,appearancePersisted:true,mapDrawCalls:calls,mapBuildingEntries:true,libraryStages:4,previewDidNotWriteState:true});
+  }
+  check(!errors.length, errors.join('\n'));
+  return {mode:'local QA, disposable fixture',results,errors};
+}
+)(page);
+```
+### Page
+- Page URL: http://127.0.0.1:5197/?qa#library
+- Page Title: 旷野 · 小芽的家
+- Console: 0 errors, 4 warnings
+### Events
+- New console entries: .playwright-cli/console-2026-10-03T04-08-13-854Z.log#L11-L25

@@ -42,7 +42,7 @@ function key(e,c) {const delta={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1]
   <div class="yard-page">
     <header class="town-intro"><div><span class="eyebrow">从门口开始，住成喜欢的样子</span><h2>给家，留一个院子。</h2><p>第一批材料已经备好。试着放一张长椅，或为窗外种一棵树。</p></div><button class="soft-button" @click="emit('home')">进屋看看 ↗</button></header>
     <div class="yard-workbench">
-      <div ref="previewHost" class="yard-preview"><TownScene :editable="tab==='yard'" :town="previewTown" :ghost="tab==='yard'?ghost:null" :light="light" @cell="choose" @select="select" />
+      <div ref="previewHost" class="yard-preview"><TownScene :editable="tab==='yard'" :focus="tab==='house'?'house':'yard'" :town="previewTown" :ghost="tab==='yard'?ghost:null" :light="light" @cell="choose" @select="select" />
         <div class="yard-light" role="group" aria-label="预览光线"><button :aria-pressed="light==='day'" @click="light='day'">日间</button><button :aria-pressed="light==='night'" @click="light='night'">夜间</button><span>仅切换预览光线</span></div>
         <div v-if="preview" class="plan-confirm" aria-label="确认院落布局">
           <div><span class="eyebrow">正在试摆 · 尚未保存</span><h3 ref="previewHeading" tabindex="-1">{{ preview.name }}</h3><p>采用后替换当前六件材料的位置，房屋配色保持原样。</p></div>

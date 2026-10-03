@@ -1,0 +1,274 @@
+{
+  "scenarios": 24,
+  "finiteGeometry": "PASS",
+  "materialBatching": "PASS",
+  "envelopes": "PASS",
+  "priorHouseCanopyTriangles": 30464,
+  "priorLibrary3Triangles": 21644,
+  "models": [
+    {
+      "name": "house-cream-clay-open",
+      "triangles": 13448,
+      "sourceMeshes": 390,
+      "materialGroups": 26,
+      "size": [
+        3.488,
+        3.125,
+        3.39
+      ]
+    },
+    {
+      "name": "house-cream-clay-canopy",
+      "triangles": 16436,
+      "sourceMeshes": 461,
+      "materialGroups": 26,
+      "size": [
+        3.488,
+        3.125,
+        3.705
+      ]
+    },
+    {
+      "name": "house-cream-moss-open",
+      "triangles": 13448,
+      "sourceMeshes": 390,
+      "materialGroups": 26,
+      "size": [
+        3.488,
+        3.125,
+        3.39
+      ]
+    },
+    {
+      "name": "house-cream-moss-canopy",
+      "triangles": 16436,
+      "sourceMeshes": 461,
+      "materialGroups": 26,
+      "size": [
+        3.488,
+        3.125,
+        3.705
+      ]
+    },
+    {
+      "name": "house-cream-blue-open",
+      "triangles": 13448,
+      "sourceMeshes": 390,
+      "materialGroups": 26,
+      "size": [
+        3.488,
+        3.125,
+        3.39
+      ]
+    },
+    {
+      "name": "house-cream-blue-canopy",
+      "triangles": 16436,
+      "sourceMeshes": 461,
+      "materialGroups": 26,
+      "size": [
+        3.488,
+        3.125,
+        3.705
+      ]
+    },
+    {
+      "name": "house-sage-clay-open",
+      "triangles": 13448,
+      "sourceMeshes": 390,
+      "materialGroups": 26,
+      "size": [
+        3.488,
+        3.125,
+        3.39
+      ]
+    },
+    {
+      "name": "house-sage-clay-canopy",
+      "triangles": 16436,
+      "sourceMeshes": 461,
+      "materialGroups": 26,
+      "size": [
+        3.488,
+        3.125,
+        3.705
+      ]
+    },
+    {
+      "name": "house-sage-moss-open",
+      "triangles": 13448,
+      "sourceMeshes": 390,
+      "materialGroups": 26,
+      "size": [
+        3.488,
+        3.125,
+        3.39
+      ]
+    },
+    {
+      "name": "house-sage-moss-canopy",
+      "triangles": 16436,
+      "sourceMeshes": 461,
+      "materialGroups": 26,
+      "size": [
+        3.488,
+        3.125,
+        3.705
+      ]
+    },
+    {
+      "name": "house-sage-blue-open",
+      "triangles": 13448,
+      "sourceMeshes": 390,
+      "materialGroups": 26,
+      "size": [
+        3.488,
+        3.125,
+        3.39
+      ]
+    },
+    {
+      "name": "house-sage-blue-canopy",
+      "triangles": 16436,
+      "sourceMeshes": 461,
+      "materialGroups": 26,
+      "size": [
+        3.488,
+        3.125,
+        3.705
+      ]
+    },
+    {
+      "name": "house-rose-clay-open",
+      "triangles": 13448,
+      "sourceMeshes": 390,
+      "materialGroups": 26,
+      "size": [
+        3.488,
+        3.125,
+        3.39
+      ]
+    },
+    {
+      "name": "house-rose-clay-canopy",
+      "triangles": 16436,
+      "sourceMeshes": 461,
+      "materialGroups": 26,
+      "size": [
+        3.488,
+        3.125,
+        3.705
+      ]
+    },
+    {
+      "name": "house-rose-moss-open",
+      "triangles": 13448,
+      "sourceMeshes": 390,
+      "materialGroups": 26,
+      "size": [
+        3.488,
+        3.125,
+        3.39
+      ]
+    },
+    {
+      "name": "house-rose-moss-canopy",
+      "triangles": 16436,
+      "sourceMeshes": 461,
+      "materialGroups": 26,
+      "size": [
+        3.488,
+        3.125,
+        3.705
+      ]
+    },
+    {
+      "name": "house-rose-blue-open",
+      "triangles": 13448,
+      "sourceMeshes": 390,
+      "materialGroups": 26,
+      "size": [
+        3.488,
+        3.125,
+        3.39
+      ]
+    },
+    {
+      "name": "house-rose-blue-canopy",
+      "triangles": 16436,
+      "sourceMeshes": 461,
+      "materialGroups": 26,
+      "size": [
+        3.488,
+        3.125,
+        3.705
+      ]
+    },
+    {
+      "name": "library-0",
+      "triangles": 8424,
+      "sourceMeshes": 280,
+      "materialGroups": 24,
+      "size": [
+        3.487,
+        2.945,
+        3.455
+      ]
+    },
+    {
+      "name": "library-1",
+      "triangles": 7700,
+      "sourceMeshes": 265,
+      "materialGroups": 23,
+      "size": [
+        3.487,
+        2.945,
+        3.455
+      ]
+    },
+    {
+      "name": "library-2",
+      "triangles": 8312,
+      "sourceMeshes": 316,
+      "materialGroups": 26,
+      "size": [
+        3.487,
+        2.945,
+        3.455
+      ]
+    },
+    {
+      "name": "library-3",
+      "triangles": 12084,
+      "sourceMeshes": 405,
+      "materialGroups": 27,
+      "size": [
+        3.78,
+        2.945,
+        3.75
+      ]
+    },
+    {
+      "name": "atelier",
+      "triangles": 7236,
+      "sourceMeshes": 216,
+      "materialGroups": 23,
+      "size": [
+        2.397,
+        2.545,
+        2.64
+      ]
+    },
+    {
+      "name": "woodshop",
+      "triangles": 7660,
+      "sourceMeshes": 212,
+      "materialGroups": 20,
+      "size": [
+        2.177,
+        2.145,
+        2.195
+      ]
+    }
+  ]
+}

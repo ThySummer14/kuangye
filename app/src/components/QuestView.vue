@@ -106,7 +106,7 @@ function effort(t) {
 }
 function tierLabel(t) {
   if (t.chain) return `${CHAINS[t.chain]?.name || "成长线"} · 第 ${t.stage} 阶段`;
-  return t.tier === "chapter" ? `本章 · 第 ${t.chapter + 1} 章` : "赛季任务";
+  return "";
 }
 const activeCards = new Map();
 onMounted(async () => {
@@ -323,7 +323,7 @@ function log(a) {
         <p>{{ t.desc }}</p>
         <button class="text-button guide-link" :aria-label="t.title + '：看看怎么开始'" @click="inspecting = t">看看怎么开始 ↗</button>
         <div class="task-effort">
-          <span>{{ effort(t) }}</span><span v-if="taskContext(t)">约 {{ taskContext(t).minutes }} 分钟 · {{ PLACES[taskContext(t).place] }}</span><span>{{ t.reviewStatus === 'pending-review' ? '试用小事' : tierLabel(t) }}</span>
+          <span>{{ effort(t) }}</span><span v-if="taskContext(t)">约 {{ taskContext(t).minutes }} 分钟 · {{ PLACES[taskContext(t).place] }}</span><span v-if="t.reviewStatus === 'pending-review' || tierLabel(t)">{{ t.reviewStatus === 'pending-review' ? '试用小事' : tierLabel(t) }}</span>
         </div>
         <div class="quest-card-footer">
           <span class="price"

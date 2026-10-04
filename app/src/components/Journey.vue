@@ -10,7 +10,7 @@ const counts = computed(() => acceptState())
 <template>
   <div class="section-h">
     <span class="t">进行中</span>
-    <span class="s">{{ counts.total }} / 3 · 赛季级 ≤2 · 本章 ≤2</span>
+    <span class="s">{{ counts.total }} / 3</span>
     <span class="line" />
   </div>
 

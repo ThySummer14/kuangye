@@ -2,6 +2,7 @@ import { TASKS } from '../data/tasks.js';
 import { TRAILS } from '../data/field-guides.js';
 import { TRAIL_NOTEBOOKS } from '../data/trail-notebooks.js';
 import { selectTasks } from './task-selection.js';
+import { sessionContext } from '../data/task-context.js';
 
 const directions = Object.fromEntries(TRAILS.map(trail => [trail.id, new Set([
   ...trail.tasks,
@@ -12,7 +13,10 @@ const directions = Object.fromEntries(TRAILS.map(trail => [trail.id, new Set([
 // canonical task objects, so acceptance and chain eligibility stay in store.
 export function recommendMapTask(state, { trail = '', minutes = 0, day = '', offset = 0 } = {}, pool = TASKS) {
   if (state.active.length || (trail && !directions[trail])) return { task: null, count: 0 };
-  const candidates = selectTasks(state, { scope: 'all', minutes }, pool).filter(task =>
+  // 短时组合也接受「每次约 N 分钟」的按天／累积任务：今天这一次做得完，攒下的日子也不会清零。
+  const base = selectTasks(state, { scope: 'all', minutes }, pool);
+  const sessions = minutes ? selectTasks(state, { scope: 'all' }, pool).filter(task => !base.includes(task) && sessionContext(task)?.minutes <= minutes) : [];
+  const candidates = [...base, ...sessions].filter(task =>
     ['E', 'D'].includes(task.diff) && (!task.chain || task.stage === 1) &&
     (!trail || directions[trail].has(task.id))
   );

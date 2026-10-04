@@ -153,12 +153,10 @@ export function canAccept(task) {
   if (!chainUnlocked(task))
     return { ok: false, why: "先完成这条成长线的上一阶段" };
   const l = acceptState();
+  // 只有一条上限：手里最多 3 件。旧版「赛季级 ≤2、本章 ≤2」随本章任务板一起退役，
+  // 它会让手里有两个习惯的人接不了第三件、又说不清为什么（第三十六切片）。
   if (l.total >= 3)
     return { ok: false, why: "手里最多放 3 件事，慢慢完成就好" };
-  if (task.tier === "season" && l.season >= 2)
-    return { ok: false, why: "赛季级任务最多同时 2 个" };
-  if (task.tier === "chapter" && l.chapter >= 2)
-    return { ok: false, why: "本章任务最多同时 2 个" };
   return { ok: true };
 }
 export function accept(task) {

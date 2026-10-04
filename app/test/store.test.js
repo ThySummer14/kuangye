@@ -89,15 +89,16 @@ test("旧档里带空档与金牌标记的按天日志，按日期数恢复进�
   assert.deepEqual(store.progressOf(a), { cur: 5, target: 14 });
   assert.equal(a.shields, 1);
 });
-test("three concurrent tasks remains the global limit", () => {
+test("three concurrent tasks remains the only limit, whatever their tier", () => {
   store.resetData();
-  for (const tier of ["season", "chapter", "chapter"]) {
-    const t = TASKS.find((t) => t.tier === tier && store.canAccept(t).ok);
-    assert.ok(t);
-    store.accept(t);
+  for (const id of ["read-s1", "body-walk3", "cook-s1"]) {
+    assert.equal(TASKS.find((t) => t.id === id).tier, "season");
+    assert.deepEqual(store.canAccept(TASKS.find((t) => t.id === id)), { ok: true });
+    store.accept(TASKS.find((t) => t.id === id));
   }
   assert.equal(store.state.active.length, 3);
   assert.ok(TASKS.every((t) => !store.canAccept(t).ok));
+  assert.match(store.canAccept(TASKS.find((t) => t.id === "climb")).why, /最多放 3 件/);
 });
 test("damaged v3 falls back to a legacy save without overwriting the legacy key", async () => {
   const legacy = {

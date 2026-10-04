@@ -21,7 +21,8 @@ import { nativePlatform } from "./services/native.js";
 import { recommendMapTask } from "./game/map-recommendation.js";
 import { accept, canAccept, taskById, progressOf, checkedToday, checkIn, reached } from "./store.js";
 import { DIFF, CATS } from "./data/tasks.js";
-import { taskContext, PLACES } from "./data/task-context.js";
+import { taskContext, sessionContext, PLACES } from "./data/task-context.js";
+import { pickPrepMove, prepSuggestion } from "./game/prep-moves.js";
 import { PLACE_TITLES } from "./data/places.js";
 import { lumenReward } from "./game/home.js";
 import PlaceIcon from "./components/PlaceIcon.vue";
@@ -123,14 +124,27 @@ const levelPct = computed(() => Math.max(0, Math.min(1, levelInfo.value.cur / (l
 const ticketMeta = computed(() => {
   const t = nextAction.value?.task;
   if (!t) return "";
-  const ctx = taskContext(t);
-  return [t.personal ? "自己写下的事" : DIFF[t.diff]?.name, CATS[t.cat]?.name, ctx ? `约 ${ctx.minutes} 分钟 · ${PLACES[ctx.place]}` : ""].filter(Boolean).join(" · ");
+  const ctx = taskContext(t), session = !ctx && sessionContext(t);
+  const span = t.type === "streak" ? `记满 ${t.target} 天` : t.type === "total" ? `累计 ${t.target}${t.unit || "次"}` : "";
+  return [t.personal ? "自己写下的事" : DIFF[t.diff]?.name, CATS[t.cat]?.name,
+    ctx ? `约 ${ctx.minutes} 分钟 · ${PLACES[ctx.place]}` : session ? `每次约 ${session.minutes} 分钟 · ${span}` : ""].filter(Boolean).join(" · ");
 });
 const selectedAction = ref("");
 const startingTrail = ref(''), startingMinutes = ref(0), suggestionTurn = ref(0);
 const recommendation = computed(() => recommendMapTask(state, {trail:startingTrail.value,minutes:startingMinutes.value,day:today(),offset:suggestionTurn.value}));
 const startingLabel = computed(() => [TRAILS.find(t=>t.id===startingTrail.value)?.title || '方向不限',startingMinutes.value?`${startingMinutes.value} 分钟内`:'时间不限'].join(' · '));
-watch([startingTrail,startingMinutes],()=>{suggestionTurn.value=0;});
+const startingDetails = ref(null);
+// 时间是第二个、也是最后一个问题：选完就收起面板，让推荐回到眼前。
+function closeStarting() { if (startingDetails.value) startingDetails.value.open = false; }
+const prepTurn = ref(0);
+const prep = computed(() => recommendation.value.task ? { move: null, count: 0 } : pickPrepMove(state, {trail:startingTrail.value,minutes:startingMinutes.value,day:today(),offset:prepTurn.value}));
+function writePrepMove() {
+  const move = prep.value.move;
+  if (!move) return;
+  questEntry.value = { trail: startingTrail.value, task: '', suggestion: prepSuggestion(move) };
+  tab.value = 'tasks';
+}
+watch([startingTrail,startingMinutes],()=>{suggestionTurn.value=0;prepTurn.value=0;});
 function resetStartingPoint() { startingTrail.value='';startingMinutes.value=0;suggestionTurn.value=0; }
 function openStartingNotebook() {
   questEntry.value={trail:startingTrail.value,task:'',suggestion:null};
@@ -173,7 +187,7 @@ async function takeMapTask() {
     return;
   }
   const result = canAccept(action.task);
-  if (!result.ok) return navigate("tasks");
+  if (!result.ok) { toast(result.why); return navigate("tasks"); }
   accept(action.task);
   toast(`已接下「${action.task.title}」，按自己的节奏来。`);
   questEntry.value={trail:startingTrail.value,task:action.task.id,suggestion:null};
@@ -231,16 +245,16 @@ async function takeMapTask() {
               <span class="eyebrow">{{ nextAction?.kind === 'active' ? '今天继续这一件' : '今天先做这一件' }}</span>
               <span class="ticket-seal" aria-hidden="true">{{ nextAction?.kind === 'active' ? '进行' : '今日' }}</span>
             </div>
-            <details v-if="!state.active.length" class="starting-choices">
+            <details v-if="!state.active.length" ref="startingDetails" class="starting-choices">
               <summary>{{ startingLabel }}<span aria-hidden="true">⌄</span></summary>
               <fieldset><legend>今天想试哪个方向？</legend><div class="starting-directions" role="group" aria-label="出发方向">
                 <button :aria-pressed="!startingTrail" @click="startingTrail=''">都可以</button>
                 <button v-for="t in TRAILS" :key="t.id" :aria-pressed="startingTrail===t.id" @click="startingTrail=t.id"><PlaceIcon :name="t.id" :size="14" />{{ t.title }}</button>
               </div></fieldset>
               <fieldset><legend>这次能留多久？</legend><div class="starting-times" role="group" aria-label="出发时间">
-                <button v-for="m in [15,30,0]" :key="m" :aria-pressed="startingMinutes===m" @click="startingMinutes=m">{{ m?m+' 分钟内':'时间不限' }}</button>
+                <button v-for="m in [15,30,0]" :key="m" :aria-pressed="startingMinutes===m" @click="startingMinutes=m; closeStarting()">{{ m?m+' 分钟内':'时间不限' }}</button>
               </div></fieldset>
-              <p class="starting-explain">短时筛选只看有估时的一次性任务。时间供安排参考，具体做到什么仍看任务说明。</p>
+              <p class="starting-explain">短时会找一次做得完的事，也找每次十来分钟、按天攒的事。时间供安排参考，具体做到什么仍看任务说明。</p>
             </details>
             <template v-if="nextAction">
             <h3 class="map-action-title" aria-live="polite">{{ nextAction.task.title }}</h3>
@@ -270,6 +284,19 @@ async function takeMapTask() {
               {{ nextAction.kind === 'active' ? '打开进行中' : '接下这一步' }} <span aria-hidden="true">→</span>
             </button>
             <button v-if="nextAction.kind==='suggested' && recommendation.count>1" class="text-button map-another" @click="suggestionTurn++">换一件看看</button>
+            </template>
+            <template v-else-if="prep.move">
+              <div class="prep-move">
+                <span class="prep-kicker">{{ prep.move.minutes }} 分钟，先做一步准备</span>
+                <h3 class="map-action-title" aria-live="polite">{{ prep.move.text }}</h3>
+                <p>这一步取自「{{ prep.move.task.title }}」的出发手册。做完它不算完成原任务，也不发光；想留个记录，可以写成自己的一件小事。</p>
+              </div>
+              <div class="ticket-tear" aria-hidden="true" />
+              <button class="primary-button" @click="writePrepMove">把这一步写成我的事 <span aria-hidden="true">→</span></button>
+              <div class="starting-empty-actions">
+                <button v-if="prep.count > 1" class="text-button" @click="prepTurn++">换一步看看</button>
+                <button class="text-button" @click="openStartingNotebook">去岩壁看原任务 ↗</button>
+              </div>
             </template>
             <template v-else>
               <h3>先留一点余地。</h3>

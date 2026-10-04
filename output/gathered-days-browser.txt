@@ -1,0 +1,10 @@
+[
+  {
+    "width": 1280,
+    "status": "PASS"
+  },
+  {
+    "width": 375,
+    "status": "PASS"
+  }
+]

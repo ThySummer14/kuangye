@@ -68,3 +68,20 @@ test('preparation steps quote existing handbooks, skip finished tasks, and never
   assert.equal(s.step,a.move.text);
   assert.ok(!('title' in s) && !('desc' in s));
 });
+import { onwardSuggestion, trailOfTask } from '../src/game/onward.js';
+test('after finishing, one onward suggestion in the same direction, never auto-accepted',()=>{
+  const by=id=>TASKS.find(t=>t.id===id);
+  assert.equal(trailOfTask(by('selfrec')),'make');
+  assert.equal(trailOfTask({id:'personal-x',cat:'mind'}),'think');
+  const chain=onwardSuggestion(empty,by('read-s1'),{next:by('read-s2'),nextOk:true});
+  assert.deepEqual([chain.kind,chain.task.id],['chain','read-s2']);
+  const hand=onwardSuggestion({active:[{qid:'climb'}],done:[]},by('selfrec'));
+  assert.equal(hand.kind,'hand');
+  const doneState={active:[],done:[{qid:'selfrec'}]};
+  const before=JSON.stringify(doneState);
+  const same=onwardSuggestion(doneState,by('selfrec'),{day:'2026-10-04'});
+  assert.equal(same.kind,'same');
+  assert.notEqual(same.task.id,'selfrec');
+  assert.equal(trailOfTask(same.task),'make');
+  assert.equal(JSON.stringify(doneState),before);
+});

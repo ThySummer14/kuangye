@@ -11,6 +11,8 @@ import {
   today,
 } from "../store.js";
 import { recordedDates, bestRun, rhythmStrip } from "../game/rhythm.js";
+import { onwardSuggestion } from "../game/onward.js";
+import { prepSuggestion } from "../game/prep-moves.js";
 import { readingMilestones } from "../game/town.js";
 import { fieldGuide } from "../data/field-guides.js";
 import { taskXp } from "../game/personal-tasks.js";
@@ -18,7 +20,7 @@ import { lumenReward } from "../game/home.js";
 import BuddyFace from "./BuddyFace.vue";
 import ModalFrame from "./ModalFrame.vue";
 const props = defineProps({ active: Object }),
-  emit = defineEmits(["close", "done", "shop", "map", "library"]);
+  emit = defineEmits(["close", "done", "shop", "map", "library", "direction", "write"]);
 const finishButton = ref(null);
 const task = computed(() => taskById[props.active.qid]),
   xp = computed(() => taskXp(task.value)),
@@ -49,7 +51,21 @@ const footprint = computed(() => {
   };
 });
 const next = computed(() => (result.value ? nextChainStage(task.value) : null));
+// 只给一个「下一件」，不自动接取；今天到这里也完全可以。
+const onward = computed(() => result.value ? onwardSuggestion(state, task.value, { day: today(), next: next.value, nextOk: !!next.value && canAccept(next.value).ok }) : null);
+function takeOnward() {
+  const o = onward.value;
+  if (!o?.task || !accept(o.task)) return;
+  emit("done", o.kind === "chain" ? "新的成长线，慢慢来" : `已接下「${o.task.title}」，按自己的节奏来。`);
+  emit("close");
+}
+function writeOnward() {
+  if (!onward.value?.move) return;
+  emit("write", { trail: onward.value.trail, suggestion: prepSuggestion(onward.value.move) });
+  emit("close");
+}
 function finish() {
+  if (result.value && onward.value?.trail) emit("direction", onward.value.trail);
   if (result.value)
     emit("done", task.value.personal ? "自己写下的事，也认真做到了。" : `这件事完成了，收获 ${lumenReward(xp.value)} 光`);
   emit("close");
@@ -57,12 +73,6 @@ function finish() {
 function returnToMap() {
   finish();
   emit("map");
-}
-function nextTask() {
-  if (accept(next.value)) {
-    emit("done", "新的成长线，慢慢来");
-    emit("close");
-  }
 }
 </script>
 <template>
@@ -125,13 +135,16 @@ function nextTask() {
         "
       >
         去集市，把这句话安放到一件家具上 ↗</button
-      ><button
-        v-if="next && canAccept(next).ok"
-        class="text-button"
-        @click="nextTask"
-      >
-        接下成长线的下一步</button
-      ></template
+      ><section v-if="onward && ['chain', 'same', 'prep'].includes(onward.kind)" class="onward" aria-label="下一件可以是">
+        <span class="onward-kicker">{{ onward.kind === 'chain' ? '成长线的下一步' : onward.kind === 'prep' ? '同一个方向，下次可以先做一步准备' : '同一个方向，下次可以是' }}</span>
+        <strong>{{ onward.task?.title || onward.move.text }}</strong>
+        <p v-if="onward.task">{{ fieldGuide(onward.task).steps[0] }}</p>
+        <p v-else>取自「{{ onward.move.task.title }}」的出发手册。</p>
+        <button v-if="onward.task" class="soft-button" @click="takeOnward">接下它</button>
+        <button v-else class="soft-button" @click="writeOnward">把这一步写成我的事</button>
+        <small>不急。今天到这里，也已经很好。</small>
+      </section>
+      <p v-else-if="onward?.kind === 'hand'" class="onward-hand">手里还有「{{ taskById[onward.active.qid]?.title }}」，按自己的节奏接着来。</p></template
     ></ModalFrame
   >
 </template>
@@ -143,6 +156,12 @@ function nextTask() {
 .footprint li.on { background: var(--moss); box-shadow: none; }
 .completion-result .footprint p { font-size: 13px; color: var(--ink-2); margin: 10px 0 0; }
 .footprint small { display: block; margin-top: 2px; font-size: 12px; color: var(--glow-deep); }
+.onward { margin: 18px 0 4px; padding: 14px 16px; border-radius: var(--r-s); background: var(--moss-wash); border: 1px dashed var(--line-2); text-align: left; }
+.onward-kicker { display: block; font-size: 11.5px; font-weight: 700; color: var(--moss); }
+.onward strong { display: block; margin: 6px 0 2px; font-family: var(--serif); font-size: 16px; color: var(--ink); line-height: 1.5; }
+.onward p { margin: 0 0 10px; font-size: 12.5px; line-height: 1.7; color: var(--ink-2); }
+.onward small { display: block; margin-top: 8px; font-size: 11.5px; color: var(--ink-3); }
+.onward-hand { margin: 16px 0 0; text-align: center; font-size: 13px; color: var(--ink-2); }
 .review-prompt { font-size: 13px; line-height: 1.7; color: var(--ink-2); margin: 8px 0 12px; }
 .completion-saved {
   text-align: center;

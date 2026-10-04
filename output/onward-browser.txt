@@ -1,0 +1,12 @@
+[
+  {
+    "width": 1280,
+    "status": "PASS",
+    "chainAccepted": "read-s2"
+  },
+  {
+    "width": 375,
+    "status": "PASS",
+    "chainAccepted": "read-s2"
+  }
+]

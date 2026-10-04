@@ -368,6 +368,8 @@ async function takeMapTask() {
       v-if="completing"
       :active="completing"
       @close="completing = null"
+      @direction="t => { if (!state.active.length) startingTrail = t }"
+      @write="e => { questEntry = { trail: e.trail, task: '', suggestion: e.suggestion }; tab = 'tasks' }"
       @done="toast"
       @shop="tab = 'shop'"
       @map="finishToMap"

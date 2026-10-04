@@ -15,7 +15,7 @@ const currentInquiry = computed(() => state.home.inquiry?.pages.find(page => pag
 const status = task => state.active.some(a => a.qid === task.id) ? 'active'
   : state.done.some(d => d.qid === task.id && !task.repeatable) ? 'done' : 'ready';
 function effort(task) {
-  if (task.type === 'streak') return `连续 ${task.target} 天 · 按天记录`;
+  if (task.type === 'streak') return `记满 ${task.target} 天 · 中间空着不清零`;
   if (task.type === 'total') return `累计 ${task.target} ${task.unit || '次'} · 可以分次做`;
   return '一次完成 · 按自己的节奏';
 }

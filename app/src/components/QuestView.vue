@@ -14,8 +14,9 @@ import {
   progressOf,
   reached,
   logUnits,
-  useShield,
-  canUseShield,
+  recordYesterday,
+  canRecordYesterday,
+  today,
 } from "../store.js";
 import { lumenReward } from "../game/home.js";
 import SituationFieldNotes from "./SituationFieldNotes.vue";
@@ -28,6 +29,7 @@ import TrailNotebook from "./TrailNotebook.vue";
 import PersonalTaskForm from "./PersonalTaskForm.vue";
 import ActionPlan from "./ActionPlan.vue";
 import TaskGuide from "./TaskGuide.vue";
+import RhythmStrip from "./RhythmStrip.vue";
 import PlaceIcon from "./PlaceIcon.vue";
 import { TRAILS, fieldGuide } from "../data/field-guides.js";
 const props = defineProps({ initialTrail: String, focusTask: String, initialSuggestion: Object });
@@ -99,7 +101,7 @@ const list = computed(() => {
 const scopeLabel = computed(() => scope.value === "today" ? "今天可做" : "任务库");
 function effort(t) {
   if (t.type === "once") return "一次完成";
-  if (t.type === "streak") return `连续 ${t.target} 天`;
+  if (t.type === "streak") return `记满 ${t.target} 天`;
   return `累计 ${t.target}${t.unit || "次"}`;
 }
 function tierLabel(t) {
@@ -186,7 +188,8 @@ function log(a) {
           <ActionPlan :active="a" :suggestion="fieldGuide(taskById[a.qid]).steps[0]" />
           <button v-if="taskById[a.qid].personal" class="text-button guide-link" @click="editingTask = taskById[a.qid]; writingSuggestion = null; writing = true">修改这件事 ↗</button>
           <button v-else class="text-button guide-link" @click="inspecting = taskById[a.qid]">打开出发手册 ↗</button>
-          <template v-if="taskById[a.qid].type !== 'once'"
+          <RhythmStrip v-if="taskById[a.qid].type === 'streak'" :active="a" :target="taskById[a.qid].target" :today="today()" />
+          <template v-else-if="taskById[a.qid].type !== 'once'"
             ><div class="task-progress">
               <i
                 :style="{
@@ -200,7 +203,7 @@ function log(a) {
             </div>
             <small
               >{{ progressOf(a).cur }} / {{ progressOf(a).target }}
-              {{ taskById[a.qid].type === "streak" ? "天" : taskById[a.qid].unit }}</small
+              {{ taskById[a.qid].unit }}</small
             ></template
           >
           <div class="task-actions">
@@ -234,9 +237,9 @@ function log(a) {
             >
               我完成了</button
             ><button
-              v-if="canUseShield(a)"
+              v-if="canRecordYesterday(a)"
               class="text-button"
-              @click="useShield(a)"
+              @click="recordYesterday(a) && emit('toast', '昨天的那一笔，补上了。')"
             >
               补记昨天</button
             ><button class="text-button" @click="emit('abandon', a)">

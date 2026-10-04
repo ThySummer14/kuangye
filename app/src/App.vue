@@ -19,7 +19,7 @@ const WoodshopView = scenePage(() => import("./components/WoodshopView.vue"));
 const HomeView = scenePage(() => import("./components/HomeView.vue"));
 import { nativePlatform } from "./services/native.js";
 import { recommendMapTask } from "./game/map-recommendation.js";
-import { accept, canAccept, taskById } from "./store.js";
+import { accept, canAccept, taskById, progressOf, checkedToday, checkIn, reached } from "./store.js";
 import { DIFF, CATS } from "./data/tasks.js";
 import { taskContext, PLACES } from "./data/task-context.js";
 import { PLACE_TITLES } from "./data/places.js";
@@ -153,6 +153,14 @@ const latestDone = computed(() => {
     task: taskById[record.qid] || null,
   };
 });
+// 按天任务在地图上就能记下今天：做完回来点一下，不用再翻进岩壁。
+const mapRhythm = computed(() => {
+  const a = nextAction.value?.kind === "active" && nextAction.value.task.type === "streak" ? nextAction.value.active : null;
+  return a ? { a, ...progressOf(a), today: checkedToday(a), ready: reached(a) } : null;
+});
+function recordFromMap() {
+  if (mapRhythm.value && checkIn(mapRhythm.value.a)) toast(mapRhythm.value.ready ? "攒满了，可以收好这件事了。" : "今天这一格，填好了。");
+}
 async function takeMapTask() {
   const action = nextAction.value;
   if (!action) return;
@@ -250,7 +258,15 @@ async function takeMapTask() {
               <span>{{ ticketMeta }}</span>
               <span v-if="!nextAction.task.personal"><PlaceIcon name="light" :size="12" />{{ lumenReward(DIFF[nextAction.task.diff].xp) }} 光 · ＋{{ DIFF[nextAction.task.diff].xp }} XP</span>
             </div>
-            <button class="primary-button" @click="takeMapTask">
+            <div v-if="mapRhythm" class="map-rhythm" role="img" :aria-label="`已攒 ${mapRhythm.cur} 天，目标 ${mapRhythm.target} 天`">
+              <span><b>{{ mapRhythm.cur }}</b> / {{ mapRhythm.target }} 天</span>
+              <i aria-hidden="true"><em :style="{ width: Math.min(100, mapRhythm.cur / mapRhythm.target * 100) + '%' }" /></i>
+              <small>{{ mapRhythm.today ? '今天记好了' : '空过的日子不清零' }}</small>
+            </div>
+            <button v-if="mapRhythm?.ready" class="primary-button" @click="completing = mapRhythm.a">攒满了，收好这件事 <span aria-hidden="true">→</span></button>
+            <button v-else-if="mapRhythm && !mapRhythm.today" class="primary-button" @click="recordFromMap">今天做到了，记一笔 <span aria-hidden="true">✓</span></button>
+            <button v-if="mapRhythm && (mapRhythm.ready || !mapRhythm.today)" class="text-button map-another" @click="takeMapTask">打开进行中</button>
+            <button v-else class="primary-button" @click="takeMapTask">
               {{ nextAction.kind === 'active' ? '打开进行中' : '接下这一步' }} <span aria-hidden="true">→</span>
             </button>
             <button v-if="nextAction.kind==='suggested' && recommendation.count>1" class="text-button map-another" @click="suggestionTurn++">换一件看看</button>

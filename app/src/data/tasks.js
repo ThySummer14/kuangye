@@ -27,7 +27,7 @@ export const DIFF = {
   S: { name: '传说', xp: 500, color: '#e0b13f' },
 }
 
-export const TYPES = { once: '一次性', streak: '连击', total: '累积' }
+export const TYPES = { once: '一次性', streak: '按天', total: '累积' }
 export const TYPE_ICONS = { once: '✦', streak: '◌', total: '∑' }
 
 // 人生累计卡：按 metric 汇总
@@ -62,24 +62,24 @@ export const TASKS = [
   { id: 'swim-s2', cat: 'body', diff: 'C', type: 'once', tier: 'season', chain: 'swim', stage: 2, title: '连续游完 25 米', desc: '第一段不带停的距离。' },
   { id: 'swim200', cat: 'body', diff: 'B', type: 'once', tier: 'season', chain: 'swim', stage: 3, title: '学会游泳，连续游 200 米', desc: '不怕水的那一刻，就赢了一半。' },
   { id: 'climb', cat: 'body', diff: 'C', type: 'once', tier: 'season', title: '爬一座山，到达山顶', desc: '下山时记得回头看一眼来路。', metric: 'summit', mv: 1 },
-  { id: 'cold30', cat: 'body', diff: 'B', type: 'streak', tier: 'season', target: 30, title: '连续 30 天洗冷水澡', desc: '每天早上和本能对抗一次。' },
-  { id: 'walk10k', cat: 'body', diff: 'A', type: 'streak', tier: 'season', target: 90, title: '连续 90 天每天走 1 万步', desc: '把屏幕时间换成路上的时间。', metric: 'km', mv: 630 },
+  { id: 'cold30', cat: 'body', diff: 'B', type: 'streak', tier: 'season', target: 30, title: '洗满 30 天冷水澡', desc: '每天早上和本能对抗一次。' },
+  { id: 'walk10k', cat: 'body', diff: 'A', type: 'streak', tier: 'season', target: 90, title: '走满 90 个一万步的日子', desc: '把屏幕时间换成路上的时间。', metric: 'km', mv: 630 },
   { id: 'handstand', cat: 'body', diff: 'A', type: 'once', tier: 'season', title: '学会倒立，稳定 10 秒', desc: '换一个角度看世界。' },
   { id: 'fast24', cat: 'body', diff: 'C', type: 'once', tier: 'season', title: '轻断食 24 小时', desc: '观察自己的饥饿、情绪和念头。' },
   { id: 'martial30', cat: 'body', diff: 'B', type: 'streak', tier: 'season', target: 30, title: '练一项格斗/对抗运动 30 天', desc: '拳击、巴柔、散打，随便哪个。' },
-  { id: 'sleep30', cat: 'body', diff: 'A', type: 'streak', tier: 'season', target: 30, title: '连续 30 天 23:30 前睡觉', desc: '熬夜借来的，白天都要还。' },
+  { id: 'sleep30', cat: 'body', diff: 'A', type: 'streak', tier: 'season', target: 30, title: '攒满 30 个 23:30 前入睡的晚上', desc: '熬夜借来的，白天都要还。' },
   { id: 'run10k', cat: 'body', diff: 'A', type: 'once', tier: 'season', chain: 'run', stage: 3, title: '完成一次 10 公里跑', desc: '从 5 公里到 10 公里，中间隔着一个不肯放弃的人。', metric: 'km', mv: 10 },
   { id: 'earlyclass', cat: 'body', diff: 'B', type: 'once', tier: 'season', title: '一学期早八全勤', desc: '学期末自评：一次都没迟到，才算完成。' },
   { id: 'body-walk3', cat: 'body', diff: 'E', type: 'total', tier: 'season', target: 3, unit: '次', title: '完成 3 次 20 分钟散步', desc: '不用赶路，走到身体重新有一点温度。' },
-  { id: 'body-mobility7', cat: 'body', diff: 'E', type: 'streak', tier: 'season', target: 7, title: '连续 7 天做 5 分钟拉伸', desc: '起床后或睡前都可以，找到适合自己的动作。' },
+  { id: 'body-mobility7', cat: 'body', diff: 'E', type: 'streak', tier: 'season', target: 7, title: '做满 7 天，每天拉伸 5 分钟', desc: '起床后或睡前都可以，找到适合自己的动作。' },
 
   // ———— 头脑（赛季级） ————
-  { id: 'read-s1', cat: 'mind', diff: 'E', type: 'streak', tier: 'season', chain: 'read', stage: 1, target: 3, title: '连续 3 天，每天读 10 分钟', desc: '先让书出现在每一天里。' },
-  { id: 'read-s2', cat: 'mind', diff: 'D', type: 'streak', tier: 'season', chain: 'read', stage: 2, target: 14, title: '连续 14 天，每天读 20 分钟', desc: '阅读开始成为习惯。' },
+  { id: 'read-s1', cat: 'mind', diff: 'E', type: 'streak', tier: 'season', chain: 'read', stage: 1, target: 3, title: '读满 3 天，每天读 10 分钟', desc: '先让书出现在每一天里。' },
+  { id: 'read-s2', cat: 'mind', diff: 'D', type: 'streak', tier: 'season', chain: 'read', stage: 2, target: 14, title: '读满 14 天，每天读 20 分钟', desc: '阅读开始成为习惯。' },
   { id: 'read-s3', cat: 'mind', diff: 'C', type: 'once', tier: 'season', chain: 'read', stage: 3, title: '一个月读完一本书', desc: '写 200 字短评收尾。', metric: 'books', mv: 1 },
   { id: 'med-s1', cat: 'mind', diff: 'D', type: 'once', tier: 'season', chain: 'meditate', stage: 1, title: '完成 3 次冥想尝试', desc: '每次 10 分钟，走神了就拉回来。' },
-  { id: 'med30', cat: 'mind', diff: 'C', type: 'streak', tier: 'season', chain: 'meditate', stage: 2, target: 30, title: '连续 30 天冥想 10 分钟', desc: '一天不落。', metric: 'meddays', mv: 30 },
-  { id: 'journal90', cat: 'mind', diff: 'B', type: 'streak', tier: 'season', target: 90, title: '连续 90 天晨间写日记', desc: '写给自己，不用写得好。' },
+  { id: 'med30', cat: 'mind', diff: 'C', type: 'streak', tier: 'season', chain: 'meditate', stage: 2, target: 30, title: '冥想满 30 天，每次 10 分钟', desc: '坐下来就算，中间空了接着数。', metric: 'meddays', mv: 30 },
+  { id: 'journal90', cat: 'mind', diff: 'B', type: 'streak', tier: 'season', target: 90, title: '写满 90 个早晨的日记', desc: '写给自己，不用写得好。' },
   { id: 'nosocial7', cat: 'mind', diff: 'B', type: 'once', tier: 'season', title: '整整一周不用社交网络', desc: '卸载或断网，回来时看看有什么变化。' },
   { id: 'books12', cat: 'mind', diff: 'S', type: 'total', tier: 'season', chain: 'read', stage: 4, target: 12, unit: '本', title: '一年读完 12 本书', desc: '一月一本，每本写 200 字短评。', metric: 'books' },
   { id: 'chess100', cat: 'mind', diff: 'B', type: 'total', tier: 'season', target: 100, unit: '盘', title: '学国际象棋/围棋，下完 100 盘', desc: '认真下，每一盘都复盘。' },
@@ -105,18 +105,18 @@ export const TASKS = [
   { id: 'design1', cat: 'create', diff: 'D', type: 'once', tier: 'season', title: '从无到有设计一样东西', desc: '哪怕很小，从 0 到 1。' },
   { id: 'newword', cat: 'create', diff: 'E', type: 'once', tier: 'season', title: '发明一个新词，使用它 10 次', desc: '让它被至少一个人听懂。' },
   { id: 'shipweb', cat: 'create', diff: 'B', type: 'once', tier: 'season', title: '做一个网站或小游戏并上线', desc: '有公开链接才算。', metric: 'pieces', mv: 1 },
-  { id: 'create-sketch14', cat: 'create', diff: 'C', type: 'streak', tier: 'season', target: 14, title: '连续 14 天完成一张草图', desc: '构图、手稿、分镜或随手画都行，先让手每天动起来。' },
+  { id: 'create-sketch14', cat: 'create', diff: 'C', type: 'streak', tier: 'season', target: 14, title: '画满 14 天，每天一张草图', desc: '构图、手稿、分镜或随手画都行，先让手每天动起来。' },
   { id: 'create-remix', cat: 'create', diff: 'C', type: 'once', tier: 'season', title: '把一个旧作品重新做一版', desc: '可以是文章、照片、代码或手作，写下这次改了什么。' },
 
   // ———— 生活技能（赛季级） ————
-  { id: 'nocook30', cat: 'live', diff: 'B', type: 'streak', tier: 'season', target: 30, title: '连续 30 天不点外卖', desc: '自己做饭，或去食堂。' },
+  { id: 'nocook30', cat: 'live', diff: 'B', type: 'streak', tier: 'season', target: 30, title: '攒满 30 个不点外卖的日子', desc: '自己做饭，或去食堂。' },
   { id: 'skills10', cat: 'live', diff: 'C', type: 'total', tier: 'season', target: 10, unit: '项', title: '学会 10 项生活自理技能', desc: '缝补、换灯泡、修车胎、挂号、报税……' },
   { id: 'budget90', cat: 'live', diff: 'B', type: 'streak', tier: 'season', target: 90, title: '记账 90 天 + 存下自由基金', desc: '钱要看得见，才守得住。' },
   { id: 'solotrip', cat: 'live', diff: 'C', type: 'once', tier: 'season', title: '独自完成一次全流程旅行', desc: '自己做攻略、订票、住宿，一个人走。' },
   { id: 'license', cat: 'live', diff: 'B', type: 'once', tier: 'season', title: '考下驾照', desc: '趁学生时代便宜。' },
   { id: 'movehouse', cat: 'live', diff: 'A', type: 'once', tier: 'season', title: '搬一次家，全程自己搞定', desc: '打包、搬运、复原，一个人。' },
   { id: 'live-repair', cat: 'live', diff: 'E', type: 'once', tier: 'season', title: '完成一次小修复', desc: '补一颗纽扣、换灯泡或处理一个小故障，把东西继续用下去。' },
-  { id: 'live-laundry7', cat: 'live', diff: 'D', type: 'streak', tier: 'season', target: 7, title: '连续 7 天洗好、晾好并收好衣服', desc: '每天处理一点，让明天不用面对一篮子衣服。' },
+  { id: 'live-laundry7', cat: 'live', diff: 'D', type: 'streak', tier: 'season', target: 7, title: '7 天把衣服洗好、晾好并收好', desc: '每天处理一点，让明天不用面对一篮子衣服。' },
   { id: 'live-admin3', cat: 'live', diff: 'C', type: 'total', tier: 'season', target: 3, unit: '件', title: '处理 3 件拖了很久的生活事务', desc: '挂号、报修、缴费或证件办理，完成哪三件由你决定。' },
 
   // ———— 勇气与连接（赛季级） ————
@@ -128,37 +128,37 @@ export const TASKS = [
   { id: 'letter10y', cat: 'courage', diff: 'E', type: 'once', tier: 'season', title: '给 10 年后的自己写一封信', desc: '封好，设定一个打开的日子。' },
   { id: 'volunteer', cat: 'courage', diff: 'D', type: 'once', tier: 'season', title: '参加一次志愿活动', desc: '半天以上。' },
   { id: 'strangerchat', cat: 'courage', diff: 'B', type: 'once', tier: 'season', title: '和陌生人深聊 30 分钟以上', desc: '聊真的东西，不是寒暄。' },
-  { id: 'courage-thanks7', cat: 'courage', diff: 'E', type: 'streak', tier: 'season', target: 7, title: '连续 7 天向一个人明确表达感谢', desc: '可以发消息、当面说或打电话，说清楚谢的是什么。' },
-  { id: 'courage-checkin7', cat: 'courage', diff: 'D', type: 'streak', tier: 'season', target: 7, title: '连续 7 天认真问一位重要的人近况', desc: '不求长聊，先把“最近过得怎么样”问出口。' },
+  { id: 'courage-thanks7', cat: 'courage', diff: 'E', type: 'streak', tier: 'season', target: 7, title: '7 天，每天向一个人明确表达感谢', desc: '可以发消息、当面说或打电话，说清楚谢的是什么。' },
+  { id: 'courage-checkin7', cat: 'courage', diff: 'D', type: 'streak', tier: 'season', target: 7, title: '7 天，每天认真问一位重要的人近况', desc: '不求长聊，先把“最近过得怎么样”问出口。' },
   { id: 'courage-meet3', cat: 'courage', diff: 'D', type: 'total', tier: 'season', target: 3, unit: '次', title: '主动约 3 次见面、通话或共同活动', desc: '对象和方式由你决定，真正发出邀请才算。' },
 
   // ———— 第一章「翻土」 ————
-  { id: 'c0-walk14', cat: 'body', diff: 'D', type: 'streak', tier: 'chapter', chapter: 0, target: 14, title: '连续 14 天每天走 8000 步', desc: '本章热身，先把身体摇醒。' },
+  { id: 'c0-walk14', cat: 'body', diff: 'D', type: 'streak', tier: 'chapter', chapter: 0, target: 14, title: '走满 14 个八千步的日子', desc: '本章热身，先把身体摇醒。' },
   { id: 'c0-run3', cat: 'body', diff: 'D', type: 'once', tier: 'chapter', chapter: 0, title: '完成一次 3 公里跑', desc: '不用快，跑完就行。', metric: 'km', mv: 3 },
-  { id: 'c0-sleep7', cat: 'body', diff: 'D', type: 'streak', tier: 'chapter', chapter: 0, target: 7, title: '连续 7 天 23:30 前睡觉', desc: '第一周，先赢在床上。' },
-  { id: 'c0-med7', cat: 'mind', diff: 'D', type: 'streak', tier: 'chapter', chapter: 0, target: 7, title: '连续 7 天冥想 10 分钟', desc: '给大脑一个静音键。' },
+  { id: 'c0-sleep7', cat: 'body', diff: 'D', type: 'streak', tier: 'chapter', chapter: 0, target: 7, title: '攒满 7 个 23:30 前入睡的晚上', desc: '第一周，先赢在床上。' },
+  { id: 'c0-med7', cat: 'mind', diff: 'D', type: 'streak', tier: 'chapter', chapter: 0, target: 7, title: '冥想满 7 天，每次 10 分钟', desc: '给大脑一个静音键。' },
   { id: 'c0-book1', cat: 'mind', diff: 'D', type: 'once', tier: 'chapter', chapter: 0, title: '读完一整本书，写 200 字短评', desc: '本月这本，由你选。', metric: 'books', mv: 1 },
   { id: 'c0-nosvideo', cat: 'mind', diff: 'E', type: 'once', tier: 'chapter', chapter: 0, title: '24 小时不碰短视频', desc: '试试看，天不会塌。' },
   { id: 'c0-cook3', cat: 'create', diff: 'D', type: 'once', tier: 'chapter', chapter: 0, title: '学会 3 道新菜', desc: '从最想吃的开始。', metric: 'dishes', mv: 3 },
-  { id: 'c0-photo14', cat: 'create', diff: 'D', type: 'streak', tier: 'chapter', chapter: 0, target: 14, title: '每天一张照片，连续 14 天', desc: '开始记录，就已经在创作。' },
+  { id: 'c0-photo14', cat: 'create', diff: 'D', type: 'streak', tier: 'chapter', chapter: 0, target: 14, title: '每天一张照片，拍满 14 天', desc: '开始记录，就已经在创作。' },
   { id: 'c0-skill3', cat: 'live', diff: 'D', type: 'once', tier: 'chapter', chapter: 0, title: '学会 3 项生活技能', desc: '缝扣子、换灯泡、报修，都算。' },
   { id: 'c0-tidy', cat: 'live', diff: 'E', type: 'once', tier: 'chapter', chapter: 0, title: '大扫除：扔掉 30 件东西', desc: '物理空间先清爽起来。' },
   { id: 'c0-call30', cat: 'courage', diff: 'E', type: 'once', tier: 'chapter', chapter: 0, title: '给爸妈打一通 30 分钟以上的电话', desc: '不是有事才打的那种。' },
   { id: 'c0-newfriend', cat: 'courage', diff: 'D', type: 'once', tier: 'chapter', chapter: 0, title: '认识一位新朋友，深聊 20 分钟', desc: '越过寒暄那一层。' },
 
   // ———— 第二章「播种」 ————
-  { id: 'c1-pushup21', cat: 'body', diff: 'C', type: 'streak', tier: 'chapter', chapter: 1, target: 21, title: '连续 21 天每天 30 个俯卧撑', desc: '分三组也行，做完才算。' },
+  { id: 'c1-pushup21', cat: 'body', diff: 'C', type: 'streak', tier: 'chapter', chapter: 1, target: 21, title: '做满 21 天，每天 30 个俯卧撑', desc: '分三组也行，做完才算。' },
   { id: 'c1-ride20', cat: 'body', diff: 'D', type: 'once', tier: 'chapter', chapter: 1, title: '一次骑行 20 公里', desc: '傍晚出发最好。', metric: 'km', mv: 20 },
-  { id: 'c1-journal21', cat: 'mind', diff: 'C', type: 'streak', tier: 'chapter', chapter: 1, target: 21, title: '连续 21 天晨间日记', desc: '三周，把习惯种下去。' },
+  { id: 'c1-journal21', cat: 'mind', diff: 'C', type: 'streak', tier: 'chapter', chapter: 1, target: 21, title: '写满 21 个早晨的日记', desc: '三周，把习惯种下去。' },
   { id: 'c1-demo', cat: 'mind', diff: 'D', type: 'once', tier: 'chapter', chapter: 1, title: '学一样新东西，并向别人演示', desc: '教是最好的学。' },
   { id: 'c1-write1k', cat: 'create', diff: 'D', type: 'once', tier: 'chapter', chapter: 1, title: '写一篇 1000 字文章并发布', desc: '发布给真实世界。', metric: 'pieces', mv: 1 },
   { id: 'c1-handcraft', cat: 'create', diff: 'E', type: 'once', tier: 'chapter', chapter: 1, title: '手工做一件小物', desc: '折纸、木工、陶土，都行。' },
-  { id: 'c1-budget7', cat: 'live', diff: 'E', type: 'streak', tier: 'chapter', chapter: 1, target: 7, title: '连续 7 天记账', desc: '先看清钱去了哪。' },
+  { id: 'c1-budget7', cat: 'live', diff: 'E', type: 'streak', tier: 'chapter', chapter: 1, target: 7, title: '记账满 7 天', desc: '先看清钱去了哪。' },
   { id: 'c1-askhelp', cat: 'courage', diff: 'D', type: 'once', tier: 'chapter', chapter: 1, title: '主动向人求助一次', desc: '示弱也是一种能力。' },
 
   // ———— 第三章「发芽」 ————
-  { id: 'c2-walk30', cat: 'body', diff: 'C', type: 'streak', tier: 'chapter', chapter: 2, target: 30, title: '连续 30 天每天 8000 步', desc: '发芽期，稳住节奏。' },
-  { id: 'c2-read30', cat: 'mind', diff: 'C', type: 'streak', tier: 'chapter', chapter: 2, target: 30, title: '连续 30 天睡前阅读 20 分钟', desc: '用书收尾一天。' },
+  { id: 'c2-walk30', cat: 'body', diff: 'C', type: 'streak', tier: 'chapter', chapter: 2, target: 30, title: '走满 30 个八千步的日子', desc: '发芽期，稳住节奏。' },
+  { id: 'c2-read30', cat: 'mind', diff: 'C', type: 'streak', tier: 'chapter', chapter: 2, target: 30, title: '睡前读满 30 晚，每晚 20 分钟', desc: '用书收尾一天。' },
   { id: 'c2-letter', cat: 'mind', diff: 'E', type: 'once', tier: 'chapter', chapter: 2, title: '给下学期的自己写一封信', desc: '写完封好，别偷看。' },
   { id: 'c2-film', cat: 'create', diff: 'D', type: 'once', tier: 'chapter', chapter: 2, title: '拍一支 1 分钟短片并发布', desc: '手机就够。', metric: 'pieces', mv: 1 },
   { id: 'c2-cook5', cat: 'create', diff: 'C', type: 'once', tier: 'chapter', chapter: 2, title: '菜单扩充到 5 道拿手菜', desc: '可以招待朋友的那种。', metric: 'dishes', mv: 2 },

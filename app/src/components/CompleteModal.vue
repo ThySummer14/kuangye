@@ -8,7 +8,9 @@ import {
   nextChainStage,
   state,
   saveWarning,
+  today,
 } from "../store.js";
+import { recordedDates, bestRun, rhythmStrip } from "../game/rhythm.js";
 import { readingMilestones } from "../game/town.js";
 import { fieldGuide } from "../data/field-guides.js";
 import { taskXp } from "../game/personal-tasks.js";
@@ -32,6 +34,20 @@ async function confirm() {
     finishButton.value?.focus();
   }
 }
+// 按天任务的回望：这些日子散落在多长的时间里；停过又回来，本身值得被看见。
+const footprint = computed(() => {
+  if (task.value.type !== "streak") return null;
+  const dates = recordedDates(props.active.logs);
+  if (!dates.length) return null;
+  const end = today() > dates.at(-1) ? today() : dates.at(-1);
+  const span = Math.round((new Date(end + "T12:00:00") - new Date(dates[0] + "T12:00:00")) / 86400000) + 1;
+  const best = bestRun(props.active.logs);
+  return {
+    days: dates.length, span, best,
+    cells: rhythmStrip(props.active.logs, end, "", Math.min(span, 120)),
+    line: dates.length >= span ? `${dates.length} 天，一天也没有空着。` : `${dates.length} 天，散落在 ${span} 天里。停过，也回来了。`,
+  };
+});
 const next = computed(() => (result.value ? nextChainStage(task.value) : null));
 function finish() {
   if (result.value)
@@ -82,6 +98,10 @@ function nextTask() {
         <template v-else><h2>＋{{ lumenReward(xp) }} <small>光</small></h2><span class="completion-xp">＋{{ xp }} XP</span></template>
         <h3>{{ task.title }}</h3>
         <p>{{ review || "今天，又为自己完成了一件事。" }}</p>
+        <div v-if="footprint" class="footprint" role="img" :aria-label="footprint.line + (footprint.best >= 2 ? `最长一口气 ${footprint.best} 天。` : '')">
+          <ol aria-hidden="true"><li v-for="c in footprint.cells" :key="c.d" :class="{ on: c.on }" /></ol>
+          <p>{{ footprint.line }}<small v-if="footprint.best >= 2">最长一口气 {{ footprint.best }} 天</small></p>
+        </div>
         <p v-if="glimmer" class="glimmer-gift">
           这七天的微光，又凝成了 {{ glimmer }} 点光。
         </p>
@@ -117,6 +137,12 @@ function nextTask() {
 </template>
 <style scoped>
 .completion-result h2.personal-completion-heading { font-size: 26px; line-height: 1.5; color: var(--primary); }
+.footprint { margin: 18px auto 12px; max-width: 340px; }
+.footprint ol { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; }
+.footprint li { width: 9px; height: 9px; border-radius: 3px; background: var(--paper-2); box-shadow: inset 0 0 0 1px var(--line); }
+.footprint li.on { background: var(--moss); box-shadow: none; }
+.completion-result .footprint p { font-size: 13px; color: var(--ink-2); margin: 10px 0 0; }
+.footprint small { display: block; margin-top: 2px; font-size: 12px; color: var(--glow-deep); }
 .review-prompt { font-size: 13px; line-height: 1.7; color: var(--ink-2); margin: 8px 0 12px; }
 .completion-saved {
   text-align: center;

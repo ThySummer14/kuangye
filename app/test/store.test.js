@@ -49,6 +49,46 @@ test("streak check-in is unique and cannot complete early; abandoning never chan
   assert.equal(store.state.home.lumens, 0);
   assert.equal(store.state.abandoned.length, 1);
 });
+test("按天任务空档后不清零，完成仍需记满且只结算一次", () => {
+  store.resetData();
+  const t = TASKS.find((t) => t.id === "read-s1");
+  const day = (d) => (store.state.settings.devDate = d);
+  day("2026-09-01");
+  assert.equal(store.accept(t), true);
+  const a = store.activeOf(t.id);
+  store.checkIn(a);
+  day("2026-09-05");
+  store.checkIn(a);
+  assert.deepEqual(store.progressOf(a), { cur: 2, target: 3 });
+  assert.equal(store.complete(a), false);
+  day("2026-09-20");
+  assert.equal(store.progressOf(a).cur, 2);
+  assert.equal(store.canRecordYesterday(a), true);
+  assert.equal(store.recordYesterday(a), true);
+  assert.equal(store.recordYesterday(a), false);
+  assert.equal(store.progressOf(a).cur, 3);
+  assert.equal(a.shields, 2);
+  store.checkIn(a);
+  assert.equal(store.complete(a, "断断续续，也读完了三天"), true);
+  const done = store.state.done.at(-1);
+  assert.equal(done.streak, 2);
+  assert.equal(done.logs.length, 4);
+  assert.equal(store.state.home.lumens, 5);
+  assert.equal(store.state.home.glimmerDays.length, 4);
+  day("");
+});
+test("旧档里带空档与金牌标记的按天日志，按日期数恢复进度", () => {
+  store.resetData();
+  store.importData(JSON.stringify({ app: "kuangye", version: 3, state: {
+    active: [{ qid: "read-s2", start: "2026-09-01", shields: 1, logs: [
+      { d: "2026-09-01" }, { d: "2026-09-02" }, { d: "2026-09-03", shield: true }, { d: "2026-09-10" }, { d: "2026-09-10" }, { d: "2026-09-15" },
+    ] }],
+    done: [{ qid: "read-s1", xp: 10, at: "2026-08-31", review: "", logs: [] }], abandoned: [],
+  } }));
+  const a = store.activeOf("read-s2");
+  assert.deepEqual(store.progressOf(a), { cur: 5, target: 14 });
+  assert.equal(a.shields, 1);
+});
 test("three concurrent tasks remains the global limit", () => {
   store.resetData();
   for (const tier of ["season", "chapter", "chapter"]) {

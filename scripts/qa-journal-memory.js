@@ -41,7 +41,7 @@ async (page) => {
     await page.getByRole('button',{name:'完成的事 · 4',exact:true}).click();
     await page.getByRole('button',{name:'看看下一步怎么开始 ↗'}).click();
     await page.getByRole('dialog').waitFor();
-    if (!(await page.getByRole('dialog').innerText()).includes('连续 14 天，每天读 20 分钟')) throw Error('未衔接阅读下一阶段');
+    if (!(await page.getByRole('dialog').innerText()).includes('读满 14 天，每天读 20 分钟')) throw Error('未衔接阅读下一阶段');
     await page.getByRole('button',{name:'接下这件事',exact:true}).click();
     await page.waitForFunction(() => document.activeElement?.textContent.includes('回任务岩壁'));
     await page.getByRole('link',{name:'回任务岩壁，继续手里的事 ↗'}).click();

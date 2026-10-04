@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { CATS, DIFF, TYPES, TYPE_ICONS } from '../data/tasks'
-import { progressOf, reached, checkedToday, checkIn, logUnits, canUseShield, useShield, taskById, now } from '../store'
+import { progressOf, reached, checkedToday, checkIn, logUnits, canRecordYesterday, recordYesterday, taskById, now } from '../store'
 
 const props = defineProps({ active: Object })
 const emit = defineEmits(['complete', 'abandon'])
@@ -14,7 +14,7 @@ const todayChecked = computed(() => checkedToday(props.active))
 const addV = ref(1)
 const inputError = ref('')
 const ratio = computed(() => Math.min(1, p.value.cur / p.value.target))
-const shieldAvailable = computed(() => canUseShield(props.active))
+const backfillAvailable = computed(() => canRecordYesterday(props.active))
 
 // 最近 14 天打卡格
 const dots = computed(() => {
@@ -38,7 +38,7 @@ function record() {
   }
 }
 function saveYesterday() {
-  if (useShield(props.active)) inputError.value = ''
+  if (recordYesterday(props.active)) inputError.value = ''
 }
 </script>
 
@@ -71,8 +71,8 @@ function saveYesterday() {
       <div class="bar"><i :style="{ '--p': ratio }" /></div>
       <div class="dots"><i v-for="(on, i) in dots" :key="i" :class="{ on }" /></div>
       <div class="shield-note">
-        <span>免死金牌 ×{{ props.active.shields }}</span>
-        <button v-if="shieldAvailable" class="text-action" @click="saveYesterday">补记昨天</button>
+        <span>中间空着也不清零，记过的都还在</span>
+        <button v-if="backfillAvailable" class="text-action" @click="saveYesterday">补记昨天</button>
       </div>
       <div class="qc-actions">
         <button v-if="todayChecked" class="btn" disabled>今日已打卡 ✓</button>

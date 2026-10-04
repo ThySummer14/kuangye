@@ -7,6 +7,7 @@ import { normalizeActionPlan } from "./game/action-plan.js";
 import { QA } from "./game/qa.js";
 import { expandRoom, addHomeMoment, normalizeDecor } from "./game/room.js";
 import { parseImport } from "./game/save.js";
+import { dayCount, bestRun, canBackfill } from "./game/rhythm.js";
 // Reactive API facade. Quest actions stay compatible; home rules and save migration are pure modules.
 import { reactive, watch, computed } from "vue";
 import { TASKS, DIFF, CATS } from "./data/tasks.js";
@@ -34,8 +35,8 @@ export function buddyMoment(mood, ms = 1500, text = "") {
 const emptyState = () => ({
   home: emptyHome(),
   customTasks: [],
-  active: [], // { qid, start, logs:[{d, v?, note?, shield?}], shields }
-  done: [], // { qid, xp, at, review, units:[{metric, v}], streak? }
+  active: [], // { qid, start, logs:[{d, v?, note?, shield?}], shields（旧版免死金牌，已不使用，保留兼容） }
+  done: [], // { qid, xp, at, review, units:[{metric, v}], streak?（最长一口气） }
   abandoned: [], // { qid, reason, at }
   settings: { devDate: "" },
 });
@@ -179,7 +180,8 @@ export function saveActionPlan(a, value) {
 export function progressOf(a) {
   const t = taskById[a.qid];
   if (!t) return { cur: 0, target: 1 };
-  if (t.type === "streak") return { cur: streakRun(a), target: t.target };
+  // 按天任务：记录过的日期数，只增不减（节奏规则见 game/rhythm.js）。
+  if (t.type === "streak") return { cur: dayCount(a.logs), target: t.target };
   if (t.type === "total")
     return {
       cur: a.logs.reduce((s, l) => s + Math.max(0, Number(l.v) || 0), 0),
@@ -195,33 +197,15 @@ export function checkedToday(a) {
   const t = today();
   return a.logs.some((l) => l.d === t);
 }
-function streakRun(a) {
-  const dates = [...new Set(a.logs.map((l) => l.d).filter(Boolean))].sort();
-  if (!dates.length) return 0;
-  const end = dates.includes(today()) ? today() : yesterday();
-  let run = 0;
-  const cursor = new Date(end + "T12:00:00");
-  const set = new Set(dates);
-  while (set.has(dateStr(cursor))) {
-    run += 1;
-    cursor.setDate(cursor.getDate() - 1);
-  }
-  return run;
+// 诚实补记：昨天做了却忘了记，可以补一笔，不消耗任何东西。
+export function canRecordYesterday(a) {
+  return taskById[a.qid]?.type === "streak" && canBackfill(a, today());
 }
-export function canUseShield(a) {
-  return (
-    taskById[a.qid]?.type === "streak" &&
-    a.start <= yesterday() &&
-    a.shields > 0 &&
-    !a.logs.some((l) => l.d === yesterday())
-  );
-}
-export function useShield(a) {
-  if (!canUseShield(a)) return false;
-  a.logs.push({ d: yesterday(), shield: true });
+export function recordYesterday(a) {
+  if (!canRecordYesterday(a)) return false;
+  a.logs.push({ d: yesterday() });
   recordGlimmer(state.home, yesterday());
-  a.shields -= 1;
-  buddyMoment("excited", 1000, "金牌替你守住一天");
+  buddyMoment("happy", 1000, "昨天的那一笔，补上了。");
   return true;
 }
 export function checkIn(a) {
@@ -261,7 +245,7 @@ export function complete(a, review = "") {
     review,
     units,
     logs: a.logs.map((l) => ({ ...l })),
-    ...(t.type === "streak" ? { streak: p.cur } : {}),
+    ...(t.type === "streak" ? { streak: bestRun(a.logs) } : {}),
   });
   state.active = state.active.filter((x) => x !== a);
   rewardCompletion(state.home, taskXp(t));
@@ -345,24 +329,10 @@ export const lifeMetrics = computed(() => {
   }
   return m;
 });
-function longestStreak(logs) {
-  const dates = [...new Set(logs.map((l) => l.d).filter(Boolean))].sort();
-  let best = 0;
-  let run = 0;
-  let prev = null;
-  for (const s of dates) {
-    const dt = new Date(s + "T12:00:00").getTime();
-    run = prev && dt - prev === 86400000 ? run + 1 : 1;
-    prev = dt;
-    if (run > best) best = run;
-  }
-  return best;
-}
-
 export const maxStreakDays = computed(() =>
   Math.max(
-    ...state.done.map((d) => d.streak || longestStreak(d.logs || [])),
-    ...state.active.map((a) => longestStreak(a.logs)),
+    ...state.done.map((d) => d.streak || bestRun(d.logs)),
+    ...state.active.map((a) => bestRun(a.logs)),
     0,
   ),
 );

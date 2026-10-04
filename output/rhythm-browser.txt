@@ -1,0 +1,20 @@
+[
+  {
+    "width": 1280,
+    "status": "PASS",
+    "qid": "read-s2",
+    "days": 14,
+    "best": 3,
+    "lumens": 30,
+    "glimmerDays": 18
+  },
+  {
+    "width": 375,
+    "status": "PASS",
+    "qid": "read-s2",
+    "days": 14,
+    "best": 3,
+    "lumens": 30,
+    "glimmerDays": 18
+  }
+]

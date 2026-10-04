@@ -35,3 +35,23 @@ test('按月分组，月份倒序、月内正序', () => {
   assert.deepEqual(months[1].days.map(d => d.date), ['2026-09-12', '2026-09-13', '2026-09-20']);
   assert.deepEqual(gatheredMonths(gatheredDays({ home: {}, active: [], done: [] }, {})), []);
 });
+
+test('暂放快照保留日子细节，接起和多次暂放不重计累计数量', () => {
+  const logs = [{ d: '2026-09-13', v: 1 }, { d: '2026-09-13', v: 2 }];
+  const snapshot = { qid: 'body-walk3', logs };
+  const s = { home: {}, active: [], done: [], abandoned: [snapshot, { ...snapshot, logs: logs.slice(0, 1) }] };
+  const check = expected => {
+    const before = JSON.stringify(s), days = gatheredDays(s, taskById);
+    assert.equal(days.length, 1);
+    assert.equal(days[0].entries.length, 1);
+    assert.equal(days[0].entries[0].v, expected);
+    assert.equal(JSON.stringify(s), before);
+  };
+  check(3);
+  s.active.push({ qid: snapshot.qid, logs: [...logs, { d: '2026-09-13', v: 1 }] });
+  check(4);
+  s.done.push({ ...s.active.pop(), at: '2026-09-13', review: '走回来了' });
+  const completed = gatheredDays(s, taskById)[0];
+  assert.equal(completed.entries.find(e => e.kind === 'units').v, 4);
+  assert.equal(completed.done, true);
+});

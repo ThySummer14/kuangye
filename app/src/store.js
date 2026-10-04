@@ -37,7 +37,7 @@ const emptyState = () => ({
   customTasks: [],
   active: [], // { qid, start, logs:[{d, v?, note?, shield?}], shields（旧版免死金牌，已不使用，保留兼容） }
   done: [], // { qid, xp, at, review, units:[{metric, v}], streak?（最长一口气） }
-  abandoned: [], // { qid, reason, at }
+  abandoned: [], // { qid, reason, at, logs?（放下时的记录快照，再接起时复制到进行中） }
   settings: { devDate: "" },
 });
 
@@ -159,9 +159,17 @@ export function canAccept(task) {
     return { ok: false, why: "手里最多放 3 件事，慢慢完成就好" };
   return { ok: true };
 }
+// 导入记录的排列可能不是时间顺序；同日按最后写入的暂放记录恢复。
+export function restRecordOf(qid) {
+  return [...state.abandoned].reverse().filter(r => r.qid === qid)
+    .sort((a, b) => b.at.localeCompare(a.at))[0] || null;
+}
 export function accept(task) {
   if (!canAccept(task).ok) return false;
-  state.active.push({ qid: task.id, start: today(), logs: [], shields: 2 });
+  // 复制最近一次暂放的快照，手记保留原记录；不累加多份快照。
+  const kept = restRecordOf(task.id);
+  const logs = (kept?.logs || []).map(l => ({ ...l }));
+  state.active.push({ qid: task.id, start: today(), logs, shields: 2 });
   buddyMoment("excited", 1300, "新任务，冲！");
   return true;
 }
@@ -254,7 +262,7 @@ export function complete(a, review = "") {
 }
 export function abandon(a, reason = "") {
   if (!a || !state.active.includes(a) || !taskById[a.qid]) return false;
-  state.abandoned.push({ qid: a.qid, reason, at: today() });
+  state.abandoned.push({ qid: a.qid, reason, at: today(), ...(a.logs.length ? { logs: a.logs.map((l) => ({ ...l })) } : {}) });
   state.active = state.active.filter((x) => x !== a);
   buddyMoment("sad", 2400, "休息一下也好，我陪着你。");
   return true;

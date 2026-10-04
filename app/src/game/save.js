@@ -33,6 +33,15 @@ export function normalizeState(raw) {
   }
   const cleanNumber = (v, fallback = 0) =>
     Number.isFinite(Number(v)) ? Number(v) : fallback;
+  // 进行中、已完成、暂时放下共用一份日志清洗；已完成与放下的日志也保留数量（第三十九切片前完成记录会丢掉数量）。
+  const cleanLogs = (logs) => Array.isArray(logs)
+    ? logs.filter((l) => l && typeof l.d === "string").map((l) => ({
+        d: l.d,
+        ...(l.v !== undefined ? { v: Math.max(0, cleanNumber(l.v)) } : {}),
+        ...(l.note ? { note: String(l.note).slice(0, 160) } : {}),
+        ...(l.shield ? { shield: true } : {}),
+      }))
+    : [];
   return {
     customTasks,
     active: source.active
@@ -41,18 +50,7 @@ export function normalizeState(raw) {
         qid: a.qid,
         ...(normalizeActionPlan(a.plan) ? { plan: normalizeActionPlan(a.plan) } : {}),
         start: typeof a.start === "string" ? a.start : dateStr(new Date()),
-        logs: Array.isArray(a.logs)
-          ? a.logs
-              .filter((l) => l && typeof l.d === "string")
-              .map((l) => ({
-                d: l.d,
-                ...(l.v !== undefined
-                  ? { v: Math.max(0, cleanNumber(l.v)) }
-                  : {}),
-                ...(l.note ? { note: String(l.note).slice(0, 160) } : {}),
-                ...(l.shield ? { shield: true } : {}),
-              }))
-          : [],
+        logs: cleanLogs(a.logs),
         shields: Math.max(0, Math.floor(cleanNumber(a.shields, 2))),
       })),
     done: Array.isArray(source.done)
@@ -71,14 +69,7 @@ export function normalizeState(raw) {
                     v: Math.max(0, cleanNumber(u.v)),
                   }))
               : [],
-            logs: Array.isArray(d.logs)
-              ? d.logs
-                  .filter((l) => l && typeof l.d === "string")
-                  .map((l) => ({
-                    d: l.d,
-                    ...(l.shield ? { shield: true } : {}),
-                  }))
-              : [],
+            logs: cleanLogs(d.logs),
             ...(d.streak !== undefined
               ? { streak: Math.max(0, Math.floor(cleanNumber(d.streak))) }
               : {}),
@@ -87,11 +78,15 @@ export function normalizeState(raw) {
     abandoned: Array.isArray(source.abandoned)
       ? source.abandoned
           .filter((a) => a && typeof a.qid === "string" && taskIds.has(a.qid))
-          .map((a) => ({
-            qid: a.qid,
-            reason: typeof a.reason === "string" ? a.reason.slice(0, 160) : "",
-            at: typeof a.at === "string" ? a.at : dateStr(new Date()),
-          }))
+          .map((a) => {
+            const logs = cleanLogs(a.logs);
+            return {
+              qid: a.qid,
+              reason: typeof a.reason === "string" ? a.reason.slice(0, 160) : "",
+              at: typeof a.at === "string" ? a.at : dateStr(new Date()),
+              ...(logs.length ? { logs } : {}),
+            };
+          })
       : [],
     home: normalizeHome(
       source.home,

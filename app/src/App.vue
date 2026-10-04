@@ -68,6 +68,10 @@ function returnFromLibrary(qid = '') {
   questEntry.value = { trail: 'think', task: typeof qid === 'string' && taskById[qid] ? qid : '', suggestion: null };
   tab.value = 'tasks';
 }
+function resumeFromJournal(qid) {
+  questEntry.value = { trail: '', task: qid, suggestion: null };
+  tab.value = 'tasks';
+}
 function writeInquiryStep(page) {
   questEntry.value = { trail: 'think', task: '', suggestion: {
     cat: 'mind', label: '问号夹页', note: page.question, step: page.next,
@@ -345,6 +349,7 @@ async function takeMapTask() {
       />
       <JournalView :focus-memory="memoryTarget" @back-furniture="backToFurniture" @library="openLibrary('reading')"
         v-else-if="tab === 'panel'"
+        @resume="resumeFromJournal"
         @toast="toast"
         @chains="tab = 'chains'"
       />

@@ -1,12 +1,12 @@
 <script setup>
 import { computed, ref, shallowRef, watch, nextTick } from 'vue';
-import { state, taskById, canAccept, accept, nextChainStage } from '../store.js';
+import { state, taskById, canAccept, accept, activeOf, restRecordOf, progressOf, nextChainStage } from '../store.js';
 import { CATS, TASKS } from '../data/tasks.js';
 import { fieldGuide } from '../data/field-guides.js';
 import { journalRecords, journalMonths, linkedMemoryRecord } from '../game/journal.js';
 import TaskGuide from './TaskGuide.vue';
 const props=defineProps({focusMemory:Object});
-const emit = defineEmits(['toast','back-furniture']);
+const emit = defineEmits(['toast','back-furniture','resume']);
 const linkedElement=ref(null);
 const linkedRecord=computed(()=>linkedMemoryRecord(state.done,props.focusMemory));
 const filter = ref('done'), cat = ref('all'), query = ref(''), onlyNotes = ref(false), limit = ref(12);
@@ -29,6 +29,26 @@ const nextTask = computed(() => {
 });
 watch([filter, cat, query, onlyNotes], () => { limit.value = 12; });
 function clearFilters() { cat.value = 'all'; query.value = ''; onlyNotes.value = false; }
+function keptLine({ task, record }) {
+  const p = progressOf(record);
+  return task?.type === 'total' ? `当时记下的 ${p.cur}${task.unit || ''}，仍在这页里。` : `当时攒下的 ${p.cur} 天，仍在「攒下的日子」里。`;
+}
+function restStatus({ task, record }) {
+  if (activeOf(record.qid)) return '已经重新接起，正在任务岩壁上继续。';
+  if (state.done.some(d => d.qid === record.qid && !task?.repeatable)) return '后来，你已经完成了这件事。';
+  if (task?.personal) return '自己写下的内容已收进手记。想继续时，可以到岩壁重新写一件。';
+  if (!task) return '这段经历仍在，当前任务库暂时没有这件事。';
+  if (!canAccept(task).ok) return canAccept(task).why;
+  if (task.type === 'once') return '想做时，随时可以重新接起。';
+  if (!record.logs?.length) return '这份旧记录只保存了放下的理由；再接起时从零开始。';
+  const p = progressOf(record);
+  return task.type === 'streak' ? `再接起时，从 ${p.cur} / ${p.target} 天继续。` : `再接起时，从 ${p.cur} / ${p.target}${task.unit || ''} 继续累计。`;
+}
+function resume(task) {
+  if (!activeOf(task.id) && !accept(task)) { emit('toast', canAccept(task).why); return; }
+  emit('toast', `「${task.title}」，接着走。`);
+  emit('resume', task.id);
+}
 function monthLabel(month) { const match = /^(\d{4})-(\d{2})$/.exec(month); return match ? `${match[1]} 年 ${Number(match[2])} 月` : month; }
 async function take(task) {
   if (!accept(task)) { emit('toast', canAccept(task).why); return; }
@@ -109,6 +129,14 @@ function linkElement(el,record) { if(record===linkedRecord.value)linkedElement.v
         <p v-if="entry.record.review || entry.record.reason" class="memory-words">{{ entry.record.review || entry.record.reason }}</p>
         <p v-else class="memory-no-note">{{ filter === 'done' ? '那天没有留下文字，但这件事已经做到了。' : '这次没有留下理由。把手里的事放一放，也是一种选择。' }}</p>
         <p v-if="entry.task?.personal" class="personal-condition">当时约定：{{ entry.task.desc }}</p>
+        <div v-if="filter === 'rest'" class="memory-rest">
+          <p v-if="entry.record.logs?.length" class="memory-kept">{{ keptLine(entry) }}</p>
+          <template v-if="entry.record === restRecordOf(entry.record.qid)">
+            <p class="memory-rest-status">{{ restStatus(entry) }}</p>
+            <button v-if="entry.task && canAccept(entry.task).ok" class="soft-button" @click="resume(entry.task)">接起这件事 ↗</button>
+            <button v-else-if="entry.task && activeOf(entry.task.id)" class="text-button" @click="emit('resume', entry.task.id)">去岩壁继续 ↗</button>
+          </template>
+        </div>
         <small v-if="filter === 'done' && !entry.task?.personal" class="memory-earned">当时获得 ＋{{ entry.record.xp }} XP</small>
         <button v-if="entry.record===linkedRecord" class="soft-button" @click="emit('back-furniture')">回到这件家具 ↗</button>
       </article>
@@ -153,6 +181,10 @@ button.memory-link { padding: 0; text-align: left; }
 .memory-date { display: flex; flex-wrap: wrap; gap: 12px; font-size: 11px; color: var(--ink-2); }
 .memory-words { font: 400 18px/1.85 var(--serif); white-space: pre-wrap; overflow-wrap: anywhere; margin: 10px 0; }
 .memory-no-note { font-size: 13px; color: var(--ink-2); line-height: 1.8; }
+.memory-rest { margin-top: 12px; padding: 14px 16px; background: var(--moss-wash); border-radius: var(--r-s); }
+.memory-kept { margin: 0; font-size: 13px; line-height: 1.8; color: var(--moss); }
+.memory-rest-status { margin: 4px 0 0; font-size: 12.5px; line-height: 1.8; color: var(--ink-2); }
+.memory-rest button { margin-top: 10px; }
 .personal-condition { font-size: 12px; color: var(--ink-2); line-height: 1.8; overflow-wrap: anywhere; }
 .memory-earned { color: var(--ink-2); font-size: 11px; }
 .memory-empty { padding: 24px 0 35px; }

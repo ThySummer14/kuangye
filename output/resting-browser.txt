@@ -1,0 +1,129 @@
+### Result
+{"mode":"local QA, disposable fixture","results":[{"width":1280,"status":"PASS","daysRestored":7,"daysAfterCheckIn":8,"unitsRestored":3,"historyPreserved":true,"focused":true,"extraRewards":false},{"width":375,"status":"PASS","daysRestored":7,"daysAfterCheckIn":8,"unitsRestored":3,"historyPreserved":true,"focused":true,"extraRewards":false}],"errors":[]}
+### Ran Playwright code
+```js
+await (async (page) => {
+  const base = 'http://127.0.0.1:5190/?qa', results = [], errors = [];
+  page.on('pageerror', e => errors.push(e.message));
+  const check = (ok, message) => { if (!ok) throw Error(message); };
+  const run = (body, arg) => page.evaluate(async ([body, arg]) => {
+    const url = performance.getEntriesByType('resource').map(e => e.name).filter(n => new URL(n).pathname === '/src/store.js').at(-1);
+    return new Function('st', 'arg', body)(await import(url), arg);
+  }, [body, arg]);
+  const frame = () => page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  const capture = async (locator, name, width) => {
+    if (name === 'map' || name.endsWith('journal')) await page.locator('.toast').waitFor({ state: 'hidden' });
+    await frame();
+    check(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${name}/${width}: horizontal overflow`);
+    const path = `output/playwright/resting-${name}-${width}.png`;
+    if (name === 'map') {
+      await page.evaluate(() => scrollTo(0, 0));
+      await page.screenshot({ path, fullPage: true });
+    } else await locator.screenshot({ path });
+  };
+  const back = async () => {
+    await page.getByRole('button', { name: '← 回到地图', exact: true }).click();
+    await page.locator('.world-canvas[data-ready=true]').waitFor();
+  };
+  const journal = async () => {
+    await back();
+    await page.locator('[data-place=journal]').click();
+    await page.getByRole('button', { name: /^暂时放下 ·/ }).click();
+  };
+  for (const width of [1280, 375]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto(base + '#map');
+    await page.locator('.world-canvas[data-ready=true]').waitFor();
+    await run(`st.resetData(); const at=d=>st.state.settings.devDate=d;
+      at('2026-09-12'); st.accept(st.taskById['read-s1']);
+      for(const d of ['2026-09-12','2026-09-13','2026-09-14']) {at(d);st.checkIn(st.activeOf('read-s1'));}
+      st.complete(st.activeOf('read-s1'),'十分钟，读得下去。');
+      at('2026-09-15');st.accept(st.taskById['read-s2']);
+      for(const d of ['2026-09-15','2026-09-17','2026-09-18','2026-09-19','2026-09-22','2026-09-23','2026-09-27']) {at(d);st.checkIn(st.activeOf('read-s2'));}
+      at('2026-10-04');`);
+    const economy = await run('return JSON.stringify([st.state.home.lumens,st.totalXp.value,st.state.home.glimmerDays,st.state.done]);');
+    await page.locator('[data-place=tasks]').click();
+    const card = page.locator('[data-active-task="read-s2"]');
+    await card.getByRole('button', { name: '先放一放', exact: true }).click();
+    let dialog = page.getByRole('dialog', { name: '暂时放下任务' });
+    check((await dialog.innerText()).includes('这 7 天仍在「攒下的日子」里'), 'missing acknowledgement of gathered days');
+    check((await dialog.innerText()).includes('从 7 / 14 天继续'), 'missing resumption rule');
+    await page.keyboard.press('Escape');
+    check(await run('return st.state.active.length===1 && !st.state.abandoned.length;'), 'cancel changed the save');
+    await card.getByRole('button', { name: '先放一放', exact: true }).click();
+    dialog = page.getByRole('dialog', { name: '暂时放下任务' });
+    await dialog.getByRole('textbox').fill('考试周先照顾手里的事。读过的七天，留着以后继续。');
+    await capture(dialog, 'days-dialog', width);
+    await dialog.getByRole('button', { name: '暂时放下', exact: true }).click();
+    await journal();
+    const entry = page.locator('[data-memory-qid="read-s2"]');
+    check((await entry.innerText()).includes('从 7 / 14 天继续'), 'journal lost the resumption rule');
+    await capture(entry, 'days-journal', width);
+    await page.locator('.gathered').getByRole('button', { name: /9月15日/ }).click();
+    check((await page.locator('.day-detail').innerText()).includes('攒下一天'), 'resting days lost their details');
+    await capture(page.locator('.gathered'), 'days-gathered', width);
+    await page.reload();
+    await page.getByRole('button', { name: /^暂时放下 ·/ }).click();
+    await page.locator('[data-memory-qid="read-s2"]').getByRole('button', { name: '接起这件事 ↗' }).click();
+    await card.waitFor();
+    check(await card.evaluate(el => document.activeElement === el), 'resumed task is not focused');
+    check(await run('return st.progressOf(st.activeOf("read-s2")).cur===7 && st.state.abandoned[0].logs.length===7;'), 'resumption lost progress or history');
+    check(await run('return JSON.stringify([st.state.home.lumens,st.totalXp.value,st.state.home.glimmerDays,st.state.done]);') === economy, 'resting or resuming paid extra rewards');
+    await capture(card, 'days-resumed', width);
+    await card.getByRole('button', { name: '记录今天', exact: true }).click();
+    check(await run('return st.progressOf(st.activeOf("read-s2")).cur===8 && st.state.abandoned[0].logs.length===7;'), 'active logs mutated historical snapshot');
+    await back();
+    await capture(page.locator('main'), 'map', width);
+    await page.locator('[data-place=home]').click();
+    await page.getByRole('combobox', { name: /光线/ }).selectOption('day');
+    await page.locator('.home-canvas[data-ready=true]').waitFor();
+    await capture(page.locator('.home-stage'), 'home-day', width);
+    await page.getByRole('combobox', { name: /光线/ }).selectOption('night');
+    await capture(page.locator('.home-stage'), 'home-night', width);
+    // 累计任务：同一天两笔真实记录、两次暂放；快照不能重复计入日子详情。
+    await run(`st.resetData(); st.state.settings.devDate='2026-10-04';st.accept(st.taskById.poems10);st.logUnits(st.activeOf('poems10'),2);`);
+    await back();
+    await page.locator('[data-place=tasks]').click();
+    const poem = page.locator('[data-active-task="poems10"]');
+    await poem.getByRole('button', { name: '先放一放', exact: true }).click();
+    dialog = page.getByRole('dialog', { name: '暂时放下任务' });
+    check((await dialog.innerText()).includes('记下的 2首，都还在'), 'missing cumulative acknowledgement');
+    await capture(dialog, 'units-dialog', width);
+    await dialog.getByRole('button', { name: '暂时放下', exact: true }).click();
+    await journal();
+    await page.locator('[data-memory-qid="poems10"]').getByRole('button', { name: '接起这件事 ↗' }).click();
+    await poem.waitFor();
+    await poem.getByRole('spinbutton').fill('1');
+    await poem.getByRole('button', { name: '记录', exact: true }).click();
+    await poem.getByRole('button', { name: '先放一放', exact: true }).click();
+    await page.getByRole('dialog').getByRole('button', { name: '暂时放下', exact: true }).click();
+    await run('st.importData(st.exportData());');
+    await journal();
+    check((await page.locator('.day-detail').innerText()).includes('记下 3首'), 'snapshots inflated daily units');
+    check(await page.getByRole('button', { name: '接起这件事 ↗' }).count() === 1, 'duplicate resume actions');
+    await capture(page.locator('.memory-notebook'), 'units-journal', width);
+    await page.getByRole('button', { name: '接起这件事 ↗' }).click();
+    check(await run('return st.progressOf(st.activeOf("poems10")).cur===3 && st.state.home.lumens===0 && st.totalXp.value===0 && st.state.home.glimmerDays.length===1;'), 'cumulative resume changed progress or economy');
+    // 手里三件、自建任务和旧档缺日志：不提供错误承诺。
+    await run(`st.resetData();st.state.settings.devDate='2026-10-04';
+      st.state.abandoned.push({qid:'read-s1',at:'2026-08-01',reason:'旧版只留了理由'});
+      st.accept(st.taskById.climb);st.accept(st.taskById['run-s1']);st.accept(st.taskById.selfrec);`);
+    await journal();
+    check((await page.locator('[data-memory-qid="read-s1"]').innerText()).includes('最多放 3 件'), 'journal hid task capacity');
+    check(await page.getByRole('button', { name: '接起这件事 ↗' }).count() === 0, 'capacity can be bypassed');
+    await run(`st.state.active=[];const r=st.createPersonalTask({title:'整理桌面',desc:'文具和书本各自收好',cat:'live'});st.abandon(st.activeOf(r.task.id),'先写作业');`);
+    await frame();
+    check((await page.locator('[data-memory-qid="read-s1"]').innerText()).includes('从零开始'), 'legacy history promises invented logs');
+    check((await page.locator('.memory-notebook').innerText()).includes('自己写下的内容已收进手记'), 'personal history freeze is not explained');
+    results.push({ width, status: 'PASS', daysRestored: 7, daysAfterCheckIn: 8, unitsRestored: 3, historyPreserved: true, focused: true, extraRewards: false });
+  }
+  check(!errors.length, JSON.stringify(errors));
+  return { mode: 'local QA, disposable fixture', results, errors };
+})(page);
+```
+### Page
+- Page URL: http://127.0.0.1:5190/?qa#panel
+- Page Title: 旷野 · 小芽的家
+- Console: 0 errors, 9 warnings
+### Events
+- New console entries: .playwright-cli/console-2026-10-04T15-31-02-682Z.log#L24-L45

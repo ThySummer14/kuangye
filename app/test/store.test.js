@@ -89,6 +89,79 @@ test("旧档里带空档与金牌标记的按天日志，按日期数恢复进�
   assert.deepEqual(store.progressOf(a), { cur: 5, target: 14 });
   assert.equal(a.shields, 1);
 });
+test("放下不清零：攒下的日子随放下记录保留，再接起来接着数", () => {
+  store.resetData();
+  const day = (d) => (store.state.settings.devDate = d);
+  const t = TASKS.find((t) => t.id === "read-s2");
+  store.state.done.push({ qid: "read-s1", xp: 10, at: "2026-08-31", review: "", units: [], logs: [] });
+  day("2026-09-01"); store.accept(t);
+  for (const d of ["2026-09-01", "2026-09-02", "2026-09-05"]) { day(d); store.checkIn(store.activeOf(t.id)); }
+  assert.equal(store.abandon(store.activeOf(t.id), "考试周"), true);
+  assert.equal(store.state.abandoned.at(-1).logs.length, 3);
+  assert.equal(store.state.home.lumens, 0);
+  day("2026-09-20");
+  assert.equal(store.accept(t), true);
+  const a = store.activeOf(t.id);
+  assert.deepEqual(store.progressOf(a), { cur: 3, target: 14 });
+  assert.equal(store.state.abandoned.at(-1).logs.length, 3);
+  assert.notEqual(store.state.abandoned.at(-1).logs, a.logs);
+  store.checkIn(a);
+  assert.equal(store.progressOf(a).cur, 4);
+  assert.equal(store.state.abandoned.at(-1).logs.length, 3);
+  // 复制最近快照，不累加历史快照；过去的每一页仍然保留。
+  store.abandon(a); store.accept(t);
+  assert.equal(store.progressOf(store.activeOf(t.id)).cur, 4);
+  assert.deepEqual(store.state.abandoned.map(r => r.logs.length), [3, 4]);
+  day("");
+});
+test("累计任务多次放下、备份往返与接起，不重复数量或奖励", () => {
+  store.resetData();
+  store.state.settings.devDate = "2026-10-04";
+  const t = store.taskById.poems10;
+  store.accept(t);
+  store.logUnits(store.activeOf(t.id), 2);
+  store.abandon(store.activeOf(t.id), "先准备考试");
+  store.importData(store.exportData());
+  store.accept(t);
+  assert.equal(store.progressOf(store.activeOf(t.id)).cur, 2);
+  store.logUnits(store.activeOf(t.id), 1);
+  store.abandon(store.activeOf(t.id));
+  store.importData(store.exportData());
+  store.accept(t);
+  assert.equal(store.progressOf(store.activeOf(t.id)).cur, 3);
+  assert.deepEqual(store.state.abandoned.map(r => r.logs.reduce((n, l) => n + l.v, 0)), [2, 3]);
+  assert.equal(store.state.home.lumens, 0);
+  assert.equal(store.state.home.glimmerDays.length, 1);
+  assert.equal(store.state.done.length, 0);
+  assert.equal(store.totalXp.value, 0);
+  store.state.settings.devDate = "";
+});
+test("接起按最近暂放日期恢复；无日志的旧记录如实从零开始", () => {
+  store.resetData();
+  store.importData(JSON.stringify({ active: [], abandoned: [
+    { qid: "poems10", at: "2026-09-09", logs: [{ d: "2026-09-08", v: 3 }] },
+    { qid: "poems10", at: "2026-09-01", logs: [{ d: "2026-09-01", v: 1 }] },
+    { qid: "read-s1", at: "2026-08-01", reason: "旧版只留了理由" },
+  ] }));
+  store.accept(store.taskById.poems10);
+  assert.equal(store.progressOf(store.activeOf("poems10")).cur, 3);
+  store.accept(store.taskById["read-s1"]);
+  assert.equal(store.progressOf(store.activeOf("read-s1")).cur, 0);
+});
+test("存档往返保留已完成与放下记录里的数量", () => {
+  store.resetData();
+  const backup = JSON.stringify({ app: "kuangye", version: 3, state: {
+    active: [], abandoned: [{ qid: "poems10", reason: "", at: "2026-09-03", logs: [{ d: "2026-09-02", v: 2 }] }, { qid: "climb", reason: "旧版", at: "2026-08-01" }],
+    done: [{ qid: "body-walk3", xp: 10, at: "2026-09-05", review: "", units: [], logs: [{ d: "2026-09-01", v: 1 }, { d: "2026-09-05", v: 2, note: "河边" }] }],
+  } });
+  store.importData(backup);
+  assert.deepEqual(store.state.done[0].logs, [{ d: "2026-09-01", v: 1 }, { d: "2026-09-05", v: 2, note: "河边" }]);
+  assert.deepEqual(store.state.abandoned[0].logs, [{ d: "2026-09-02", v: 2 }]);
+  assert.equal("logs" in store.state.abandoned[1], false);
+  store.importData(store.exportData());
+  assert.equal(store.state.done[0].logs[1].v, 2);
+  assert.equal(store.progressOf({ qid: "poems10", logs: store.state.abandoned[0].logs }).cur, 2);
+});
 test("three concurrent tasks remains the only limit, whatever their tier", () => {
   store.resetData();
   for (const id of ["read-s1", "body-walk3", "cook-s1"]) {

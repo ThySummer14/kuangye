@@ -32,12 +32,14 @@ export function linkedMemoryRecord(done, memory) {
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
 export function gatheredDays(state, taskById) {
   const days = new Map();
-  const add = (d, entry) => {
+  const add = (d, entry, snapshot = false) => {
     if (!DAY.test(d || '')) return;
     if (!days.has(d)) days.set(d, []);
     if (!entry) return;
     const list = days.get(d), same = list.find(e => e.kind === entry.kind && e.key === entry.key);
-    if (same) { if (entry.v) same.v = (same.v || 0) + entry.v; } else list.push(entry);
+    if (same) {
+      if (entry.v) same.v = snapshot ? Math.max(same.v || 0, entry.v) : (same.v || 0) + entry.v;
+    } else list.push(entry);
   };
   const logEntries = (qid, logs) => {
     const task = taskById[qid];
@@ -48,6 +50,18 @@ export function gatheredDays(state, taskById) {
   for (const r of state.done || []) {
     logEntries(r.qid, r.logs);
     add(r.at, { kind: 'done', key: r.qid, title: taskById[r.qid]?.title || '一件已经完成的事', review: r.review || '' });
+  }
+  // 暂放日志是累计快照，和进行中／完成日志有重叠。先在每份快照内合计当天数量，
+  // 再取当天的最大值，避免反复放下和接起把同一次努力算多遍。
+  for (const r of state.abandoned || []) {
+    const entries = new Map(), task = taskById[r.qid];
+    for (const l of r.logs || []) {
+      const kind = l?.v ? 'units' : 'day', key = `${l?.d}:${kind}`;
+      const e = entries.get(key) || { kind, key: r.qid, title: task?.title || '一件事', unit: task?.unit || '', v: 0, d: l?.d };
+      e.v += Number(l?.v) || 0;
+      entries.set(key, e);
+    }
+    for (const { d, ...entry } of entries.values()) add(d, entry, true);
   }
   for (const b of state.home?.reading?.books || []) for (const n of b.notes || []) add(n.at, { kind: 'reading', key: b.id, title: b.title });
   for (const p of state.home?.inquiry?.pages || []) for (const n of p.notes || []) add(n.at, { kind: 'clue', key: p.id, title: p.question });

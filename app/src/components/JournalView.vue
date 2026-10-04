@@ -20,7 +20,7 @@ import { parseImport } from '../game/save.js';
 import { nativePlatform, exportBackup, pickBackup } from "../services/backup.js";
 const props=defineProps({focusMemory:Object});
 const view = ref('journal');
-const emit = defineEmits(["toast", "chains", "library", "back-furniture"]),
+const emit = defineEmits(["toast", "chains", "library", "back-furniture", "resume"]),
   file = ref(null),
   pendingImport = ref(""),
   importSummary = ref("");
@@ -180,7 +180,7 @@ function report() {
       </div>
       <GatheredDays />
       <section v-if="state.home.reading?.books.length" class="home-renovation"><span class="eyebrow">书页里的日子</span><h3>我的阅读书架</h3><p v-for="book in state.home.reading.books.slice(0,4)" :key="book.id">《{{ book.title }}》 · {{ book.status==='reading'?'正在读':book.finished?'已读完':'暂放书架' }} · {{ book.notes.length }} 段摘记</p><button class="soft-button" @click="emit('library')">去书屋翻开书签与摘记 ↗</button></section>
-      <JournalMemories :focus-memory="props.focusMemory" @back-furniture="emit('back-furniture')" @toast="emit('toast', $event)" />
+      <JournalMemories :focus-memory="props.focusMemory" @back-furniture="emit('back-furniture')" @toast="emit('toast', $event)" @resume="emit('resume', $event)" />
       <section class="backup-section">
         <div>
           <h3>把小家，好好保存。</h3>

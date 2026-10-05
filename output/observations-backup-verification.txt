@@ -1,0 +1,24 @@
+[
+  {
+    "width": 1280,
+    "status": "PASS",
+    "downloadedVersion": 3,
+    "place": "窗边",
+    "images": 1,
+    "photoChars": 6371,
+    "fullWhitespacePreserved": true,
+    "normalizerAccepts": true,
+    "noTasksOrRewards": true
+  },
+  {
+    "width": 375,
+    "status": "PASS",
+    "downloadedVersion": 3,
+    "place": "窗边",
+    "images": 1,
+    "photoChars": 6371,
+    "fullWhitespacePreserved": true,
+    "normalizerAccepts": true,
+    "noTasksOrRewards": true
+  }
+]

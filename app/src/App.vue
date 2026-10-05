@@ -50,6 +50,7 @@ const tab = ref(
 let toastTimer, unregisterTools;
 const libraryDesk = ref('reading'), questEntry = shallowRef({ trail: '', task: '', suggestion: null });
 const studioTarget = ref('');
+const yardDesk=ref('arrange'),observationTarget=ref('');
 const studioAlbum = ref(false);
 const showHomeWork = ref(false);
 function toast(t) {
@@ -60,6 +61,7 @@ function toast(t) {
 function navigate(id) {
   if (id === 'tasks' || id === 'quest') questEntry.value = { trail: '', task: '', suggestion: null };
   if (id === 'library') libraryDesk.value = 'reading';
+  if (id === 'yard') {yardDesk.value='arrange';observationTarget.value='';}
   if (id==='journal' || id==='panel') memoryTarget.value=null;
   if (id === 'atelier') { studioTarget.value = ''; studioAlbum.value = false; }
   const next = id === "journal" ? "panel" : id;
@@ -70,6 +72,8 @@ function openStudio(id = '') {
   studioAlbum.value = true;
   tab.value = 'atelier';
 }
+function openObservationBook(id=''){yardDesk.value='observations';observationTarget.value=id;tab.value='yard';}
+function visitOutsideTasks(){questEntry.value={trail:'outside',task:'',suggestion:null};tab.value='tasks';}
 function visitStudioHome() { showHomeWork.value = true; tab.value = 'home'; }
 function openLibrary(desk = 'reading') {
   libraryDesk.value = ['inquiry','visits'].includes(desk) ? desk : 'reading';
@@ -355,14 +359,14 @@ async function takeMapTask() {
       />
       <StudioView v-else-if="tab === 'atelier'" :focus-work="studioTarget" :album="studioAlbum" @complete="completing=$event" @abandon="abandoning=$event" @home="visitStudioHome" @visits="openLibrary('visits')" @toast="toast" />
       <WoodshopView v-else-if="tab === 'woodshop'" @toast="toast" />
-      <YardView v-else-if="tab === 'yard'" @home="tab = 'home'" />
+      <YardView v-else-if="tab === 'yard'" :desk="yardDesk" :focus-observation="observationTarget" @home="tab = 'home'" @toast="toast" @journal="memoryTarget=null; tab='panel'" @outside="visitOutsideTasks" />
       <LibraryView v-else-if="tab === 'library'" :desk="libraryDesk" @desk="libraryDesk=$event" @studio="openStudio" @tasks="returnFromLibrary" @notebook="returnFromLibrary()" @write="writeInquiryStep" @journal="memoryTarget=null; tab = 'panel'" @toast="toast" />
       <ShopView
         v-else-if="tab === 'shop'"
         @home="tab = 'home'"
         @toast="toast"
       />
-      <JournalView :focus-memory="memoryTarget" @back-furniture="backToFurniture" @library="openLibrary('reading')" @visits="openLibrary('visits')"
+      <JournalView :focus-memory="memoryTarget" @back-furniture="backToFurniture" @library="openLibrary('reading')" @visits="openLibrary('visits')" @observation="openObservationBook"
         v-else-if="tab === 'panel'"
         @resume="resumeFromJournal"
         @toast="toast"

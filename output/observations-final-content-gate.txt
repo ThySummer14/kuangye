@@ -1,0 +1,14 @@
+Final observation prompt gate after mobile title adjustment:
+app/dist/assets: leaf.title: 0 matches
+app/dist/assets: leaf.note: 0 matches
+app/dist/assets: sounds.title: 0 matches
+app/dist/assets: sounds.note: 0 matches
+app/dist/assets: light.title: 0 matches
+app/dist/assets: light.note: 0 matches
+dist/assets: leaf.title: 0 matches
+dist/assets: leaf.note: 0 matches
+dist/assets: sounds.title: 0 matches
+dist/assets: sounds.note: 0 matches
+dist/assets: light.title: 0 matches
+dist/assets: light.note: 0 matches
+PASS: all pending title/note strings absent

@@ -1,6 +1,7 @@
 import { emptyReading, normalizeReading } from "./reading.js";
 import { emptyInquiry, normalizeInquiry } from "./inquiry.js";
-import { emptyStudio, normalizeStudio } from "./studio.js";
+import { emptyStudio, normalizeStudio, studioImageSize, STUDIO_LIMITS } from "./studio.js";
+import { emptyObservations, normalizeObservations, observationImageSize } from './observations.js';
 import { emptyVisits, normalizeVisits } from "./residents.js";
 import { emptyTown, normalizeTown } from "./town.js";
 import { furnitureById } from "../data/furniture.js";
@@ -18,6 +19,7 @@ export const emptyHome = () => ({
   reading: emptyReading(),
   inquiry: emptyInquiry(),
   studio: emptyStudio(),
+  observations: emptyObservations(),
   visits: emptyVisits(),
   decor: normalizeDecor(),
   moments: [],
@@ -46,6 +48,9 @@ export function normalizeHome(raw, done = []) {
   h.reading = normalizeReading(raw.reading);
   h.inquiry = normalizeInquiry(raw.inquiry);
   h.studio = normalizeStudio(raw.studio);
+  h.observations = normalizeObservations(raw.observations);
+  if(studioImageSize(h.studio.works)+observationImageSize(h.observations)>STUDIO_LIMITS.allImageChars)
+    throw Error('画室与观察册的图片总量超过保存容量，请保留原备份。');
   h.visits = normalizeVisits(raw.visits);
   h.room = roomOf(raw);
   h.decor = normalizeDecor(raw.decor);

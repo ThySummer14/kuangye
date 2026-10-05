@@ -382,3 +382,36 @@ test('resident commission shares capacity, reopens the same artifact after resti
     assert.throws(()=>store.importData(JSON.stringify(bad)),/作品/);assert.equal(JSON.stringify(store.state),current);
   } finally { RESIDENT_VISITS.pop();store.resetData(); }
 });
+
+test('observation pages keep discoveries without touching tasks or payouts, and share photo capacity with studio both ways',async()=>{
+  store.resetData();
+  for(let i=0;i<3;i++)store.createPersonalTask({title:'手里的事',desc:'做成一版',cat:'create'});
+  const tasks=JSON.stringify([store.state.active,store.state.done,store.state.customTasks]),economy=JSON.stringify([store.state.home.lumens,store.state.home.earned,store.state.home.glimmerDays]);
+  const {entry}=store.openObservationPage({kind:'plant',hint:'看一片叶子'});
+  assert.equal(store.openObservationPage().entry.id,entry.id);
+  assert.equal(store.keepObservationPage(entry.id).ok,false);
+  assert.equal(store.saveObservationPage(entry.id,{place:'楼下',body:'叶缘是一排小齿。',observedOn:'2026-10-03'}).ok,true);
+  assert.equal(store.keepObservationPage(entry.id).ok,true);assert.equal(store.keepObservationPage(entry.id).unchanged,true);
+  assert.equal(JSON.stringify([store.state.active,store.state.done,store.state.customTasks]),tasks);
+  assert.equal(JSON.stringify([store.state.home.lumens,store.state.home.earned,store.state.home.glimmerDays]),economy);
+  await nextTick();const backup=store.exportData();store.importData(backup);
+  assert.equal(store.state.home.observations.entries[0].body,'叶缘是一排小齿。');
+  const before=JSON.stringify(store.state),bad=JSON.parse(backup);bad.state.home.observations.entries[0].body='';
+  assert.throws(()=>store.importData(JSON.stringify(bad)));assert.equal(JSON.stringify(store.state),before);
+  store.resetData();const large='data:image/jpeg;base64,'+'a'.repeat(230000),small='data:image/jpeg;base64,'+'a'.repeat(100000);
+  for(let i=0;i<7;i++) {
+    const result=store.openStudioWork({title:'作品',criterion:'留下这一版',images:[large]});assert.equal(result.ok,true);
+    store.abandon(store.activeOf(result.work.taskIds[0]),'先留在画室');
+  }
+  const observation=store.openObservationPage().entry;
+  const original=JSON.stringify(store.state);
+  assert.equal(store.saveObservationPage(observation.id,{images:[large]}).ok,false);assert.equal(JSON.stringify(store.state),original);
+  assert.equal(store.saveObservationPage(observation.id,{place:'楼下',body:'树叶的形状。',images:[small]}).ok,true);
+  const shared=JSON.stringify(store.state);
+  assert.equal(store.openStudioWork({title:'新作品',criterion:'一版',images:[small]}).ok,false);assert.equal(JSON.stringify(store.state),shared);
+  const work=store.state.home.studio.works[0];
+  assert.equal(store.saveStudioWork(work.id,{title:work.title,images:[large,small]}).ok,false);assert.equal(JSON.stringify(store.state),shared);
+  assert.equal(store.keepObservationPage(observation.id).ok,true);
+  await nextTick();store.importData(store.exportData());assert.equal(store.state.home.observations.entries[0].images.length,1);
+  store.resetData();
+});

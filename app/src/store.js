@@ -1,6 +1,7 @@
 import { emptyReading, startBook, updateBook, noteBook, shelveBook, reopenBook } from "./game/reading.js";
 import { emptyInquiry, startInquiry, updateInquiry, noteInquiry, keepInquiry, reopenInquiry } from "./game/inquiry.js";
-import { studioFields, studioReady, studioStatus, studioWorkForTask, addStudioWork, updateStudioWork } from "./game/studio.js";
+import { studioFields, studioReady, studioStatus, studioWorkForTask, studioImageSize, addStudioWork, updateStudioWork } from "./game/studio.js";
+import { startObservation, updateObservation, keepObservation, observationImageSize } from './game/observations.js';
 import { residentBrief, handInVisit } from "./game/residents.js";
 import { RESIDENT_VISITS } from "./data/residents.js";
 import { emptyTown, changeExterior, placeYard, repairLibrary, applyYardPlan } from "./game/town.js";
@@ -465,7 +466,7 @@ export function openStudioWork(input) {
     const fields = studioFields(input), id = crypto.randomUUID(), qid = `personal-${crypto.randomUUID()}`;
     const task = personalTask({ id: qid, title: fields.title, desc: input.criterion, cat: 'create' });
     if (!task) return { ok: false, why: '写下作品名和一个可以判断的完成条件。' };
-    const result = addStudioWork(state.home.studio, fields, { id, qid, theme: input.theme, exerciseId: input.exerciseId || '', at: today() });
+    const result = addStudioWork(state.home.studio, fields, { id, qid, theme: input.theme, exerciseId: input.exerciseId || '', at: today(), otherImageChars:observationImageSize(state.home.observations) });
     if (!result.ok) return result;
     state.customTasks.push(task);
     accept(task);
@@ -477,7 +478,7 @@ export function saveStudioWork(id, fields) {
   try {
     const work = state.home.studio.works.find(work => work.id === id);
     if (work && studioStatus(work, state) === 'done' && !studioReady(studioFields(fields))) return { ok: false, why: '已收好的作品需要保留正文或一张图片。原来的这一版仍在。' };
-    return updateStudioWork(state.home.studio, id, fields, today());
+    return updateStudioWork(state.home.studio, id, fields, today(), observationImageSize(state.home.observations));
   }
   catch (error) { return { ok: false, why: error.message }; }
 }
@@ -515,3 +516,13 @@ export function acceptResidentVisit(id) {
   return { ...result, visit };
 }
 export const deliverResidentVisit = (id, confirmed) => handInVisit(state,id,confirmed,today());
+
+export function openObservationPage(input={}) {
+  try { return startObservation(state.home.observations,input,crypto.randomUUID(),today(),studioImageSize(state.home.studio.works)); }
+  catch(error) { return {ok:false,why:error.message}; }
+}
+export function saveObservationPage(id,input) {
+  try { return updateObservation(state.home.observations,id,input,studioImageSize(state.home.studio.works)); }
+  catch(error) { return {ok:false,why:error.message}; }
+}
+export const keepObservationPage = id => keepObservation(state.home.observations,id,today());

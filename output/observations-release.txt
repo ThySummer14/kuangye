@@ -1,0 +1,12 @@
+=== observations slice: npm run check:release ===
+
+> check:release
+> npm --prefix app run check:release
+
+
+> kuangye@0.1.0 check:release
+> node ../scripts/check-release-assets.mjs
+
+release assets OK: 24 etchings, 27 runtime packages, Privacy Manifest included
+
+[release exit code: 0]

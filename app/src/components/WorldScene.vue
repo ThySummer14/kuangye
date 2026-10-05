@@ -13,7 +13,7 @@ const host=ref(null), labels=ref({}), failed=ref(false), highlighted=ref('');
 const places=MAP_PLACES;
 const resident=computed(()=>!!RESIDENT_VISITS.length || !!state.home.visits.length);
 const displayed=computed(()=>hasResidentDisplay(state.home.visits));
-const counts=computed(()=>({ tasks: state.active.length ? `${state.active.length}/3` : '', atelier: state.home.studio.works.filter(work=>studioStatus(work,state)==='done').length || '' }));
+const counts=computed(()=>({ tasks: state.active.length ? `${state.active.length}/3` : '', atelier: state.home.studio.works.filter(work=>studioStatus(work,state)==='done').length || '', yard:state.home.observations.entries.filter(entry=>entry.status==='kept').length || '' }));
 let engine;
 const selectedPlace=computed(()=>places.find(p=>p.id===highlighted.value));
 const marker=computed(()=>labels.value[highlighted.value]);
@@ -54,7 +54,7 @@ onBeforeUnmount(()=>engine?.dispose());
         @pointerenter="highlighted=p.id" @pointerleave="highlighted=''" @focus="highlighted=p.id" @blur="highlighted=''"
         @click="engine&&!failed?engine.flyTo(p.id):emit('navigate',p.id)">
         <span class="place-badge"><PlaceIcon :name="p.id" :size="20" /></span>
-        <span class="place-text"><b>{{ p.name }}</b><small :id="'place-hint-'+p.id">{{ p.id==='library' && resident ? displayed?'窗边留着一次来往':'阅读、问题与街角来访' : p.hint }}</small></span>
+        <span class="place-text"><b>{{ p.name }}</b><small :id="'place-hint-'+p.id">{{ p.id==='yard'?'院落与观察册':p.id==='library' && resident ? displayed?'窗边留着一次来往':'阅读、问题与街角来访' : p.hint }}</small></span>
         <span class="place-short" aria-hidden="true">{{ p.short }}</span>
         <em v-if="counts[p.id]" :id="'place-count-'+p.id" class="place-count">{{ counts[p.id] }}</em>
       </button>

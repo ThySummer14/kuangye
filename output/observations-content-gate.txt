@@ -1,0 +1,11 @@
+=== observations pending-content gate: exact title/note strings in app/dist and dist JavaScript ===
+Checked exact strings from app/src/data/observation-drafts.js:
+title: 停在一片叶子旁
+note: 找一株你平常路过的植物。看一看叶缘、颜色和它站着的地方，记下一个以前没注意的细节。不必知道它的名字。
+title: 听一听熟路的声音
+note: 在熟悉的路上找一个可以停留的位置。听一分钟，写下声音从哪里来、有什么远近或变化。
+title: 看看光落在哪里
+note: 从自己的窗边或门口，找一处光与影的交界。写下它照到了什么、是什么颜色，不必等一个特别的天气。
+[content gate: PASS — all three title/note pairs are absent from built JavaScript]
+
+[content gate exit code: 0]

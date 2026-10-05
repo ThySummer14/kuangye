@@ -1,10 +1,21 @@
 <script setup>
-import { computed, ref, nextTick } from 'vue';
+import { computed, ref, nextTick, watch } from 'vue';
 import { state, setExterior, arrangeYard, removeYard, adoptYardPlan } from '../store.js';
 import { EXTERIOR, YARD_ITEMS, YARD_PLANS } from '../data/town.js';
 import { emptyTown, yardCheck, yardFootprint, previewYardPlan } from '../game/town.js';
 import TownScene from './TownScene.vue';
-const emit=defineEmits(['home']);
+import ObservationBook from './ObservationBook.vue';
+const props=defineProps({desk:{type:String,default:'arrange'},focusObservation:String});
+const emit=defineEmits(['home','toast','journal','outside']);
+const page=ref(props.desk==='observations'?'observations':'arrange');
+watch(()=>props.desk,desk=>{page.value=desk==='observations'?'observations':'arrange';});
+function choosePage(value){page.value=value;preview.value=null;message.value='';}
+async function pageKey(event){
+  if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
+  event.preventDefault();const controls=event.currentTarget.parentElement;
+  choosePage(event.key==='Home'?'arrange':event.key==='End'?'observations':page.value==='arrange'?'observations':'arrange');
+  await nextTick();controls.querySelector('[aria-selected=true]')?.focus();
+}
 const town=computed(()=>state.home.town||emptyTown());
 const tab=ref('yard'), selected=ref('bench'), rotation=ref(0), cell=ref({x:0,z:0}), message=ref(''), light=ref('day');
 const preview=ref(null), previewHost=ref(null), previewHeading=ref(null), editor=ref(null);
@@ -40,8 +51,10 @@ function key(e,c) {const delta={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1]
 </script>
 <template>
   <div class="yard-page">
-    <header class="town-intro"><div><span class="eyebrow">从门口开始，住成喜欢的样子</span><h2>给家，留一个院子。</h2><p>第一批材料已经备好。试着放一张长椅，或为窗外种一棵树。</p></div><button class="soft-button" @click="emit('home')">进屋看看 ↗</button></header>
-    <div class="yard-workbench">
+    <header class="town-intro"><div><span class="eyebrow">从门口开始，住成喜欢的样子</span><h2>{{ page==='observations'?'在近处，发现一点新东西。':'给家，留一个院子。' }}</h2><p>{{ page==='observations'?'出门看一眼，回来留一页。楼下、窗边、熟悉的路，都可以是起点。':'第一批材料已经备好。试着放一张长椅，或为窗外种一棵树。' }}</p></div><button class="soft-button" @click="emit('home')">进屋看看 ↗</button></header>
+    <div class="yard-places" role="tablist" aria-label="院子里的去处"><button id="yard-arrange-tab" role="tab" :aria-selected="page==='arrange'" :tabindex="page==='arrange'?0:-1" aria-controls="yard-arrange-panel" @click="choosePage('arrange')" @keydown="pageKey">院落布置<span>给家留一点自己的样子</span></button><button id="yard-observations-tab" role="tab" :aria-selected="page==='observations'" :tabindex="page==='observations'?0:-1" aria-controls="yard-observations-panel" @click="choosePage('observations')" @keydown="pageKey">观察册<span>去近处，带回一个发现</span></button></div>
+    <section v-if="page==='observations'" id="yard-observations-panel" role="tabpanel" aria-labelledby="yard-observations-tab"><ObservationBook :focus-entry="focusObservation" @toast="emit('toast',$event)" @journal="emit('journal')" @outside="emit('outside')" /></section>
+    <div v-else id="yard-arrange-panel" role="tabpanel" aria-labelledby="yard-arrange-tab" class="yard-workbench">
       <div ref="previewHost" class="yard-preview"><TownScene :editable="tab==='yard'" :focus="tab==='house'?'house':'yard'" :town="previewTown" :ghost="tab==='yard'?ghost:null" :light="light" @cell="choose" @select="select" />
         <div class="yard-light" role="group" aria-label="预览光线"><button :aria-pressed="light==='day'" @click="light='day'">日间</button><button :aria-pressed="light==='night'" @click="light='night'">夜间</button><span>仅切换预览光线</span></div>
         <div v-if="preview" class="plan-confirm" aria-label="确认院落布局">
@@ -82,6 +95,12 @@ function key(e,c) {const delta={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1]
   </div>
 </template>
 <style scoped>
+.yard-places { display:flex; gap:12px; padding:20px 0; margin-bottom:26px; border-block:1px solid var(--line); }
+.yard-places button { text-align:left; padding:14px 22px; border:1px solid var(--line-2); border-radius:5px; background:transparent; color:var(--ink); font:500 18px/1.6 var(--serif); }
+.yard-places button[aria-selected=true] { background:var(--moss-wash); border-color:var(--primary); }
+.yard-places span { display:block; font:400 11px/1.8 var(--sans); color:var(--ink-3); margin-top:4px; }
+@media(max-width:600px) { .yard-places button { flex:1; padding:12px; min-width:0; } }
+
 .plan-confirm { padding:18px 20px; background:#f1f4e8; border:1px solid #c6d2b9; border-radius:12px; }
 .plan-confirm h3 { font:500 23px var(--serif); margin:8px 0; }
 .plan-confirm p { font-size:12px; line-height:1.8; color:var(--ink-2); margin:0; }

@@ -59,21 +59,21 @@ export function studioStatus(work, state) {
   return state.active.some(record => record.qid === work.taskIds.at(-1)) ? 'working' : 'rest';
 }
 export const studioWorkForTask = (studio, qid) => studio.works.find(work => work.taskIds.at(-1) === qid);
-export function addStudioWork(studio, fields, { id, qid, theme = 'own', exerciseId = '', at }) {
+export function addStudioWork(studio, fields, { id, qid, theme = 'own', exerciseId = '', at, otherImageChars = 0 }) {
   const value = studioFields(fields);
   if (!value.title || !id || studio.works.some(work => work.id === id) || !isPersonalId(qid)) return { ok: false, why: '先给作品起一个名字。' };
   const work = { id, ...value, theme: themeIds.has(theme) ? theme : 'own', exerciseId, taskIds: [qid], created: at, updated: at };
-  if (studioImageSize([...studio.works, work]) > STUDIO_LIMITS.allImageChars) return { ok: false, why: '图片保存空间快满了。请换较小的图片；已有作品都保留着。' };
+  if (studioImageSize([...studio.works, work]) + otherImageChars > STUDIO_LIMITS.allImageChars) return { ok: false, why: '图片保存空间快满了。请换较小的图片；已有作品都保留着。' };
   studio.works.unshift(work);
   return { ok: true, work };
 }
-export function updateStudioWork(studio, id, fields, at) {
+export function updateStudioWork(studio, id, fields, at, otherImageChars = 0) {
   const work = studio.works.find(work => work.id === id);
   if (!work) return { ok: false, why: '没有找到这件作品。' };
   const value = studioFields(fields);
   if (!value.title) return { ok: false, why: '给这件作品留一个名字。' };
   const next = studio.works.map(item => item.id === id ? { ...item, ...value } : item);
-  if (studioImageSize(next) > STUDIO_LIMITS.allImageChars) return { ok: false, why: '图片保存空间快满了。请换较小的图片；已有作品都保留着。' };
+  if (studioImageSize(next) + otherImageChars > STUDIO_LIMITS.allImageChars) return { ok: false, why: '图片保存空间快满了。请换较小的图片；已有作品都保留着。' };
   Object.assign(work, value, { updated: at });
   return { ok: true, work };
 }

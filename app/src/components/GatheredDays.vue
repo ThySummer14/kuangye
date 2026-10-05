@@ -19,6 +19,7 @@ function describe(e) {
   if (e.kind === "done") return `完成了「${e.title}」`;
   if (e.kind === "units") return `「${e.title}」记下 ${e.v}${e.unit || ""}`;
   if (e.kind === "day") return `「${e.title}」攒下一天`;
+  if (e.kind === "observation") return `在「${e.title}」留下一个具体发现`;
   if (e.kind === "reading") return `在《${e.title}》里留了一段摘记`;
   return `给问题「${e.title}」添了一条线索`;
 }

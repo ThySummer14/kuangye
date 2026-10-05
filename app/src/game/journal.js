@@ -65,7 +65,8 @@ export function gatheredDays(state, taskById) {
   }
   for (const b of state.home?.reading?.books || []) for (const n of b.notes || []) add(n.at, { kind: 'reading', key: b.id, title: b.title });
   for (const p of state.home?.inquiry?.pages || []) for (const n of p.notes || []) add(n.at, { kind: 'clue', key: p.id, title: p.question });
-  const order = { done: 0, day: 1, units: 1, reading: 2, clue: 3 };
+  for(const entry of state.home?.observations?.entries || []) if(entry.status==='kept') add(entry.observedOn,{kind:'observation',key:entry.id,title:entry.place});
+  const order = { done: 0, day: 1, units: 1, reading: 2, clue: 3, observation:4 };
   return [...days].sort(([a], [b]) => b.localeCompare(a))
     .map(([date, entries]) => ({ date, entries: entries.sort((a, b) => order[a.kind] - order[b.kind]), done: entries.some(e => e.kind === 'done') }));
 }

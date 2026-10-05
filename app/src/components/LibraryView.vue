@@ -7,16 +7,23 @@ import TownScene from './TownScene.vue';
 import ReadingDesk from './ReadingDesk.vue';
 import InquiryDesk from './InquiryDesk.vue';
 import TaskGuide from './TaskGuide.vue';
+import ResidentDesk from './ResidentDesk.vue';
+import { RESIDENT_VISITS } from '../data/residents.js';
+import { hasResidentDisplay } from '../game/residents.js';
 const props=defineProps({desk:{type:String,default:'reading'}});
-const emit=defineEmits(['tasks','journal','toast','desk','notebook','write']);
-const selectedDesk=ref(props.desk==='inquiry'?'inquiry':'reading');
-watch(()=>props.desk,desk=>{selectedDesk.value=desk==='inquiry'?'inquiry':'reading';});
+const emit=defineEmits(['tasks','journal','toast','desk','notebook','write','studio']);
+const hasVisits=computed(()=>!!RESIDENT_VISITS.length || !!state.home.visits.length);
+const desks=computed(()=>hasVisits.value?['reading','inquiry','visits']:['reading','inquiry']);
+const selectedDesk=ref(desks.value.includes(props.desk)?props.desk:'reading');
+const display=computed(()=>hasResidentDisplay(state.home.visits));
+watch(()=>props.desk,desk=>{selectedDesk.value=desks.value.includes(desk)?desk:'reading';});
 function chooseDesk(desk) {selectedDesk.value=desk;emit('desk',desk);}
 async function deskKey(event) {
   if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
   event.preventDefault();
   const controls=event.currentTarget.parentElement;
-  chooseDesk(event.key==='Home'?'reading':event.key==='End'?'inquiry':selectedDesk.value==='reading'?'inquiry':'reading');
+  const tabs=desks.value,index=tabs.indexOf(selectedDesk.value);
+  chooseDesk(event.key==='Home'?tabs[0]:event.key==='End'?tabs.at(-1):tabs[(index+(event.key==='ArrowRight'?1:tabs.length-1))%tabs.length]);
   await nextTick();controls.querySelector('[aria-selected=true]')?.focus();
 }
 const town=computed(()=>state.home.town||emptyTown());
@@ -32,14 +39,15 @@ function record(qid) {return state.done.find(d=>d.qid===qid);}
 </script>
 <template>
   <div class="library-page">
-    <header><span class="eyebrow">家门外的第一条街</span><h2>{{ town.library===3?'书屋开门了，进来坐坐。':'让街角的书屋，慢慢亮起来。' }}</h2><p>每走完一段阅读旅程，就为这里修好一点。那些读过的日子，会留在这条街上。</p></header>
-    <div class="library-workspace"><div class="library-desks" role="tablist" aria-label="选择书屋里的桌子"><button id="reading-desk-tab" role="tab" :aria-selected="selectedDesk==='reading'" :tabindex="selectedDesk==='reading'?0:-1" aria-controls="library-reading-panel" @click="chooseDesk('reading')" @keydown="deskKey">阅读桌<span>一本书，一张书签</span></button><button id="inquiry-desk-tab" role="tab" :aria-selected="selectedDesk==='inquiry'" :tabindex="selectedDesk==='inquiry'?0:-1" aria-controls="library-inquiry-panel" @click="chooseDesk('inquiry')" @keydown="deskKey">问号夹页<span>一个问题，一段来路</span></button></div><button class="text-button" @click="emit('notebook')">回头脑小册，找一个起点 ↗</button></div>
+    <header><span class="eyebrow">家门外的第一条街</span><h2>{{ selectedDesk==='visits'?'在街角，带着一个小约定出门。':town.library===3?'书屋开门了，进来坐坐。':'让街角的书屋，慢慢亮起来。' }}</h2><p>{{ selectedDesk==='visits'?'遇见一个人，做一件真实的事。等你带回成果，这条街也会留下变化。':'每走完一段阅读旅程，就为这里修好一点。那些读过的日子，会留在这条街上。' }}</p></header>
+    <div class="library-workspace"><div class="library-desks" role="tablist" aria-label="选择书屋里的桌子"><button id="reading-desk-tab" role="tab" :aria-selected="selectedDesk==='reading'" :tabindex="selectedDesk==='reading'?0:-1" aria-controls="library-reading-panel" @click="chooseDesk('reading')" @keydown="deskKey">阅读桌<span>一本书，一张书签</span></button><button id="inquiry-desk-tab" role="tab" :aria-selected="selectedDesk==='inquiry'" :tabindex="selectedDesk==='inquiry'?0:-1" aria-controls="library-inquiry-panel" @click="chooseDesk('inquiry')" @keydown="deskKey">问号夹页<span>一个问题，一段来路</span></button><button v-if="hasVisits" id="visits-desk-tab" role="tab" :aria-selected="selectedDesk==='visits'" :tabindex="selectedDesk==='visits'?0:-1" aria-controls="library-visits-panel" @click="chooseDesk('visits')" @keydown="deskKey">街角来访<span>一个约定，一件成果</span></button></div><button class="text-button" @click="emit('notebook')">回头脑小册，找一个起点 ↗</button></div>
     <section v-if="selectedDesk==='reading'" id="library-reading-panel" role="tabpanel" aria-labelledby="reading-desk-tab"><ReadingDesk @task="inspecting=$event" @tasks="emit('tasks',$event)" /></section>
-    <section v-else id="library-inquiry-panel" role="tabpanel" aria-labelledby="inquiry-desk-tab"><InquiryDesk @task="inspecting=$event" @tasks="emit('tasks',$event)" @write="emit('write',$event)" /></section>
-    <h3 class="library-place-title">街角，因那些阅读而变化。</h3>
+    <section v-else-if="selectedDesk==='inquiry'" id="library-inquiry-panel" role="tabpanel" aria-labelledby="inquiry-desk-tab"><InquiryDesk @task="inspecting=$event" @tasks="emit('tasks',$event)" @write="emit('write',$event)" /></section>
+    <section v-else id="library-visits-panel" role="tabpanel" aria-labelledby="visits-desk-tab"><ResidentDesk @studio="emit('studio',$event)" @journal="emit('journal')" @toast="emit('toast',$event)" /></section>
+    <h3 class="library-place-title">{{ selectedDesk==='visits' ? display?'窗边，留下一次真实来往。':'街角，留着一个可以回来的位置。' : '街角，因那些阅读而变化。' }}</h3>
     <div class="library-layout">
-      <div><TownScene mode="library" :town="town" :light="light" /><div class="library-light" role="group" aria-label="书屋预览光线"><button :aria-pressed="light==='day'" @click="light='day'">日间</button><button :aria-pressed="light==='night'" @click="light='night'">夜间</button></div></div>
-      <section class="library-current" aria-label="书屋的下一步">
+      <div><TownScene mode="library" :town="town" :light="light" :resident="hasVisits" :resident-display="display" /><div class="library-light" role="group" aria-label="书屋预览光线"><button :aria-pressed="light==='day'" @click="light='day'">日间</button><button :aria-pressed="light==='night'" @click="light='night'">夜间</button></div></div>
+      <section v-if="selectedDesk!=='visits'" class="library-current" aria-label="书屋的下一步">
         <span class="eyebrow">{{ town.library }} / 3 段街角记忆</span>
         <template v-if="next"><h3>{{ next.title }}</h3><p>{{ next.change }}</p>
           <template v-if="ready"><p class="library-ready">你已经做到了「{{ task.title }}」。现在可以把这段经历留在书屋。</p><button class="primary-button" @click="repair">{{ next.title }}</button></template>
@@ -51,8 +59,9 @@ function record(qid) {return state.done.find(d=>d.qid===qid);}
         <p v-if="notice" class="library-notice" role="status">{{ notice }}</p>
         <p class="library-note">以前完成的阅读也算数。修复不花光、不另发奖励，也没有施工倒计时。</p>
       </section>
+      <section v-else class="library-current"><span class="eyebrow">窗边的木夹</span><h3>{{ display?'这里，多了一件来自生活的作品。':'先留一点空白。' }}</h3><p>{{ display?'纸牌已经留在街角。上面的来往记录可以回看，完整作品在画室里。':'等你真的去看过、做出一版，再把它带回来。阅读修复与来访各按自己的节奏进行。' }}</p><button v-if="display" class="soft-button" @click="emit('journal')">去手记看看这次来往 ↗</button></section>
     </div>
-    <section class="library-history" aria-label="书屋修复记忆"><h3>一间书屋，三段来路。</h3><div class="library-stages"><article v-for="(stage,index) in LIBRARY_STAGES" :key="stage.qid" :class="{built:index<town.library}"><span>{{ index<town.library?'已留在街角':record(stage.qid)?'阅读已完成':'还没走到这里' }}</span><h4>{{ stage.title }}</h4><p>{{ index<town.library?stage.memory:stage.change }}</p><template v-if="record(stage.qid)"><time>{{ record(stage.qid).at }}</time><blockquote>{{ record(stage.qid).review || '那时没有留下文字，但那些阅读已经成为这间书屋的一部分。' }}</blockquote></template><small v-else>{{ taskById[stage.qid].title }}</small></article></div></section>
+    <section v-if="selectedDesk!=='visits'" class="library-history" aria-label="书屋修复记忆"><h3>一间书屋，三段来路。</h3><div class="library-stages"><article v-for="(stage,index) in LIBRARY_STAGES" :key="stage.qid" :class="{built:index<town.library}"><span>{{ index<town.library?'已留在街角':record(stage.qid)?'阅读已完成':'还没走到这里' }}</span><h4>{{ stage.title }}</h4><p>{{ index<town.library?stage.memory:stage.change }}</p><template v-if="record(stage.qid)"><time>{{ record(stage.qid).at }}</time><blockquote>{{ record(stage.qid).review || '那时没有留下文字，但那些阅读已经成为这间书屋的一部分。' }}</blockquote></template><small v-else>{{ taskById[stage.qid].title }}</small></article></div></section>
     <TaskGuide v-if="inspecting" :task="inspecting" :active="!!activeOf(inspecting.id)" :eligibility="canAccept(inspecting)" @close="inspecting=null" @accept="take" />
   </div>
 </template>
@@ -67,7 +76,7 @@ function record(qid) {return state.done.find(d=>d.qid===qid);}
 .library-desks span { display:block; margin-top:5px; font:400 11px/1.7 var(--sans); color:var(--ink-2); }
 .library-workspace > button { font-size:12px; line-height:1.8; text-align:left; padding:0; }
 .library-workspace button:focus-visible { outline:2px solid var(--primary); outline-offset:3px; }
-@media(max-width:600px) { .library-desks { width:100%; } .library-desks button { flex:1; padding:12px 14px; } }
+@media(max-width:600px) { .library-desks { width:100%; gap:6px; } .library-desks button { flex:1; min-width:0; padding:12px 10px; font-size:16px; } .library-desks span { font-size:10px; } }
 .library-place-title { font:500 24px/1.6 var(--serif); margin:24px 0; }
 .library-layout { display:grid; grid-template-columns:minmax(0,1.4fr) minmax(300px,1fr); gap:26px; align-items:start; }
 .library-current { background:#fffdf5; border:1px solid var(--line); border-radius:18px; padding:28px; }

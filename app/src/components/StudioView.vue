@@ -2,13 +2,14 @@
 import { ref, computed } from 'vue';
 import { state, taskById, activeOf, openStudioWork, continueStudioWork, displayStudioWork } from '../store.js';
 import { STUDIO_THEMES, STUDIO_EXERCISES, studioTheme } from '../data/studio.js';
+import { visitForWork } from '../game/residents.js';
 import { studioStatus, studioReady } from '../game/studio.js';
 import { albumDocument, workCard, downloadStudioFile } from '../services/studio-media.js';
 import ModalFrame from './ModalFrame.vue';
 import StudioWorkEditor from './StudioWorkEditor.vue';
 import StudioWorkPreview from './StudioWorkPreview.vue';
 const props = defineProps({ focusWork: String, album: Boolean });
-const emit = defineEmits(['toast', 'complete', 'abandon', 'home']);
+const emit = defineEmits(['toast', 'complete', 'abandon', 'home', 'visits']);
 const page = ref(props.album || props.focusWork ? 'works' : 'start'), selected = ref(props.focusWork || ''), editing = ref(false);
 const starting = ref(null), title = ref(''), criterion = ref(''), error = ref(''), exporting = ref(false), includeNote = ref(false);
 const works = computed(() => state.home.studio.works);
@@ -16,6 +17,7 @@ const completed = computed(() => works.value.filter(work => studioStatus(work, s
 const work = computed(() => works.value.find(work => work.id === selected.value));
 const status = computed(() => work.value ? studioStatus(work.value, state) : '');
 const active = computed(() => work.value ? activeOf(work.value.taskIds.at(-1)) : null);
+const visit = computed(() => visitForWork(state.home.visits,work.value?.id));
 const exercise = computed(() => STUDIO_EXERCISES.find(item => item.id === work.value?.exerciseId));
 const emotionLink = './emotion-lab.html' + location.search;
 const statusLabel = work => ({ working: '正在做', rest: '先放着', done: '已收好' }[studioStatus(work, state)]);
@@ -70,7 +72,7 @@ function exportAlbum() {
           <template v-if="status==='working'"><p class="work-help">先去创作。带回正文或图片，再记下完成的这一刻。</p><button class="primary-button" :disabled="!studioReady(work)" @click="editing=false; emit('complete',active)">我做好了，收好这件作品</button><button class="text-button" @click="emit('abandon',active)">先放一放</button></template>
           <template v-else-if="status==='rest'"><p class="work-help">成果还在。继续时，会接下一件同条件的小事；原任务记录也保留着。</p><button class="primary-button" :disabled="state.active.length>=3" @click="resume">接着做这件作品</button><small v-if="state.active.length>=3">手里已有三件事，先为创作留一个位置。</small></template>
           <template v-else><p v-if="work.note && !editing" class="private-note"><strong>留给自己的话</strong>{{ work.note }}</p><button class="soft-button" @click="editing=!editing">{{ editing ? '看作品成稿' : '再改一改这一版' }}</button><button class="primary-button" @click="display">{{ state.home.studio.displayId===work.id ? '从小家收回这件作品' : '陈列到小家' }}</button><button class="text-button" @click="emit('home')">去小家看看 ↗</button><div class="export-options"><label><input v-model="includeNote" type="checkbox" /> 导出时带上留给自己的话</label><button class="soft-button" :disabled="exporting" @click="exportWork">{{ exporting ? '正在做卡片…' : '导出这一件的 PNG 卡片' }}</button><p>卡片选取第一张图和一页正文。整本作品集保留全部图片与文字。</p><button class="text-button" @click="exportAlbum">导出 {{ completed.length }} 件作品的 HTML 作品集 ↗</button></div></template>
-          <p v-if="error" role="alert" class="studio-error">{{ error }}</p>
+          <div v-if="visit" class="work-visit"><span>{{ visit.brief.name }} · 街角的约定</span><p>{{ visit.delivered ? '这一版已交回书屋，来往记录仍在。' : status==='done' ? '作品已收好。按约定检查这一版，再带回书屋交回。' : '书屋留着这次来访。做完这一版，随时可以带回去。' }}</p><button class="soft-button" @click="emit('visits')">{{ visit.delivered?'回书屋看看窗边陈列 ↗':status==='done'?'回书屋，交回这件作品 ↗':'回书屋看看这次约定 ↗' }}</button></div><p v-if="error" role="alert" class="studio-error">{{ error }}</p>
         </aside>
       </div>
     </template>
@@ -109,6 +111,8 @@ function exportAlbum() {
 .exercise p { margin: 8px 0 0; font-size: 12px; color: var(--ink-3); line-height: 1.8; }
 .exercise-time { font-size: 11px; color: var(--ink-3); text-align: right; padding-top: 3px; }
 .exercise-time i { font-style: normal; margin-left: 7px; color: var(--theme-color); }
+.work-visit { padding:20px 0; margin-top:20px; border-top:1px solid var(--line); font-size:12px; line-height:1.9; color:var(--primary); }
+.work-visit p { color:var(--ink-2); }
 .studio-back { margin: 20px 0; }
 .work-layout { display: grid; grid-template-columns: minmax(0,1fr) 280px; gap: 40px; }
 .work-page { min-width: 0; }

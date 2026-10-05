@@ -21,7 +21,7 @@ import { parseImport } from '../game/save.js';
 import { nativePlatform, exportBackup, pickBackup } from "../services/backup.js";
 const props=defineProps({focusMemory:Object});
 const view = ref('journal');
-const emit = defineEmits(["toast", "chains", "library", "back-furniture", "resume", "studio"]),
+const emit = defineEmits(["toast", "chains", "library", "back-furniture", "resume", "studio", "visits"]),
   file = ref(null),
   pendingImport = ref(""),
   importSummary = ref("");
@@ -183,6 +183,7 @@ function report() {
       <GatheredDays />
       <section v-if="portfolio.length" class="home-renovation journal-portfolio"><span class="eyebrow">自己做出来的东西</span><h3>我的作品集 · {{ portfolio.length }} 件</h3><button v-for="work in portfolio.slice(0,3)" :key="work.id" class="text-button" :data-journal-work="work.id" @click="emit('studio',work.id)">{{ work.title }} ↗</button><button class="soft-button" @click="emit('studio','')">到画室翻开全部作品</button></section>
       <section v-if="state.home.reading?.books.length" class="home-renovation"><span class="eyebrow">书页里的日子</span><h3>我的阅读书架</h3><p v-for="book in state.home.reading.books.slice(0,4)" :key="book.id">《{{ book.title }}》 · {{ book.status==='reading'?'正在读':book.finished?'已读完':'暂放书架' }} · {{ book.notes.length }} 段摘记</p><button class="soft-button" @click="emit('library')">去书屋翻开书签与摘记 ↗</button></section>
+      <section v-if="state.home.visits.some(v=>v.delivered)" class="home-renovation journal-visits"><span class="eyebrow">街角的来往</span><h3>做过的事，也留在了别人的窗边。</h3><article v-for="visit in state.home.visits.filter(v=>v.delivered)" :key="visit.id" :data-journal-visit="visit.id"><p><small>{{ visit.delivered.at }}</small> · {{ visit.brief.name }} · {{ visit.delivered.title }}</p><blockquote>{{ visit.brief.reply }}</blockquote><button class="text-button" @click="emit('studio',visit.workId)">打开这次带回的作品 ↗</button></article><button class="soft-button" @click="emit('visits')">回书屋，看看街角来往 ↗</button></section>
       <JournalMemories :focus-memory="props.focusMemory" @back-furniture="emit('back-furniture')" @toast="emit('toast', $event)" @resume="emit('resume', $event)" @studio="emit('studio',$event)" />
       <section class="backup-section">
         <div>
@@ -220,6 +221,8 @@ function report() {
 </template>
 
 <style scoped>
+.journal-visits article { padding-block:16px; border-bottom:1px solid var(--line); margin-bottom:20px; }
+.journal-visits blockquote { margin:14px 0; font:400 15px/1.9 var(--serif); color:var(--ink-2); }
 .journal-portfolio > button { display: block; margin: 10px 0; overflow-wrap: anywhere; max-width: 100%; text-align: left; }
 @media (max-width: 760px) {
   .journal-pages { order: -1; }

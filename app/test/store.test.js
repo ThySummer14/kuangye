@@ -9,6 +9,8 @@ globalThis.localStorage = {
 };
 const store = await import("../src/store.js");
 const { TASKS } = await import("../src/data/tasks.js");
+const { RESIDENT_VISITS } = await import('../src/data/residents.js');
+const { RESIDENT_DRAFTS } = await import('../src/data/resident-drafts.js');
 test("full store flow pays exactly once, persists v3, and imports home together with tasks", async () => {
   store.resetData();
   const t = TASKS.find((t) => t.id === "run-s1");
@@ -342,4 +344,41 @@ test('studio resting preserves artifacts, resumes through a new task and rejects
   store.importData(backup);
   assert.deepEqual([...store.state.home.studio.works[0].taskIds],[old,resumed.taskIds[1]]);
   await nextTick();
+});
+
+test('resident commission shares capacity, reopens the same artifact after resting, and never adds a payout',async()=>{
+  store.resetData();
+  RESIDENT_VISITS.push(RESIDENT_DRAFTS[0]);
+  try {
+    for(let i=0;i<3;i++) store.createPersonalTask({title:'手里的事',desc:'做完一版',cat:'create'});
+    const before=JSON.stringify(store.state);
+    assert.equal(store.acceptResidentVisit(RESIDENT_DRAFTS[0].id).ok,false);
+    assert.equal(JSON.stringify(store.state),before);
+    store.abandon(store.state.active[0],'留一个位置');
+    const {work,visit}=store.acceptResidentVisit(RESIDENT_DRAFTS[0].id);
+    assert.equal(store.state.active.length,3);
+    assert.equal(store.acceptResidentVisit(visit.id).work.id,work.id);
+    assert.equal(store.state.home.visits.length,1);
+    const old=work.taskIds[0];
+    store.saveStudioWork(work.id,{title:work.title,body:'窗边一株绿、杯柄的白、书页的暖黄。愿你今天能停一会儿。',note:'私人备注',images:[]});
+    store.abandon(store.activeOf(old),'先放着');
+    const restState=JSON.stringify(store.state);
+    assert.equal(store.acceptResidentVisit(visit.id).work.id,work.id);
+    assert.equal(JSON.stringify(store.state),restState);
+    assert.equal(store.continueStudioWork(work.id).ok,true);
+    assert.equal(work.taskIds.length,2);assert.ok(store.state.abandoned.some(a=>a.qid===old));
+    assert.equal(store.complete(store.activeOf(work.taskIds.at(-1)),'带回这一版'),true);
+    const money=store.state.home.lumens,glimmers=JSON.stringify(store.state.home.glimmerDays);
+    assert.equal(store.deliverResidentVisit(visit.id,false).ok,false);
+    assert.equal(store.deliverResidentVisit(visit.id,true).ok,true);
+    assert.equal(store.deliverResidentVisit(visit.id,true).unchanged,true);
+    assert.equal(store.state.home.lumens,money);assert.equal(JSON.stringify(store.state.home.glimmerDays),glimmers);
+    assert.equal(store.state.done.at(-1).xp,0);
+    await nextTick();
+    const backup=store.exportData();store.importData(backup);
+    assert.equal(store.state.home.visits[0].delivered.title,work.title);
+    const bad=JSON.parse(backup);bad.state.home.visits[0].workId='missing';
+    const current=JSON.stringify(store.state);
+    assert.throws(()=>store.importData(JSON.stringify(bad)),/作品/);assert.equal(JSON.stringify(store.state),current);
+  } finally { RESIDENT_VISITS.pop();store.resetData(); }
 });

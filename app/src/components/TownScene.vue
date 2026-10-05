@@ -4,7 +4,8 @@ import * as THREE from 'three';
 import { createWorld } from '../scenes/world.js';
 import { buildExterior, buildYardItem, buildYardPath, buildFence, buildLibrary } from '../scenes/town-models.js';
 import { yardFootprint } from '../game/town.js';
-const props=defineProps({ town: Object, mode: { type: String, default: 'yard' }, focus: {type:String,default:'yard'}, ghost: Object, editable: {type:Boolean,default:true}, light: {type:String,default:'day'} });
+import { buildResidentCorner } from '../scenes/resident-models.js';
+const props=defineProps({ town: Object, mode: { type: String, default: 'yard' }, focus: {type:String,default:'yard'}, ghost: Object, editable: {type:Boolean,default:true}, light: {type:String,default:'day'}, resident:Boolean, residentDisplay:Boolean });
 const emit=defineEmits(['cell','select']);
 const host=ref(null), failed=ref(false);
 let engine;
@@ -15,7 +16,10 @@ function frame() {
 }
 function sync() {
   engine?.setFurniture(parent=>{
-    if(props.mode==='library') buildLibrary(engine,parent,props.town.library,0,-.4);
+    if(props.mode==='library') {
+      const library=buildLibrary(engine,parent,props.town.library,0,-.4);
+      buildResidentCorner(engine,library,props.residentDisplay,props.resident);
+    }
     else {
       buildExterior(engine,parent,props.town.exterior);
       buildYardPath(engine,parent,props.town.exterior);
@@ -51,6 +55,7 @@ onMounted(()=>{
   } catch {failed.value=true;engine?.dispose();engine=null;}
 });
 watch(()=>props.town,sync,{deep:true});
+watch(()=>[props.resident,props.residentDisplay],sync);
 watch(()=>props.ghost,preview,{deep:true});
 watch(()=>props.light,v=>engine?.setLighting(v));
 watch(()=>props.focus,frame);
@@ -58,7 +63,7 @@ onBeforeUnmount(()=>engine?.dispose());
 </script>
 <template>
   <div class="town-scene" :class="{night:light==='night'}">
-    <div ref="host" class="town-canvas" :aria-label="mode==='yard'?'可旋转的房屋与院落预览':'街角书屋修复预览'" />
+    <div ref="host" class="town-canvas" :aria-label="mode==='yard'?'可旋转的房屋与院落预览':residentDisplay?'街角书屋与交回作品的纸牌陈列':'街角书屋修复预览'" />
     <p v-if="failed" class="town-fallback">暂时无法显示立体预览，仍可使用下方的平面布局和选项。</p>
     <div class="town-view-controls"><button aria-label="放大场景" @click="engine?.zoom(-2)">＋</button><button aria-label="缩小场景" @click="engine?.zoom(2)">−</button><button aria-label="恢复场景视角" @click="frame">⟳</button></div>
     <p class="town-scene-hint">拖动转一转 · 滚动缩放{{ mode==='yard' && editable?' · 点地面选择位置':'' }}</p>

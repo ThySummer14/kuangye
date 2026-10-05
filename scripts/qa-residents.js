@@ -1,0 +1,78 @@
+async (page) => {
+  const errors=[],results=[];page.on('pageerror',e=>errors.push(e.message));
+  const check=(ok,message)=>{if(!ok)throw Error(message);};
+  const run=(body,arg)=>page.evaluate(async([body,arg])=>{
+    const url=performance.getEntriesByType('resource').map(e=>e.name).filter(n=>new URL(n).pathname==='/src/store.js').at(-1);
+    return new Function('st','arg',body)(await import(url),arg);
+  },[body,arg]);
+  const capture=async(name,width)=>{
+    await page.locator('.toast').waitFor({state:'hidden'});
+    check(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),name+' overflow');
+    await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+    await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:`output/playwright/residents-${name}-${width}.png`,fullPage:true});
+  };
+  const back=async()=>{await page.getByRole('button',{name:'← 回到地图',exact:true}).click();await page.locator('.world-canvas[data-ready=true]').waitFor();};
+  const enter=async()=>{await page.locator('[data-place=library]').click();await page.getByRole('tab',{name:/街角来访/}).click();await page.locator('.resident-desk').waitFor();};
+  for(const width of [1280,375]) {
+    await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:5190/?qa#map');
+    await page.locator('.world-canvas[data-ready=true]').waitFor();await run("st.resetData();st.state.settings.devDate='2026-10-05';");
+    await capture('map-before',width);await enter();
+    // Tabs have roving keyboard focus across all three desks.
+    await page.getByRole('tab',{name:/街角来访/}).press('Home');check(await page.getByRole('tab',{name:/阅读桌/}).getAttribute('aria-selected')==='true','Home tab');
+    await page.getByRole('tab',{name:/阅读桌/}).press('End');check(await page.getByRole('tab',{name:/街角来访/}).evaluate(el=>el===document.activeElement),'End tab focus');
+    check(await page.locator('.resident-steps li').count()===3,'steps missing');
+    check(await run('return st.state.home.visits.length===0 && st.state.active.length===0;'),'reading auto accepted');
+    await capture('visit',width);
+    // Refuse a fourth task without creating a work or visit.
+    await run("for(let i=0;i<3;i++)st.createPersonalTask({title:'手里的事',desc:'做完一版',cat:'create'});");
+    await page.getByRole('button',{name:'接下委托，去画室开始'}).click();
+    check((await page.locator('.visit-error').innerText()).includes('最多放 3 件'),'capacity message');
+    check(await run('return st.state.home.visits.length===0 && st.state.home.studio.works.length===0;'),'capacity mutated');
+    await run("st.resetData();st.state.settings.devDate='2026-10-05';");await page.getByRole('button',{name:'接下委托，去画室开始'}).click();
+    await page.locator('.studio-editor').waitFor();
+    const id=await page.locator('[data-studio-work]').getAttribute('data-studio-work');
+    const original=await run('return st.state.home.studio.works[0].taskIds[0];');
+    check(await page.getByRole('button',{name:'我做好了，收好这件作品'}).isDisabled(),'empty completion allowed');
+    await page.locator('#studio-title').fill('楼下，三种慢下来的颜色');
+    await page.locator('#studio-body').fill('地点：楼下的长椅。\n树叶是新绿，椅背的木纹是暖褐，墙上的光是淡金。\n给路过的人：今天也可以停下来，坐一会儿。');
+    await page.locator('#studio-note').fill('这是只留给自己的备注。');
+    await page.getByRole('button',{name:'保存这一版',exact:true}).click();await capture('making',width);
+    await page.getByRole('button',{name:'先放一放',exact:true}).click();await page.getByRole('dialog').getByRole('textbox').fill('等我下次路过。');await page.getByRole('dialog').getByRole('button',{name:'暂时放下',exact:true}).click();
+    await page.getByRole('button',{name:'回书屋看看这次约定 ↗'}).click();await capture('rest',width);
+    await page.getByRole('button',{name:'回画室，接着做这一版'}).click();
+    check(await page.locator('[data-studio-work]').getAttribute('data-studio-work')===id,'rest opens wrong work');
+    await page.getByRole('button',{name:'接着做这件作品'}).click();
+    check(await run('const w=st.state.home.studio.works[0];return w.taskIds.length===2&&w.taskIds[0]===arg&&st.state.abandoned.some(a=>a.qid===arg)&&st.state.home.visits.length===1;',original),'rest history lost');
+    await page.getByRole('button',{name:'我做好了，收好这件作品'}).click();
+    await page.getByRole('dialog',{name:'记录完成的任务'}).getByRole('textbox').fill('走到楼下，留下一张明信片。');
+    await page.getByRole('button',{name:'完成，记下这一刻'}).click();
+    await page.getByRole('dialog',{name:'这一件事，收好了'}).waitFor();
+    await page.getByRole('button',{name:'去画室看看这件作品 ↗'}).click();
+    await page.getByRole('button',{name:'回书屋，交回这件作品 ↗'}).click();
+    const handover=page.getByRole('button',{name:'把这一版交回书屋'});
+    check(await handover.isDisabled(),'handover without confirmation');
+    check(!(await page.locator('.visit-handover').innerText()).includes('这是只留给自己的备注'),'private note leaked');
+    await capture('handover',width);
+    const economy=await run('return JSON.stringify([st.state.home.lumens,st.state.home.earned,st.state.home.glimmerDays,st.state.done]);');
+    await page.getByRole('checkbox',{name:'我确认这一版按约定留下了真实观察与成果。'}).check();await handover.click();
+    await page.locator('.resident-return').waitFor();check(await run('return JSON.stringify([st.state.home.lumens,st.state.home.earned,st.state.home.glimmerDays,st.state.done]);')===economy,'extra handover rewards');
+    check((await page.locator('.resident-keepsake').innerText()).includes('楼下，三种慢下来的颜色'),'wrong snapshot');
+    await capture('returned',width);
+    await page.getByRole('button',{name:'日间',exact:true}).click();await page.locator('.town-canvas[data-ready=true]').waitFor();await capture('library-day',width);
+    await page.getByRole('button',{name:'夜间',exact:true}).click();await capture('library-night',width);
+    const save=await run('return st.exportData();');
+    const history=await run('return JSON.stringify(st.state.home.visits);');
+    await page.reload();await page.getByRole('tab',{name:/街角来访/}).click();check(await run('return JSON.stringify(st.state.home.visits);')===history,'refresh lost visit');
+    check(await run("const before=JSON.stringify(st.state);st.deliverResidentVisit('ahe-first-postcard',true);return before===JSON.stringify(st.state);"),'repeat handover mutated');
+    await page.getByRole('button',{name:'打开窗边的作品 ↗'}).click();check(await page.locator('[data-studio-work]').getAttribute('data-studio-work')===id,'opens wrong artifact');
+    await page.getByRole('button',{name:'再改一改这一版'}).click();await page.locator('#studio-title').fill('修订后的楼下明信片');await page.getByRole('button',{name:'保存这一版',exact:true}).click();
+    await page.getByRole('button',{name:'回书屋看看窗边陈列 ↗'}).click();check((await page.locator('.resident-keepsake').innerText()).includes('楼下，三种慢下来的颜色'),'revision changed snapshot');
+    await page.getByRole('button',{name:'在成长手记回望这次来往 ↗'}).click();await capture('journal',width);
+    await page.locator('[data-journal-visit]').getByRole('button',{name:'打开这次带回的作品 ↗'}).click();check(await page.locator('[data-studio-work]').getAttribute('data-studio-work')===id,'journal work mismatch');
+    await run('st.importData(arg);',save);
+    check(await run("const bad=JSON.parse(st.exportData());bad.state.home.visits[0].workId='missing';const before=JSON.stringify(st.state);let refused=false;try{st.importData(JSON.stringify(bad));}catch{refused=true;}return refused && before===JSON.stringify(st.state);"),'invalid import changed state');
+    await back();check((await page.locator('[data-place=library]').innerText()).includes('窗边留着一次来往'),'map no aftermath');await capture('map-after',width);
+    results.push({width,status:'PASS',mapTwoClicks:true,keyboard:true,capacity:3,restHistory:true,confirmedHandover:true,noExtraRewards:true,privateNoteExcluded:true,immutableSnapshot:true,refresh:true,backup:true,journal:true,dayNight:true});
+  }
+  check(!errors.length,JSON.stringify(errors));return {results,errors,fixture:'local disposable ?qa only'};
+}

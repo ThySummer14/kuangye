@@ -1,0 +1,10 @@
+=== final residents pending-content gate: exact name/title/story/reply strings in app/dist and dist JavaScript ===
+Checked exact strings from app/src/data/resident-drafts.js:
+name: 阿禾
+title: 给窗边留一张明信片
+story: 阿禾抱着一摞旧书，停在窗边。最上面那本掉出一张空白明信片。她翻来覆去看了一会儿，说：“原来留白也能留这么久。”
+story: “我想把它放在这里。但窗外是什么样，还是得有人真的出去看一眼。你愿意从自己的日常里，带回一个小地方吗？不用远行，楼下也可以。”
+reply: 阿禾把明信片扶正，压在窗边的木夹下。“现在这扇窗，多看见了一个地方。”她没有再派下一件事，只给你挪出一个能坐下的位置。
+[content gate: PASS — all checked resident draft strings are absent from built JavaScript]
+
+[content gate exit code: 0]

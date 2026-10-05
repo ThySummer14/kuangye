@@ -1,4 +1,5 @@
 import { buildExterior, buildYardItem, buildYardPath, buildFence, buildLibrary, buildAtelier, buildWoodshop } from "./town-models.js";
+import { buildResidentCorner } from './resident-models.js';
 import { emptyTown } from "../game/town.js";
 import { makeSoftCorner } from "./mascot-model.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
@@ -68,6 +69,8 @@ export function createWorld(
     getMood = () => "idle",
     mode = "map",
     town = emptyTown(),
+    resident = false,
+    residentDisplay = false,
   } = {},
 ) {
   const scene = new THREE.Scene();
@@ -314,6 +317,7 @@ export function createWorld(
     for (const p of town.yard) buildYardItem(kit,yard,p);
     mapGroups.push({ id: 'yard', group: yard }); poi('yard', -4.8, -.25, .5);
     const library = buildLibrary(kit,world,town.library,5.3,-.95);
+    buildResidentCorner(kit,library,residentDisplay,resident);
     library.scale.setScalar(.78);
     mapGroups.push({ id: 'library', group: library }); poi('library',5.3,-.95,2.5);
     // A short boardwalk joins the old square to the new street.

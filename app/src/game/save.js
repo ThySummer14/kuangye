@@ -4,6 +4,7 @@ import { TASKS } from "../data/tasks.js";
 import { dateStr } from "../data/season.js";
 import { normalizeHome } from "./home.js";
 import { validateStudioLinks } from "./studio.js";
+import { validateVisitLinks } from "./residents.js";
 const TASK_IDS = new Set(TASKS.map((t) => t.id));
 // Import must not silently discard unfamiliar history during whitelist cleaning.
 export function parseImport(json) {
@@ -103,5 +104,6 @@ export function normalizeState(raw) {
     },
   };
   validateStudioLinks(normalized);
+  validateVisitLinks(normalized);
   return normalized;
 }

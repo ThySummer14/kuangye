@@ -1,0 +1,10 @@
+import { readFileSync, writeFileSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { RESIDENT_DRAFTS } from '../app/src/data/resident-drafts.js';
+import { residentBrief } from '../app/src/game/residents.js';
+const draft=RESIDENT_DRAFTS[0],qid='personal-release-resident';
+const fixture={version:3,state:{active:[{qid,start:'2026-10-05',logs:[]}],done:[],abandoned:[],customTasks:[{id:qid,title:draft.title,desc:draft.criterion,cat:'create'}],home:{visits:[{id:draft.id,workId:'release-postcard',acceptedAt:'2026-10-05',brief:residentBrief(draft),delivered:null}],studio:{displayId:'',works:[{id:'release-postcard',title:'正式恢复的一张明信片',body:'地点：楼下。\n树叶的新绿、木椅的暖褐、墙上的淡金。\n愿你路过时，也能坐一会儿。',note:'仅自己的备注',images:[],theme:'notice',exerciseId:'',taskIds:[qid],created:'2026-10-05',updated:'2026-10-05'}]}}}};
+const code=readFileSync('scripts/qa-residents-release.js','utf8').trim().replace('__RESIDENT_FIXTURE__',JSON.stringify(fixture));
+const r=spawnSync(process.env.HOME+'/.codex/skills/playwright/scripts/playwright_cli.sh',['-s=kuangye-portfolio','run-code',code],{encoding:'utf8'});
+const output=r.stdout+r.stderr;writeFileSync('output/residents-release-browser.txt',output);console.log(output);
+if(r.status||/### Error/.test(output))process.exit(1);

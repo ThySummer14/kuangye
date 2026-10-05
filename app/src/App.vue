@@ -72,7 +72,7 @@ function openStudio(id = '') {
 }
 function visitStudioHome() { showHomeWork.value = true; tab.value = 'home'; }
 function openLibrary(desk = 'reading') {
-  libraryDesk.value = desk === 'inquiry' ? 'inquiry' : 'reading';
+  libraryDesk.value = ['inquiry','visits'].includes(desk) ? desk : 'reading';
   tab.value = 'library';
 }
 function returnFromLibrary(qid = '') {
@@ -353,16 +353,16 @@ async function takeMapTask() {
         @toast="toast"
         @studio="openStudio"
       />
-      <StudioView v-else-if="tab === 'atelier'" :focus-work="studioTarget" :album="studioAlbum" @complete="completing=$event" @abandon="abandoning=$event" @home="visitStudioHome" @toast="toast" />
+      <StudioView v-else-if="tab === 'atelier'" :focus-work="studioTarget" :album="studioAlbum" @complete="completing=$event" @abandon="abandoning=$event" @home="visitStudioHome" @visits="openLibrary('visits')" @toast="toast" />
       <WoodshopView v-else-if="tab === 'woodshop'" @toast="toast" />
       <YardView v-else-if="tab === 'yard'" @home="tab = 'home'" />
-      <LibraryView v-else-if="tab === 'library'" :desk="libraryDesk" @desk="libraryDesk=$event" @tasks="returnFromLibrary" @notebook="returnFromLibrary()" @write="writeInquiryStep" @journal="memoryTarget=null; tab = 'panel'" @toast="toast" />
+      <LibraryView v-else-if="tab === 'library'" :desk="libraryDesk" @desk="libraryDesk=$event" @studio="openStudio" @tasks="returnFromLibrary" @notebook="returnFromLibrary()" @write="writeInquiryStep" @journal="memoryTarget=null; tab = 'panel'" @toast="toast" />
       <ShopView
         v-else-if="tab === 'shop'"
         @home="tab = 'home'"
         @toast="toast"
       />
-      <JournalView :focus-memory="memoryTarget" @back-furniture="backToFurniture" @library="openLibrary('reading')"
+      <JournalView :focus-memory="memoryTarget" @back-furniture="backToFurniture" @library="openLibrary('reading')" @visits="openLibrary('visits')"
         v-else-if="tab === 'panel'"
         @resume="resumeFromJournal"
         @toast="toast"

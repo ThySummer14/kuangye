@@ -1,6 +1,8 @@
 import { emptyReading, startBook, updateBook, noteBook, shelveBook, reopenBook } from "./game/reading.js";
 import { emptyInquiry, startInquiry, updateInquiry, noteInquiry, keepInquiry, reopenInquiry } from "./game/inquiry.js";
 import { studioFields, studioReady, studioStatus, studioWorkForTask, addStudioWork, updateStudioWork } from "./game/studio.js";
+import { residentBrief, handInVisit } from "./game/residents.js";
+import { RESIDENT_VISITS } from "./data/residents.js";
 import { emptyTown, changeExterior, placeYard, repairLibrary, applyYardPlan } from "./game/town.js";
 import { personalTask, taskXp } from "./game/personal-tasks.js";
 import { persistence } from './services/persistence.js';
@@ -499,3 +501,17 @@ export function displayStudioWork(id) {
   state.home.studio.displayId = id;
   return { ok: true };
 }
+
+export function acceptResidentVisit(id) {
+  const previous = state.home.visits.find(visit => visit.id === id);
+  if (previous) return { ok:true, visit:previous, work:state.home.studio.works.find(work => work.id === previous.workId) };
+  const definition = RESIDENT_VISITS.find(visit => visit.id === id);
+  if (!definition) return { ok:false, why:'这次来访还在整理。' };
+  const brief = residentBrief(definition);
+  const result = openStudioWork({ title:brief.title, criterion:brief.criterion, theme:'notice', step:brief.steps[0] });
+  if (!result.ok) return result;
+  const visit = { id, workId:result.work.id, acceptedAt:today(), brief, delivered:null };
+  state.home.visits.unshift(visit);
+  return { ...result, visit };
+}
+export const deliverResidentVisit = (id, confirmed) => handInVisit(state,id,confirmed,today());

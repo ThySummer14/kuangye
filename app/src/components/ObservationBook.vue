@@ -5,11 +5,15 @@ import { observationEntries } from '../game/observations.js';
 import { OBSERVATION_PROMPTS, OBSERVATION_KINDS, observationKind } from '../data/observations.js';
 import ObservationEditor from './ObservationEditor.vue';
 import ObservationMark from './ObservationMark.vue';
+import ObservationCraftDialog from './ObservationCraftDialog.vue';
+import { observationWorkFor } from '../game/observation-craft.js';
 const props=defineProps({focusEntry:String});
-const emit=defineEmits(['toast','journal','outside']);
+const emit=defineEmits(['toast','journal','outside','studio']);
+const crafting=ref(false);
 const selected=ref(props.focusEntry||''),editing=ref(false),query=ref(''),kind=ref('all'),error=ref(''),heading=ref(null);
 const book=computed(()=>state.home.observations),entry=computed(()=>book.value.entries.find(entry=>entry.id===selected.value));
 const draft=computed(()=>book.value.entries.find(entry=>entry.status==='draft'));
+const linked=computed(()=>observationWorkFor(state.home.observationWorks,entry.value?.id));
 const kept=computed(()=>observationEntries(book.value));
 const visible=computed(()=>observationEntries(book.value,{query:query.value,kind:kind.value}));
 watch(()=>props.focusEntry,id=>{if(id)open(id);},{immediate:true});
@@ -20,6 +24,7 @@ function begin(prompt) {
   open(result.entry.id);
 }
 function collected() {editing.value=false;emit('toast','这次停下来看见的，收好了。');}
+function craft() { if(linked.value) emit('studio',linked.value.workId); else crafting.value=true; }
 </script>
 <template>
   <section class="observation-book" :class="{'has-entry':!!entry}" aria-label="院子里的观察册">
@@ -36,13 +41,14 @@ function collected() {editing.value=false;emit('toast','这次停下来看见的
         <template v-if="entry"><div class="observation-page-tools"><button class="text-button" @click="selected=''; editing=false">← 回到观察册</button><span>{{ entry.status==='draft'?'正在写的一页':'已收进册子' }}</span></div><article class="observation-page" :data-observation-page="entry.id"><h4 ref="heading" tabindex="-1">{{ entry.place || '这次，在哪里停下来看了看？' }}</h4>
           <ObservationEditor v-if="entry.status==='draft'||editing" :key="entry.id" :entry="entry" @kept="collected" @saved="emit('toast','这一页，保存好了。')" />
           <template v-else><div class="observation-page-meta"><time>{{ entry.observedOn }}</time><span>{{ observationKind(entry.kind)?.name }}</span></div><div v-if="entry.images.length" class="observation-photos"><img v-for="(src,i) in entry.images" :key="i" :src="src" :alt="entry.place+' · 第 '+(i+1)+' 张观察图片'" /></div><div v-else class="observation-page-mark"><ObservationMark :kind="entry.kind" /></div><p class="observation-finding">{{ entry.body }}</p><footer>{{ entry.keptAt }} · 收进观察册</footer></template>
-        </article><div v-if="entry.status==='kept'" class="observation-page-actions"><button class="soft-button" @click="editing=!editing">{{ editing?'看收好的记录':'再补一点发现' }}</button><button class="text-button" @click="emit('journal')">去成长手记回望 ↗</button></div></template>
+        </article><div v-if="entry.status==='kept'" class="observation-page-actions"><button v-if="!editing" class="primary-button" @click="craft">{{ linked?'回到这一页的作品 ↗':'把这个发现带到画室 ↗' }}</button><button class="soft-button" @click="editing=!editing">{{ editing?'看收好的记录':'再补一点发现' }}</button><button class="text-button" @click="emit('journal')">去成长手记回望 ↗</button></div></template>
         <template v-else><div class="observation-empty"><div class="observation-empty-mark"><ObservationMark /></div><span class="eyebrow">一个很近的地方，也值得认真看</span><h4>{{ kept.length?'那些停下来的时刻，都在这里。':'不必远行，先从门口开始。' }}</h4><p>不用先拍到一张好照片。记下自己真正看见的一个细节，就能留下这一页。</p><button class="soft-button" @click="begin()">{{ draft?'回到正在写的那一页':'开始自己的观察' }}</button></div>
           <div v-if="OBSERVATION_PROMPTS.length" class="observation-prompts"><span class="eyebrow">也可以从一个小起点出门 · 本地试用</span><button v-for="prompt in OBSERVATION_PROMPTS" :key="prompt.id" :aria-label="prompt.title" :data-observation-prompt="prompt.id" @click="begin(prompt)"><ObservationMark :kind="prompt.kind" /><div><strong>{{ prompt.title }}</strong><p>{{ prompt.note }}</p></div><span aria-hidden="true">↗</span></button></div>
         </template><p v-if="error" class="observation-error" role="alert">{{ error }}</p>
       </div>
     </div>
     <footer class="observation-book-footer"><p>观察页与图片随成长手记的整份备份保存。记一页不会自动完成任务；已有出门的事，仍回岩壁按自己的条件记录。</p><button class="text-button" @click="emit('outside')">去岩壁，找一件出门的事 ↗</button></footer>
+    <ObservationCraftDialog v-if="crafting && entry" :entry="entry" @close="crafting=false" @studio="crafting=false; emit('studio',$event)" />
   </section>
 </template>
 <style scoped>

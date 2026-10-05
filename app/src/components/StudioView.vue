@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch, nextTick } from 'vue';
 import { state, taskById, activeOf, openStudioWork, continueStudioWork, displayStudioWork } from '../store.js';
 import { STUDIO_THEMES, STUDIO_EXERCISES, studioTheme } from '../data/studio.js';
 import { visitForWork } from '../game/residents.js';
@@ -8,8 +8,11 @@ import { albumDocument, workCard, downloadStudioFile } from '../services/studio-
 import ModalFrame from './ModalFrame.vue';
 import StudioWorkEditor from './StudioWorkEditor.vue';
 import StudioWorkPreview from './StudioWorkPreview.vue';
+import ObservationSource from './ObservationSource.vue';
+import { observationSourceFor } from '../game/observation-craft.js';
 const props = defineProps({ focusWork: String, album: Boolean });
-const emit = defineEmits(['toast', 'complete', 'abandon', 'home', 'visits']);
+const emit = defineEmits(['toast', 'complete', 'abandon', 'home', 'visits', 'observation']);
+const heading = ref(null);
 const page = ref(props.album || props.focusWork ? 'works' : 'start'), selected = ref(props.focusWork || ''), editing = ref(false);
 const starting = ref(null), title = ref(''), criterion = ref(''), error = ref(''), exporting = ref(false), includeNote = ref(false);
 const works = computed(() => state.home.studio.works);
@@ -18,6 +21,7 @@ const work = computed(() => works.value.find(work => work.id === selected.value)
 const status = computed(() => work.value ? studioStatus(work.value, state) : '');
 const active = computed(() => work.value ? activeOf(work.value.taskIds.at(-1)) : null);
 const visit = computed(() => visitForWork(state.home.visits,work.value?.id));
+const observation = computed(() => observationSourceFor(state.home.observationWorks,work.value?.id));
 const exercise = computed(() => STUDIO_EXERCISES.find(item => item.id === work.value?.exerciseId));
 const emotionLink = './emotion-lab.html' + location.search;
 const statusLabel = work => ({ working: '正在做', rest: '先放着', done: '已收好' }[studioStatus(work, state)]);
@@ -28,7 +32,8 @@ function take() {
   starting.value = null; selected.value = result.work.id; page.value = 'works'; editing.value = true;
   emit('toast', '这件作品，按你自己的节奏开始。');
 }
-function open(id) { selected.value = id; editing.value = false; includeNote.value = false; error.value = ''; }
+async function open(id) { selected.value = id; page.value = 'works'; editing.value = false; includeNote.value = false; error.value = ''; await nextTick(); heading.value?.focus({preventScroll:true}); heading.value?.scrollIntoView({block:'start'}); }
+watch(() => props.focusWork, id => { if (id) open(id); }, {immediate:true});
 function resume() {
   const result = continueStudioWork(work.value.id);
   if (!result.ok) { error.value = result.why; return; }
@@ -65,9 +70,10 @@ function exportAlbum() {
     </template>
     <template v-else-if="work">
       <button class="text-button studio-back" @click="selected=''; editing=false">← 回到作品集</button>
+      <h3 ref="heading" tabindex="-1" class="work-title">{{ work.title }}</h3>
       <div class="work-layout" :data-studio-work="work.id">
-        <section class="work-page"><StudioWorkEditor v-if="status!=='done' || editing" :key="work.id" :work="work" @saved="emit('toast','这一版，保存好了。')" /><StudioWorkPreview v-else :work="work" /></section>
-        <aside class="work-sidebar"><span class="work-state">{{ statusLabel(work) }} · {{ studioTheme(work.theme)?.title || '自己的想法' }}</span><h3>{{ work.title }}</h3><p class="work-criterion"><strong>做到这里，就可以收好</strong>{{ taskById[work.taskIds.at(-1)]?.desc }}</p>
+        <section class="work-page"><div v-if="observation" class="work-source"><ObservationSource :source="observation.source" /><p>接下创作时留下的素材。原观察后续修订，不会改掉这里；导出卡片与作品集只带成果。</p><button class="text-button" @click="emit('observation',observation.observationId)">回到原观察页 ↗</button></div><StudioWorkEditor v-if="status!=='done' || editing" :key="work.id" :work="work" @saved="emit('toast','这一版，保存好了。')" /><StudioWorkPreview v-else :work="work" /></section>
+        <aside class="work-sidebar"><span class="work-state">{{ statusLabel(work) }} · {{ studioTheme(work.theme)?.title || '自己的想法' }}</span><p class="work-criterion"><strong>做到这里，就可以收好</strong>{{ taskById[work.taskIds.at(-1)]?.desc }}</p>
           <details v-if="exercise" class="work-guide" open><summary>出发时的小提示</summary><ol><li v-for="step in exercise.steps" :key="step">{{ step }}</li></ol></details>
           <template v-if="status==='working'"><p class="work-help">先去创作。带回正文或图片，再记下完成的这一刻。</p><button class="primary-button" :disabled="!studioReady(work)" @click="editing=false; emit('complete',active)">我做好了，收好这件作品</button><button class="text-button" @click="emit('abandon',active)">先放一放</button></template>
           <template v-else-if="status==='rest'"><p class="work-help">成果还在。继续时，会接下一件同条件的小事；原任务记录也保留着。</p><button class="primary-button" :disabled="state.active.length>=3" @click="resume">接着做这件作品</button><small v-if="state.active.length>=3">手里已有三件事，先为创作留一个位置。</small></template>
@@ -114,6 +120,10 @@ function exportAlbum() {
 .work-visit { padding:20px 0; margin-top:20px; border-top:1px solid var(--line); font-size:12px; line-height:1.9; color:var(--primary); }
 .work-visit p { color:var(--ink-2); }
 .studio-back { margin: 20px 0; }
+.work-title { font:500 27px/1.5 var(--serif); margin:0 0 26px; overflow-wrap:anywhere; outline:none; scroll-margin-top:85px; }
+.work-source { margin-bottom:28px; }
+.work-source p { font-size:11px; color:var(--ink-3); line-height:1.9; }
+.work-source button { margin-bottom:12px; }
 .work-layout { display: grid; grid-template-columns: minmax(0,1fr) 280px; gap: 40px; }
 .work-page { min-width: 0; }
 .work-sidebar { min-width: 0; }

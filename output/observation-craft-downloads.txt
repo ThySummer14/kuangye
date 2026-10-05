@@ -1,0 +1,4 @@
+{"mode":"dev","width":1280,"status":"PASS","links":1,"sourceImageChars":8503,"sourceBodyWhitespace":true,"displayPreserved":true,"originalTaskHistory":true,"exportOnlyArtifact":true}
+{"mode":"dev","width":375,"status":"PASS","links":1,"sourceImageChars":8503,"sourceBodyWhitespace":true,"displayPreserved":true,"originalTaskHistory":true,"exportOnlyArtifact":true}
+{"mode":"release","width":1280,"status":"PASS","links":1,"sourceImageChars":8503,"sourceBodyWhitespace":true,"displayPreserved":true,"originalTaskHistory":true,"exportOnlyArtifact":true}
+{"mode":"release","width":375,"status":"PASS","links":1,"sourceImageChars":8503,"sourceBodyWhitespace":true,"displayPreserved":true,"originalTaskHistory":true,"exportOnlyArtifact":true}

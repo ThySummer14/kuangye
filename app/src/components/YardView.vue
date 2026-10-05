@@ -6,7 +6,7 @@ import { emptyTown, yardCheck, yardFootprint, previewYardPlan } from '../game/to
 import TownScene from './TownScene.vue';
 import ObservationBook from './ObservationBook.vue';
 const props=defineProps({desk:{type:String,default:'arrange'},focusObservation:String});
-const emit=defineEmits(['home','toast','journal','outside']);
+const emit=defineEmits(['home','toast','journal','outside','studio']);
 const page=ref(props.desk==='observations'?'observations':'arrange');
 watch(()=>props.desk,desk=>{page.value=desk==='observations'?'observations':'arrange';});
 function choosePage(value){page.value=value;preview.value=null;message.value='';}
@@ -53,7 +53,7 @@ function key(e,c) {const delta={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1]
   <div class="yard-page">
     <header class="town-intro"><div><span class="eyebrow">从门口开始，住成喜欢的样子</span><h2>{{ page==='observations'?'在近处，发现一点新东西。':'给家，留一个院子。' }}</h2><p>{{ page==='observations'?'出门看一眼，回来留一页。楼下、窗边、熟悉的路，都可以是起点。':'第一批材料已经备好。试着放一张长椅，或为窗外种一棵树。' }}</p></div><button class="soft-button" @click="emit('home')">进屋看看 ↗</button></header>
     <div class="yard-places" role="tablist" aria-label="院子里的去处"><button id="yard-arrange-tab" role="tab" :aria-selected="page==='arrange'" :tabindex="page==='arrange'?0:-1" aria-controls="yard-arrange-panel" @click="choosePage('arrange')" @keydown="pageKey">院落布置<span>给家留一点自己的样子</span></button><button id="yard-observations-tab" role="tab" :aria-selected="page==='observations'" :tabindex="page==='observations'?0:-1" aria-controls="yard-observations-panel" @click="choosePage('observations')" @keydown="pageKey">观察册<span>去近处，带回一个发现</span></button></div>
-    <section v-if="page==='observations'" id="yard-observations-panel" role="tabpanel" aria-labelledby="yard-observations-tab"><ObservationBook :focus-entry="focusObservation" @toast="emit('toast',$event)" @journal="emit('journal')" @outside="emit('outside')" /></section>
+    <section v-if="page==='observations'" id="yard-observations-panel" role="tabpanel" aria-labelledby="yard-observations-tab"><ObservationBook :focus-entry="focusObservation" @toast="emit('toast',$event)" @journal="emit('journal')" @outside="emit('outside')" @studio="emit('studio',$event)" /></section>
     <div v-else id="yard-arrange-panel" role="tabpanel" aria-labelledby="yard-arrange-tab" class="yard-workbench">
       <div ref="previewHost" class="yard-preview"><TownScene :editable="tab==='yard'" :focus="tab==='house'?'house':'yard'" :town="previewTown" :ghost="tab==='yard'?ghost:null" :light="light" @cell="choose" @select="select" />
         <div class="yard-light" role="group" aria-label="预览光线"><button :aria-pressed="light==='day'" @click="light='day'">日间</button><button :aria-pressed="light==='night'" @click="light='night'">夜间</button><span>仅切换预览光线</span></div>

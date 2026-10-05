@@ -357,9 +357,9 @@ async function takeMapTask() {
         @toast="toast"
         @studio="openStudio"
       />
-      <StudioView v-else-if="tab === 'atelier'" :focus-work="studioTarget" :album="studioAlbum" @complete="completing=$event" @abandon="abandoning=$event" @home="visitStudioHome" @visits="openLibrary('visits')" @toast="toast" />
+      <StudioView v-else-if="tab === 'atelier'" :focus-work="studioTarget" :album="studioAlbum" @complete="completing=$event" @abandon="abandoning=$event" @home="visitStudioHome" @visits="openLibrary('visits')" @observation="openObservationBook" @toast="toast" />
       <WoodshopView v-else-if="tab === 'woodshop'" @toast="toast" />
-      <YardView v-else-if="tab === 'yard'" :desk="yardDesk" :focus-observation="observationTarget" @home="tab = 'home'" @toast="toast" @journal="memoryTarget=null; tab='panel'" @outside="visitOutsideTasks" />
+      <YardView v-else-if="tab === 'yard'" :desk="yardDesk" :focus-observation="observationTarget" @home="tab = 'home'" @toast="toast" @journal="memoryTarget=null; tab='panel'" @outside="visitOutsideTasks" @studio="openStudio" />
       <LibraryView v-else-if="tab === 'library'" :desk="libraryDesk" @desk="libraryDesk=$event" @studio="openStudio" @tasks="returnFromLibrary" @notebook="returnFromLibrary()" @write="writeInquiryStep" @journal="memoryTarget=null; tab = 'panel'" @toast="toast" />
       <ShopView
         v-else-if="tab === 'shop'"

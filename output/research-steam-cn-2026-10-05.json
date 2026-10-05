@@ -1,0 +1,69 @@
+{
+  "observed_on": "2026-10-05",
+  "country": "cn",
+  "currency_note": "price in minor units; regional storefront snapshot, no checkout performed",
+  "products": [
+    {
+      "source": "https://store.steampowered.com/api/appdetails?appids=2113850&cc=cn&l=schinese",
+      "success": true,
+      "name": "Spirit City: Lofi Sessions",
+      "is_free": false,
+      "price_overview": {
+        "currency": "CNY",
+        "initial": 4000,
+        "final": 1600,
+        "discount_percent": 60,
+        "initial_formatted": "¥ 40.00",
+        "final_formatted": "¥ 16.00"
+      },
+      "platforms": {
+        "windows": true,
+        "mac": true,
+        "linux": false
+      },
+      "release_date": {
+        "coming_soon": false,
+        "date": "2024 年 4 月 8 日"
+      }
+    },
+    {
+      "source": "https://store.steampowered.com/api/appdetails?appids=2943180&cc=cn&l=schinese",
+      "success": true,
+      "name": "Virtual Cottage 2",
+      "is_free": false,
+      "price_overview": {
+        "currency": "CNY",
+        "initial": 3300,
+        "final": 2475,
+        "discount_percent": 25,
+        "initial_formatted": "¥ 33.00",
+        "final_formatted": "¥ 24.75"
+      },
+      "platforms": {
+        "windows": true,
+        "mac": true,
+        "linux": true
+      },
+      "release_date": {
+        "coming_soon": false,
+        "date": "2026 年 3 月 27 日"
+      }
+    },
+    {
+      "source": "https://store.steampowered.com/api/appdetails?appids=1369320&cc=cn&l=schinese",
+      "success": true,
+      "name": "Virtual Cottage",
+      "is_free": true,
+      "price_overview": null,
+      "platforms": {
+        "windows": true,
+        "mac": true,
+        "linux": true
+      },
+      "release_date": {
+        "coming_soon": false,
+        "date": "2020 年 10 月 7 日"
+      }
+    }
+  ]
+}

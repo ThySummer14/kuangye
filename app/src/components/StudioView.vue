@@ -9,12 +9,15 @@ import ModalFrame from './ModalFrame.vue';
 import StudioWorkEditor from './StudioWorkEditor.vue';
 import StudioWorkPreview from './StudioWorkPreview.vue';
 import ObservationSource from './ObservationSource.vue';
+import ObservationCraftDialog from './ObservationCraftDialog.vue';
+import StudioObservationPicker from './StudioObservationPicker.vue';
 import { observationSourceFor } from '../game/observation-craft.js';
 const props = defineProps({ focusWork: String, album: Boolean });
 const emit = defineEmits(['toast', 'complete', 'abandon', 'home', 'visits', 'observation']);
 const heading = ref(null);
 const page = ref(props.album || props.focusWork ? 'works' : 'start'), selected = ref(props.focusWork || ''), editing = ref(false);
 const starting = ref(null), title = ref(''), criterion = ref(''), error = ref(''), exporting = ref(false), includeNote = ref(false);
+const crafting = ref(null);
 const works = computed(() => state.home.studio.works);
 const completed = computed(() => works.value.filter(work => studioStatus(work, state) === 'done'));
 const work = computed(() => works.value.find(work => work.id === selected.value));
@@ -33,6 +36,7 @@ function take() {
   emit('toast', '这件作品，按你自己的节奏开始。');
 }
 async function open(id) { selected.value = id; page.value = 'works'; editing.value = false; includeNote.value = false; error.value = ''; await nextTick(); heading.value?.focus({preventScroll:true}); heading.value?.scrollIntoView({block:'start'}); }
+function crafted(id) { crafting.value = null; open(id); emit('toast', '发现留在素材页，这一版从自己的创作开始。'); }
 watch(() => props.focusWork, id => { if (id) open(id); }, {immediate:true});
 function resume() {
   const result = continueStudioWork(work.value.id);
@@ -60,6 +64,7 @@ function exportAlbum() {
     <header class="studio-heading"><div><span class="eyebrow">把自己做出的东西留下来</span><h2>从一小步，到一件作品。</h2><p>带着一个想法出门，把做出的那一版带回来。这里收下文字、照片、图画，也收下第一次尝试。</p></div><div class="studio-tally"><strong>{{ completed.length }}</strong><span>件作品，已经收好</span><small>手里 {{ state.active.length }} / 3 件事</small></div></header>
     <div class="place-tabs" role="group" aria-label="画室内的去处"><button :class="{active:page==='start'}" :aria-pressed="page==='start'" @click="page='start'; selected=''">开始创作</button><button :class="{active:page==='works'}" :aria-pressed="page==='works'" @click="page='works'; selected=''">我的作品集 · {{ works.length }}</button></div>
     <template v-if="page==='start'">
+      <StudioObservationPicker @preview="crafting=$event" @work="open" @observation="emit('observation','')" />
       <section class="studio-own"><div><h3>已经有想做的东西？</h3><p>给它一个名字，写清做到哪一步就算完成。</p></div><button class="primary-button" @click="inspect()">开始自己的作品 ＋</button></section>
       <p v-if="STUDIO_EXERCISES.length" class="studio-caption">也可以从下面挑一个起点。约需的时间只供安排，不计时；主题里没有必须完成的顺序。<span>练习文案 · 本地试用</span></p>
       <p v-else class="studio-caption">练习小册还在整理，你可以先开始自己的作品。</p>
@@ -88,6 +93,7 @@ function exportAlbum() {
       <div v-if="completed.length" class="album-export"><label><input v-model="includeNote" type="checkbox" /> 导出时带上留给自己的话</label><button class="soft-button" @click="exportAlbum">导出整本作品集 · {{ completed.length }} 件</button><p>独立 HTML 文件可在浏览器打开、打印，包含完整正文和图片。</p></div>
     </template>
     <footer class="studio-footer"><span>作品随成长手记的整份备份一起保存。换设备前，记得导出备份。</span><a :href="emotionLink">看看小芽的形象试验台 ↗</a></footer>
+    <ObservationCraftDialog v-if="crafting" :entry="crafting" @close="crafting=null" @studio="crafted" />
     <ModalFrame v-if="starting" label="开始一件作品" @close="starting=null"><span class="eyebrow">{{ starting.id ? '一个创作起点 · 本地试用' : '从自己的想法开始' }}</span><h2>{{ starting.title || '这次，想做出什么？' }}</h2><p v-if="starting.premise">{{ starting.premise }}</p><ol v-if="starting.steps" class="starting-steps"><li v-for="step in starting.steps" :key="step">{{ step }}</li></ol><form class="studio-start-form" @submit.prevent="take"><label for="studio-start-title">给作品一个名字</label><input id="studio-start-title" v-model="title" maxlength="60" required placeholder="比如：窗边的三个颜色" /><label for="studio-start-criterion">做到什么，就可以完成</label><textarea id="studio-start-criterion" v-model="criterion" maxlength="160" rows="3" required placeholder="写清最后会做出什么，而不只是一个愿望。" /><p>和岩壁共用三个任务名额。按自己的条件完成，不额外发任务光或 XP。</p><p v-if="error" role="alert" class="studio-error">{{ error }}</p><div class="placement-actions"><button type="button" class="text-button" @click="starting=null">先看看</button><button class="primary-button" type="submit">接下这件创作</button></div></form></ModalFrame>
   </div>
 </template>

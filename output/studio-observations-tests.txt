@@ -1,0 +1,726 @@
+
+> test
+> npm --prefix app test
+
+
+> kuangye@0.1.0 test
+> node --test
+
+TAP version 13
+# Subtest: old light settings migrate to outdoor sync and explicit overrides persist
+ok 1 - old light settings migrate to outdoor sync and explicit overrides persist
+  ---
+  duration_ms: 0.718959
+  type: 'test'
+  ...
+# Subtest: east-eight clock is independent from host timezone and daylight is continuous
+ok 2 - east-eight clock is independent from host timezone and daylight is continuous
+  ---
+  duration_ms: 0.08275
+  type: 'test'
+  ...
+# Subtest: weather codes map to supported scenes without inventing unavailable data
+ok 3 - weather codes map to supported scenes without inventing unavailable data
+  ---
+  duration_ms: 0.147083
+  type: 'test'
+  ...
+# Subtest: blink closes and opens continuously without hard steps
+ok 4 - blink closes and opens continuously without hard steps
+  ---
+  duration_ms: 3.274209
+  type: 'test'
+  ...
+# Subtest: backup bridge falls back to web semantics outside the native shell
+ok 5 - backup bridge falls back to web semantics outside the native shell
+  ---
+  duration_ms: 2.809167
+  type: 'test'
+  ...
+# Subtest: legacy and v3 backups share import cleaning without losing known history
+ok 6 - legacy and v3 backups share import cleaning without losing known history
+  ---
+  duration_ms: 0.73625
+  type: 'test'
+  ...
+# Subtest: import refuses unknown task history instead of silently deleting it
+ok 7 - import refuses unknown task history instead of silently deleting it
+  ---
+  duration_ms: 0.212
+  type: 'test'
+  ...
+# Subtest: future backup schema cannot overwrite current data through import
+ok 8 - future backup schema cannot overwrite current data through import
+  ---
+  duration_ms: 0.054792
+  type: 'test'
+  ...
+# Subtest: all 196 mood pairs converge; interruption preserves pose and velocity
+ok 9 - all 196 mood pairs converge; interruption preserves pose and velocity
+  ---
+  duration_ms: 127.140833
+  type: 'test'
+  ...
+# Subtest: spring is timestep consistent and resumes safely; closed outlines retain topology
+ok 10 - spring is timestep consistent and resumes safely; closed outlines retain topology
+  ---
+  duration_ms: 3.891459
+  type: 'test'
+  ...
+# Subtest: furniture memories find exact original dates and avoid ambiguous imported completions
+ok 11 - furniture memories find exact original dates and avoid ambiguous imported completions
+  ---
+  duration_ms: 1.05175
+  type: 'test'
+  ...
+# Subtest: completion rewards are rounded to five and invalid input never creates currency
+ok 12 - completion rewards are rounded to five and invalid input never creates currency
+  ---
+  duration_ms: 0.871959
+  type: 'test'
+  ...
+# Subtest: unique recorded days yield glimmer once; gaps never remove progress
+ok 13 - unique recorded days yield glimmer once; gaps never remove progress
+  ---
+  duration_ms: 0.173375
+  type: 'test'
+  ...
+# Subtest: first task can buy first furniture and memory binds once per completion
+ok 14 - first task can buy first furniture and memory binds once per completion
+  ---
+  duration_ms: 0.085083
+  type: 'test'
+  ...
+# Subtest: placement enforces rotated footprint, bounds, collisions and can move itself
+ok 15 - placement enforces rotated footprint, bounds, collisions and can move itself
+  ---
+  duration_ms: 0.182833
+  type: 'test'
+  ...
+# Subtest: recycle returns 70 percent of actual paid price only once and removes placement
+ok 16 - recycle returns 70 percent of actual paid price only once and removes placement
+  ---
+  duration_ms: 0.073375
+  type: 'test'
+  ...
+# Subtest: level gifts are idempotent and cannot be bought or recycled
+ok 17 - level gifts are idempotent and cannot be bought or recycled
+  ---
+  duration_ms: 0.118708
+  type: 'test'
+  ...
+# Subtest: v2 migration preserves active, done, abandoned and credits historical completion light
+ok 18 - v2 migration preserves active, done, abandoned and credits historical completion light
+  ---
+  duration_ms: 0.38175
+  type: 'test'
+  ...
+# Subtest: v3 save round trip keeps purchased prices, placements and plaques
+ok 19 - v3 save round trip keeps purchased prices, placements and plaques
+  ---
+  duration_ms: 0.55475
+  type: 'test'
+  ...
+# Subtest: corrupt home data is sanitized without removing task records
+ok 20 - corrupt home data is sanitized without removing task records
+  ---
+  duration_ms: 0.2565
+  type: 'test'
+  ...
+# Subtest: vintage stock is deterministic and independent from purchases
+ok 21 - vintage stock is deterministic and independent from purchases
+  ---
+  duration_ms: 0.297875
+  type: 'test'
+  ...
+# Subtest: all expressions interpolate without overshooting or discontinuity
+ok 22 - all expressions interpolate without overshooting or discontinuity
+  ---
+  duration_ms: 1.026917
+  type: 'test'
+  ...
+# Subtest: 攒下的日子合并所有记录来源，只列出现过的日期
+ok 23 - 攒下的日子合并所有记录来源，只列出现过的日期
+  ---
+  duration_ms: 7.347208
+  type: 'test'
+  ...
+# Subtest: 按月分组，月份倒序、月内正序
+ok 24 - 按月分组，月份倒序、月内正序
+  ---
+  duration_ms: 0.177417
+  type: 'test'
+  ...
+# Subtest: 暂放快照保留日子细节，接起和多次暂放不重计累计数量
+ok 25 - 暂放快照保留日子细节，接起和多次暂放不重计累计数量
+  ---
+  duration_ms: 0.233083
+  type: 'test'
+  ...
+# Subtest: idle stays put; explicit furniture actions remain available without hopping
+ok 26 - idle stays put; explicit furniture actions remain available without hopping
+  ---
+  duration_ms: 29.663625
+  type: 'test'
+  ...
+# Subtest: inquiry preserves the original guess, sourced clues and next action through keeping and reopening
+ok 27 - inquiry preserves the original guess, sourced clues and next action through keeping and reopening
+  ---
+  duration_ms: 1.253791
+  type: 'test'
+  ...
+# Subtest: v3 backups keep every inquiry page and clue beside old task and reading records without changing the economy
+ok 28 - v3 backups keep every inquiry page and clue beside old task and reading records without changing the economy
+  ---
+  duration_ms: 0.9415
+  type: 'test'
+  ...
+# Subtest: damaged inquiry history rejects the entire import rather than silently discarding a page or clue
+ok 29 - damaged inquiry history rejects the entire import rather than silently discarding a page or clue
+  ---
+  duration_ms: 0.21175
+  type: 'test'
+  ...
+# Subtest: journal sorts imported dates and same-day records without mutating stored history
+ok 30 - journal sorts imported dates and same-day records without mutating stored history
+  ---
+  duration_ms: 5.238667
+  type: 'test'
+  ...
+# Subtest: journal combines domain, personal words, and notes filters; missing legacy task stays readable
+ok 31 - journal combines domain, personal words, and notes filters; missing legacy task stays readable
+  ---
+  duration_ms: 0.151209
+  type: 'test'
+  ...
+# Subtest: map suggestions vary by day and manual turn without writing or cloning tasks
+ok 32 - map suggestions vary by day and manual turn without writing or cloning tasks
+  ---
+  duration_ms: 0.790541
+  type: 'test'
+  ...
+# Subtest: map directions use their existing notebooks and respect honest time estimates
+ok 33 - map directions use their existing notebooks and respect honest time estimates
+  ---
+  duration_ms: 3.00675
+  type: 'test'
+  ...
+# Subtest: map suggestions exclude completed nonrepeatable and locked advanced tasks, and leave active work first
+ok 34 - map suggestions exclude completed nonrepeatable and locked advanced tasks, and leave active work first
+  ---
+  duration_ms: 0.229
+  type: 'test'
+  ...
+# Subtest: every short map combination offers a real task or a handbook preparation step
+ok 35 - every short map combination offers a real task or a handbook preparation step
+  ---
+  duration_ms: 2.404042
+  type: 'test'
+  ...
+# Subtest: preparation steps quote existing handbooks, skip finished tasks, and never write state
+ok 36 - preparation steps quote existing handbooks, skip finished tasks, and never write state
+  ---
+  duration_ms: 0.192084
+  type: 'test'
+  ...
+# Subtest: after finishing, one onward suggestion in the same direction, never auto-accepted
+ok 37 - after finishing, one onward suggestion in the same direction, never auto-accepted
+  ---
+  duration_ms: 0.189833
+  type: 'test'
+  ...
+# Subtest: soft corner is a closed volumetric shell with outward normals
+ok 38 - soft corner is a closed volumetric shell with outward normals
+  ---
+  duration_ms: 5.215458
+  type: 'test'
+  ...
+# Subtest: every expression stays on the body; character and shadow use no texture maps
+ok 39 - every expression stays on the body; character and shadow use no texture maps
+  ---
+  duration_ms: 12.572042
+  type: 'test'
+  ...
+# Subtest: source is a frozen snapshot; blank artifacts cannot complete; resting and repeat entry preserve one link and original payouts
+ok 40 - source is a frozen snapshot; blank artifacts cannot complete; resting and repeat entry preserve one link and original payouts
+  ---
+  duration_ms: 9.5875
+  type: 'test'
+  ...
+# Subtest: uncollected pages, missing observations, invalid completion conditions and three active tasks refuse before any mutation
+ok 41 - uncollected pages, missing observations, invalid completion conditions and three active tasks refuse before any mutation
+  ---
+  duration_ms: 5.842791
+  type: 'test'
+  ...
+# Subtest: copying source photos can fail atomically and text-only entry succeeds without touching the original photos
+ok 42 - copying source photos can fail atomically and text-only entry succeeds without touching the original photos
+  ---
+  duration_ms: 37.51875
+  type: 'test'
+  ...
+# Subtest: source images count in every studio and observation write path and combined import; refused writes preserve all data
+ok 43 - source images count in every studio and observation write path and combined import; refused writes preserve all data
+  ---
+  duration_ms: 79.870958
+  type: 'test'
+  ...
+# Subtest: old v1/v2/v3 saves default to no links, and every historical association and source round-trips
+ok 44 - old v1/v2/v3 saves default to no links, and every historical association and source round-trips
+  ---
+  duration_ms: 1.789292
+  type: 'test'
+  ...
+# Subtest: duplicate, missing, draft and malformed source associations reject the whole backup
+ok 45 - duplicate, missing, draft and malformed source associations reject the whole backup
+  ---
+  duration_ms: 0.671709
+  type: 'test'
+  ...
+# Subtest: observation prompts are concrete drafts, free writing is independent of their release gate
+ok 46 - observation prompts are concrete drafts, free writing is independent of their release gate
+  ---
+  duration_ms: 0.523
+  type: 'test'
+  ...
+# Subtest: old saves default to an empty book and preserve every historical entry, image and body whitespace
+ok 47 - old saves default to an empty book and preserve every historical entry, image and body whitespace
+  ---
+  duration_ms: 7.335417
+  type: 'test'
+  ...
+# Subtest: one draft at a time, concrete content before collecting, idempotent collection and revisions preserve the original collection date
+ok 48 - one draft at a time, concrete content before collecting, idempotent collection and revisions preserve the original collection date
+  ---
+  duration_ms: 0.604
+  type: 'test'
+  ...
+# Subtest: invalid dates, identities, content, images and multiple drafts reject the entire import
+ok 49 - invalid dates, identities, content, images and multiple drafts reject the entire import
+  ---
+  duration_ms: 3.414458
+  type: 'test'
+  ...
+# Subtest: shared image budget refuses writes before mutation and rejects an overfull combined backup
+ok 50 - shared image budget refuses writes before mutation and rejects an overfull combined backup
+  ---
+  duration_ms: 7.539041
+  type: 'test'
+  ...
+# Subtest: search and date projections are read-only, collected discoveries never masquerade as task completions
+ok 51 - search and date projections are read-only, collected discoveries never masquerade as task completions
+  ---
+  duration_ms: 6.545584
+  type: 'test'
+  ...
+# Subtest: reading keeps bookmarks and notes across shelving, rereading and save normalization
+ok 52 - reading keeps bookmarks and notes across shelving, rereading and save normalization
+  ---
+  duration_ms: 1.013
+  type: 'test'
+  ...
+# Subtest: reading import validates fields, keeps all notes, and never treats a book as a task reward
+ok 53 - reading import validates fields, keeps all notes, and never treats a book as a task reward
+  ---
+  duration_ms: 0.109
+  type: 'test'
+  ...
+# Subtest: release checker accepts isolated inputs without a prior build
+ok 54 - release checker accepts isolated inputs without a prior build
+  ---
+  duration_ms: 202.319625
+  type: 'test'
+  ...
+# Subtest: CLI actually executes on Chinese paths and rejects missing dist index
+ok 55 - CLI actually executes on Chinese paths and rejects missing dist index
+  ---
+  duration_ms: 164.156
+  type: 'test'
+  ...
+# Subtest: release gate rejects same-length asset changes
+ok 56 - release gate rejects same-length asset changes
+  ---
+  duration_ms: 70.765917
+  type: 'test'
+  ...
+# Subtest: release gate rejects indexed version drift without modifying repository
+ok 57 - release gate rejects indexed version drift without modifying repository
+  ---
+  duration_ms: 67.919209
+  type: 'test'
+  ...
+# Subtest: release gate rejects missing native licenses and fixture code
+ok 58 - release gate rejects missing native licenses and fixture code
+  ---
+  duration_ms: 66.974208
+  type: 'test'
+  ...
+# Subtest: resident story has one concrete commission, remains a draft, and is gated in release
+ok 59 - resident story has one concrete commission, remains a draft, and is gated in release
+  ---
+  duration_ms: 0.553708
+  type: 'test'
+  ...
+# Subtest: old saves default to no visits and accepted stories survive without the current catalogue
+ok 60 - old saves default to no visits and accepted stories survive without the current catalogue
+  ---
+  duration_ms: 2.772458
+  type: 'test'
+  ...
+# Subtest: invalid visits and broken work associations reject the entire backup
+ok 61 - invalid visits and broken work associations reject the entire backup
+  ---
+  duration_ms: 0.615791
+  type: 'test'
+  ...
+# Subtest: handover requires linked completed work and explicit confirmation, freezes a private-note-free snapshot and is idempotent
+ok 62 - handover requires linked completed work and explicit confirmation, freezes a private-note-free snapshot and is idempotent
+  ---
+  duration_ms: 4.369625
+  type: 'test'
+  ...
+# Subtest: 按天进度只数不同日期，空档不清零
+ok 63 - 按天进度只数不同日期，空档不清零
+  ---
+  duration_ms: 2.106666
+  type: 'test'
+  ...
+# Subtest: 一口气只是记录：最长段与当前段
+ok 64 - 一口气只是记录：最长段与当前段
+  ---
+  duration_ms: 0.821125
+  type: 'test'
+  ...
+# Subtest: 节奏条按日排列，区分接取前、记录与今天
+ok 65 - 节奏条按日排列，区分接取前、记录与今天
+  ---
+  duration_ms: 0.32525
+  type: 'test'
+  ...
+# Subtest: 补记只针对接取之后、还没记的昨天
+ok 66 - 补记只针对接取之后、还没记的昨天
+  ---
+  duration_ms: 0.129958
+  type: 'test'
+  ...
+# Subtest: expansion charges once per added strip and never spends unavailable light
+ok 67 - expansion charges once per added strip and never spends unavailable light
+  ---
+  duration_ms: 0.676542
+  type: 'test'
+  ...
+# Subtest: expanded placements survive normalization and old saves start at nine square metres
+ok 68 - expanded placements survive normalization and old saves start at nine square metres
+  ---
+  duration_ms: 0.510917
+  type: 'test'
+  ...
+# Subtest: rugs support furniture while solid furniture cannot overlap
+ok 69 - rugs support furniture while solid furniture cannot overlap
+  ---
+  duration_ms: 0.098209
+  type: 'test'
+  ...
+# Subtest: walking goes around furniture, rejects sealed destinations and finds reachable interaction edge
+ok 70 - walking goes around furniture, rejects sealed destinations and finds reachable interaction edge
+  ---
+  duration_ms: 0.436083
+  type: 'test'
+  ...
+# Subtest: home discoveries are bounded and cannot be farmed into currency
+ok 71 - home discoveries are bounded and cannot be farmed into currency
+  ---
+  duration_ms: 1.263875
+  type: 'test'
+  ...
+# Subtest: wall fixtures share their supporting cutaway group
+ok 72 - wall fixtures share their supporting cutaway group
+  ---
+  duration_ms: 44.26275
+  type: 'test'
+  ...
+# Subtest: static batching keeps rounded boxes, spheres and tubes sharing one material
+ok 73 - static batching keeps rounded boxes, spheres and tubes sharing one material
+  ---
+  duration_ms: 12.459959
+  type: 'test'
+  ...
+# Subtest: short-task drafts stay isolated and have a bounded one-time reward budget
+ok 74 - short-task drafts stay isolated and have a bounded one-time reward budget
+  ---
+  duration_ms: 1.85675
+  type: 'test'
+  ...
+# Subtest: time and place filter before suggestion limits, respecting history and search
+ok 75 - time and place filter before suggestion limits, respecting history and search
+  ---
+  duration_ms: 0.700875
+  type: 'test'
+  ...
+# Subtest: themed drafts cannot enter the ordinary task pool or overwrite an existing task identity
+ok 76 - themed drafts cannot enter the ordinary task pool or overwrite an existing task identity
+  ---
+  duration_ms: 0.743292
+  type: 'test'
+  ...
+# Subtest: native migration copies and verifies v1/v2/v3 keys without removing originals
+ok 77 - native migration copies and verifies v1/v2/v3 keys without removing originals
+  ---
+  duration_ms: 1.795
+  type: 'test'
+  ...
+# Subtest: native migration readback mismatch refuses startup and leaves old keys intact
+ok 78 - native migration readback mismatch refuses startup and leaves old keys intact
+  ---
+  duration_ms: 0.601958
+  type: 'test'
+  ...
+# Subtest: syntax damage falls back to previous and subsequent writes preserve good backup
+ok 79 - syntax damage falls back to previous and subsequent writes preserve good backup
+  ---
+  duration_ms: 0.405167
+  type: 'test'
+  ...
+# Subtest: unsupported native histories never fall back or overwrite files
+ok 80 - unsupported native histories never fall back or overwrite files
+  ---
+  duration_ms: 0.3175
+  type: 'test'
+  ...
+# Subtest: each failure point retains the last valid generation and retry can save
+ok 81 - each failure point retains the last valid generation and retry can save
+  ---
+  duration_ms: 0.305833
+  type: 'test'
+  ...
+# Subtest: current write corruption reports failure and recovers verified previous on restart
+ok 82 - current write corruption reports failure and recovers verified previous on restart
+  ---
+  duration_ms: 0.097042
+  type: 'test'
+  ...
+# Subtest: overlapping save calls preserve request order and the penultimate generation
+ok 83 - overlapping save calls preserve request order and the penultimate generation
+  ---
+  duration_ms: 0.172333
+  type: 'test'
+  ...
+# Subtest: web driver keeps original keys, QA isolation, and write errors observable
+ok 84 - web driver keeps original keys, QA isolation, and write errors observable
+  ---
+  duration_ms: 0.155291
+  type: 'test'
+  ...
+# Subtest: purge deletes the whole vault and the next save starts fresh
+ok 85 - purge deletes the whole vault and the next save starts fresh
+  ---
+  duration_ms: 0.222209
+  type: 'test'
+  ...
+# Subtest: full store flow pays exactly once, persists v3, and imports home together with tasks
+ok 86 - full store flow pays exactly once, persists v3, and imports home together with tasks
+  ---
+  duration_ms: 2.787625
+  type: 'test'
+  ...
+# Subtest: streak check-in is unique and cannot complete early; abandoning never changes currency
+ok 87 - streak check-in is unique and cannot complete early; abandoning never changes currency
+  ---
+  duration_ms: 0.387209
+  type: 'test'
+  ...
+# Subtest: 按天任务空档后不清零，完成仍需记满且只结算一次
+ok 88 - 按天任务空档后不清零，完成仍需记满且只结算一次
+  ---
+  duration_ms: 0.839833
+  type: 'test'
+  ...
+# Subtest: 旧档里带空档与金牌标记的按天日志，按日期数恢复进度
+ok 89 - 旧档里带空档与金牌标记的按天日志，按日期数恢复进度
+  ---
+  duration_ms: 0.577375
+  type: 'test'
+  ...
+# Subtest: 放下不清零：攒下的日子随放下记录保留，再接起来接着数
+ok 90 - 放下不清零：攒下的日子随放下记录保留，再接起来接着数
+  ---
+  duration_ms: 7.077709
+  type: 'test'
+  ...
+# Subtest: 累计任务多次放下、备份往返与接起，不重复数量或奖励
+ok 91 - 累计任务多次放下、备份往返与接起，不重复数量或奖励
+  ---
+  duration_ms: 1.5965
+  type: 'test'
+  ...
+# Subtest: 接起按最近暂放日期恢复；无日志的旧记录如实从零开始
+ok 92 - 接起按最近暂放日期恢复；无日志的旧记录如实从零开始
+  ---
+  duration_ms: 0.477791
+  type: 'test'
+  ...
+# Subtest: 存档往返保留已完成与放下记录里的数量
+ok 93 - 存档往返保留已完成与放下记录里的数量
+  ---
+  duration_ms: 0.603125
+  type: 'test'
+  ...
+# Subtest: three concurrent tasks remains the only limit, whatever their tier
+ok 94 - three concurrent tasks remains the only limit, whatever their tier
+  ---
+  duration_ms: 0.995459
+  type: 'test'
+  ...
+# Subtest: damaged v3 falls back to a legacy save without overwriting the legacy key
+ok 95 - damaged v3 falls back to a legacy save without overwriting the legacy key
+  ---
+  duration_ms: 1.707833
+  type: 'test'
+  ...
+# Subtest: action plans round-trip safely without affecting rewards or legacy records
+ok 96 - action plans round-trip safely without affecting rewards or legacy records
+  ---
+  duration_ms: 0.4865
+  type: 'test'
+  ...
+# Subtest: personal tasks share capacity, preserve their content, and cannot mint completion rewards
+ok 97 - personal tasks share capacity, preserve their content, and cannot mint completion rewards
+  ---
+  duration_ms: 1.953375
+  type: 'test'
+  ...
+# Subtest: personal backup definitions cannot collide or inject rewards; missing content is rejected
+ok 98 - personal backup definitions cannot collide or inject rewards; missing content is rejected
+  ---
+  duration_ms: 0.298584
+  type: 'test'
+  ...
+# Subtest: a personal completion can become a furniture memory and survive backup
+ok 99 - a personal completion can become a furniture memory and survive backup
+  ---
+  duration_ms: 0.440041
+  type: 'test'
+  ...
+# Subtest: town changes persist with tasks and repair never changes the economy
+ok 100 - town changes persist with tasks and repair never changes the economy
+  ---
+  duration_ms: 0.407
+  type: 'test'
+  ...
+# Subtest: studio task capacity, artifact completion, display and revisions preserve existing reward rules
+ok 101 - studio task capacity, artifact completion, display and revisions preserve existing reward rules
+  ---
+  duration_ms: 0.998791
+  type: 'test'
+  ...
+# Subtest: studio resting preserves artifacts, resumes through a new task and rejects imports without changing current data
+ok 102 - studio resting preserves artifacts, resumes through a new task and rejects imports without changing current data
+  ---
+  duration_ms: 0.772875
+  type: 'test'
+  ...
+# Subtest: resident commission shares capacity, reopens the same artifact after resting, and never adds a payout
+ok 103 - resident commission shares capacity, reopens the same artifact after resting, and never adds a payout
+  ---
+  duration_ms: 1.258208
+  type: 'test'
+  ...
+# Subtest: observation pages keep discoveries without touching tasks or payouts, and share photo capacity with studio both ways
+ok 104 - observation pages keep discoveries without touching tasks or payouts, and share photo capacity with studio both ways
+  ---
+  duration_ms: 36.282584
+  type: 'test'
+  ...
+# Subtest: three studio themes each have four concrete draft exercises; release content remains gated
+ok 105 - three studio themes each have four concrete draft exercises; release content remains gated
+  ---
+  duration_ms: 0.557458
+  type: 'test'
+  ...
+# Subtest: old saves get an empty studio and all historical works round-trip without trimming body
+ok 106 - old saves get an empty studio and all historical works round-trip without trimming body
+  ---
+  duration_ms: 3.468583
+  type: 'test'
+  ...
+# Subtest: invalid identities, missing task records, unsafe images and overlong fields reject the whole backup
+ok 107 - invalid identities, missing task records, unsafe images and overlong fields reject the whole backup
+  ---
+  duration_ms: 1.1835
+  type: 'test'
+  ...
+# Subtest: image budgets fail before mutation and never evict existing work
+ok 108 - image budgets fail before mutation and never evict existing work
+  ---
+  duration_ms: 13.564625
+  type: 'test'
+  ...
+# Subtest: readiness needs real content, status is derived from task history
+ok 109 - readiness needs real content, status is derived from task history
+  ---
+  duration_ms: 0.618292
+  type: 'test'
+  ...
+# Subtest: standalone album escapes user text, preserves every image and defaults to excluding private notes
+ok 110 - standalone album escapes user text, preserves every image and defaults to excluding private notes
+  ---
+  duration_ms: 0.659458
+  type: 'test'
+  ...
+# Subtest: search finds advanced tasks without changing today's suggestions
+ok 111 - search finds advanced tasks without changing today's suggestions
+  ---
+  duration_ms: 1.896083
+  type: 'test'
+  ...
+# Subtest: search covers descriptions, domains, types, and growth lines
+ok 112 - search covers descriptions, domains, types, and growth lines
+  ---
+  duration_ms: 0.579458
+  type: 'test'
+  ...
+# Subtest: search respects chosen domain and existing task history
+ok 113 - search respects chosen domain and existing task history
+  ---
+  duration_ms: 0.199667
+  type: 'test'
+  ...
+# Subtest: yard placement respects boundary, reserved path, rotation and collisions without consuming items
+ok 114 - yard placement respects boundary, reserved path, rotation and collisions without consuming items
+  ---
+  duration_ms: 0.80375
+  type: 'test'
+  ...
+# Subtest: library repair is sequential, tied to real reading milestones, and idempotent at each stage
+ok 115 - library repair is sequential, tied to real reading milestones, and idempotent at each stage
+  ---
+  duration_ms: 0.122917
+  type: 'test'
+  ...
+# Subtest: v3 town backup preserves custom house and legal layout, old saves get defaults, unearned repairs are cleaned
+ok 116 - v3 town backup preserves custom house and legal layout, old saves get defaults, unearned repairs are cleaned
+  ---
+  duration_ms: 1.870791
+  type: 'test'
+  ...
+# Subtest: yard plans are legal, distinct, independent previews and preserve other town settings
+ok 117 - yard plans are legal, distinct, independent previews and preserve other town settings
+  ---
+  duration_ms: 0.497833
+  type: 'test'
+  ...
+# Subtest: invalid preset fails atomically rather than partially replacing a saved yard
+ok 118 - invalid preset fails atomically rather than partially replacing a saved yard
+  ---
+  duration_ms: 0.134209
+  type: 'test'
+  ...
+1..118
+# tests 118
+# suites 0
+# pass 118
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 757.3045

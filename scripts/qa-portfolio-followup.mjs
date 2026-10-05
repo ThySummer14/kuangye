@@ -1,0 +1,10 @@
+import { readFileSync, writeFileSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+const cli=process.env.HOME+'/.codex/skills/playwright/scripts/playwright_cli.sh';
+const run=code=>spawnSync(cli,['-s=kuangye-portfolio','run-code',code],{encoding:'utf8'});
+const results=[];
+results.push(run(readFileSync('scripts/qa-portfolio-followup.js','utf8').trim()));
+const html=readFileSync('output/playwright/portfolio-album-1280.html','utf8');
+results.push(run(`async (page)=>{const c=await page.context().browser().newContext(),p=await c.newPage();await p.setViewportSize({width:900,height:900});await p.setContent(${JSON.stringify(html)});await p.locator('img').evaluate(img=>img.decode());if(!(await p.locator('img').evaluate(img=>img.naturalWidth>0)))throw Error('album image broken');await p.screenshot({path:'output/playwright/portfolio-export-album.png',fullPage:true});await c.close();return {standaloneAlbum:true,embeddedImageDecoded:true};}`));
+const output=results.map(r=>r.stdout+r.stderr).join('\n');writeFileSync('output/portfolio-followup-browser.txt',output);console.log(output);
+if(results.some(r=>r.status)||/### Error/.test(output))process.exit(1);

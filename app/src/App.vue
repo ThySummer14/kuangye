@@ -17,6 +17,7 @@ const WorldScene = scenePage(() => import("./components/WorldScene.vue"));
 const ShopView = scenePage(() => import("./components/ShopView.vue"));
 const WoodshopView = scenePage(() => import("./components/WoodshopView.vue"));
 const HomeView = scenePage(() => import("./components/HomeView.vue"));
+const StudioView = scenePage(() => import("./components/StudioView.vue"));
 import { nativePlatform } from "./services/native.js";
 import { recommendMapTask } from "./game/map-recommendation.js";
 import { accept, canAccept, taskById, progressOf, checkedToday, checkIn, reached } from "./store.js";
@@ -38,6 +39,7 @@ const validTabs = [
   "woodshop",
   "yard",
   "library",
+  "atelier",
 ];
 const tab = ref(
     validTabs.includes(location.hash.slice(1)) ? location.hash.slice(1) : "map",
@@ -47,6 +49,9 @@ const tab = ref(
   toastMsg = ref("");
 let toastTimer, unregisterTools;
 const libraryDesk = ref('reading'), questEntry = shallowRef({ trail: '', task: '', suggestion: null });
+const studioTarget = ref('');
+const studioAlbum = ref(false);
+const showHomeWork = ref(false);
 function toast(t) {
   toastMsg.value = t;
   clearTimeout(toastTimer);
@@ -56,10 +61,16 @@ function navigate(id) {
   if (id === 'tasks' || id === 'quest') questEntry.value = { trail: '', task: '', suggestion: null };
   if (id === 'library') libraryDesk.value = 'reading';
   if (id==='journal' || id==='panel') memoryTarget.value=null;
-  if (id === "atelier") { location.href = "./emotion-lab.html" + location.search; return; }
+  if (id === 'atelier') { studioTarget.value = ''; studioAlbum.value = false; }
   const next = id === "journal" ? "panel" : id;
   tab.value = validTabs.includes(next) ? next : "map";
 }
+function openStudio(id = '') {
+  studioTarget.value = id;
+  studioAlbum.value = true;
+  tab.value = 'atelier';
+}
+function visitStudioHome() { showHomeWork.value = true; tab.value = 'home'; }
 function openLibrary(desk = 'reading') {
   libraryDesk.value = desk === 'inquiry' ? 'inquiry' : 'reading';
   tab.value = 'library';
@@ -90,6 +101,7 @@ async function finishToMap() {
 watch(tab, (t, previous) => {
   if (t !== 'panel' && !(previous === 'panel' && t === 'home')) memoryTarget.value=null;
   if (t !== 'home') returnFurniture.value='';
+  if (t !== 'home') showHomeWork.value=false;
   location.hash = t;
   window.scrollTo({ top: 0, behavior: "instant" });
 });
@@ -332,13 +344,16 @@ async function takeMapTask() {
         @chains="tab = 'chains'"
         @library="openLibrary"
         @entry-used="consumeQuestSuggestion"
+        @studio="openStudio"
       />
-      <HomeView :return-furniture="returnFurniture" @memory="openFurnitureMemory"
+      <HomeView :return-furniture="returnFurniture" :focus-work="showHomeWork" @memory="openFurnitureMemory"
         v-else-if="tab === 'home'"
         @shop="tab = 'shop'"
         @journal="memoryTarget=null; tab = 'panel'"
         @toast="toast"
+        @studio="openStudio"
       />
+      <StudioView v-else-if="tab === 'atelier'" :focus-work="studioTarget" :album="studioAlbum" @complete="completing=$event" @abandon="abandoning=$event" @home="visitStudioHome" @toast="toast" />
       <WoodshopView v-else-if="tab === 'woodshop'" @toast="toast" />
       <YardView v-else-if="tab === 'yard'" @home="tab = 'home'" />
       <LibraryView v-else-if="tab === 'library'" :desk="libraryDesk" @desk="libraryDesk=$event" @tasks="returnFromLibrary" @notebook="returnFromLibrary()" @write="writeInquiryStep" @journal="memoryTarget=null; tab = 'panel'" @toast="toast" />
@@ -352,6 +367,7 @@ async function takeMapTask() {
         @resume="resumeFromJournal"
         @toast="toast"
         @chains="tab = 'chains'"
+        @studio="openStudio"
       />
       <div v-else class="legacy-content">
         <button class="text-button" @click="tab = 'tasks'">
@@ -379,6 +395,7 @@ async function takeMapTask() {
       @shop="tab = 'shop'"
       @map="finishToMap"
       @library="openLibrary('reading')"
+      @studio="openStudio"
     /><AbandonModal
       v-if="abandoning"
       :active="abandoning"

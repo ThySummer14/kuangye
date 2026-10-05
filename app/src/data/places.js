@@ -8,7 +8,7 @@ export const MAP_PLACES = [
   { id: "library", name: "街角书屋", short: "书屋", hint: "阅读与问题", tone: "ink" },
   { id: "yard", name: "家门前的院子", short: "院子", hint: "花草与院落", tone: "leaf" },
   { id: "woodshop", name: "木器铺", short: "木器铺", hint: "扩建与外观", tone: "wood" },
-  { id: "atelier", name: "小小画室", short: "画室", hint: "小芽的形象", tone: "plum" },
+  { id: "atelier", name: "小小画室", short: "画室", hint: "创作与作品集", tone: "plum" },
 ];
 
 // 顶栏显示的当前场所（路由名 → 标题、图标）。
@@ -22,4 +22,5 @@ export const PLACE_TITLES = {
   yard: ["家门前的院子", "yard"],
   library: ["街角书屋", "library"],
   chains: ["成长线", "chains"],
+  atelier: ["小小画室", "atelier"],
 };

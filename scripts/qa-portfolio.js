@@ -1,0 +1,97 @@
+async (page) => {
+  const base='http://127.0.0.1:5190/?qa',results=[],errors=[];
+  page.on('pageerror',e=>errors.push(e.message));
+  const check=(ok,message)=>{if(!ok)throw Error(message);};
+  const run=(body,arg)=>page.evaluate(async([body,arg])=>{
+    const url=performance.getEntriesByType('resource').map(e=>e.name).filter(n=>new URL(n).pathname==='/src/store.js').at(-1);
+    return new Function('st','arg',body)(await import(url),arg);
+  },[body,arg]);
+  const capture=async(locator,name,width)=>{
+    await page.locator('.toast').waitFor({state:'hidden'});
+    check(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${name}/${width}: overflow`);
+    await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+    const path=`output/playwright/portfolio-${name}-${width}.png`;
+    if(['exercise','completion'].includes(name)) await locator.screenshot({path});
+    else { await page.evaluate(()=>scrollTo(0,0)); await page.screenshot({path,fullPage:true}); }
+  };
+  const back=async()=>{await page.getByRole('button',{name:'← 回到地图',exact:true}).click();await page.locator('.world-canvas[data-ready=true]').waitFor();};
+  const enter=async()=>{await page.locator('[data-place=atelier]').click();await page.locator('.studio').waitFor();};
+  for(const width of [1280,375]) {
+    await page.setViewportSize({width,height:900});await page.goto(base+'#map');
+    await page.locator('.world-canvas[data-ready=true]').waitFor();
+    await run("st.resetData();st.state.settings.devDate='2026-10-05';");await enter();
+    check(await page.locator('[data-exercise]').count()===12,'not twelve exercises');
+    check(await page.locator('.studio-theme').count()===3,'not three themes');
+    for(const theme of await page.locator('.studio-theme').all())check(await theme.locator('[data-exercise]').count()===4,'theme not four exercises');
+    check(await page.getByRole('link',{name:'看看小芽的形象试验台 ↗'}).getAttribute('href')==='./emotion-lab.html?qa','old lab inaccessible');
+    await capture(page.locator('.studio'),'start',width);
+    await page.locator('[data-exercise=notice-colors]').click();
+    let dialog=page.getByRole('dialog',{name:'开始一件作品'});
+    check(await dialog.locator('.starting-steps li').count()===3,'steps missing');
+    check(!!await dialog.locator('#studio-start-criterion').inputValue(),'criterion missing');
+    await capture(dialog,'exercise',width);
+    await dialog.getByRole('button',{name:'接下这件创作',exact:true}).click();
+    await page.locator('.studio-editor').waitFor();
+    const id=await page.locator('[data-studio-work]').getAttribute('data-studio-work');
+    const qid=await run('return st.state.home.studio.works[0].taskIds[0];');
+    check(await page.getByRole('button',{name:'我做好了，收好这件作品'}).isDisabled(),'empty artifact can finish');
+    await back();await page.locator('[data-place=tasks]').click();
+    await page.locator(`[data-active-task="${qid}"]`).getByRole('button',{name:'我完成了',exact:true}).click();
+    dialog=page.getByRole('dialog',{name:'记录完成的任务'});
+    check(await dialog.getByRole('button',{name:'完成，记下这一刻'}).isDisabled(),'rock bypasses artifact guard');
+    await dialog.getByRole('button',{name:'回画室带回作品 ↗'}).click();
+    await page.locator('.studio-editor').waitFor();
+    await page.locator('#studio-body').fill('窗边的绿、杯柄的白、书页边的暖黄。\n以前走过这一米，总是匆匆的。今天终于停下来看了一会儿。');
+    await page.locator('#studio-note').fill('仅留给自己：原来停下来也能做成一件事。');
+    const data=await page.evaluate(()=>{const c=document.createElement('canvas');c.width=900;c.height=600;const x=c.getContext('2d');x.fillStyle='#efe9d7';x.fillRect(0,0,900,600);x.fillStyle='#53755e';x.fillRect(100,80,250,440);x.fillStyle='#fffcf3';x.fillRect(390,160,320,290);x.fillStyle='#d5b96c';x.fillRect(520,90,270,70);return c.toDataURL('image/png');});
+    await page.getByLabel('选择作品图片').setInputFiles({name:'three-colors.png',mimeType:'image/png',buffer:Buffer.from(data.split(',')[1],'base64')});
+    await page.locator('.editor-images img').waitFor();
+    check(await run('return st.state.home.studio.works[0].images[0].startsWith("data:image/jpeg;base64,");'),'image not reencoded locally');
+    await page.getByRole('button',{name:'保存这一版',exact:true}).click();
+    await capture(page.locator('.work-layout'),'editor',width);
+    // 有效修改自动保存，离开再回来和刷新不会丢失正文、备注与图片。
+    await back();await enter();await page.getByRole('button',{name:/我的作品集/}).click();await page.locator(`[data-work="${id}"]`).click();
+    check((await page.locator('#studio-body').inputValue()).includes('终于停下来'),'navigation lost text');
+    await page.reload();await page.getByRole('button',{name:/我的作品集/}).click();await page.locator(`[data-work="${id}"]`).click();
+    check(await page.locator('.editor-images img').count()===1,'refresh lost image');
+    await page.getByRole('button',{name:'我做好了，收好这件作品'}).click();
+    dialog=page.getByRole('dialog',{name:'记录完成的任务'});
+    await dialog.getByRole('textbox').fill('第一次把看见的颜色留下来。');
+    await dialog.getByRole('button',{name:'完成，记下这一刻'}).click();
+    await page.getByRole('dialog',{name:'这一件事，收好了'}).waitFor();
+    check(await run('return st.state.done.length===1 && st.state.done[0].xp===0 && st.state.home.lumens===0 && st.state.home.glimmerDays.length===1;'),'extra rewards');
+    await capture(page.getByRole('dialog'),'completion',width);
+    await page.getByRole('button',{name:'去画室看看这件作品 ↗'}).click();
+    await page.locator('.studio-work-preview').waitFor();
+    await capture(page.locator('.work-layout'),'finished',width);
+    // 下载真实文件：私密备注默认排除，整本包含所有正文和图片。
+    const pngEvent=page.waitForEvent('download');await page.getByRole('button',{name:'导出这一件的 PNG 卡片'}).click();const png=await pngEvent;await png.saveAs(`output/playwright/portfolio-card-${width}.png`);
+    const htmlEvent=page.waitForEvent('download');await page.getByRole('button',{name:/导出 1 件作品的 HTML/}).click();const html=await htmlEvent;await html.saveAs(`output/playwright/portfolio-album-${width}.html`);
+    await page.getByRole('button',{name:'陈列到小家',exact:true}).click();await page.getByRole('button',{name:'去小家看看 ↗'}).click();
+    await page.locator('.home-portfolio-frame').waitFor();check(await page.locator('.home-portfolio-frame').evaluate(el=>document.activeElement===el),'home did not focus displayed work');check((await page.locator('.home-portfolio-frame').innerText()).includes('一米之内的三种颜色'),'home lost work');
+    await page.getByRole('combobox',{name:/光线/}).selectOption('day');await page.locator('.home-canvas[data-ready=true]').waitFor();await capture(page.locator('.home-main'),'home-day',width);
+    await page.getByRole('combobox',{name:/光线/}).selectOption('night');await capture(page.locator('.home-main'),'home-night',width);
+    await page.getByRole('button',{name:'打开这件作品 ↗'}).click();check(await page.locator('[data-studio-work]').getAttribute('data-studio-work')===id,'home opens wrong work');
+    await back();await page.locator('[data-place=journal]').click();await page.locator(`[data-journal-work="${id}"]`).click();check(await page.locator('[data-studio-work]').getAttribute('data-studio-work')===id,'journal opens wrong work');
+    await run(`const backup=st.exportData();st.importData(backup);const before=JSON.stringify(st.state),bad=JSON.parse(backup);bad.state.home.studio.works[0].taskIds.push('personal-missing-record');let rejected=false;try{st.importData(JSON.stringify(bad));}catch{rejected=true;}return rejected&&JSON.stringify(st.state)===before;`).then(ok=>check(ok,'import failure changed state'));
+    // 三件上限与暂放接续：用同一件作品保存历史任务关联。
+    await page.getByRole('button',{name:'开始创作',exact:true}).click();
+    for(const exercise of ['words-today','lines-outline','notice-object']){
+      await page.locator(`[data-exercise=${exercise}]`).click();await page.getByRole('dialog').getByRole('button',{name:'接下这件创作',exact:true}).click();await page.getByRole('button',{name:'开始创作',exact:true}).click();
+    }
+    await page.locator('[data-exercise=words-sound]').click();await page.getByRole('dialog').getByRole('button',{name:'接下这件创作',exact:true}).click();check((await page.getByRole('dialog').innerText()).includes('最多放 3 件'),'no capacity error');await page.keyboard.press('Escape');
+    await page.getByRole('button',{name:/我的作品集/}).click();
+    const restId=await run('return st.state.home.studio.works[0].id;'),old=await run('return st.state.home.studio.works[0].taskIds[0];');
+    await page.locator(`[data-work="${restId}"]`).click();await page.locator('#studio-body').fill('三张小物肖像的第一张，已经拍好了。');
+    await page.getByRole('button',{name:'先放一放',exact:true}).click();check((await page.getByRole('dialog').innerText()).includes('正文和图片会留在画室'),'rest dialog lost artwork promise');await page.getByRole('dialog').getByRole('textbox').fill('这周先做手里的另一件。');await page.getByRole('dialog').getByRole('button',{name:'暂时放下',exact:true}).click();
+    await page.getByRole('button',{name:'接着做这件作品'}).click();
+    check(await run('const w=st.state.home.studio.works[0];return w.taskIds.length===2 && w.taskIds[0]===arg && w.taskIds[1]!==arg && st.state.abandoned.some(a=>a.qid===arg) && w.body.includes("第一张");',old),'rest or resume destroyed work/history');
+    await page.getByRole('button',{name:/我的作品集/}).click();await capture(page.locator('.studio'),'album',width);
+    results.push({width,status:'PASS',exercises:12,themes:3,capacity:3,artifactGuard:true,localImage:true,refresh:true,completionXp:0,extraTaskLight:0,restHistory:true,backup:true,png:true,html:true,homeDayNight:true,journal:true});
+  }
+  // 普通 DEV 地址也是十二次练习；另开一次性上下文，不触及用户的普通存档。
+  const isolated=await page.context().browser().newContext(),plain=await isolated.newPage();
+  await plain.goto('http://127.0.0.1:5190/#atelier');await plain.locator('[data-exercise]').first().waitFor();
+  check(await plain.locator('[data-exercise]').count()===12,'normal dev requires QA flag');await isolated.close();
+  check(!errors.length,JSON.stringify(errors));return {mode:'local disposable fixtures',results,normalDevExercises:12,errors};
+}

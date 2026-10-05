@@ -19,6 +19,7 @@ import {
   today,
 } from "../store.js";
 import { lumenReward } from "../game/home.js";
+import { studioWorkForTask } from '../game/studio.js';
 import SituationFieldNotes from "./SituationFieldNotes.vue";
 import { CONNECTION_NOTEBOOK } from "../data/connection-tasks.js";
 import { CREATIVE_NOTEBOOK } from "../data/creative-tasks.js";
@@ -87,7 +88,7 @@ async function acceptGuide(task) {
   await nextTick();
   await take(task);
 }
-const emit = defineEmits(["complete", "abandon", "toast", "chains", "library", "entry-used"]);
+const emit = defineEmits(["complete", "abandon", "toast", "chains", "library", "entry-used", "studio"]);
 const cat = ref("all"),
   scope = ref("today"),
   query = ref(""),
@@ -186,7 +187,8 @@ function log(a) {
           <h3>{{ taskById[a.qid].title }}</h3>
           <p><strong v-if="taskById[a.qid].personal" class="personal-criterion">我的完成条件</strong>{{ taskById[a.qid].desc }}</p>
           <ActionPlan :active="a" :suggestion="fieldGuide(taskById[a.qid]).steps[0]" />
-          <button v-if="taskById[a.qid].personal" class="text-button guide-link" @click="editingTask = taskById[a.qid]; writingSuggestion = null; writing = true">修改这件事 ↗</button>
+          <button v-if="studioWorkForTask(state.home.studio,a.qid)" class="text-button guide-link" @click="emit('studio',studioWorkForTask(state.home.studio,a.qid).id)">回画室带回作品 ↗</button>
+          <button v-else-if="taskById[a.qid].personal" class="text-button guide-link" @click="editingTask = taskById[a.qid]; writingSuggestion = null; writing = true">修改这件事 ↗</button>
           <button v-else class="text-button guide-link" @click="inspecting = taskById[a.qid]">打开出发手册 ↗</button>
           <RhythmStrip v-if="taskById[a.qid].type === 'streak'" :active="a" :target="taskById[a.qid].target" :today="today()" />
           <template v-else-if="taskById[a.qid].type !== 'once'"

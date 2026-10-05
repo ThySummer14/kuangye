@@ -9,6 +9,7 @@ import {
   state,
   saveWarning,
   today,
+  completionIssue,
 } from "../store.js";
 import { recordedDates, bestRun, rhythmStrip } from "../game/rhythm.js";
 import { onwardSuggestion } from "../game/onward.js";
@@ -17,10 +18,13 @@ import { readingMilestones } from "../game/town.js";
 import { fieldGuide } from "../data/field-guides.js";
 import { taskXp } from "../game/personal-tasks.js";
 import { lumenReward } from "../game/home.js";
+import { studioWorkForTask } from '../game/studio.js';
 import BuddyFace from "./BuddyFace.vue";
 import ModalFrame from "./ModalFrame.vue";
 const props = defineProps({ active: Object }),
-  emit = defineEmits(["close", "done", "shop", "map", "library", "direction", "write"]);
+  emit = defineEmits(["close", "done", "shop", "map", "library", "direction", "write", "studio"]);
+const work = computed(() => studioWorkForTask(state.home.studio, props.active.qid));
+const issue = computed(() => completionIssue(props.active));
 const finishButton = ref(null);
 const task = computed(() => taskById[props.active.qid]),
   xp = computed(() => taskXp(task.value)),
@@ -52,7 +56,7 @@ const footprint = computed(() => {
 });
 const next = computed(() => (result.value ? nextChainStage(task.value) : null));
 // 只给一个「下一件」，不自动接取；今天到这里也完全可以。
-const onward = computed(() => result.value ? onwardSuggestion(state, task.value, { day: today(), next: next.value, nextOk: !!next.value && canAccept(next.value).ok }) : null);
+const onward = computed(() => result.value && !work.value ? onwardSuggestion(state, task.value, { day: today(), next: next.value, nextOk: !!next.value && canAccept(next.value).ok }) : null);
 function takeOnward() {
   const o = onward.value;
   if (!o?.task || !accept(o.task)) return;
@@ -93,9 +97,10 @@ function returnToMap() {
         rows="4"
       />
       <p class="completion-note">它也会成为你下一件家具上的小小铭牌。</p>
+      <p v-if="issue" role="alert" class="review-prompt">{{ issue }}<button class="text-button" @click="emit('close'); emit('studio',work.id)">回画室带回作品 ↗</button></p>
       <div class="placement-actions">
         <button class="soft-button" @click="emit('close')">再等等</button
-        ><button class="primary-button" @click="confirm">
+        ><button class="primary-button" :disabled="!!issue" @click="confirm">
           {{ task.personal ? "完成，记下这一刻" : "完成，收下这束光" }}
         </button>
       </div></template
@@ -127,6 +132,7 @@ function returnToMap() {
         {{ (saveWarning.text || saveWarning.pending) ? "回到地图" : "收好了，回到地图" }}
       </button>
       <button v-if="task.chain === 'read' && readingMilestones(state.done) > (state.home.town?.library || 0)" class="text-button completion-shop-link" @click="emit('close'); emit('library')">去街角书屋，留下一点变化 ↗</button>
+      <button v-if="work" class="text-button completion-shop-link" @click="emit('close'); emit('studio',work.id)">去画室看看这件作品 ↗</button>
       <button
         class="text-button completion-shop-link"
         @click="

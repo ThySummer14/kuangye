@@ -3,6 +3,7 @@ import { normalizeActionPlan } from "./action-plan.js";
 import { TASKS } from "../data/tasks.js";
 import { dateStr } from "../data/season.js";
 import { normalizeHome } from "./home.js";
+import { validateStudioLinks } from "./studio.js";
 const TASK_IDS = new Set(TASKS.map((t) => t.id));
 // Import must not silently discard unfamiliar history during whitelist cleaning.
 export function parseImport(json) {
@@ -42,7 +43,7 @@ export function normalizeState(raw) {
         ...(l.shield ? { shield: true } : {}),
       }))
     : [];
-  return {
+  const normalized = {
     customTasks,
     active: source.active
       .filter((a) => a && typeof a.qid === "string" && taskIds.has(a.qid))
@@ -101,4 +102,6 @@ export function normalizeState(raw) {
           : "",
     },
   };
+  validateStudioLinks(normalized);
+  return normalized;
 }

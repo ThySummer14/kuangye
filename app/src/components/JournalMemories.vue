@@ -5,8 +5,10 @@ import { CATS, TASKS } from '../data/tasks.js';
 import { fieldGuide } from '../data/field-guides.js';
 import { journalRecords, journalMonths, linkedMemoryRecord } from '../game/journal.js';
 import TaskGuide from './TaskGuide.vue';
+import { studioStatus } from '../game/studio.js';
 const props=defineProps({focusMemory:Object});
-const emit = defineEmits(['toast','back-furniture','resume']);
+const emit = defineEmits(['toast','back-furniture','resume','studio']);
+const linkedWork = qid => state.home.studio.works.find(work => work.taskIds.includes(qid));
 const linkedElement=ref(null);
 const linkedRecord=computed(()=>linkedMemoryRecord(state.done,props.focusMemory));
 const filter = ref('done'), cat = ref('all'), query = ref(''), onlyNotes = ref(false), limit = ref(12);
@@ -34,6 +36,8 @@ function keptLine({ task, record }) {
   return task?.type === 'total' ? `当时记下的 ${p.cur}${task.unit || ''}，仍在这页里。` : `当时攒下的 ${p.cur} 天，仍在「攒下的日子」里。`;
 }
 function restStatus({ task, record }) {
+  const work = linkedWork(record.qid);
+  if(work) return studioStatus(work,state)==='done' ? '后来，这件作品已经收好。原来的记录仍保留着。' : studioStatus(work,state)==='working' ? '已经在画室接着做。原来的暂放记录仍保留着。' : '已保存的作品还在画室。想继续时，可以接着做这件作品。';
   if (activeOf(record.qid)) return '已经重新接起，正在任务岩壁上继续。';
   if (state.done.some(d => d.qid === record.qid && !task?.repeatable)) return '后来，你已经完成了这件事。';
   if (task?.personal) return '自己写下的内容已收进手记。想继续时，可以到岩壁重新写一件。';
@@ -129,6 +133,7 @@ function linkElement(el,record) { if(record===linkedRecord.value)linkedElement.v
         <p v-if="entry.record.review || entry.record.reason" class="memory-words">{{ entry.record.review || entry.record.reason }}</p>
         <p v-else class="memory-no-note">{{ filter === 'done' ? '那天没有留下文字，但这件事已经做到了。' : '这次没有留下理由。把手里的事放一放，也是一种选择。' }}</p>
         <p v-if="entry.task?.personal" class="personal-condition">当时约定：{{ entry.task.desc }}</p>
+        <button v-if="linkedWork(entry.record.qid)" class="text-button" @click="emit('studio',linkedWork(entry.record.qid).id)">去画室看看这件作品 ↗</button>
         <div v-if="filter === 'rest'" class="memory-rest">
           <p v-if="entry.record.logs?.length" class="memory-kept">{{ keptLine(entry) }}</p>
           <template v-if="entry.record === restRecordOf(entry.record.qid)">

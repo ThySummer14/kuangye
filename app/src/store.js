@@ -1,5 +1,6 @@
 import { emptyReading, startBook, updateBook, noteBook, shelveBook, reopenBook } from "./game/reading.js";
 import { emptyInquiry, startInquiry, updateInquiry, noteInquiry, keepInquiry, reopenInquiry } from "./game/inquiry.js";
+import { studioFields, studioReady, studioStatus, studioWorkForTask, addStudioWork, updateStudioWork } from "./game/studio.js";
 import { emptyTown, changeExterior, placeYard, repairLibrary, applyYardPlan } from "./game/town.js";
 import { personalTask, taskXp } from "./game/personal-tasks.js";
 import { persistence } from './services/persistence.js';
@@ -234,8 +235,8 @@ export function logUnits(a, v) {
 
 // ———— 完成 / 放弃 ————
 export function complete(a, review = "") {
-  const t = taskById[a.qid];
-  if (!state.active.includes(a) || !t || (t.type !== "once" && !reached(a)))
+  const t = taskById[a?.qid];
+  if (!state.active.includes(a) || !t || completionIssue(a) || (t.type !== "once" && !reached(a)))
     return false;
   const p = progressOf(a);
   const units = [];
@@ -454,3 +455,47 @@ export const saveInquiryPage = (id, fields) => updateInquiry(inquiryState(), id,
 export const addInquiryClue = (id, fields) => noteInquiry(inquiryState(), id, fields, today());
 export const keepInquiryPage = id => keepInquiry(inquiryState(), id, today());
 export const continueInquiryPage = id => reopenInquiry(inquiryState(), id);
+
+// 作品完成事实仍来自任务记录，不在作品里维护另一套完成状态。
+export function openStudioWork(input) {
+  if (state.active.length >= 3) return { ok: false, why: '手里最多放 3 件事，完成或放下一件后再来。' };
+  try {
+    const fields = studioFields(input), id = crypto.randomUUID(), qid = `personal-${crypto.randomUUID()}`;
+    const task = personalTask({ id: qid, title: fields.title, desc: input.criterion, cat: 'create' });
+    if (!task) return { ok: false, why: '写下作品名和一个可以判断的完成条件。' };
+    const result = addStudioWork(state.home.studio, fields, { id, qid, theme: input.theme, exerciseId: input.exerciseId || '', at: today() });
+    if (!result.ok) return result;
+    state.customTasks.push(task);
+    accept(task);
+    saveActionPlan(activeOf(qid), { step: input.step || '' });
+    return result;
+  } catch (error) { return { ok: false, why: error.message }; }
+}
+export function saveStudioWork(id, fields) {
+  try {
+    const work = state.home.studio.works.find(work => work.id === id);
+    if (work && studioStatus(work, state) === 'done' && !studioReady(studioFields(fields))) return { ok: false, why: '已收好的作品需要保留正文或一张图片。原来的这一版仍在。' };
+    return updateStudioWork(state.home.studio, id, fields, today());
+  }
+  catch (error) { return { ok: false, why: error.message }; }
+}
+export function continueStudioWork(id) {
+  const work = state.home.studio.works.find(work => work.id === id);
+  if (!work || studioStatus(work, state) === 'done') return { ok: false, why: '这件作品已经收好了。' };
+  if (studioStatus(work, state) === 'working') return { ok: true, work };
+  const original = taskById[work.taskIds.at(-1)];
+  const result = createPersonalTask({ title: work.title, desc: original.desc, cat: 'create' });
+  if (!result.ok) return result;
+  work.taskIds.push(result.task.id);
+  return { ok: true, work };
+}
+export function completionIssue(active) {
+  const work = active && studioWorkForTask(state.home.studio, active.qid);
+  return work && !studioReady(work) ? '先到画室保存作品正文或图片，再收好这件事。' : '';
+}
+export function displayStudioWork(id) {
+  const work = state.home.studio.works.find(work => work.id === id);
+  if (id && (!work || studioStatus(work, state) !== 'done' || !studioReady(work))) return { ok: false, why: '作品收好之后，就可以陈列在小家。' };
+  state.home.studio.displayId = id;
+  return { ok: true };
+}

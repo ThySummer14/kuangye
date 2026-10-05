@@ -21,7 +21,9 @@ import FurnitureImage from "./FurnitureImage.vue";
 import BuddyFace from "./BuddyFace.vue";
 import ModalFrame from "./ModalFrame.vue";
 import FurnitureMemoryCard from "./FurnitureMemoryCard.vue";
-const props=defineProps({ returnFurniture: String });
+import StudioWorkPreview from './StudioWorkPreview.vue';
+const displayedWork = computed(() => state.home.studio.works.find(work => work.id === state.home.studio.displayId));
+const props=defineProps({ returnFurniture: String, focusWork: Boolean });
 const memoryOpen=ref(false);
 import { roomOf } from "../game/room.js";
 import { homeLife } from "../scenes/home-life.js";
@@ -38,7 +40,7 @@ function setAtmosphere(v) {
   atmosphere?.set(v);
 }
 
-const emit = defineEmits(["shop", "toast", "journal", "memory"]);
+const emit = defineEmits(["shop", "toast", "journal", "memory", "studio"]);
 const host = ref(null),
   failed = ref(false),
   selected = ref(""),
@@ -244,6 +246,11 @@ watch(() => state.home.placed, sync, { deep: true });
 watch(() => state.home.inventory, sync, { deep: true });
 watch([editing, item, rotation, cell, check], ghost, { deep: true });
 onMounted(async () => {
+  if(props.focusWork && displayedWork.value) {
+    await nextTick();
+    const frame=document.querySelector('.home-portfolio-frame');
+    frame?.focus({preventScroll:true});frame?.scrollIntoView({block:'center',behavior:'instant'});
+  }
   const saved=state.home.inventory.find(i=>i.uid===props.returnFurniture);
   if(saved && state.home.placed.some(p=>p.uid===saved.uid)) {
     select(saved);await nextTick();
@@ -376,6 +383,7 @@ onBeforeUnmount(() => {
           </button>
         </div>
       </div>
+      <section v-if="displayedWork" tabindex="-1" aria-label="小家陈列的作品" class="home-portfolio-frame"><div><span class="eyebrow">小家里的一页作品</span><button class="text-button" @click="emit('studio',displayedWork.id)">打开这件作品 ↗</button></div><StudioWorkPreview :work="displayedWork" compact /></section>
     </section>
     <aside class="home-aside">
       <section v-if="current" class="placement-card">
@@ -489,3 +497,9 @@ onBeforeUnmount(() => {
     >
   </div>
 </template>
+
+<style scoped>
+.home-portfolio-frame { margin: 24px 0; max-width: 560px; }
+.home-portfolio-frame > div { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px; }
+.home-portfolio-frame > div button { font-size: 12px; }
+</style>

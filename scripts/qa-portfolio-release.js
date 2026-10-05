@@ -1,0 +1,26 @@
+async (page) => {
+  const isolated=await page.context().browser().newContext(),p=await isolated.newPage(),results=[],errors=[];
+  p.on('pageerror',e=>errors.push(e.message));const check=(ok,m)=>{if(!ok)throw Error(m);};
+  for(const width of [1280,375]) {
+    await p.setViewportSize({width,height:900});await p.goto('http://127.0.0.1:5191/#map');await p.locator('.world-canvas[data-ready=true]').waitFor();await p.locator('[data-place=atelier]').click();await p.locator('.studio').waitFor();
+    check(await p.locator('[data-exercise]').count()===0,'release contains draft exercise');
+    await p.getByRole('button',{name:'开始自己的作品 ＋'}).click();
+    await p.locator('#studio-start-title').fill('这是一张留下今天窗边颜色与线条的小卡片，也是从第一版慢慢走到完整作品的一次尝试');
+    await p.locator('#studio-start-criterion').fill('写出一版完整正文，留下自己实际做出的结果。');
+    await p.getByRole('button',{name:'接下这件创作',exact:true}).click();await p.locator('#studio-body').fill('窗边的绿、杯柄的白、书页边的暖黄。\n把目光停下来，会看到一些以前错过的小事。\n'.repeat(40));await p.locator('#studio-note').fill('这是仅留给自己的备注。下次想再试一次，慢慢留下每一版。'.repeat(7));
+    const data=await p.evaluate(()=>{const c=document.createElement('canvas');c.width=1000;c.height=600;const x=c.getContext('2d');x.fillStyle='#efe9d7';x.fillRect(0,0,1000,600);x.fillStyle='#53755e';x.fillRect(100,90,300,400);x.fillStyle='#d5b96c';x.fillRect(490,130,330,250);return c.toDataURL('image/png');});
+    await p.getByLabel('选择作品图片').setInputFiles({name:'work.png',mimeType:'image/png',buffer:Buffer.from(data.split(',')[1],'base64')});await p.locator('.editor-images img').waitFor();
+    await p.getByRole('button',{name:'我做好了，收好这件作品'}).click();await p.getByRole('button',{name:'完成，记下这一刻'}).click();await p.getByRole('button',{name:'去画室看看这件作品 ↗'}).click();await p.locator('.studio-work-preview').waitFor();
+    check(await p.evaluate(()=>{const s=JSON.parse(localStorage.getItem('kuangye.v3'));return s.done.length===1&&s.done[0].xp===0&&s.home.studio.works.length===1&&s.home.lumens===0;}),'release own work not saved');
+    const event=p.waitForEvent('download');await p.getByRole('button',{name:'导出这一件的 PNG 卡片'}).click();await (await event).saveAs(`output/playwright/portfolio-long-card-${width}.png`);
+    await p.getByRole('checkbox',{name:'导出时带上留给自己的话'}).check();
+    const withNote=p.waitForEvent('download');await p.getByRole('button',{name:'导出这一件的 PNG 卡片'}).click();await (await withNote).saveAs(`output/playwright/portfolio-note-card-${width}.png`);
+    const album=p.waitForEvent('download');await p.getByRole('button',{name:/导出 .* 件作品的 HTML/}).click();await (await album).saveAs(`output/playwright/portfolio-note-album-${width}.html`);
+    await p.reload();await p.getByRole('button',{name:/我的作品集/}).click();await p.locator('[data-work]').first().click();check((await p.locator('.studio-work-preview p').innerText()).includes('错过的小事'),'release refresh lost work');
+    check(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'release overflow');await p.locator('.toast').waitFor({state:'hidden'});await p.evaluate(()=>scrollTo(0,0));await p.screenshot({path:`output/playwright/portfolio-release-${width}.png`,fullPage:true});
+    results.push({width,status:'PASS',draftExercises:0,ownCreation:true,localSave:true,refresh:true,pngLongText:true,noteOptIn:true});
+    // 下一轮宽度前用一次性上下文里的本地 fixture 清空；不会触及用户普通存档。
+    await p.evaluate(()=>localStorage.removeItem('kuangye.v3'));await p.reload();
+  }
+  await isolated.close();check(!errors.length,JSON.stringify(errors));return {mode:'release localhost, isolated disposable context',results,errors};
+}

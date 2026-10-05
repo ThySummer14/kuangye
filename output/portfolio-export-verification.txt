@@ -1,0 +1,4 @@
+{"width":1280,"png":[1200,1600],"privateNoteDefaultExcluded":true,"noteOptIn":true,"all40Paragraphs":true,"embeddedImage":true,"status":"PASS"}
+{"width":375,"png":[1200,1600],"privateNoteDefaultExcluded":true,"noteOptIn":true,"all40Paragraphs":true,"embeddedImage":true,"status":"PASS"}
+app/dist: all 12 pending studio titles absent — PASS
+dist: all 12 pending studio titles absent — PASS

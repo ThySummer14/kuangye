@@ -1,11 +1,12 @@
 <script setup>
-import { computed, ref, nextTick } from 'vue';
+import { computed, ref, nextTick, defineAsyncComponent } from 'vue';
 import { CHALLENGE_OPERATIONS } from '../data/challenges.js';
 import { challengeBrief, challengeRating, challengeCriteria, challengeHonors, challengeRecords } from '../game/challenges.js';
 import { state, taskById, acceptChallenge } from '../store.js';
 import ChallengeEmblem from './ChallengeEmblem.vue';
 import ModalFrame from './ModalFrame.vue';
 import '../challenger.css';
+const ChallengeMedalViewer = defineAsyncComponent(() => import('./ChallengeMedalViewer.vue'));
 const emit = defineEmits(['complete', 'abandon', 'toast', 'back']);
 const section = ref('operations'), filter = ref('all'), selected = ref(null), selectedTerms = ref([]), medal = ref(null), error = ref('');
 const sectionHeading = ref(null), activeHeading = ref(null);
@@ -42,11 +43,11 @@ const bestFor = id => Math.max(0, ...records.value.filter(r => r.challenge.opera
         <p class="challenge-hero-note">选择一件难事，亲手提高难度。<br/>这里的每一道刻痕，都来自真实的突破。</p>
         <button class="challenge-primary hero-cta" @click="goOperations">选择我的挑战 <span aria-hidden="true">↗</span></button>
       </div>
-      <div class="challenge-hero-art" aria-hidden="true">
+      <div class="challenge-hero-art">
         <div class="challenge-orbit orbit-one"/><div class="challenge-orbit orbit-two"/>
-        <span class="hero-giant-word">BEYOND</span>
-        <div class="hero-emblem"><ChallengeEmblem motif="summit" large /></div>
-        <div class="hero-art-caption"><span>临界之上</span><small>CHALLENGE RATING 12</small></div>
+        <span class="hero-giant-word" aria-hidden="true">BEYOND</span>
+        <button class="hero-emblem" aria-label="旋转观察临界之上蚀刻章" @click="medal=honors.medals.find(m=>m.id==='summit')"><ChallengeEmblem motif="summit" large /></button>
+        <div class="hero-art-caption"><span>临界之上</span><small>CHALLENGE RATING 12</small><button class="hero-inspect-link" @click="medal=honors.medals.find(m=>m.id==='summit')">360° 旋转观察 ↗</button></div>
       </div>
       <div class="hero-foot"><span>挑战由你选择，边界由你定义。</span><span>可暂放 · 可重试 · 不限时</span></div>
     </header>
@@ -81,7 +82,7 @@ const bestFor = id => Math.max(0, ...records.value.filter(r => r.challenge.opera
         <div class="challenge-principles"><b>对手，是昨天的自己。</b><p>等级只记录你选择的条件，不衡量人的价值。可以分段、可以暂停，完成之前，随时回来。</p></div>
       </template>
       <template v-else-if="section==='medals'">
-        <div class="challenge-medals"><button v-for="m in honors.medals" :key="m.id" class="challenge-medal" :class="{earned:m.earned}" :data-medal="m.id" @click="medal=m"><div class="medal-art"><ChallengeEmblem :motif="m.motif" :locked="!m.earned" /></div><span class="medal-state">{{ m.earned?'已刻印':'尚未刻印' }}</span><h4>{{ m.name }}</h4><small>{{ m.english }}</small><p>{{ m.condition }}</p><span class="medal-progress">{{ m.progress }} / {{ m.target }} <span aria-hidden="true">↗</span></span></button></div>
+        <div class="challenge-medals"><button v-for="m in honors.medals" :key="m.id" class="challenge-medal" :class="{earned:m.earned}" :data-medal="m.id" @click="medal=m"><div class="medal-art"><ChallengeEmblem :motif="m.motif" :locked="!m.earned" /></div><span class="medal-state">{{ m.earned?'已刻印':'尚未刻印' }}</span><h4>{{ m.name }}</h4><small>{{ m.english }}</small><p>{{ m.condition }}</p><span class="medal-progress">{{ m.progress }} / {{ m.target }} <span>360° 观察 ↗</span></span></button></div>
         <p class="challenge-note">蚀刻章只记录荣誉，不能购买，不额外发光或 XP。挑战完成仍计入当天的微光。</p>
       </template>
       <template v-else>
@@ -100,7 +101,7 @@ const bestFor = id => Math.max(0, ...records.value.filter(r => r.challenge.opera
       <p v-if="!available" class="challenge-note">{{ currentActive?'关闭面板，继续本次行动；想换条件可以先放下。':'可以先查看条件，完成或暂放手里的事后再接取。' }}</p><p v-if="error" role="alert">{{ error }}</p><p class="challenge-note">完成后按条件留下蚀刻章。可暂放重试，不扣款，不限时。</p>
     </ModalFrame>
     <ModalFrame v-if="medal" :label="medal.name+'蚀刻章'" class="challenge-dialog medal-dialog" @close="medal=null">
-      <div class="medal-inspect"><ChallengeEmblem :motif="medal.motif"/><span class="challenge-eyebrow">{{ medal.earned?'已刻印':'图样预览 / 尚未获得' }}</span><h2>{{ medal.name }}</h2><p>{{ medal.inscription }}</p><div class="medal-condition"><span>刻印条件</span><strong>{{ medal.condition }}</strong><small>当前进度 {{ medal.progress }} / {{ medal.target }}</small></div><button class="challenge-primary" @click="medal=null;goOperations()">查看挑战一览 ↗</button></div>
+      <div class="medal-inspect"><ChallengeMedalViewer :key="medal.id" :motif="medal.motif" :name="medal.name"/><div class="medal-inspect-copy"><span class="challenge-eyebrow">{{ medal.earned?'已刻印':'图样预览 / 尚未获得' }}</span><h2>{{ medal.name }}</h2><p>{{ medal.inscription }}</p><div class="medal-condition"><span>刻印条件</span><strong>{{ medal.condition }}</strong><small>当前进度 {{ medal.progress }} / {{ medal.target }}</small></div><button class="challenge-primary" @click="medal=null;goOperations()">查看挑战一览 ↗</button></div></div>
     </ModalFrame>
   </div>
 </template>

@@ -1,0 +1,14 @@
+Use case: stylized-concept
+Asset type: one coherent industrial design concept sheet for a set of four collectible 3D etched achievement medals in the Chinese personal growth game “旷野 / THE CHALLENGER”. This sheet will be a modeling reference for real orbitable three.js objects.
+Primary request: Be bold: four striking sculptural medals celebrating overcoming one's own limits. Distinct silhouettes, cut-through voids, stacked plates, beveled edges, real thickness. Original design, no existing game symbols.
+Scene/backdrop: charcoal black industrial studio, elegant evenly spaced 2 by 2 design board. No UI cards. Four medals displayed floating, consistent front three-quarter view tilted only 12 degrees so their construction is clearly visible.
+Subjects, in reading order:
+01 FIRST BREACH: broken open angular silver gate, a vivid orange lightning slash cutting diagonally through its hollow center; staggered architectural gunmetal backing, brushed silver gate and copper inset.
+02 TEMPERED WILL: tall diamond-shaped furnace crest, sculpted silver flame blades cradling an orange translucent faceted ember, layered dark shield with side ventilation slots.
+03 BEYOND ONE PATH: three radial silver spear-shaped facets around an orange triangular core, rotated 120 degrees, open triangular chassis and articulated dark connecting arms.
+04 ABOVE THE LIMIT: the grandest medal, a soaring double mountain chevron with a long sharp summit, massive angular silver wing vanes sweeping out on either side, black layered hexagonal armor below, vivid orange central vertical crystal, restrained gold-orange edge accents. Visibly more elaborate than the others.
+Style: precise luxury hard-surface collectible object design, photorealistic PBR product render, deliberately strong and angular, believable machinable components, refined rather than toy-like.
+Materials: dark graphite anodized titanium base, brushed silver machined faces, polished cut bevels, burnt copper edgework, orange translucent enamel/crystals, tiny recessed screw heads. Fine etched serial markings and engraved linework. Metallic reflections read cleanly.
+Lighting: large soft white strip key and cool rim light, subtle orange bounce. Clear dark-to-light material contrast, dramatic but details in the black metal remain visible.
+Text: very small technical labels below each medal: “01 / FIRST BREACH”, “02 / TEMPERED WILL”, “03 / BEYOND ONE PATH”, “04 / ABOVE THE LIMIT”. No other text.
+Constraints: all four objects fully visible with generous margins; no crops; no ribbons, no chains, no real-world military insignia; no copied Arknights artwork or logos; no flat drawn icons, no plastic appearance, no overpowering bloom.

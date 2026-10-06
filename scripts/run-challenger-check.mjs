@@ -1,0 +1,10 @@
+import {readFileSync,writeFileSync} from 'node:fs';
+import {spawnSync} from 'node:child_process';
+const [script,out,origin]=process.argv.slice(2);
+if(!script||!out)throw Error('Usage: node scripts/run-challenger-check.mjs script.js output.txt');
+let code=readFileSync(script,'utf8');
+if(origin)code=code.replaceAll('https://thysummer14.github.io/kuangye/',origin).replaceAll('challenger-live-','challenger-local-final-');
+const r=spawnSync(`${process.env.HOME}/.codex/skills/playwright/scripts/playwright_cli.sh`,['-s=kuangye-challenger','run-code',code],{encoding:'utf8',maxBuffer:2*1024*1024});
+const match=r.stdout.match(/### Result\n([^\n]+)/),result=match?JSON.parse(match[1]):{error:r.stdout+r.stderr};
+writeFileSync(out,JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result,null,2));
+if(r.status||!Array.isArray(result)||result.some(r=>r.status!=='PASS'))process.exit(1);

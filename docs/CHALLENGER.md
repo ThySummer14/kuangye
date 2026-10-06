@@ -25,8 +25,8 @@
 
 ## 本次验收证据
 
-- 原基线 122 项；最终 129/129 node:test，通过新增七项真实业务契约测试。见 `app/test/challenges.test.js` 与 `output/challenger-tests.txt`。
-- `npm run build` 与 `npm run check:release` 成功；Vue / three.js 依赖与 lockfile 不变。既有 24 枚图片章、27 个运行包与 Privacy Manifest 通过校验；本专辑四枚新章为原创代码内 SVG，不混进旧营地章的二十四张图样计数。
+- 原基线 122 项；专辑首版 129/129 node:test，通过新增七项真实业务契约测试。见 `app/test/challenges.test.js` 与 `output/challenger-tests.txt`。
+- `npm run build` 与 `npm run check:release` 成功；Vue / three.js 依赖与 lockfile 不变。既有 24 枚图片章、27 个运行包与 Privacy Manifest 通过校验；本专辑四枚新章随后升级为原创 three.js 模型及其透明缩略图，不混进旧营地章的二十四张图样计数。
 - `scripts/qa-challenger.js`／`.mjs`：DEV／正式 × 1280／375px，地图两击、六项目筛选、取消不写入且恢复焦点、条件叠加、重复拒绝、三名额、地图返回专辑、从岩壁完成也逐项校验、必填实际结果、完成仪式、暂放重试、四章条件、原条件档案、刷新、实际 JSON 下载与空上下文导入、reduced-motion、小家日夜全部通过。汇总 `output/challenger-browser.txt`。
 - 四份下载文件另由 parseImport + challengeHonors 核对，均三条完成、一条进行中、一条暂放、五份原始条件、等级 12／三种项目／四枚章，光为零、同日一次微光。见 `output/challenger-downloads.txt`。测试数据来自一次性浏览器上下文，不是用户真实成果。
 - 主代理亲看桌面与手机截图，修正返回按钮、toast、普通岩壁打开挑战完成弹窗时的辅助文字对比度。最后的 CSS 修正补构建与两宽度定向截图核对；关键证据归档 `output/playwright/challenger-release-*`，章近照 `challenger-medals-detail-*`。
@@ -36,3 +36,15 @@
 ## 预览发布
 
 默认预览 [GitHub Pages](https://thysummer14.github.io/kuangye/)，[专辑直达](https://thysummer14.github.io/kuangye/#challenger)。每次改版在 main 触发既有 Deploy to GitHub Pages 工作流，必须等部署完成并核对页面。Sites 绑定保留，本轮不重复部署到另一主机。
+
+## 追加：照着概念图，做成可旋绕观察的实物（2026-10-06）
+
+内置 imagegen 生成四章设计参考板并保存原图与完整提示词，按图的四种轮廓逐件建模。详见 [概念图、提示词和重建说明](art/challenger-3d/README.md)。图中的工业金属结构转为真正有厚度的倒角板、镂空框架、切面晶体、背扣和编号铭牌；实时模型采用低面数几何重新设计，并非将概念图贴在平面上。
+
+点击首屏大章或任意章卡，支持 360° 拖动、双指／滚轮缩放、方向键、正反面、可暂停自动巡回。尚未获得也能完整观察图样，进度与刻印条件如实保留。桌面左右陈列，375px 上下排列；静态缩略图与交互模型同源，完整概念板只保存在设计档案，不增加首屏下载。
+
+最终 132/132 node:test；新三项检查有限几何／真实厚度／有效法线、材质合并与四章区别、完整释放和非法 motif。构建与发布资源检查通过。`output/challenger-3d-{tests,build,release,browser}.txt` 保存结果，`output/playwright/challenger-3d-*` 保存正面、背面、旋转、四章和回退画面。
+
+1280px／375px 正式构建浏览器实测四枚模型、鼠标拖动、键盘、缩放、手机双指模拟、相机真实翻到背面、自动巡回暂停、reduced-motion、关闭后的原生 WebGL 上下文丢失（证明释放）、GPU 上下文丢失后的静态回退／重试、初始无 WebGL 后恢复重试、焦点恢复与存档零写入。原完整挑战流程在 DEV／正式 × 两宽度也重新全量通过，实际下载的四份 JSON 再次通过 parseImport 与荣誉核对。无 pageerror 或资源 404，无横向溢出。实体手机 GPU／真实触摸硬件性能仍未验收。
+
+首版部署 `4d1e4af` 对应 [Actions 37479744825](https://github.com/ThySummer14/kuangye/actions/runs/37479744825)，已成功。立体章版将再次推送 main，沿同一 Pages 工作流发布并核对线上模型与资源。

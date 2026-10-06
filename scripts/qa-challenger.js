@@ -45,7 +45,7 @@ async (page) => {
       await p.getByRole('group',{name:'筛选挑战领域'}).getByRole('button',{name:'全部挑战',exact:true}).click();
       await tab('蚀刻章');check(await p.locator('.challenge-medal.earned').count()===0,'unearned medals appear earned');
       await capture('medals-locked');
-      await p.locator('[data-medal=summit]').click();await p.getByText('图样预览 / 尚未获得',{exact:true}).waitFor();
+      await p.locator('[data-medal=summit]').click();await p.getByText('图样预览 / 尚未获得',{exact:true}).waitFor();await p.locator('.medal-canvas[data-ready=true]').waitFor();await p.getByRole('button',{name:'正面',exact:true}).click();
       await capture('medal-preview',true);await p.keyboard.press('Escape');
       await tab('挑战一览');await inspect('prototype');await p.keyboard.press('Escape');
       check(await p.locator('[data-operation=prototype]').evaluate(el=>el===document.activeElement),'cancel focus not restored');

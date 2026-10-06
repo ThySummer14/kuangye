@@ -1,0 +1,234 @@
+{
+  "app": "kuangye",
+  "version": 3,
+  "exportedAt": "2026-10-06T14:26:02.314Z",
+  "state": {
+    "customTasks": [
+      {
+        "challenge": {
+          "version": 1,
+          "album": "challenger",
+          "operationId": "prototype",
+          "title": "从零造物",
+          "objective": "独立做出一件可使用的原创作品或工具，请一位真实使用者试用，并根据反馈完成一次修订。",
+          "baseRating": 6,
+          "terms": [
+            {
+              "id": "process",
+              "title": "留下过程",
+              "condition": "保留三个制作阶段的文字或图像记录。",
+              "weight": 1
+            },
+            {
+              "id": "constraint",
+              "title": "自设约束",
+              "condition": "开工前写下一条材料或工具限制，全程遵守并说明。",
+              "weight": 2
+            },
+            {
+              "id": "test",
+              "title": "真实检验",
+              "condition": "请三位使用者独立试用，修复他们共同指出的问题。",
+              "weight": 3
+            }
+          ]
+        },
+        "id": "personal-d92132d2-28d8-4825-ba12-fa7b1cf30dd2",
+        "title": "从零造物 · 挑战 12",
+        "desc": "独立做出一件可使用的原创作品或工具，请一位真实使用者试用，并根据反馈完成一次修订。",
+        "cat": "create",
+        "type": "once",
+        "diff": "E",
+        "tier": "personal",
+        "personal": true
+      },
+      {
+        "challenge": {
+          "version": 1,
+          "album": "challenger",
+          "operationId": "deep-work",
+          "title": "破壁",
+          "objective": "为一个卡住的难题投入累计 90 分钟专注，完成一份可检查的解答、分析或方案。",
+          "baseRating": 4,
+          "terms": [
+            {
+              "id": "offline",
+              "title": "静默频道",
+              "condition": "全部专注时段关闭社交消息与短视频。",
+              "weight": 1
+            }
+          ]
+        },
+        "id": "personal-fb109a87-1596-463f-8d7f-53699745da66",
+        "title": "破壁 · 挑战 5",
+        "desc": "为一个卡住的难题投入累计 90 分钟专注，完成一份可检查的解答、分析或方案。",
+        "cat": "mind",
+        "type": "once",
+        "diff": "E",
+        "tier": "personal",
+        "personal": true
+      },
+      {
+        "challenge": {
+          "version": 1,
+          "album": "challenger",
+          "operationId": "hard-book",
+          "title": "深潜",
+          "objective": "读完一本有难度的非虚构书中至少 100 页，写 800 字自己的理解，包含三个核心观点。",
+          "baseRating": 5,
+          "terms": []
+        },
+        "id": "personal-ecc99312-2ba0-4ca1-bf66-39aa095f07f7",
+        "title": "深潜 · 挑战 5",
+        "desc": "读完一本有难度的非虚构书中至少 100 页，写 800 字自己的理解，包含三个核心观点。",
+        "cat": "mind",
+        "type": "once",
+        "diff": "E",
+        "tier": "personal",
+        "personal": true
+      },
+      {
+        "challenge": {
+          "version": 1,
+          "album": "challenger",
+          "operationId": "speak",
+          "title": "打破静音",
+          "objective": "准备一个自己的观点，向至少两位真实听众做 5 分钟完整表达，主动收集并回应三个问题。",
+          "baseRating": 5,
+          "terms": []
+        },
+        "id": "personal-74d99d7f-a00f-405b-8ab7-83af2746ae48",
+        "title": "打破静音 · 挑战 5",
+        "desc": "准备一个自己的观点，向至少两位真实听众做 5 分钟完整表达，主动收集并回应三个问题。",
+        "cat": "courage",
+        "type": "once",
+        "diff": "E",
+        "tier": "personal",
+        "personal": true
+      },
+      {
+        "challenge": {
+          "version": 1,
+          "album": "challenger",
+          "operationId": "hard-book",
+          "title": "深潜",
+          "objective": "读完一本有难度的非虚构书中至少 100 页，写 800 字自己的理解，包含三个核心观点。",
+          "baseRating": 5,
+          "terms": [
+            {
+              "id": "debate",
+              "title": "反向论证",
+              "condition": "针对一个核心观点写出有证据的反驳，再回应它。",
+              "weight": 3
+            }
+          ]
+        },
+        "id": "personal-7792e750-2687-420d-aa51-01a2b0408e9d",
+        "title": "深潜 · 挑战 8",
+        "desc": "读完一本有难度的非虚构书中至少 100 页，写 800 字自己的理解，包含三个核心观点。",
+        "cat": "mind",
+        "type": "once",
+        "diff": "E",
+        "tier": "personal",
+        "personal": true
+      }
+    ],
+    "active": [
+      {
+        "qid": "personal-74d99d7f-a00f-405b-8ab7-83af2746ae48",
+        "start": "2026-10-06",
+        "logs": [],
+        "shields": 2
+      }
+    ],
+    "done": [
+      {
+        "qid": "personal-d92132d2-28d8-4825-ba12-fa7b1cf30dd2",
+        "xp": 0,
+        "at": "2026-10-06",
+        "review": "测试记录：独立做出原型，三人试用后完成修订。",
+        "units": [],
+        "logs": []
+      },
+      {
+        "qid": "personal-fb109a87-1596-463f-8d7f-53699745da66",
+        "xp": 0,
+        "at": "2026-10-06",
+        "review": "测试记录：解出难题并关闭了消息。",
+        "units": [],
+        "logs": []
+      },
+      {
+        "qid": "personal-7792e750-2687-420d-aa51-01a2b0408e9d",
+        "xp": 0,
+        "at": "2026-10-06",
+        "review": "测试记录：读完指定页数，完成理解与反向论证。",
+        "units": [],
+        "logs": []
+      }
+    ],
+    "abandoned": [
+      {
+        "qid": "personal-ecc99312-2ba0-4ca1-bf66-39aa095f07f7",
+        "reason": "测试：换一组条件再来。",
+        "at": "2026-10-06"
+      }
+    ],
+    "home": {
+      "room": {
+        "w": 6,
+        "d": 6
+      },
+      "town": {
+        "exterior": {
+          "wall": "cream",
+          "roof": "clay",
+          "door": "oak",
+          "porch": "open",
+          "path": "stone"
+        },
+        "yard": [],
+        "library": 0
+      },
+      "reading": {
+        "books": []
+      },
+      "inquiry": {
+        "pages": []
+      },
+      "studio": {
+        "works": [],
+        "displayId": ""
+      },
+      "observations": {
+        "entries": []
+      },
+      "observationWorks": [],
+      "visits": [],
+      "decor": {
+        "wall": "meadow",
+        "floor": "oak",
+        "atmosphereVersion": 1,
+        "weather": "auto",
+        "light": "auto"
+      },
+      "moments": [],
+      "lumens": 0,
+      "earned": 0,
+      "spent": 0,
+      "refunded": 0,
+      "glimmerDays": [
+        "2026-10-06"
+      ],
+      "glimmerPaid": 0,
+      "inventory": [],
+      "placed": [],
+      "boundMemories": [],
+      "gifts": [],
+      "nextId": 1
+    },
+    "settings": {
+      "devDate": ""
+    }
+  }
+}

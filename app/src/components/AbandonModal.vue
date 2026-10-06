@@ -11,6 +11,7 @@ const reason = ref(""),
 // 放下不清零：攒下的日子与数量会留着，再接起来接着数。
 const kept = computed(() => {
   if (studioWorkForTask(state.home.studio,props.active.qid)) return { title: '这件作品和当时的记录，都还在。', detail: '已保存的正文和图片会留在画室。以后想继续，到画室接着做这件作品；原任务会保留在手记里。' };
+  if (task.value.challenge) return { title: '这次尝试，仍然留在行动档案里。', detail: '挑战条件和暂放原因会保留。回来后，可以在挑战者专辑重新选条件，再开始一次。' };
   if (task.value.personal) return { title: "这件事会收进手记。", detail: "自己写下的内容会保留原样。以后想继续，可以到岩壁重新写一件。" };
   const p = progressOf(props.active);
   if (p.cur && task.value.type === "streak") return {

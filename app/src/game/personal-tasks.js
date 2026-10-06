@@ -1,10 +1,12 @@
+import { normalizeChallenge } from './challenges.js';
 import { CATS, DIFF } from '../data/tasks.js';
 export const isPersonalId = id => typeof id === 'string' && /^personal-[a-z0-9-]{8,80}$/.test(id);
 export function personalTask(input) {
   const clean = (v, n) => typeof v === 'string' ? v.trim().slice(0, n) : '';
   const title = clean(input?.title, 60), desc = clean(input?.desc, 240);
   if (!title || !desc || !Object.hasOwn(CATS, input?.cat)) return null;
-  return { id: input.id, title, desc, cat: input.cat, type: 'once', diff: 'E', tier: 'personal', personal: true };
+  const challenge = normalizeChallenge(input.challenge);
+  return { ...(challenge ? { challenge } : {}), id: input.id, title, desc, cat: input.cat, type: 'once', diff: 'E', tier: 'personal', personal: true };
 }
 export function normalizePersonalTasks(raw = []) {
   if (!Array.isArray(raw)) throw new Error('自己的任务资料格式不完整，请保留原备份');

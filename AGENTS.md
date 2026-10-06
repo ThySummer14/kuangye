@@ -2,6 +2,8 @@
 
 默认中文。运行时仅 Vue 3 + three.js；保留现有依赖与 `app/package-lock.json`。
 
+当前方向（2026-10-06 用户要求）：暂缓商品化，优先好用；每次改版验证通过后推送 main，等待 GitHub Pages 部署成功并核对线上预览，交付链接。GitHub Pages 为本阶段默认预览地址，保留既有 Sites 绑定。
+
 ## 命令
 
 - `npm --prefix app ci`：安装现有依赖。

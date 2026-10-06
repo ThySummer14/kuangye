@@ -1,7 +1,7 @@
 // 地图场所声明：地图路牌、顶栏标题与图标共用一份，组件里不再各存一份名字。
 // tone 只决定路牌徽章的色调（表现层），不参与任何规则。
 export const MAP_PLACES = [
-  { id: "tasks", name: "任务岩壁", short: "岩壁", hint: "接一件真实的事", tone: "ember" },
+  { id: "tasks", name: "任务岩壁", short: "岩壁", hint: "日常任务与挑战者专辑", tone: "ember" },
   { id: "home", name: "小芽的家", short: "小家", hint: "布置与陪伴", tone: "moss" },
   { id: "shop", name: "林间集市", short: "集市", hint: "用光换家具", tone: "glow" },
   { id: "journal", name: "瞭望台 · 成长手记", short: "瞭望台", hint: "回望走过的路", tone: "lake" },
@@ -23,4 +23,5 @@ export const PLACE_TITLES = {
   library: ["街角书屋", "library"],
   chains: ["成长线", "chains"],
   atelier: ["小小画室", "atelier"],
+  challenger: ["挑战者", "tasks"],
 };

@@ -88,7 +88,7 @@ async function acceptGuide(task) {
   await nextTick();
   await take(task);
 }
-const emit = defineEmits(["complete", "abandon", "toast", "chains", "library", "entry-used", "studio"]);
+const emit = defineEmits(["complete", "abandon", "toast", "chains", "library", "entry-used", "studio", "challenger"]);
 const cat = ref("all"),
   scope = ref("today"),
   query = ref(""),
@@ -166,6 +166,7 @@ function log(a) {
         <div class="wall-slots" aria-hidden="true"><i v-for="n in 3" :key="n" :class="{ filled: n <= state.active.length }"><PlaceIcon v-if="n <= state.active.length" name="tasks" :size="18" /></i></div>
         <strong>{{ state.active.length }}<small> / 3 件</small></strong><p>{{ state.active.length ? '先照顾正在做的事。改变安排也没关系。' : '从一件做得到的小事开始。不必先把人生安排好。' }}</p></aside>
     </section>
+    <button class="challenger-entry" @click="emit('challenger')"><span class="challenger-entry-mark" aria-hidden="true">↗</span><span><small>THE CHALLENGER / 越界行动</small><strong>挑战者</strong><em>六项硬挑战，自选加码。把突破刻成勋章。</em></span><b>打开专辑 ↗</b></button>
     <section v-if="state.active.length" class="active-section">
       <div class="section-title">
         <h3>
@@ -182,12 +183,13 @@ function log(a) {
           tabindex="-1" :aria-label="'已接下：' + taskById[a.qid].title">
           <div class="task-meta">
             <span>{{ CATS[taskById[a.qid].cat].name }}</span
-            ><span v-if="taskById[a.qid].personal">自己写下的事</span><span v-else>✦ {{ lumenReward(DIFF[taskById[a.qid].diff].xp) }} 光</span>
+            ><span v-if="taskById[a.qid].challenge">挑战者专辑</span><span v-else-if="taskById[a.qid].personal">自己写下的事</span><span v-else>✦ {{ lumenReward(DIFF[taskById[a.qid].diff].xp) }} 光</span>
           </div>
           <h3>{{ taskById[a.qid].title }}</h3>
           <p><strong v-if="taskById[a.qid].personal" class="personal-criterion">我的完成条件</strong>{{ taskById[a.qid].desc }}</p>
           <ActionPlan :active="a" :suggestion="fieldGuide(taskById[a.qid]).steps[0]" />
           <button v-if="studioWorkForTask(state.home.studio,a.qid)" class="text-button guide-link" @click="emit('studio',studioWorkForTask(state.home.studio,a.qid).id)">回画室带回作品 ↗</button>
+          <button v-else-if="taskById[a.qid].challenge" class="text-button guide-link" @click="emit('challenger')">查看本次挑战条件 ↗</button>
           <button v-else-if="taskById[a.qid].personal" class="text-button guide-link" @click="editingTask = taskById[a.qid]; writingSuggestion = null; writing = true">修改这件事 ↗</button>
           <button v-else class="text-button guide-link" @click="inspecting = taskById[a.qid]">打开出发手册 ↗</button>
           <RhythmStrip v-if="taskById[a.qid].type === 'streak'" :active="a" :target="taskById[a.qid].target" :today="today()" />
@@ -424,4 +426,8 @@ function log(a) {
   .accept-note { max-width: none; text-align: left; }
   .quest-card-action .soft-button { width: 100%; }
 }
+</style>
+
+<style scoped>
+.challenger-entry{display:flex;align-items:center;gap:24px;width:100%;border:1px solid #3c4839;background:#1b251c;color:#f3efe1;padding:25px 30px;text-align:left;cursor:pointer;margin:4px 0 28px;position:relative;overflow:hidden;transition:background .2s}.challenger-entry::after{content:'';width:90px;height:150%;background:#f3914b12;transform:skew(-25deg);position:absolute;right:20%}.challenger-entry:hover{background:#2a3426}.challenger-entry-mark{font:64px/1 sans-serif;color:#f9995b}.challenger-entry>span:nth-child(2){flex:1}.challenger-entry small{font:9px monospace;letter-spacing:2px;color:#efb485;display:block}.challenger-entry strong{display:block;font-size:30px;letter-spacing:4px;margin:7px 0}.challenger-entry em{font-size:12px;font-style:normal;color:#b9c5ac}.challenger-entry b{color:#f5b27f;font-size:13px;font-weight:500;white-space:nowrap}@media(max-width:600px){.challenger-entry{padding:20px;gap:16px;flex-wrap:wrap}.challenger-entry-mark{font-size:43px}.challenger-entry small{font-size:8px;letter-spacing:1px}.challenger-entry strong{font-size:26px}.challenger-entry em{font-size:11px;line-height:1.8;display:block}.challenger-entry b{width:100%;text-align:right;font-size:12px}}@media(prefers-reduced-motion:reduce){.challenger-entry{transition:none}}
 </style>

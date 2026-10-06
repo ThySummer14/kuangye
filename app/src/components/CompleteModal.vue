@@ -19,12 +19,18 @@ import { fieldGuide } from "../data/field-guides.js";
 import { taskXp } from "../game/personal-tasks.js";
 import { lumenReward } from "../game/home.js";
 import { studioWorkForTask } from '../game/studio.js';
+import { challengeCriteria, challengeRating, challengeCompletionIssue, challengeHonors } from '../game/challenges.js';
+import ChallengeEmblem from './ChallengeEmblem.vue';
+import '../challenger.css';
 import BuddyFace from "./BuddyFace.vue";
 import ModalFrame from "./ModalFrame.vue";
 const props = defineProps({ active: Object }),
-  emit = defineEmits(["close", "done", "shop", "map", "library", "direction", "write", "studio"]);
+  emit = defineEmits(["close", "done", "shop", "map", "library", "direction", "write", "studio", "challenger"]);
 const work = computed(() => studioWorkForTask(state.home.studio, props.active.qid));
 const issue = computed(() => completionIssue(props.active));
+const confirmed = ref([]), newMedals = ref([]);
+const challenge = computed(() => task.value?.challenge);
+const challengeIssue = computed(() => challenge.value ? challengeCompletionIssue(challenge.value, review.value, confirmed.value) : '');
 const finishButton = ref(null);
 const task = computed(() => taskById[props.active.qid]),
   xp = computed(() => taskXp(task.value)),
@@ -33,7 +39,9 @@ const task = computed(() => taskById[props.active.qid]),
   glimmer = ref(0);
 async function confirm() {
   const before = state.home.glimmerPaid;
-  if (complete(props.active, review.value.trim())) {
+  const earnedBefore = challenge.value ? challengeHonors(state).medals.filter(m => m.earned).map(m => m.id) : [];
+  if (complete(props.active, review.value.trim(), confirmed.value)) {
+    if (challenge.value) newMedals.value = challengeHonors(state).medals.filter(m => m.earned && !earnedBefore.includes(m.id));
     glimmer.value = state.home.glimmerPaid - before;
     result.value = true;
     await nextTick();
@@ -56,7 +64,7 @@ const footprint = computed(() => {
 });
 const next = computed(() => (result.value ? nextChainStage(task.value) : null));
 // 只给一个「下一件」，不自动接取；今天到这里也完全可以。
-const onward = computed(() => result.value && !work.value ? onwardSuggestion(state, task.value, { day: today(), next: next.value, nextOk: !!next.value && canAccept(next.value).ok }) : null);
+const onward = computed(() => result.value && !work.value && !challenge.value ? onwardSuggestion(state, task.value, { day: today(), next: next.value, nextOk: !!next.value && canAccept(next.value).ok }) : null);
 function takeOnward() {
   const o = onward.value;
   if (!o?.task || !accept(o.task)) return;
@@ -71,7 +79,7 @@ function writeOnward() {
 function finish() {
   if (result.value && onward.value?.trail) emit("direction", onward.value.trail);
   if (result.value)
-    emit("done", task.value.personal ? "自己写下的事，也认真做到了。" : `这件事完成了，收获 ${lumenReward(xp.value)} 光`);
+    emit("done", challenge.value ? "这次突破，已经刻进你的行动档案。" : task.value.personal ? "自己写下的事，也认真做到了。" : `这件事完成了，收获 ${lumenReward(xp.value)} 光`);
   emit("close");
 }
 function returnToMap() {
@@ -81,36 +89,43 @@ function returnToMap() {
 </script>
 <template>
   <ModalFrame
+    :class="{ 'challenge-dialog challenge-completion': challenge }"
     :label="result ? '这一件事，收好了' : '记录完成的任务'"
     @close="finish"
     ><template v-if="!result"
-      ><span class="eyebrow">A LITTLE MOMENT TO REMEMBER</span>
-      <h2>这一件事，你做到了。</h2>
-      <p class="completion-task">{{ task.title }}</p><p v-if="task.personal" class="review-prompt">你定下的完成条件：{{ task.desc }}</p>
+      ><span class="eyebrow">{{ challenge ? 'CHALLENGE ACCOMPLISHED' : 'A LITTLE MOMENT TO REMEMBER' }}</span>
+      <h2>{{ challenge ? '这条边界，你跨过了。' : '这一件事，你做到了。' }}</h2>
+      <p class="completion-task">{{ task.title }}</p><p v-if="task.personal && !challenge" class="review-prompt">你定下的完成条件：{{ task.desc }}</p>
+      <div v-if="challenge" class="challenge-confirm" role="group" aria-label="确认实际完成的挑战条件"><label v-for="c in challengeCriteria(challenge)" :key="c.id"><input v-model="confirmed" type="checkbox" :value="c.id"/><span>{{ c.condition }}</span></label></div>
       <label for="quest-review"
-        >给未来的自己留一句话 <small>（可选）</small></label
-      ><p class="review-prompt">{{ fieldGuide(task).recall }}</p><textarea
+        >{{ challenge ? "留下你实际完成的结果" : "给未来的自己留一句话" }} <small>{{ challenge ? "（必填）" : "（可选）" }}</small></label
+      ><p class="review-prompt">{{ challenge ? "带回什么成果？最难的一步是怎样完成的？" : fieldGuide(task).recall }}</p><textarea
         id="quest-review"
         v-model="review"
         maxlength="160"
-        :placeholder="fieldGuide(task).recall"
+        :placeholder="challenge ? '写下具体成果，以及这次如何越过难点。' : fieldGuide(task).recall"
         rows="4"
       />
-      <p class="completion-note">它也会成为你下一件家具上的小小铭牌。</p>
+      <p class="completion-note">{{ challenge ? "按你接取时的条件，诚实地确认这次突破。" : "它也会成为你下一件家具上的小小铭牌。" }}</p>
+      <p v-if="challengeIssue" class="review-prompt">{{ challengeIssue }}</p>
       <p v-if="issue" role="alert" class="review-prompt">{{ issue }}<button class="text-button" @click="emit('close'); emit('studio',work.id)">回画室带回作品 ↗</button></p>
       <div class="placement-actions">
         <button class="soft-button" @click="emit('close')">再等等</button
-        ><button class="primary-button" :disabled="!!issue" @click="confirm">
-          {{ task.personal ? "完成，记下这一刻" : "完成，收下这束光" }}
+        ><button class="primary-button" :disabled="!!issue || !!challengeIssue" @click="confirm">
+          {{ challenge ? "确认完成，留下刻印" : task.personal ? "完成，记下这一刻" : "完成，收下这束光" }}
         </button>
       </div></template
     ><template v-else
       ><div class="completion-result">
-        <BuddyFace :size="175" mood="celebrate" /><span class="eyebrow"
-          >{{ task.personal ? "把这一刻留给自己" : "一点努力，一点光" }}</span
+        <div v-if="challenge" class="challenge-result"><ChallengeEmblem :motif="newMedals.at(-1)?.motif || 'breach'" /></div>
+        <BuddyFace v-else :size="175" mood="celebrate" /><span class="eyebrow"
+          >{{ challenge ? "ACTION COMPLETE / 行动完成" : task.personal ? "把这一刻留给自己" : "一点努力，一点光" }}</span
         >
-        <h2 v-if="task.personal" class="personal-completion-heading">你想做的，做到了。</h2>
+        <h2 v-if="challenge">突破，已刻印。</h2>
+        <h2 v-else-if="task.personal" class="personal-completion-heading">你想做的，做到了。</h2>
         <template v-else><h2>＋{{ lumenReward(xp) }} <small>光</small></h2><span class="completion-xp">＋{{ xp }} XP</span></template>
+        <p v-if="challenge" class="challenge-rating-result">挑战等级 {{ String(challengeRating(challenge)).padStart(2,'0') }} / {{ challenge.terms.length }} 条加码</p>
+        <p v-if="newMedals.length" class="challenge-earned-result">新蚀刻章：{{ newMedals.map(m=>m.name).join('、') }}</p>
         <h3>{{ task.title }}</h3>
         <p>{{ review || "今天，又为自己完成了一件事。" }}</p>
         <div v-if="footprint" class="footprint" role="img" :aria-label="footprint.line + (footprint.best >= 2 ? `最长一口气 ${footprint.best} 天。` : '')">
@@ -131,10 +146,11 @@ function returnToMap() {
       >
         {{ (saveWarning.text || saveWarning.pending) ? "回到地图" : "收好了，回到地图" }}
       </button>
+      <button v-if="challenge" class="text-button completion-shop-link" @click="finish(); emit('challenger')">回挑战者，查看蚀刻章与档案 ↗</button>
       <button v-if="task.chain === 'read' && readingMilestones(state.done) > (state.home.town?.library || 0)" class="text-button completion-shop-link" @click="emit('close'); emit('library')">去街角书屋，留下一点变化 ↗</button>
       <button v-if="work" class="text-button completion-shop-link" @click="emit('close'); emit('studio',work.id)">去画室看看这件作品 ↗</button>
       <button
-        class="text-button completion-shop-link"
+        v-if="!challenge" class="text-button completion-shop-link"
         @click="
           emit('shop');
           emit('close');

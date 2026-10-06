@@ -6,6 +6,7 @@ import { prepareObservationWork, observationCraftImageSize } from './game/observ
 import { residentBrief, handInVisit } from "./game/residents.js";
 import { RESIDENT_VISITS } from "./data/residents.js";
 import { emptyTown, changeExterior, placeYard, repairLibrary, applyYardPlan } from "./game/town.js";
+import { challengeBrief, challengeCompletionIssue } from "./game/challenges.js";
 import { personalTask, taskXp } from "./game/personal-tasks.js";
 import { persistence } from './services/persistence.js';
 import { normalizeActionPlan } from "./game/action-plan.js";
@@ -89,8 +90,15 @@ export function createPersonalTask(input) {
   saveActionPlan(activeOf(task.id), input.plan);
   return { ok: true, task };
 }
+export function acceptChallenge(operationId, termIds = []) {
+  if (state.active.some(a => taskById[a.qid]?.challenge?.operationId === operationId))
+    return { ok: false, why: '这个项目已经在进行中，先照顾眼前这次挑战。' };
+  try { return createPersonalTask(challengeBrief(operationId, termIds)); }
+  catch (error) { return { ok: false, why: error.message }; }
+}
 export function editPersonalTask(id, input) {
   const current = taskById[id];
+  if (current?.challenge) return { ok: false, why: '接取时的挑战条件已经留存。想换条件，可以先放下再挑战。' };
   if (!current?.personal || !activeOf(id)) return { ok: false, why: '这件事已经归档，保留当时的记录。' };
   const updated = personalTask({ ...input, id });
   if (!updated) return { ok: false, why: '请写清想做的事与完成条件。' };
@@ -238,10 +246,11 @@ export function logUnits(a, v) {
 }
 
 // ———— 完成 / 放弃 ————
-export function complete(a, review = "") {
+export function complete(a, review = "", confirmed = []) {
   const t = taskById[a?.qid];
   if (!state.active.includes(a) || !t || completionIssue(a) || (t.type !== "once" && !reached(a)))
     return false;
+  if (t.challenge && challengeCompletionIssue(t.challenge, review, confirmed)) return false;
   const p = progressOf(a);
   const units = [];
   if (t.type === "total" && t.metric) {

@@ -1,0 +1,38 @@
+[
+  {
+    "file": "challenger-dev-backup-1280.json",
+    "done": 3,
+    "active": 1,
+    "abandoned": 1,
+    "medals": 4,
+    "best": 12,
+    "lumens": 0
+  },
+  {
+    "file": "challenger-dev-backup-375.json",
+    "done": 3,
+    "active": 1,
+    "abandoned": 1,
+    "medals": 4,
+    "best": 12,
+    "lumens": 0
+  },
+  {
+    "file": "challenger-release-backup-1280.json",
+    "done": 3,
+    "active": 1,
+    "abandoned": 1,
+    "medals": 4,
+    "best": 12,
+    "lumens": 0
+  },
+  {
+    "file": "challenger-release-backup-375.json",
+    "done": 3,
+    "active": 1,
+    "abandoned": 1,
+    "medals": 4,
+    "best": 12,
+    "lumens": 0
+  }
+]

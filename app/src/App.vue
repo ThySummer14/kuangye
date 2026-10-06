@@ -17,6 +17,7 @@ const WorldScene = scenePage(() => import("./components/WorldScene.vue"));
 const ShopView = scenePage(() => import("./components/ShopView.vue"));
 const WoodshopView = scenePage(() => import("./components/WoodshopView.vue"));
 const HomeView = scenePage(() => import("./components/HomeView.vue"));
+const ChallengerView = scenePage(() => import("./components/ChallengerView.vue"));
 const StudioView = scenePage(() => import("./components/StudioView.vue"));
 import { nativePlatform } from "./services/native.js";
 import { recommendMapTask } from "./game/map-recommendation.js";
@@ -42,6 +43,7 @@ const validTabs = [
   "yard",
   "library",
   "atelier",
+  "challenger",
 ];
 const tab = ref(
     validTabs.includes(location.hash.slice(1)) ? location.hash.slice(1) : "map",
@@ -148,7 +150,7 @@ const ticketMeta = computed(() => {
   if (!t) return "";
   const ctx = taskContext(t), session = !ctx && sessionContext(t);
   const span = t.type === "streak" ? `记满 ${t.target} 天` : t.type === "total" ? `累计 ${t.target}${t.unit || "次"}` : "";
-  return [t.personal ? "自己写下的事" : DIFF[t.diff]?.name, CATS[t.cat]?.name,
+  return [t.challenge ? "挑战者专辑" : t.personal ? "自己写下的事" : DIFF[t.diff]?.name, CATS[t.cat]?.name,
     ctx ? `约 ${ctx.minutes} 分钟 · ${PLACES[ctx.place]}` : session ? `每次约 ${session.minutes} 分钟 · ${span}` : ""].filter(Boolean).join(" · ");
 });
 const selectedAction = ref("");
@@ -202,6 +204,7 @@ async function takeMapTask() {
   const action = nextAction.value;
   if (!action) return;
   if (action.kind === "active") {
+    if (action.task.challenge) { navigate("challenger"); return; }
     navigate("tasks");
     await nextTick();
     const card = [...document.querySelectorAll('[data-active-task]')].find(el => el.dataset.activeTask === action.active.qid);
@@ -354,6 +357,7 @@ async function takeMapTask() {
         @library="openLibrary"
         @entry-used="consumeQuestSuggestion"
         @studio="openStudio"
+        @challenger="tab = 'challenger'"
       />
       <HomeView :return-furniture="returnFurniture" :focus-work="showHomeWork" @memory="openFurnitureMemory"
         v-else-if="tab === 'home'"
@@ -362,6 +366,7 @@ async function takeMapTask() {
         @toast="toast"
         @studio="openStudio"
       />
+      <ChallengerView v-else-if="tab === 'challenger'" @back="navigate('tasks')" @complete="completing=$event" @abandon="abandoning=$event" @toast="toast" />
       <StudioView v-else-if="tab === 'atelier'" :focus-work="studioTarget" :album="studioAlbum" @complete="completing=$event" @abandon="abandoning=$event" @home="visitStudioHome" @visits="openLibrary('visits')" @observation="openObservationBook" @toast="toast" />
       <WoodshopView v-else-if="tab === 'woodshop'" @toast="toast" />
       <YardView v-else-if="tab === 'yard'" :desk="yardDesk" :focus-observation="observationTarget" @home="tab = 'home'" @toast="toast" @journal="memoryTarget=null; tab='panel'" @outside="visitOutsideTasks" @studio="openStudio" />
@@ -403,6 +408,7 @@ async function takeMapTask() {
       @done="toast"
       @shop="tab = 'shop'"
       @map="finishToMap"
+      @challenger="tab = 'challenger'"
       @library="openLibrary('reading')"
       @studio="openStudio"
     /><AbandonModal

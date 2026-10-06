@@ -1,0 +1,12 @@
+[
+  {
+    "width": 1280,
+    "status": "PASS",
+    "color": "rgb(191, 205, 170)"
+  },
+  {
+    "width": 375,
+    "status": "PASS",
+    "color": "rgb(191, 205, 170)"
+  }
+]

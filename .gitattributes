@@ -1,0 +1,2 @@
+# Release verification compares the exact upstream license bytes, including CRLF.
+app/public/licenses/* -text

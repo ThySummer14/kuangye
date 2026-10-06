@@ -1,179 +1,119 @@
 import * as THREE from 'three';
-import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { mergeGeometries, mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
 
 export const MEDAL_MOTIFS = ['breach', 'resolve', 'versatile', 'summit'];
+// Six boundary landmarks of the original orthographic engraving atlas (1254²).
+// Clockwise in the image, counter-clockwise in model space, starting at the tip.
+const ATLAS_CORNERS = {
+  breach: [[325,12],[46,173],[46,476],[325,640],[604,476],[604,173]],
+  resolve: [[930,12],[651,174],[651,478],[930,640],[1208,478],[1208,174]],
+  versatile: [[324,621],[47,781],[46,1075],[324,1235],[604,1075],[604,781]],
+  summit: [[930,620],[651,781],[651,1075],[930,1235],[1208,1075],[1208,781]],
+};
+const hex = (radius) => Array.from({length:6},(_,i)=>{
+  const a=Math.PI/2+i*Math.PI/3;return [Math.cos(a)*radius,Math.sin(a)*radius];
+});
+function polygon(points) {
+  const shape=new THREE.Shape();points.forEach(([x,y],i)=>i?shape.lineTo(x,y):shape.moveTo(x,y));shape.closePath();return shape;
+}
 
-// Original geometry built from docs/art/challenger-3d/concepts.png. Front is +Z.
-// The model is independent from storage, rewards, the renderer and the DOM.
-export function buildChallengeMedal(motif = 'summit') {
-  if (!MEDAL_MOTIFS.includes(motif)) throw new Error('Unknown medal motif');
-  const root = new THREE.Group();
-  root.name = `challenge-medal-${motif}`;
-  const materials = {
-    armor: new THREE.MeshStandardMaterial({ color: '#303933', metalness: .86, roughness: .38 }),
-    recess: new THREE.MeshStandardMaterial({ color: '#101716', metalness: .7, roughness: .5 }),
-    silver: new THREE.MeshStandardMaterial({ color: '#aeb5bb', metalness: .92, roughness: .3 }),
-    edge: new THREE.MeshStandardMaterial({ color: '#eff1e5', metalness: .95, roughness: .2 }),
-    copper: new THREE.MeshStandardMaterial({ color: '#b66e30', metalness: .82, roughness: .27 }),
-    ember: new THREE.MeshPhysicalMaterial({ color: '#f4660a', metalness: .12, roughness: .17, transmission: .18, thickness: .3, ior: 1.65, attenuationColor: '#ff730f', attenuationDistance: .7, clearcoat: 1, clearcoatRoughness: .1, emissive: '#e94b00', emissiveIntensity: .19, flatShading: true }),
-    glow: new THREE.MeshStandardMaterial({ color: '#ff880f', metalness: .15, roughness: .23, emissive: '#ff7300', emissiveIntensity: .22 }),
-  };
-  Object.entries(materials).forEach(([name, m]) => { m.name = name; });
-  const add = (geometry, material, name) => {
-    const mesh = new THREE.Mesh(geometry, materials[material]);
-    mesh.name = name || material;
-    root.add(mesh);
-    return mesh;
-  };
-  const outline = points => {
-    const p = new THREE.Shape();
-    points.forEach(([x,y], i) => i ? p.lineTo(x,y) : p.moveTo(x,y));
-    p.closePath();
-    return p;
-  };
-  const poly = (points, z, depth, material, holes = [], bevel = .026) => {
-    const shape = outline(points);
-    shape.holes = holes.map(outline);
-    const geo = new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: bevel > 0, bevelThickness: bevel, bevelSize: bevel, bevelSegments: 2, steps: 1, curveSegments: 12 });
-    geo.translate(0,0,z);
-    return add(geo, material);
-  };
-  const scaled = (points, n) => points.map(([x,y]) => [x*n,y*n]);
-  const mirror = points => points.map(([x,y])=>[-x,y]);
-  const rotated = (points, a) => points.map(([x,y])=>[x*Math.cos(a)-y*Math.sin(a),x*Math.sin(a)+y*Math.cos(a)]);
-  function ring(points, scale, z, depth, material) { return poly(points,z,depth,material,[scaled(points,scale)]); }
-  function bar(x1,y1,x2,y2,width,z,depth,mat) {
-    const dx=x2-x1,dy=y2-y1,len=Math.hypot(dx,dy),nx=-dy/len*width/2,ny=dx/len*width/2;
-    return poly([[x1+nx,y1+ny],[x2+nx,y2+ny],[x2-nx,y2-ny],[x1-nx,y1-ny]],z,depth,mat,[],.008);
-  }
-  function screw(x,y,z) {
-    const mesh=add(new THREE.CylinderGeometry(.075,.075,.045,12),'copper');
-    mesh.rotation.x=Math.PI/2;mesh.position.set(x,y,z);
-    const socket=add(new THREE.CylinderGeometry(.045,.045,.05,6),'recess');
-    socket.rotation.x=Math.PI/2;socket.position.set(x,y,z+.012);
-    bar(x-.031,y,x+.031,y,.012,z+.04,.008,'silver');
-  }
-  // Faceted, solid surface with a raised ridge: every blade has a side and a back.
-  function facet(points, center, z, height, material='silver') {
-    const vertices=[];
-    for(let i=0;i<points.length;i++){
-      const a=points[i],b=points[(i+1)%points.length];
-      vertices.push(...a,z,...b,z,...center,z+height);
+// The face is a sampled die relief: 55,296 triangles, not a flat image plane.
+// Artwork supplies fine engraving; its luminance supplies actual shallow height.
+// Independent solid rim, reeds, reverse and working pin supply the object structure.
+function engravedFace(motif,sampleEngraving) {
+  const corners=ATLAS_CORNERS[motif].map(([x,y])=>[x/1254,1-y/1254]);
+  const center=[corners.reduce((s,p)=>s+p[0],0)/6,corners.reduce((s,p)=>s+p[1],0)/6];
+  const edge=hex(1.974),positions=[],uvs=[],indices=[],n=96;
+  for(let side=0;side<6;side++){
+    const a=edge[side],b=edge[(side+1)%6],ta=corners[side],tb=corners[(side+1)%6],rows=[];
+    for(let i=0;i<=n;i++){
+      rows[i]=[];
+      for(let j=0;j<=n-i;j++){
+        const wa=i/n,wb=j/n,wc=1-wa-wb;
+        const x=a[0]*wa+b[0]*wb,y=a[1]*wa+b[1]*wb;
+        const u=ta[0]*wa+tb[0]*wb+center[0]*wc,v=ta[1]*wa+tb[1]*wb+center[1]*wc;
+        // Ease the outer shoulder into the milled rim; no disconnected relief edges.
+        const shoulder=THREE.MathUtils.smoothstep(wc,0,.035);
+        const engraving=THREE.MathUtils.clamp(sampleEngraving?.(u,v)??0,0,1);
+        const z=.076+shoulder*(.012+engraving*.036);
+        rows[i][j]=positions.length/3;positions.push(x,y,z);uvs.push(u,v);
+      }
     }
-    const geo=new THREE.BufferGeometry();
-    geo.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));geo.computeVertexNormals();
-    const mesh=add(geo,material);mesh.material.side=THREE.DoubleSide;
-    poly(points,z-.06,.06,material,[],.008);
-  }
-  function crystal(points, center, z, height) {
-    poly(scaled(points,1.12),z-.04,.08,'copper');
-    facet(points,center,z+.07,height,'ember');
-    const small=points.map(([x,y])=>[x*.62+center[0]*.38,y*.72+center[1]*.28]);
-    facet(small,center,z+.1,height+.028,'glow');
-  }
-  const hex=[[0,1.62],[1.22,.88],[1.22,-.9],[0,-1.65],[-1.22,-.9],[-1.22,.88]];
-  if(motif==='breach'){
-    const chassis=[[.15,1.65],[1.22,1.02],[1.35,-.7],[-.2,-1.64],[-1.28,-.85],[-1.28,.75]];
-    ring(chassis,.69,-.19,.22,'armor');ring(scaled(chassis,1.055),.978,-.1,.07,'copper');
-    // A real opening, broken in two places; it is not a texture on a plate.
-    const gate=[[-1.02,-1.07],[-1.02,.99],[.19,1.37],[.42,1.01],[-.64,.64],[-.64,-.7],[-.25,-.52],[-.5,-1.18]];
-    poly(gate,.05,.25,'silver');poly(mirror(gate).map(([x,y])=>[x,-y]),.07,.25,'silver');
-    poly([[-1.1,-.79],[-1.1,.9],[-1.04,.96],[-1.04,-.85]],.34,.035,'edge');
-    const bolt=[[.82,1.84],[-.27,.3],[.03,.27],[-.9,-1.87],[.38,-.06],[.06,-.06]];
-    poly(bolt,.35,.11,'copper');facet(scaled(bolt,.9),[.02,.07],.48,.17,'ember');
-    bar(.71,1.6,-.12,.27,.026,.64,.008,'glow');bar(.18,-.08,-.68,-1.45,.027,.6,.008,'glow');
-    for(const [x,y] of [[-1.17,.07],[1.19,-.05],[-.79,.82],[.85,-.83]])screw(x,y,.4);
-    for(const side of [-1,1])for(let i=0;i<3;i++)bar(side*(.39+i*.15),side*1.27,side*(.62+i*.15),side*1.4,.045,.12,.07,'recess');
-    [[-.95,-.71,-.68,-.35],[.71,.85,.84,.54],[-.82,.82,-.65,.55],[.7,-.83,.58,-.56]].forEach(a=>bar(...a,.025,.335,.005,'recess'));
-  }else if(motif==='resolve'){
-    const diamond=[[0,1.92],[1.35,0],[0,-1.92],[-1.35,0]];
-    poly(diamond,-.22,.2,'armor');ring(scaled(diamond,1.04),.966,-.13,.08,'silver');ring(scaled(diamond,.9),.97,.015,.075,'copper');
-    const shoulder=[[.88,.55],[1.45,.05],[1.39,-.36],[1.03,-.64],[.9,-.36]];
-    for(const pts of [shoulder,mirror(shoulder)])poly(pts,.04,.14,'silver');
-    // Flowing cut blades, faceted about their ridges to catch different light.
-    const flame=[[0,1.66],[-.15,1.15],[.2,.65],[.32,.19],[.18,-.3],[.48,-.11],[.63,.3],[.43,.88]];
-    facet(flame,[.17,.6],.21,.25);
-    const plume=[[-.61,.91],[-.67,.36],[-.91,-.18],[-.82,-.57],[0,-1.45],[-.24,-.67],[-.53,-.25],[-.37,.26]];
-    facet(plume,[-.64,-.24],.22,.22);facet(mirror(plume),[.64,-.24],.23,.22);
-    const inner=[[-.26,.8],[-.44,.2],[-.5,-.34],[0,-1.27],[-.08,-.52],[-.21,-.08]];
-    facet(inner,[-.3,-.25],.39,.16);facet(mirror(inner),[.3,-.25],.39,.16);
-    crystal([[0,.71],[.36,-.01],[0,-.78],[-.36,-.01]],[0,-.05],.4,.38);
-    for(const side of [-1,1])for(let i=0;i<3;i++)bar(side*1.08,.17-i*.14,side*1.25,.05-i*.14,.054,.212,.008,'recess');
-    for(const [x,y] of [[-.68,.79],[.68,.79],[-.64,-.91],[.64,-.91]])screw(x,y,.26);
-    bar(0,-1.47,0,-1.81,.024,.18,.014,'glow');
-  }else if(motif==='versatile'){
-    const frame=[[0,1.45],[.91,.85],[1.36,-.67],[.73,-1.2],[-.73,-1.2],[-1.36,-.67],[-.91,.85]];
-    ring(frame,.83,-.19,.23,'armor');ring(scaled(frame,1.047),.979,-.08,.07,'copper');
-    const torus=add(new THREE.TorusGeometry(.91,.043,8,64),'silver');torus.position.z=.08;
-    for(let i=0;i<3;i++){
-      const a=i*2*Math.PI/3;
-      const blade=rotated([[0,1.96],[-.42,.77],[-.15,.39],[0,.51],[.19,.4],[.42,.77]],a);
-      poly(blade,.12,.13,'armor');facet(scaled(blade,.96),rotated([[0,.98]],a)[0],.27,.3);
-      const accent=rotated([[-.045,1.66],[.025,1.8],[.025,.62],[-.045,.56]],a);poly(accent,.47,.035,'copper');
-      const strut=rotated([[-.18,-.76],[.18,-.76],[.22,-1.37],[0,-1.58],[-.22,-1.37]],a);
-      poly(strut,.02,.14,'armor');const s=rotated([[0,-1.05]],a)[0];screw(...s,.22);
+    for(let i=0;i<n;i++)for(let j=0;j<n-i;j++){
+      indices.push(rows[i][j],rows[i+1][j],rows[i][j+1]);
+      if(j<n-i-1)indices.push(rows[i+1][j],rows[i+1][j+1],rows[i][j+1]);
     }
-    crystal([[0,.51],[-.45,-.28],[.45,-.28]],[0,-.01],.3,.33);
-  }else{
-    poly(hex,-.24,.18,'armor');ring(scaled(hex,1.05),.975,-.16,.08,'silver');ring(scaled(hex,.91),.971,-.035,.1,'copper');
-    poly(scaled(hex,.76),.015,.14,'recess');ring(scaled(hex,.73),.93,.1,.09,'armor');
-    for(const side of [-1,1]){
-      const wing=[[.63,.1],[1.67,1.98],[1.5,1.03],[1.77,1.43],[1.59,.5],[1.76,.83],[1.55,-.17],[.88,-.78],[.88,-.02]];
-      poly(wing.map(([x,y])=>[x*side,y]),.07,.16,'armor');
-      const feather1=[[.64,.24],[1.67,1.98],[1.53,1.19],[1.12,.51],[1.18,.26],[1.55,.82],[1.4,.18],[.84,-.32],[.88,.12]];
-      facet(feather1.map(([x,y])=>[x*side,y]),[1.21*side,.71],.25,.16);
-      const feather2=[[.93,-.08],[1.7,.83],[1.53,.12],[1.15,-.21],[1.09,-.57]];
-      facet(feather2.map(([x,y])=>[x*side,y]),[1.28*side,.11],.24,.12);
-      bar(side*1.62,1.87,side*1.16,1.11,.029,.41,.015,'copper');
-      bar(side*1.39,1.25,side*.96,.47,.009,.415,.006,'recess');
-      bar(side*1.43,.34,side*1.13,-.09,.012,.385,.008,'recess');
-      bar(side*.91,-.76,side*.91,-1.11,.056,.2,.05,'copper');
-      bar(side*.91,-1.11,side*.4,-1.43,.06,.2,.05,'copper');
-      screw(side*1.09,-.41,.27);screw(side*.83,.13,.51);
-    }
-    const peak=[[0,1.75],[.73,.32],[.53,.41],[0,1.38],[-.53,.41],[-.73,.32]];
-    poly(peak,.18,.12,'copper');facet(scaled(peak,.93),[0,1.51],.32,.17);
-    const peak2=[[0,1.27],[.49,.24],[.35,.33],[0,.96],[-.35,.33],[-.49,.24]];
-    poly(peak2,.33,.13,'silver');
-    const spear=[[0,.74],[.28,.29],[.28,-.66],[0,-1.1],[-.28,-.66],[-.28,.29]];
-    poly(scaled(spear,1.24),.14,.2,'silver');crystal(spear,[0,-.12],.37,.32);
-    facet([[-.34,-.87],[0,-1.14],[.34,-.87],[.27,-1.24],[0,-1.48],[-.27,-1.24]],[0,-1.3],.21,.19);
   }
-  if(motif==='summit')ring(scaled(hex,.91),.982,-.281,.012,'copper');
-  if(motif==='resolve')ring([[0,1.75],[1.19,0],[0,-1.75],[-1.19,0]],.982,-.26,.012,'copper');
-  // Back face: inset serial plate, two hinge blocks, and a cylindrical safety pin.
-  const back = poly([[-.52,.56],[.52,.56],[.58,-.53],[0,-.76],[-.58,-.53]],-.3,.05,'armor');
-  back.name='backplate';
-  for(const x of [-.43,.43]){
-    const mount=add(new THREE.BoxGeometry(.15,.27,.16),'silver','pin-hinge');mount.position.set(x,.73,-.32);
-  }
-  const pin=add(new THREE.CylinderGeometry(.027,.027,.88,12),'silver','back-pin');pin.rotation.z=Math.PI/2;pin.position.set(0,.73,-.47);
-  const clasp=add(new THREE.TorusGeometry(.073,.022,8,18,Math.PI*1.6),'copper','pin-clasp');clasp.position.set(-.46,.73,-.47);clasp.rotation.y=Math.PI/2;
-  for(const x of [-.38,.38]){
-    const rivet=add(new THREE.CylinderGeometry(.048,.048,.07,12),'copper','back-rivet');rivet.rotation.x=Math.PI/2;rivet.position.set(x,-.43,-.33);
-  }
-  root.userData={motif,hasBackPin:true,hasRealDepth:true};
-  // Batch only static material groups. Preserve no stale temporary geometries.
+  const raw=new THREE.BufferGeometry();raw.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));raw.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));raw.setIndex(indices);
+  const geometry=mergeVertices(raw,.00001);raw.dispose();geometry.computeVertexNormals();return geometry;
+}
+
+export function buildChallengeMedal(motif='summit',{sampleEngraving,artwork}={}) {
+  if(!MEDAL_MOTIFS.includes(motif))throw new Error('Unknown medal motif');
+  const root=new THREE.Group();root.name=`challenge-medal-${motif}`;
+  const materials={
+    armor:new THREE.MeshStandardMaterial({color:'#34434b',metalness:.85,roughness:.36}),
+    edge:new THREE.MeshStandardMaterial({color:'#d5c6a7',metalness:.86,roughness:.27}),
+    silver:new THREE.MeshStandardMaterial({color:'#b7c2c5',metalness:.88,roughness:.3}),
+    copper:new THREE.MeshStandardMaterial({color:'#9b8964',metalness:.85,roughness:.4}),
+  };
+  Object.entries(materials).forEach(([name,m])=>{m.name=name;});
   const buckets=new Map();
-  root.updateMatrixWorld(true);
-  for(const mesh of [...root.children]){
-    mesh.updateMatrix();
-    let g=mesh.geometry.index ? mesh.geometry.toNonIndexed() : mesh.geometry.clone();
-    g.applyMatrix4(mesh.matrix);g.deleteAttribute('uv');
-    if(!buckets.has(mesh.material))buckets.set(mesh.material,[]);
-    buckets.get(mesh.material).push(g);mesh.geometry.dispose();root.remove(mesh);
+  function add(geometry,name){if(!buckets.has(name))buckets.set(name,[]);buckets.get(name).push(geometry);}
+  function plate(points,z,depth,material,bevel=.009,holes=[]){
+    const s=polygon(points);s.holes=holes.map(polygon);
+    const g=new THREE.ExtrudeGeometry(s,{depth,bevelEnabled:bevel>0,bevelThickness:bevel,bevelSize:bevel,bevelSegments:4,steps:1});g.translate(0,0,z);add(g,material);
   }
-  for(const [material,geometries] of buckets){
-    const merged=mergeGeometries(geometries,false);
-    geometries.forEach(g=>g.dispose());
-    // Object-space UVs keep the brushed surface grain consistent across plates.
-    const pos=merged.getAttribute('position'),uv=new Float32Array(pos.count*2);
-    for(let i=0;i<pos.count;i++){uv[i*2]=pos.getX(i)*.5;uv[i*2+1]=pos.getY(i)*.5;}
+  function disk(x,y,r,z,depth,name,n=40){const g=new THREE.CylinderGeometry(r,r,depth,n);g.rotateX(Math.PI/2);g.translate(x,y,z);add(g,name);}
+  function line(a,b,r,z,name){
+    const path=new THREE.LineCurve3(new THREE.Vector3(...a,z),new THREE.Vector3(...b,z));
+    add(new THREE.TubeGeometry(path,1,r,6,false),name);
+  }
+  function ring(r,z,name,tube=.005){const g=new THREE.TorusGeometry(r,tube,6,160);g.translate(0,0,z);add(g,name);}
+  const outline=hex(2);
+  plate(outline,-.13,.19,'armor',.018);
+  plate(hex(2.009),.048,.018,'edge',.012,[hex(1.97)]);
+  // A small maker's shield closes the pointed crown above the illustrated field.
+  plate([[-.105,1.89],[0,1.995],[.105,1.89],[0,1.82]],.13,.012,'edge',.004);
+  plate([[-.061,1.889],[0,1.951],[.061,1.889],[0,1.845]],.146,.003,'armor',.001);
+  // Two seams on the edge and 240 individual milled grooves remain visible side-on.
+  plate(hex(2.027),-.102,.012,'copper',.004,[hex(1.978)]);
+  plate(hex(2.027),-.031,.012,'silver',.004,[hex(1.978)]);
+  for(let edge=0;edge<6;edge++){
+    const a=outline[edge],b=outline[(edge+1)%6],angle=Math.atan2(b[1]-a[1],b[0]-a[0]);
+    for(let i=1;i<=40;i++){
+      const f=i/41,g=new THREE.BoxGeometry(.008,.025,.064);
+      g.rotateZ(angle);g.translate((a[0]+(b[0]-a[0])*f)*1.014,(a[1]+(b[1]-a[1])*f)*1.014,-.05);add(g,'copper');
+    }
+  }
+  // The reverse is its own machined composition, with a mounting plate and clasp.
+  plate(hex(1.83),-.156,.018,'copper',.005,[hex(1.813)]);
+  plate(hex(1.76),-.158,.016,'silver',.003,[hex(1.752)]);
+  for(const r of [.82,.855,.965])ring(r,-.159,r===.855?'silver':'copper');
+  for(let i=0;i<96;i++){
+    const a=i*Math.PI/48,r=i%8?.888:.872;
+    line([Math.cos(a)*r,Math.sin(a)*r],[Math.cos(a)*.94,Math.sin(a)*.94],i%8?.0025:.004,-.163,'copper');
+  }
+  for(const x of [-.54,.54]){
+    disk(x,.69,.082,-.19,.11,'armor');disk(x,.69,.05,-.247,.018,'edge');
+    line([x-.027,.69],[x+.027,.69],.004,-.259,'copper');
+  }
+  const pin=new THREE.CylinderGeometry(.017,.017,1.16,24);pin.rotateZ(Math.PI/2);pin.translate(0,.69,-.282);add(pin,'silver');
+  const clasp=new THREE.TorusGeometry(.059,.011,10,48,Math.PI*1.7);clasp.rotateY(Math.PI/2);clasp.translate(-.55,.69,-.278);add(clasp,'edge');
+  // The edition number also has a tangible indexing mark below the inscription.
+  const ordinal=MEDAL_MOTIFS.indexOf(motif)+1;
+  for(let i=0;i<ordinal;i++)line([(i-(ordinal-1)/2)*.1,-1.28],[(i-(ordinal-1)/2)*.1,-1.12],.007,-.159,'edge');
+  for(const [name,parts] of buckets){
+    const flat=parts.map(g=>{const f=g.index?g.toNonIndexed():g.clone();f.deleteAttribute('uv');g.dispose();return f;});
+    const merged=mergeGeometries(flat,false);flat.forEach(g=>g.dispose());
+    const p=merged.getAttribute('position'),uv=new Float32Array(p.count*2);
+    for(let i=0;i<p.count;i++){uv[i*2]=p.getX(i)*.5;uv[i*2+1]=p.getY(i)*.5;}
     merged.setAttribute('uv',new THREE.BufferAttribute(uv,2));
-    const mesh=new THREE.Mesh(merged,material);mesh.name=material.name;mesh.castShadow=true;mesh.receiveShadow=true;root.add(mesh);
+    const mesh=new THREE.Mesh(merged,materials[name]);mesh.name=name;mesh.castShadow=true;mesh.receiveShadow=true;root.add(mesh);
   }
-  const used=new Set(root.children.map(m=>m.material));
-  Object.values(materials).filter(m=>!used.has(m)).forEach(m=>m.dispose());
+  const faceMaterial=new THREE.MeshStandardMaterial({map:artwork??null,color:artwork?'#ffffff':'#244252',metalness:.42,roughness:.48,envMapIntensity:.6});faceMaterial.name='engraving';
+  const face=new THREE.Mesh(engravedFace(motif,sampleEngraving),faceMaterial);face.name='engraved-face';face.castShadow=true;face.receiveShadow=true;root.add(face);
+  root.userData={motif,hasBackPin:true,hasRealDepth:true,design:'engraved-relief-v3',relief:'original-artwork-heightfield'};
   return root;
 }
 

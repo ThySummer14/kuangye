@@ -82,5 +82,25 @@ async(page)=>{
  await up.evaluate(()=>window.__restoreMedalContext());await up.getByRole('button',{name:'重新加载立体预览',exact:true}).click();
  await up.locator('.medal-canvas[data-ready=true]').waitFor();await unavailable.close();
  results.push({width:375,status:'PASS',webglUnavailableFallback:true,retryAfterRecovery:true});
+ // Loading can outlive the dialog. Closing it must not allocate a late renderer.
+ const loading=await browser.newContext({viewport:{width:375,height:900}}),lp=await loading.newPage();
+ await lp.addInitScript(()=>{const original=HTMLCanvasElement.prototype.getContext;window.__medalGLCalls=0;HTMLCanvasElement.prototype.getContext=function(kind,...args){if(/^webgl/.test(kind))window.__medalGLCalls++;return original.call(this,kind,...args);};});
+ let release;
+ await lp.route('**/challenger/engraving-atlas.png',route=>new Promise(resolve=>{release=async()=>{await route.continue();resolve();};}));
+ await lp.goto('http://127.0.0.1:5193/#challenger');
+ const before=await lp.evaluate(()=>window.__medalGLCalls);
+ await lp.getByRole('button',{name:'旋转观察临界之上蚀刻章',exact:true}).click();await lp.locator('.medal-loading').waitFor();
+ assert(await lp.locator('.medal-viewer-controls button:not(:disabled)').count()===0,'loading controls accept misleading actions');
+ await lp.waitForTimeout(100);assert(release,'artwork request not intercepted');
+ await lp.keyboard.press('Escape');const response=lp.waitForResponse('**/challenger/engraving-atlas.png');await release();await response;await lp.waitForTimeout(150);
+ assert(await lp.evaluate(()=>window.__medalGLCalls)===before,'closed loading dialog allocated WebGL');
+ assert(await lp.locator('.medal-canvas').count()===0,'closed loading canvas retained');await loading.close();
+ results.push({width:375,status:'PASS',closedDuringArtworkLoad:true,noLateWebGLAllocation:true});
+ const missing=await browser.newContext({viewport:{width:375,height:900}}),mp=await missing.newPage();let block=true;
+ await mp.route('**/challenger/engraving-atlas.png',route=>block?route.abort():route.continue());
+ await mp.goto('http://127.0.0.1:5193/#challenger');await mp.getByRole('button',{name:'旋转观察临界之上蚀刻章',exact:true}).click();
+ await mp.locator('.medal-render-fallback').waitFor();block=false;
+ await mp.getByRole('button',{name:'重新加载立体预览',exact:true}).click();await mp.locator('.medal-canvas[data-ready=true]').waitFor();await missing.close();
+ results.push({width:375,status:'PASS',artworkFailureFallback:true,artworkRetry:true});
  return results;
 }

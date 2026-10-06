@@ -2,6 +2,30 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { buildChallengeMedal, disposeChallengeMedal } from './challenge-medals.js';
 
+let artworkSource;
+function loadArtwork() {
+  if(!artworkSource)artworkSource=new Promise((resolve,reject)=>{
+    const image=new Image();
+    image.onload=()=>{
+      try{
+        const canvas=document.createElement('canvas');canvas.width=image.width;canvas.height=image.height;
+        const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(image,0,0);
+        const pixels=ctx.getImageData(0,0,image.width,image.height).data;
+        // Bilinear samples prevent pixel-sized spikes in the physical relief.
+        const value=(x,y)=>{const i=(y*image.width+x)*4;return (.2126*pixels[i]+.7152*pixels[i+1]+.0722*pixels[i+2])/255;};
+        const sample=(u,v)=>{
+          const x=THREE.MathUtils.clamp(u*(image.width-1),0,image.width-2),y=THREE.MathUtils.clamp((1-v)*(image.height-1),0,image.height-2),ix=Math.floor(x),iy=Math.floor(y),fx=x-ix,fy=y-iy;
+          return THREE.MathUtils.lerp(THREE.MathUtils.lerp(value(ix,iy),value(ix+1,iy),fx),THREE.MathUtils.lerp(value(ix,iy+1),value(ix+1,iy+1),fx),fy);
+        };
+        resolve({image,sample});
+      }catch(error){reject(error);}
+    };
+    image.onerror=()=>reject(new Error('Medal artwork could not be loaded'));
+    image.src=`${import.meta.env.BASE_URL}challenger/engraving-atlas.png`;
+  }).catch(error=>{artworkSource=undefined;throw error;});
+  return artworkSource;
+}
+
 function studioEnvironment() {
   const scene=new THREE.Scene();scene.background=new THREE.Color('#101515');
   for(const [w,h,pos,color,intensity] of [
@@ -36,16 +60,18 @@ function backInscription(motif) {
   for(let i=0;i<27;i++)x.fillRect(137+i*9,373, i%3===0 ? 4:1,18);
   const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;
   const m=new THREE.Mesh(new THREE.PlaneGeometry(.93,.93),new THREE.MeshStandardMaterial({map:t,transparent:true,roughness:.6,metalness:.15,emissive:'#7f724d',emissiveIntensity:.2,depthWrite:false}));
-  m.rotation.y=Math.PI;m.position.set(0,-.005,-.355);m.name='reverse-inscription';return m;
+  m.rotation.y=Math.PI;m.position.set(0,-.005,-.157);m.name='reverse-inscription';return m;
 }
 
-export function createMedalViewer(host,{motif='summit',autoRotate=false,onInteraction=()=>{},onError=()=>{},onChange=()=>{},capture=false}={}) {
+export async function createMedalViewer(host,{motif='summit',autoRotate=false,onInteraction=()=>{},onError=()=>{},onChange=()=>{},capture=false,signal}={}) {
+  const source=await loadArtwork();
+  if(signal?.aborted)throw new DOMException('Medal viewer closed','AbortError');
   let renderer,controls,environment,observer,intersection,model,raf=0,disposed=false,last=0,visible=true;
   const scene=new THREE.Scene();
   const camera=new THREE.PerspectiveCamera(34,1,.1,40);
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
   let spinning=autoRotate&&!reduced.matches;
-  const light=new THREE.DirectionalLight('#fff1da',2.1);light.position.set(-3,4,6);light.castShadow=true;light.shadow.mapSize.set(1024,1024);Object.assign(light.shadow.camera,{left:-3,right:3,top:3,bottom:-3,near:.1,far:20});light.shadow.normalBias=.012;light.shadow.bias=-.00015;scene.add(light);
+  const light=new THREE.DirectionalLight('#fff1da',1.6);light.position.set(-3,4,6);light.castShadow=true;light.shadow.mapSize.set(2048,2048);Object.assign(light.shadow.camera,{left:-3,right:3,top:3,bottom:-3,near:.1,far:20});light.shadow.normalBias=.002;light.shadow.bias=-.00015;scene.add(light);
   const rim=new THREE.DirectionalLight('#c6e0ff',2.2);rim.position.set(4,1,-2);scene.add(rim);
   const fill=new THREE.DirectionalLight('#fff2dd',.6);fill.position.set(0,-3,5);scene.add(fill);
   const reverse=new THREE.DirectionalLight('#e9e4d4',2.3);reverse.position.set(-2,3,-5);scene.add(reverse);
@@ -88,16 +114,17 @@ export function createMedalViewer(host,{motif='summit',autoRotate=false,onIntera
   }
   try{
     renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:capture,powerPreference:'low-power'});
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,host.clientWidth<500?1.5:2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
     renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;
-    renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
+    renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=.96;
     renderer.domElement.setAttribute('aria-hidden','true');host.appendChild(renderer.domElement);
     const pmrem=new THREE.PMREMGenerator(renderer),room=studioEnvironment();
     try{environment=pmrem.fromScene(room,.04);}finally{room.traverse(o=>{o.geometry?.dispose();o.material?.dispose();});room.clear();pmrem.dispose();}
     scene.environment=environment.texture;scene.environmentIntensity=1.05;
-    model=buildChallengeMedal(motif);model.add(backInscription(motif));scene.add(model);
-    const grain=grainTexture();model.traverse(o=>{if(o.isMesh&&['silver','edge','armor','copper'].includes(o.material.name)){o.material.bumpMap=grain;o.material.bumpScale=.008;o.material.needsUpdate=true;}});
-    controls=new OrbitControls(camera,renderer.domElement);controls.enablePan=false;controls.enableDamping=false;controls.minDistance=5.5;controls.maxDistance=12;controls.minPolarAngle=.16;controls.maxPolarAngle=Math.PI-.16;controls.rotateSpeed=.7;controls.zoomSpeed=.65;
+    const artwork=new THREE.Texture(source.image);artwork.colorSpace=THREE.SRGBColorSpace;artwork.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());artwork.needsUpdate=true;
+    model=buildChallengeMedal(motif,{artwork,sampleEngraving:source.sample});model.add(backInscription(motif));scene.add(model);
+    const grain=grainTexture();model.traverse(o=>{if(o.isMesh&&['silver','edge','armor','copper'].includes(o.material.name)){o.material.bumpMap=grain;o.material.bumpScale=.0012;o.material.needsUpdate=true;}});
+    controls=new OrbitControls(camera,renderer.domElement);controls.enablePan=false;controls.enableDamping=false;controls.minDistance=4.7;controls.maxDistance=12;controls.minPolarAngle=.16;controls.maxPolarAngle=Math.PI-.16;controls.rotateSpeed=.7;controls.zoomSpeed=.65;
     controls.addEventListener('change',changed);
     renderer.domElement.addEventListener('pointerdown',interaction);
     renderer.domElement.addEventListener('webglcontextlost',lost);

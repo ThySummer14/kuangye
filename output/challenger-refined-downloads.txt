@@ -1,0 +1,50 @@
+[
+  {
+    "file": "challenger-dev-backup-1280.json",
+    "status": "PASS",
+    "frozenChallenges": 5,
+    "done": 3,
+    "active": 1,
+    "abandoned": 1,
+    "medals": 4,
+    "best": 12,
+    "lumens": 0,
+    "glimmerDays": 1
+  },
+  {
+    "file": "challenger-dev-backup-375.json",
+    "status": "PASS",
+    "frozenChallenges": 5,
+    "done": 3,
+    "active": 1,
+    "abandoned": 1,
+    "medals": 4,
+    "best": 12,
+    "lumens": 0,
+    "glimmerDays": 1
+  },
+  {
+    "file": "challenger-release-backup-1280.json",
+    "status": "PASS",
+    "frozenChallenges": 5,
+    "done": 3,
+    "active": 1,
+    "abandoned": 1,
+    "medals": 4,
+    "best": 12,
+    "lumens": 0,
+    "glimmerDays": 1
+  },
+  {
+    "file": "challenger-release-backup-375.json",
+    "status": "PASS",
+    "frozenChallenges": 5,
+    "done": 3,
+    "active": 1,
+    "abandoned": 1,
+    "medals": 4,
+    "best": 12,
+    "lumens": 0,
+    "glimmerDays": 1
+  }
+]

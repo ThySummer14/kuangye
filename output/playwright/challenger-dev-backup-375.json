@@ -1,7 +1,7 @@
 {
   "app": "kuangye",
   "version": 3,
-  "exportedAt": "2026-10-06T14:54:20.896Z",
+  "exportedAt": "2026-10-06T15:50:28.546Z",
   "state": {
     "customTasks": [
       {
@@ -33,7 +33,7 @@
             }
           ]
         },
-        "id": "personal-3d15fa49-a555-46fb-a6c6-244947e83113",
+        "id": "personal-36929d85-3849-4906-a719-52daeefb69c2",
         "title": "从零造物 · 挑战 12",
         "desc": "独立做出一件可使用的原创作品或工具，请一位真实使用者试用，并根据反馈完成一次修订。",
         "cat": "create",
@@ -59,7 +59,7 @@
             }
           ]
         },
-        "id": "personal-2b611a79-3fee-4018-b784-b7c1f6a1f186",
+        "id": "personal-b21348b2-60aa-4bdf-82ee-6fbfd2693ce6",
         "title": "破壁 · 挑战 5",
         "desc": "为一个卡住的难题投入累计 90 分钟专注，完成一份可检查的解答、分析或方案。",
         "cat": "mind",
@@ -78,7 +78,7 @@
           "baseRating": 5,
           "terms": []
         },
-        "id": "personal-9fab3b81-2b5c-42e7-a221-d14534f69d9d",
+        "id": "personal-887df519-0fad-4ae1-ad38-d5e03ae6f3c1",
         "title": "深潜 · 挑战 5",
         "desc": "读完一本有难度的非虚构书中至少 100 页，写 800 字自己的理解，包含三个核心观点。",
         "cat": "mind",
@@ -97,7 +97,7 @@
           "baseRating": 5,
           "terms": []
         },
-        "id": "personal-e8e4b58d-5aaf-44f8-b33a-e20129883208",
+        "id": "personal-7a895a96-fe9f-4399-bc1f-3e78624a0231",
         "title": "打破静音 · 挑战 5",
         "desc": "准备一个自己的观点，向至少两位真实听众做 5 分钟完整表达，主动收集并回应三个问题。",
         "cat": "courage",
@@ -123,7 +123,7 @@
             }
           ]
         },
-        "id": "personal-df26e47d-7196-4b1e-bf79-3afa6a4bd300",
+        "id": "personal-4b39032c-0b3e-4442-8f99-c7d26a9cb2ce",
         "title": "深潜 · 挑战 8",
         "desc": "读完一本有难度的非虚构书中至少 100 页，写 800 字自己的理解，包含三个核心观点。",
         "cat": "mind",
@@ -135,7 +135,7 @@
     ],
     "active": [
       {
-        "qid": "personal-e8e4b58d-5aaf-44f8-b33a-e20129883208",
+        "qid": "personal-7a895a96-fe9f-4399-bc1f-3e78624a0231",
         "start": "2026-10-06",
         "logs": [],
         "shields": 2
@@ -143,7 +143,7 @@
     ],
     "done": [
       {
-        "qid": "personal-3d15fa49-a555-46fb-a6c6-244947e83113",
+        "qid": "personal-36929d85-3849-4906-a719-52daeefb69c2",
         "xp": 0,
         "at": "2026-10-06",
         "review": "测试记录：独立做出原型，三人试用后完成修订。",
@@ -151,7 +151,7 @@
         "logs": []
       },
       {
-        "qid": "personal-2b611a79-3fee-4018-b784-b7c1f6a1f186",
+        "qid": "personal-b21348b2-60aa-4bdf-82ee-6fbfd2693ce6",
         "xp": 0,
         "at": "2026-10-06",
         "review": "测试记录：解出难题并关闭了消息。",
@@ -159,7 +159,7 @@
         "logs": []
       },
       {
-        "qid": "personal-df26e47d-7196-4b1e-bf79-3afa6a4bd300",
+        "qid": "personal-4b39032c-0b3e-4442-8f99-c7d26a9cb2ce",
         "xp": 0,
         "at": "2026-10-06",
         "review": "测试记录：读完指定页数，完成理解与反向论证。",
@@ -169,7 +169,7 @@
     ],
     "abandoned": [
       {
-        "qid": "personal-9fab3b81-2b5c-42e7-a221-d14534f69d9d",
+        "qid": "personal-887df519-0fad-4ae1-ad38-d5e03ae6f3c1",
         "reason": "测试：换一组条件再来。",
         "at": "2026-10-06"
       }

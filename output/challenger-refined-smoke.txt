@@ -1,0 +1,24 @@
+[
+  {
+    "width": 1280,
+    "status": "PASS",
+    "http": 200,
+    "operations": 6,
+    "unearnedMedals": 4,
+    "maxSelectedRating": 12,
+    "mapEntryClicks": 2,
+    "threeDimensionalMedal": true,
+    "errors": []
+  },
+  {
+    "width": 375,
+    "status": "PASS",
+    "http": 200,
+    "operations": 6,
+    "unearnedMedals": 4,
+    "maxSelectedRating": 12,
+    "mapEntryClicks": 2,
+    "threeDimensionalMedal": true,
+    "errors": []
+  }
+]

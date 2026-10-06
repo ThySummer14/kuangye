@@ -11,6 +11,7 @@ async(page)=>{
   const before=await p.evaluate(()=>localStorage.getItem('kuangye.v3'));
   await p.getByRole('button',{name:'旋转观察临界之上蚀刻章',exact:true}).click();
   await p.locator('.medal-canvas[data-ready=true]').waitFor();await p.getByRole('button',{name:'背面',exact:true}).click();
+  if(!await p.evaluate(()=>performance.getEntriesByType('resource').some(entry=>entry.name.includes('/challenger/engraving-atlas.png'))))throw Error('live viewer is missing refined engraving artwork');
   if(Number((await p.locator('.medal-canvas').getAttribute('data-camera')).split(',')[2])>=0)throw Error('live 3D back view failed');
   await p.getByRole('button',{name:'正面',exact:true}).click();await p.screenshot({path:`output/playwright/challenger-live-3d-${width}.png`});await p.keyboard.press('Escape');
   if(await p.locator('.challenge-hero').evaluate(el=>el.scrollLeft!==0))throw Error('focus return scrolled hero horizontally');

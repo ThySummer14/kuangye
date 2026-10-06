@@ -59,3 +59,6 @@
 新图集只在打开详情时加载，等待期间显示现有缩略图；加载途中关闭会取消创建，失败可查看图样并重试。每次观察的 GPU 纹理、模型、环境、阴影和 WebGL 上下文按原生命周期释放；解码后的图集作为只读 CPU 缓存复用。
 
 最终验证记录在 `output/challenger-refined-{tests,build,release,3d-browser}.txt`：133/133 测试；构建与发布资源检查；桌面及 375px 四章的旋转、正反面、缩放、键盘、双指模拟、巡回暂停、reduced-motion、零存档写入、关闭释放、GPU 丢失恢复、无 WebGL 恢复、图集失败重试和加载中关闭。完整挑战流程继续通过 `scripts/qa-challenger.mjs` 验证并保存 `output/challenger-browser.txt`。未验证实体手机 GPU 与用户真实完成挑战的主观强度。
+
+
+重做版部署完成（跨日核对至 2026-10-07）：应用提交 `a20eda1`，[Actions 37491607724](https://github.com/ThySummer14/kuangye/actions/runs/37491607724) 的 build／deploy 均成功。线上 1280／375px 验证新蚀刻图集实际加载、真实翻面、六项挑战、四枚未获得章、等级选择、地图两击及焦点，全部通过且无页面错误或资源错误。`scripts/verify-challenger-assets.mjs` 核对图集与四张模型缩略图 HTTP 200、SHA-256 全与本地一致；证据 `output/challenger-refined-live.txt`／`-live-assets.txt` 和 `output/playwright/challenger-live-*`。后续提交仅归档证据，不改变已发布应用。

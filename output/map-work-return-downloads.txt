@@ -1,0 +1,42 @@
+[
+  {
+    "mode": "dev",
+    "width": 1280,
+    "status": "PASS",
+    "works": 6,
+    "taskHistory": 4,
+    "originalLog": true,
+    "artifactAndImage": true,
+    "recentCandidate": true
+  },
+  {
+    "mode": "dev",
+    "width": 375,
+    "status": "PASS",
+    "works": 6,
+    "taskHistory": 4,
+    "originalLog": true,
+    "artifactAndImage": true,
+    "recentCandidate": true
+  },
+  {
+    "mode": "release",
+    "width": 1280,
+    "status": "PASS",
+    "works": 6,
+    "taskHistory": 4,
+    "originalLog": true,
+    "artifactAndImage": true,
+    "recentCandidate": true
+  },
+  {
+    "mode": "release",
+    "width": 375,
+    "status": "PASS",
+    "works": 6,
+    "taskHistory": 4,
+    "originalLog": true,
+    "artifactAndImage": true,
+    "recentCandidate": true
+  }
+]

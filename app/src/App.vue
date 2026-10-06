@@ -27,6 +27,8 @@ import { pickPrepMove, prepSuggestion } from "./game/prep-moves.js";
 import { PLACE_TITLES } from "./data/places.js";
 import { lumenReward } from "./game/home.js";
 import PlaceIcon from "./components/PlaceIcon.vue";
+import MapRestingWork from "./components/MapRestingWork.vue";
+import { latestRestingStudioWork } from './game/studio.js';
 import { TRAILS, fieldGuide } from "./data/field-guides.js";
 const validTabs = [
   "map",
@@ -187,6 +189,7 @@ const latestDone = computed(() => {
     task: taskById[record.qid] || null,
   };
 });
+const restingWork = computed(() => latestRestingStudioWork(state));
 // 按天任务在地图上就能记下今天：做完回来点一下，不用再翻进岩壁。
 const mapRhythm = computed(() => {
   const a = nextAction.value?.kind === "active" && nextAction.value.task.type === "streak" ? nextAction.value.active : null;
@@ -260,6 +263,7 @@ async function takeMapTask() {
               <p class="buddy-speech" aria-live="polite">{{ buddyBus.text || "你来啦。今天的每一点努力，都会让我们的小家暖一点。" }}</p>
             </div>
           </section>
+          <MapRestingWork v-if="restingWork && !state.active.length" :item="restingWork" @open="openStudio" />
           <section class="little-task ticket" aria-label="今天的行动便笺">
             <div class="ticket-head">
               <span class="eyebrow">{{ nextAction?.kind === 'active' ? '今天继续这一件' : '今天先做这一件' }}</span>
@@ -324,6 +328,7 @@ async function takeMapTask() {
               <div class="starting-empty-actions"><button class="soft-button" @click="resetStartingPoint">重新挑选</button><button class="text-button" @click="openStartingNotebook">去岩壁找起点 ↗</button></div>
             </template>
           </section>
+          <MapRestingWork v-if="restingWork && state.active.length" :item="restingWork" :full="state.active.length>=3" @open="openStudio" />
           <section v-if="latestDone" class="lookback-card" aria-labelledby="lookback-title">
             <span class="eyebrow">最近完成 · 回头看一眼</span>
             <h3 id="lookback-title">{{ latestDone.task?.title || '一件已经完成的小事' }}</h3>

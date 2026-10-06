@@ -58,6 +58,14 @@ export function studioStatus(work, state) {
   if (work.taskIds.some(qid => state.done.some(record => record.qid === qid))) return 'done';
   return state.active.some(record => record.qid === work.taskIds.at(-1)) ? 'working' : 'rest';
 }
+// 返回哪一版由真实暂放历史决定；编辑成果不会改变回来的起点。
+export function latestRestingStudioWork(state) {
+  const byTask = new Map(state.home.studio.works.filter(work => studioStatus(work, state) === 'rest').map(work => [work.taskIds.at(-1), work]));
+  const candidates = state.abandoned.map((record, index) => ({ record, index, work: byTask.get(record.qid) }))
+    .filter(item => item.work).sort((a, b) => b.record.at.localeCompare(a.record.at) || b.index - a.index);
+  const item = candidates[0];
+  return item ? { work: item.work, record: item.record } : null;
+}
 export const studioWorkForTask = (studio, qid) => studio.works.find(work => work.taskIds.at(-1) === qid);
 export function addStudioWork(studio, fields, { id, qid, theme = 'own', exerciseId = '', at, otherImageChars = 0 }) {
   const value = studioFields(fields);

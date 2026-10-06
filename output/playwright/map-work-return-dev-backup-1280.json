@@ -1,0 +1,341 @@
+{
+  "app": "kuangye",
+  "version": 3,
+  "exportedAt": "2026-10-06T06:37:59.787Z",
+  "state": {
+    "customTasks": [
+      {
+        "id": "personal-df25ea43-3894-4445-9069-31a84847c92e",
+        "title": "最近后写暂放 · 边界标题最近后写暂放 · 边界标题最近后写暂放 · 边界标题最近后写暂放 · 边界标题最近后写暂放 ·",
+        "desc": "完成条件：为「最近后写暂放 · 边界标题最近后写暂放 · 边界标题最近后写暂放 · 边界标题最近后写暂放 · 边界标题最近后写暂放 ·」留下一版。",
+        "cat": "create",
+        "type": "once",
+        "diff": "E",
+        "tier": "personal",
+        "personal": true
+      },
+      {
+        "id": "personal-dbcaef68-4d2a-4067-aaf7-94f47823e3b5",
+        "title": "同日较早暂放作品",
+        "desc": "完成条件：为「同日较早暂放作品」留下一版。",
+        "cat": "create",
+        "type": "once",
+        "diff": "E",
+        "tier": "personal",
+        "personal": true
+      },
+      {
+        "id": "personal-184daa64-9266-4bef-8bf0-52349124190a",
+        "title": "前一日暂放作品",
+        "desc": "完成条件：为「前一日暂放作品」留下一版。",
+        "cat": "create",
+        "type": "once",
+        "diff": "E",
+        "tier": "personal",
+        "personal": true
+      },
+      {
+        "id": "personal-9377e2ca-6bfc-470d-ab58-21d004820855",
+        "title": "最近作品的旧任务记录",
+        "desc": "完成条件：为「最近作品的旧任务记录」留下一版。",
+        "cat": "create",
+        "type": "once",
+        "diff": "E",
+        "tier": "personal",
+        "personal": true
+      },
+      {
+        "id": "personal-8e192f23-c1f4-44f1-9500-c5437912f643",
+        "title": "同日作品的旧任务记录",
+        "desc": "完成条件：为「同日作品的旧任务记录」留下一版。",
+        "cat": "create",
+        "type": "once",
+        "diff": "E",
+        "tier": "personal",
+        "personal": true
+      },
+      {
+        "id": "personal-bf3541c9-e06c-4dd4-b9bf-3b7fd991ae18",
+        "title": "手里正在做的作品",
+        "desc": "完成条件：为「手里正在做的作品」留下一版。",
+        "cat": "create",
+        "type": "once",
+        "diff": "E",
+        "tier": "personal",
+        "personal": true
+      },
+      {
+        "id": "personal-4f52a016-4323-4ca5-b6d3-26e917e6dd24",
+        "title": "已经收好的作品",
+        "desc": "完成条件：为「已经收好的作品」留下一版。",
+        "cat": "create",
+        "type": "once",
+        "diff": "E",
+        "tier": "personal",
+        "personal": true
+      },
+      {
+        "id": "personal-de8290de-e5ca-452e-a0a2-4e2de98c77a2",
+        "title": "没有成果的暂放作品",
+        "desc": "完成条件：为「没有成果的暂放作品」留下一版。",
+        "cat": "create",
+        "type": "once",
+        "diff": "E",
+        "tier": "personal",
+        "personal": true
+      },
+      {
+        "id": "personal-5c23f8a6-c4f8-4b5a-b0f4-16ae94e2ae2f",
+        "title": "普通放弃任务",
+        "desc": "完成条件：为「普通放弃任务」留下一版。",
+        "cat": "create",
+        "type": "once",
+        "diff": "E",
+        "tier": "personal",
+        "personal": true
+      },
+      {
+        "id": "personal-5d976302-9b76-49c7-99ac-addcb8ac1bc0",
+        "title": "最近后写暂放 · 边界标题最近后写暂放 · 边界标题最近后写暂放 · 边界标题最近后写暂放 · 边界标题最近后写暂放 ·",
+        "desc": "完成条件：为「最近后写暂放 · 边界标题最近后写暂放 · 边界标题最近后写暂放 · 边界标题最近后写暂放 · 边界标题最近后写暂放 ·」留下一版。",
+        "cat": "create",
+        "type": "once",
+        "diff": "E",
+        "tier": "personal",
+        "personal": true
+      },
+      {
+        "id": "personal-808b5d29-c2fe-41ea-8b7e-ab38ce3fb89d",
+        "title": "最近后写暂放 · 边界标题最近后写暂放 · 边界标题最近后写暂放 · 边界标题最近后写暂放 · 边界标题最近后写暂放 ·",
+        "desc": "完成条件：为「最近后写暂放 · 边界标题最近后写暂放 · 边界标题最近后写暂放 · 边界标题最近后写暂放 · 边界标题最近后写暂放 ·」留下一版。",
+        "cat": "create",
+        "type": "once",
+        "diff": "E",
+        "tier": "personal",
+        "personal": true
+      }
+    ],
+    "active": [
+      {
+        "qid": "personal-bf3541c9-e06c-4dd4-b9bf-3b7fd991ae18",
+        "start": "2026-10-06",
+        "logs": [],
+        "shields": 2
+      }
+    ],
+    "done": [
+      {
+        "qid": "personal-4f52a016-4323-4ca5-b6d3-26e917e6dd24",
+        "xp": 0,
+        "at": "2026-10-06",
+        "review": "",
+        "units": [],
+        "logs": []
+      },
+      {
+        "qid": "personal-808b5d29-c2fe-41ea-8b7e-ab38ce3fb89d",
+        "xp": 0,
+        "at": "2026-10-06",
+        "review": "",
+        "units": [],
+        "logs": []
+      }
+    ],
+    "abandoned": [
+      {
+        "qid": "personal-9377e2ca-6bfc-470d-ab58-21d004820855",
+        "reason": "PRIVATE_REASON_MAP_RETURN",
+        "at": "2026-10-07",
+        "logs": [
+          {
+            "d": "2026-10-02",
+            "v": 1,
+            "note": "旧任务留下的记录"
+          }
+        ]
+      },
+      {
+        "qid": "personal-8e192f23-c1f4-44f1-9500-c5437912f643",
+        "reason": "fixture-private-reason-7912f643",
+        "at": "2026-10-07"
+      },
+      {
+        "qid": "personal-df25ea43-3894-4445-9069-31a84847c92e",
+        "reason": "PRIVATE_REASON_MAP_RETURN",
+        "at": "2026-10-06"
+      },
+      {
+        "qid": "personal-de8290de-e5ca-452e-a0a2-4e2de98c77a2",
+        "reason": "fixture-private-reason-e98c77a2",
+        "at": "2026-10-03"
+      },
+      {
+        "qid": "personal-5c23f8a6-c4f8-4b5a-b0f4-16ae94e2ae2f",
+        "reason": "fixture-private-reason-94e2ae2f",
+        "at": "2026-10-07"
+      },
+      {
+        "qid": "personal-dbcaef68-4d2a-4067-aaf7-94f47823e3b5",
+        "reason": "fixture-freed-slot",
+        "at": "2026-10-05"
+      },
+      {
+        "qid": "personal-184daa64-9266-4bef-8bf0-52349124190a",
+        "reason": "fixture-freed-slot",
+        "at": "2026-10-04"
+      },
+      {
+        "qid": "personal-5d976302-9b76-49c7-99ac-addcb8ac1bc0",
+        "reason": "再次暂放的私密原因",
+        "at": "2026-10-06"
+      }
+    ],
+    "home": {
+      "room": {
+        "w": 6,
+        "d": 6
+      },
+      "town": {
+        "exterior": {
+          "wall": "cream",
+          "roof": "clay",
+          "door": "oak",
+          "porch": "open",
+          "path": "stone"
+        },
+        "yard": [],
+        "library": 0
+      },
+      "reading": {
+        "books": []
+      },
+      "inquiry": {
+        "pages": []
+      },
+      "studio": {
+        "works": [
+          {
+            "id": "4122ea76-eada-42bc-b19d-21356c28aa39",
+            "title": "没有成果的暂放作品",
+            "body": " \n ",
+            "note": "",
+            "images": [],
+            "theme": "own",
+            "exerciseId": "",
+            "taskIds": [
+              "personal-de8290de-e5ca-452e-a0a2-4e2de98c77a2"
+            ],
+            "created": "2026-10-06",
+            "updated": "2026-10-06"
+          },
+          {
+            "id": "c4df59ed-c231-40b4-baac-fafc38b74c42",
+            "title": "已经收好的作品",
+            "body": "已经收好的作品正文。",
+            "note": "",
+            "images": [],
+            "theme": "own",
+            "exerciseId": "",
+            "taskIds": [
+              "personal-4f52a016-4323-4ca5-b6d3-26e917e6dd24"
+            ],
+            "created": "2026-10-06",
+            "updated": "2026-10-06"
+          },
+          {
+            "id": "e455e8ef-fd21-4b5f-9b82-f484450763cc",
+            "title": "手里正在做的作品",
+            "body": "正在做的作品正文。",
+            "note": "",
+            "images": [],
+            "theme": "own",
+            "exerciseId": "",
+            "taskIds": [
+              "personal-bf3541c9-e06c-4dd4-b9bf-3b7fd991ae18"
+            ],
+            "created": "2026-10-06",
+            "updated": "2026-10-06"
+          },
+          {
+            "id": "b6441abc-e03c-44a0-a42c-ddd1acff7b21",
+            "title": "前一日暂放作品",
+            "body": "前一天放下的正文。",
+            "note": "",
+            "images": [],
+            "theme": "own",
+            "exerciseId": "",
+            "taskIds": [
+              "personal-184daa64-9266-4bef-8bf0-52349124190a"
+            ],
+            "created": "2026-10-06",
+            "updated": "2026-10-06"
+          },
+          {
+            "id": "c1a4cf24-a76f-49ee-ab92-414c506f3a27",
+            "title": "同日较早暂放作品",
+            "body": "同一天更早放下的正文。",
+            "note": "",
+            "images": [],
+            "theme": "own",
+            "exerciseId": "",
+            "taskIds": [
+              "personal-8e192f23-c1f4-44f1-9500-c5437912f643",
+              "personal-dbcaef68-4d2a-4067-aaf7-94f47823e3b5"
+            ],
+            "created": "2026-10-06",
+            "updated": "2026-12-31"
+          },
+          {
+            "id": "0ec23acc-0549-4b47-a22d-8e83695953a1",
+            "title": "最近后写暂放 · 边界标题最近后写暂放 · 边界标题最近后写暂放 · 边界标题最近后写暂放 · 边界标题最近后写暂放 ·",
+            "body": "正文是一段本地长成果，用来观察三行节选、完整预览和窄屏换行。\n正文是一段本地长成果，用来观察三行节选、完整预览和窄屏换行。\n正文是一段本地长成果，用来观察三行节选、完整预览和窄屏换行。\n正文是一段本地长成果，用来观察三行节选、完整预览和窄屏换行。\n正文是一段本地长成果，用来观察三行节选、完整预览和窄屏换行。\n正文是一段本地长成果，用来观察三行节选、完整预览和窄屏换行。\n",
+            "note": "PRIVATE_NOTE_MAP_RETURN",
+            "images": [
+              "data:image/png;base64,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"
+            ],
+            "theme": "own",
+            "exerciseId": "",
+            "taskIds": [
+              "personal-9377e2ca-6bfc-470d-ab58-21d004820855",
+              "personal-df25ea43-3894-4445-9069-31a84847c92e",
+              "personal-5d976302-9b76-49c7-99ac-addcb8ac1bc0",
+              "personal-808b5d29-c2fe-41ea-8b7e-ab38ce3fb89d"
+            ],
+            "created": "2026-10-06",
+            "updated": "2026-01-01"
+          }
+        ],
+        "displayId": "c4df59ed-c231-40b4-baac-fafc38b74c42"
+      },
+      "observations": {
+        "entries": []
+      },
+      "observationWorks": [],
+      "visits": [],
+      "decor": {
+        "wall": "meadow",
+        "floor": "oak",
+        "atmosphereVersion": 1,
+        "weather": "auto",
+        "light": "night"
+      },
+      "moments": [],
+      "lumens": 0,
+      "earned": 0,
+      "spent": 0,
+      "refunded": 0,
+      "glimmerDays": [
+        "2026-10-06"
+      ],
+      "glimmerPaid": 0,
+      "inventory": [],
+      "placed": [],
+      "boundMemories": [],
+      "gifts": [],
+      "nextId": 1
+    },
+    "settings": {
+      "devDate": "2026-10-06"
+    }
+  }
+}

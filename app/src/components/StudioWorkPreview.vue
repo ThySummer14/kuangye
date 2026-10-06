@@ -1,5 +1,8 @@
 <script setup>
-defineProps({ work: Object, compact: Boolean });
+import { computed } from 'vue';
+import { studioReady } from '../game/studio.js';
+const props = defineProps({ work: Object, compact: Boolean });
+const ready = computed(() => studioReady(props.work));
 </script>
 <template>
   <article class="studio-work-preview" :class="{ compact }">
@@ -7,8 +10,9 @@ defineProps({ work: Object, compact: Boolean });
       <img v-for="(src, i) in (compact ? work.images.slice(0, 1) : work.images)" :key="i" :src="src" :alt="work.title + ' · 第 ' + (i + 1) + ' 张'" />
     </div>
     <h3>{{ work.title }}</h3>
-    <p v-if="work.body">{{ work.body }}</p>
-    <small>{{ work.created }} · 自己做出来的东西</small>
+    <p v-if="work.body.trim()">{{ work.body }}</p>
+    <p v-if="!ready">成果还没带回来，作品名与完成条件都保留着。</p>
+    <small>{{ work.created }} · {{ ready ? '自己做出来的东西' : '这一版还在路上' }}</small>
   </article>
 </template>
 <style scoped>

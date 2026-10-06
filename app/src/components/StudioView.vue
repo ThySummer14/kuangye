@@ -22,6 +22,7 @@ const works = computed(() => state.home.studio.works);
 const completed = computed(() => works.value.filter(work => studioStatus(work, state) === 'done'));
 const work = computed(() => works.value.find(work => work.id === selected.value));
 const status = computed(() => work.value ? studioStatus(work.value, state) : '');
+watch(status, value => { if (value === 'rest') editing.value = false; });
 const active = computed(() => work.value ? activeOf(work.value.taskIds.at(-1)) : null);
 const visit = computed(() => visitForWork(state.home.visits,work.value?.id));
 const observation = computed(() => observationSourceFor(state.home.observationWorks,work.value?.id));
@@ -77,11 +78,11 @@ function exportAlbum() {
       <button class="text-button studio-back" @click="selected=''; editing=false">← 回到作品集</button>
       <h3 ref="heading" tabindex="-1" class="work-title">{{ work.title }}</h3>
       <div class="work-layout" :data-studio-work="work.id">
-        <section class="work-page"><div v-if="observation" class="work-source"><ObservationSource :source="observation.source" /><p>接下创作时留下的素材。原观察后续修订，不会改掉这里；导出卡片与作品集只带成果。</p><button class="text-button" @click="emit('observation',observation.observationId)">回到原观察页 ↗</button></div><StudioWorkEditor v-if="status!=='done' || editing" :key="work.id" :work="work" @saved="emit('toast','这一版，保存好了。')" /><StudioWorkPreview v-else :work="work" /></section>
+        <section class="work-page"><div v-if="observation" class="work-source"><ObservationSource :source="observation.source" /><p>接下创作时留下的素材。原观察后续修订，不会改掉这里；导出卡片与作品集只带成果。</p><button class="text-button" @click="emit('observation',observation.observationId)">回到原观察页 ↗</button></div><StudioWorkEditor v-if="status==='working' || editing" :key="work.id" :work="work" @saved="emit('toast','这一版，保存好了。')" /><StudioWorkPreview v-else :work="work" /></section>
         <aside class="work-sidebar"><span class="work-state">{{ statusLabel(work) }} · {{ studioTheme(work.theme)?.title || '自己的想法' }}</span><p class="work-criterion"><strong>做到这里，就可以收好</strong>{{ taskById[work.taskIds.at(-1)]?.desc }}</p>
           <details v-if="exercise" class="work-guide" open><summary>出发时的小提示</summary><ol><li v-for="step in exercise.steps" :key="step">{{ step }}</li></ol></details>
           <template v-if="status==='working'"><p class="work-help">先去创作。带回正文或图片，再记下完成的这一刻。</p><button class="primary-button" :disabled="!studioReady(work)" @click="editing=false; emit('complete',active)">我做好了，收好这件作品</button><button class="text-button" @click="emit('abandon',active)">先放一放</button></template>
-          <template v-else-if="status==='rest'"><p class="work-help">成果还在。继续时，会接下一件同条件的小事；原任务记录也保留着。</p><button class="primary-button" :disabled="state.active.length>=3" @click="resume">接着做这件作品</button><small v-if="state.active.length>=3">手里已有三件事，先为创作留一个位置。</small></template>
+          <template v-else-if="status==='rest'"><p class="work-help">作品和记录都在。继续时，会接下一件同条件的小事；原任务记录也保留着。</p><button class="primary-button" :disabled="state.active.length>=3" @click="resume">接着做这件作品</button><small v-if="state.active.length>=3">手里已有三件事，先为创作留一个位置。</small></template>
           <template v-else><p v-if="work.note && !editing" class="private-note"><strong>留给自己的话</strong>{{ work.note }}</p><button class="soft-button" @click="editing=!editing">{{ editing ? '看作品成稿' : '再改一改这一版' }}</button><button class="primary-button" @click="display">{{ state.home.studio.displayId===work.id ? '从小家收回这件作品' : '陈列到小家' }}</button><button class="text-button" @click="emit('home')">去小家看看 ↗</button><div class="export-options"><label><input v-model="includeNote" type="checkbox" /> 导出时带上留给自己的话</label><button class="soft-button" :disabled="exporting" @click="exportWork">{{ exporting ? '正在做卡片…' : '导出这一件的 PNG 卡片' }}</button><p>卡片选取第一张图和一页正文。整本作品集保留全部图片与文字。</p><button class="text-button" @click="exportAlbum">导出 {{ completed.length }} 件作品的 HTML 作品集 ↗</button></div></template>
           <div v-if="visit" class="work-visit"><span>{{ visit.brief.name }} · 街角的约定</span><p>{{ visit.delivered ? '这一版已交回书屋，来往记录仍在。' : status==='done' ? '作品已收好。按约定检查这一版，再带回书屋交回。' : '书屋留着这次来访。做完这一版，随时可以带回去。' }}</p><button class="soft-button" @click="emit('visits')">{{ visit.delivered?'回书屋看看窗边陈列 ↗':status==='done'?'回书屋，交回这件作品 ↗':'回书屋看看这次约定 ↗' }}</button></div><p v-if="error" role="alert" class="studio-error">{{ error }}</p>
         </aside>

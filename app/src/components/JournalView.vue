@@ -194,7 +194,6 @@ async function report() {
       </section>
       <div class="journal-header">
         <div>
-          <span class="eyebrow">XIAO YA'S NOTEBOOK</span>
           <h2>小芽的本子</h2>
           <p>那些认真生活的瞬间，慢慢写满这一本。</p>
         </div>

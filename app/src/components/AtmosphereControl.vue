@@ -3,6 +3,7 @@ import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { state, changeHomeDecor } from "../store.js";
 import { WEATHER, eastEightHour, daylight } from "../game/atmosphere.js";
 import { QA } from "../game/qa.js";
+import PlaceIcon from "./PlaceIcon.vue";
 import { nativePlatform } from "../services/native.js";
 import { fetchWeather } from "../services/weather.js";
 const emit = defineEmits(["change"]);
@@ -69,7 +70,7 @@ onBeforeUnmount(() => {
 <template>
   <section class="weather-card">
     <div class="weather-title">
-      <span>{{ effective.day < 0.15 ? "☾" : "☀" }} 窗外的此刻</span
+      <span class="weather-now"><PlaceIcon :name="effective.day < 0.15 ? 'moon' : 'sun'" :size="15" />窗外的此刻</span
       ><time
         >{{
           now.toLocaleTimeString("zh-CN", {

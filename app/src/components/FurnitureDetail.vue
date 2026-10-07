@@ -46,7 +46,7 @@ onBeforeUnmount(()=>engine?.dispose());
   <p class="detail-rule">{{ furnitureLayer(item)==='floor'?'这是地面铺物，可以放在其他家具下面。':'摆放时需要留出完整占地，不能与其他实体家具重叠。' }}这是游戏中的占地尺寸。</p>
   <details v-if="memories.length" class="detail-memories"><summary>家中这件家具留下的回忆（{{ memories.length }}）</summary><blockquote v-for="entry in memories" :key="entry.uid">{{ entry.memory.review || '那天，我为自己完成了一件事。' }}</blockquote></details>
   <p v-else-if="owned.length" class="detail-owned">家中已有 {{ owned.length }} 件，可以回家查看与布置。</p>
-  <div class="detail-purchase"><strong>✦ {{ item.price }} 光</strong><button class="primary-button" :disabled="state.home.lumens<item.price" @click="emit('buy')">{{ state.home.lumens<item.price?'还差 '+(item.price-state.home.lumens)+' 光':owned.length?'再带一件回家':'带回家 ＋' }}</button></div>
+  <div class="detail-purchase"><strong>{{ item.price }} 光</strong><button class="primary-button" :disabled="state.home.lumens<item.price" @click="emit('buy')">{{ state.home.lumens<item.price?'还差 '+(item.price-state.home.lumens)+' 光':owned.length?'再带一件回家':'带回家 ＋' }}</button></div>
   <button v-if="owned.length" class="text-button detail-home" @click="emit('home')">回家布置 ↗</button>
  </ModalFrame>
 </template>

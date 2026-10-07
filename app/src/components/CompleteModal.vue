@@ -93,7 +93,7 @@ function returnToMap() {
     :label="result ? '这一件事，收好了' : '记录完成的任务'"
     @close="finish"
     ><template v-if="!result"
-      ><span class="eyebrow">{{ challenge ? 'CHALLENGE ACCOMPLISHED' : 'A LITTLE MOMENT TO REMEMBER' }}</span>
+      ><span class="eyebrow">{{ challenge ? 'CHALLENGE ACCOMPLISHED' : '完成记录' }}</span>
       <h2>{{ challenge ? '这条边界，你跨过了。' : '这一件事，你做到了。' }}</h2>
       <p class="completion-task">{{ task.title }}</p><p v-if="task.personal && !challenge" class="review-prompt">你定下的完成条件：{{ task.desc }}</p>
       <div v-if="challenge" class="challenge-confirm" role="group" aria-label="确认实际完成的挑战条件"><label v-for="c in challengeCriteria(challenge)" :key="c.id"><input v-model="confirmed" type="checkbox" :value="c.id"/><span>{{ c.condition }}</span></label></div>

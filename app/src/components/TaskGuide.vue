@@ -41,7 +41,7 @@ function useStep(step) {
       </section>
       <p class="guide-recall">回来时，可以记下：{{ guide.recall }}</p>
       <footer>
-        <template v-if="!active"><span v-if="!task.personal">完成后 ✦ {{ lumenReward(DIFF[task.diff].xp) }} 光 · {{ DIFF[task.diff].xp }} XP</span>
+        <template v-if="!active"><span v-if="!task.personal">完成后 {{ lumenReward(DIFF[task.diff].xp) }} 光 · {{ DIFF[task.diff].xp }} XP</span>
           <p v-if="!eligibility.ok" role="status">{{ eligibility.why }}</p>
           <button class="primary-button full-button" :disabled="!eligibility.ok" @click="$emit('accept', task)">接下这件事</button>
         </template>

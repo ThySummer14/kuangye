@@ -4,6 +4,7 @@ import { state, purchase, today, taskById } from "../store.js";
 import { FURNITURE, STALLS, vintageStock } from "../data/furniture.js";
 import FurnitureImage from "./FurnitureImage.vue";
 import BuddyFace from "./BuddyFace.vue";
+import PlaceIcon from "./PlaceIcon.vue";
 import SceneLoading from "./SceneLoading.vue";
 const FurnitureDetail = defineAsyncComponent({ loader: () => import("./FurnitureDetail.vue"), loadingComponent: SceneLoading, errorComponent: SceneLoading, delay:120, timeout:20000 });
 const inspecting = ref(null);
@@ -31,7 +32,6 @@ function buy(f) {
     <section>
       <div class="shop-banner">
         <div>
-          <span class="eyebrow">THE WOODLAND MARKET</span>
           <h2>挑一件喜欢的，带回家。</h2>
           <p>每件小物，都能成为一段生活的纪念。</p>
         </div>
@@ -66,7 +66,7 @@ function buy(f) {
             <p>{{ f.description }}</p>
             <button class="detail-entry" :aria-label="`近看${f.name}与尺寸`" @click="inspecting=f">近看与尺寸 ↗</button>
             <div class="product-bottom">
-              <span class="price">✦ {{ f.price }}</span
+              <span class="price"><PlaceIcon name="light" :size="14" />{{ f.price }}</span
               ><button
                 :disabled="state.home.lumens < f.price"
                 class="buy-button"
@@ -87,7 +87,7 @@ function buy(f) {
     <aside class="shop-aside">
       <div class="balance-card">
         <span class="eyebrow">口袋里的光</span
-        ><strong>✦ {{ state.home.lumens }}</strong>
+        ><strong><PlaceIcon name="light" :size="26" />{{ state.home.lumens }}</strong>
         <p>完成真实生活中的任务，<br />把收获的光用来布置小家。</p>
         <div class="glimmer-progress">
           <i
@@ -131,42 +131,40 @@ function buy(f) {
   </div>
 </template>
 <style scoped>
-.detail-entry { background:none; border:0; border-bottom:1px solid #cbd6bd; padding:7px 0; margin:3px 0 14px; color:var(--primary); font-size:12px; min-height:36px; }
+.detail-entry { background:none; border:0; border-bottom:1px solid var(--line-2); padding:7px 0; margin:3px 0 14px; color:var(--primary); font-size:12px; min-height:36px; }
 .detail-entry:focus-visible { outline:2px solid var(--primary); outline-offset:3px; }
 .shop-memory-invite,
 .memory-set-card {
-  margin-top: 18px;
-  padding: 18px;
-  border: 1px solid #e3dfca;
-  border-radius: 15px;
-  background: #f7f5e9;
+  margin-top: 16px;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-m);
+  background: var(--card);
 }
 .shop-memory-invite h3,
 .memory-set-card strong {
   display: block;
-  margin: 8px 0 6px;
-  color: #4c6047;
-  font-family: var(--serif);
-  font-size: 17px;
+  margin: 6px 0 6px;
+  color: var(--ink);
+  font-size: var(--t-m);
   font-weight: 600;
 }
 .shop-memory-invite p,
 .memory-set-card blockquote {
-  margin: 0 0 9px;
-  color: #788473;
-  font-size: 13px;
+  margin: 0 0 8px;
+  color: var(--ink-2);
+  font-family: var(--quote);
+  font-size: var(--t-base);
   line-height: 1.7;
 }
 .shop-memory-invite small {
-  color: #a0875d;
-  font-size: 11px;
+  color: var(--glow-deep);
+  font-size: var(--t-xs);
   line-height: 1.6;
 }
 .memory-set-card blockquote {
   padding-left: 10px;
-  border-left: 2px solid #d1b873;
-  font-family: var(--serif);
-  font-size: 15px;
+  border-left: 2px solid color-mix(in srgb, var(--glow) 60%, transparent);
 }
 @media (max-width: 760px) {
   .shop-memory-invite,

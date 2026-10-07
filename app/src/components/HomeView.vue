@@ -28,6 +28,7 @@ const memoryOpen=ref(false);
 import { roomOf } from "../game/room.js";
 import { homeLife } from "../scenes/home-life.js";
 import { INTERACTIONS } from "../game/buddy-walk.js";
+import PlaceIcon from "./PlaceIcon.vue";
 const room = computed(() => roomOf(state.home));
 const speech = ref("拖动画面转动小家，点家具可以和我一起玩。");
 let life,
@@ -279,7 +280,6 @@ onBeforeUnmount(() => {
       >
         <div class="home-heading">
           <div>
-            <span class="eyebrow">A HOME MADE OF LITTLE MOMENTS</span>
             <h2>小芽的家</h2>
             <p>
               {{
@@ -289,8 +289,8 @@ onBeforeUnmount(() => {
               }}
             </p>
           </div>
-          <button class="soft-button" @click="emit('journal')">
-            ▤ 小芽的本子
+          <button class="soft-button home-journal-link" @click="emit('journal')">
+            <PlaceIcon name="journal" :size="16" />小芽的本子
           </button>
         </div>
         <div
@@ -313,7 +313,7 @@ onBeforeUnmount(() => {
       </div>
       <FurnitureMemoryCard v-if="current && memoryOpen && !editing" :inventory-item="current" @close="memoryOpen=false" @journal="emit('memory',{...$event,uid:current.uid,name:item.name})" @move="editing=true" />
       <div class="home-controls">
-        <p class="life-speech" role="status">🌱 {{ speech }}</p>
+        <p class="life-speech" role="status">{{ speech }}</p>
         <div class="placement-actions">
           <button class="soft-button" @click="life?.pet()">摸摸小芽</button
           ><button class="soft-button" @click="engine?.turn(-0.4)">
@@ -441,7 +441,7 @@ onBeforeUnmount(() => {
           ><small>方向键选位置 · R 旋转 · Esc 取消</small></template
         ><template v-else
           ><div v-if="current.memory" class="memory-plaque">
-            <span>✦ 这件家具，记得那一天</span>
+            <span>这件家具，记得那一天</span>
             <h4>
               {{ taskById[current.memory.qid]?.title || "一次小小的成长" }}
             </h4>

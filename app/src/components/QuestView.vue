@@ -183,7 +183,7 @@ function log(a) {
           tabindex="-1" :aria-label="'已接下：' + taskById[a.qid].title">
           <div class="task-meta">
             <span>{{ CATS[taskById[a.qid].cat].name }}</span
-            ><span v-if="taskById[a.qid].challenge">挑战者专辑</span><span v-else-if="taskById[a.qid].personal">自己写下的事</span><span v-else>✦ {{ lumenReward(DIFF[taskById[a.qid].diff].xp) }} 光</span>
+            ><span v-if="taskById[a.qid].challenge">挑战者专辑</span><span v-else-if="taskById[a.qid].personal">自己写下的事</span><span v-else class="meta-light"><PlaceIcon name="light" :size="12" />{{ lumenReward(DIFF[taskById[a.qid].diff].xp) }} 光</span>
           </div>
           <h3>{{ taskById[a.qid].title }}</h3>
           <p><strong v-if="taskById[a.qid].personal" class="personal-criterion">我的完成条件</strong>{{ taskById[a.qid].desc }}</p>
@@ -331,7 +331,7 @@ function log(a) {
         </div>
         <div class="quest-card-footer">
           <span class="price"
-            >✦ {{ lumenReward(DIFF[t.diff].xp) }} <small>光</small
+            ><PlaceIcon name="light" :size="14" />{{ lumenReward(DIFF[t.diff].xp) }} <small>光</small
             ><i>＋{{ DIFF[t.diff].xp }} XP</i></span
           ><div class="quest-card-action">
             <small v-if="!canAccept(t).ok" class="accept-note">{{ canAccept(t).why }}</small>
@@ -364,7 +364,7 @@ function log(a) {
 .personal-criterion { display: block; font-size: 12px; margin-bottom: 6px; color: var(--primary); }
 .quests:not(.has-active) .wall-welcome { border-bottom: 0; margin-bottom: 0; }
 .quests:not(.has-active) .wall-discovery { margin-top: 0; padding-top: 24px; }
-.wall-welcome { display: grid; grid-template-columns: 1fr 260px; gap: 36px; padding: 10px 0 28px; border-bottom: 1px dashed var(--line-2); margin-bottom: 32px; }
+.wall-welcome { display: grid; grid-template-columns: 1fr 260px; gap: 36px; padding: 10px 0 28px; border-bottom: 1px solid var(--line); margin-bottom: 32px; }
 .wall-welcome h2 { font: 600 clamp(30px, 3.5vw, 44px)/1.3 var(--serif); margin: 16px 0; color: var(--ink); letter-spacing: 1px; }
 .wall-welcome p { font-size: 14px; line-height: 1.9; color: var(--ink-2); }
 .wall-welcome .primary-button { margin-top: 14px; }

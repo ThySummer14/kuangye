@@ -40,10 +40,10 @@ onBeforeUnmount(()=>engine?.dispose());
   <section class="world-map" :class="{'map-offline':failed}">
     <div class="world-stage" :class="{'map-failed':failed}">
       <div ref="host" class="world-canvas" aria-label="可拖动旋转的 3D 旷野小镇" />
-      <div class="map-caption"><span>THE FIRST STREET · 第一条街</span><h2>家门外，多了一条街。</h2><p>布置院子，也让生活在街角留下变化。</p></div>
+      <div class="map-caption"><span>第一条街</span><h2>家门外，多了一条街。</h2><p>布置院子，也让生活在街角留下变化。</p></div>
       <svg class="map-compass" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="21" /><circle cx="24" cy="24" r="15.5" class="inner" /><path d="M24 7 27.2 24 24 41 20.8 24z" class="needle" /><path d="M24 7 27.2 24H20.8z" class="north" /><text x="24" y="5.2">N</text></svg>
       <div v-if="failed" class="scene-fallback">这台设备暂时无法显示立体地图。可以用场所按钮继续探索。</div>
-      <div class="map-weather"><span class="sun" aria-hidden="true">☀</span><span>旷野 · 晴<br /><small>街角书屋 · {{ ['等待修复','门窗已打开','书架已安好','灯已亮起'][state.home.town?.library||0] }}</small></span></div>
+      <div class="map-weather"><PlaceIcon name="sun" :size="20" /><span>旷野 · 晴<br /><small>街角书屋 · {{ ['等待修复','门窗已打开','书架已安好','灯已亮起'][state.home.town?.library||0] }}</small></span></div>
       <div class="map-controls"><button aria-label="放大地图" @click="engine?.zoom(-2)">＋</button><button aria-label="缩小地图" @click="engine?.zoom(2)">−</button><button aria-label="恢复地图视角" @click="engine?.reset()">⟳</button></div>
       <span v-if="marker&&!failed" class="place-marker" :style="{left:marker.left+'px',top:marker.top+'px'}" aria-hidden="true" />
       <span class="map-hint">{{ selectedPlace?selectedPlace.name+' · 点击进入':'拖动看街景 · 点击建筑，或在下方选择去处' }}</span>

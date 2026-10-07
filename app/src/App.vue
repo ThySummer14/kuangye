@@ -425,8 +425,8 @@ async function takeMapTask() {
 
 <style scoped>
 .map-plan-choices { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
-.map-plan-choices button { max-width: 100%; padding: 7px 11px; font: inherit; font-size: 12px; text-align: left; overflow-wrap: anywhere; border: 1px solid var(--line-2); border-radius: 999px; background: var(--card); color: var(--ink-2); cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
-.map-plan-choices button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.map-plan-choices button { max-width: 100%; min-height: 36px; padding: 6px 12px; font: inherit; font-size: 12px; text-align: left; overflow-wrap: anywhere; border: 1px solid var(--line-2); border-radius: 999px; background: var(--card); color: var(--ink-2); cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
+.map-plan-choices button[aria-pressed="true"] { background: var(--moss-wash); border-color: var(--moss); color: var(--moss-deep); font-weight: 600; }
 .map-plan-note { border-left: 2px solid var(--sage); padding-left: 14px; margin: 14px 0; overflow-wrap: anywhere; }
 .map-plan-note strong { font-size: 13px; color: var(--moss-deep); }
 .map-plan-note p { margin-bottom: 0; }

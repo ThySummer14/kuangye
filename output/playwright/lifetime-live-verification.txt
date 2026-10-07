@@ -1,0 +1,20 @@
+[
+  {
+    "width": 1280,
+    "status": "PASS",
+    "cards": 14,
+    "mapTwoClicks": true,
+    "live3d": true,
+    "legacyActions": 6,
+    "errors": []
+  },
+  {
+    "width": 375,
+    "status": "PASS",
+    "cards": 14,
+    "mapTwoClicks": true,
+    "live3d": true,
+    "legacyActions": 6,
+    "errors": []
+  }
+]

@@ -7,7 +7,11 @@ async(page)=>{
    await p.goto(origin+'#map');await p.locator('.world-canvas[data-ready=true]').waitFor();await p.locator('[data-place=tasks]').click();await p.locator('.challenger-entry').click();await p.locator('.life-grid').waitFor();
    if(await p.locator('.life-card').count()!==14)throw Error('Missing lifetime cards');
    if(await p.locator('.life-card.earned').count()!==0)throw Error('New save earned medals');
-   await p.locator('.life-card').last().scrollIntoViewIfNeeded();await p.locator('.life-hero').scrollIntoViewIfNeeded();
+   for(const card of await p.locator('.life-card').all()){
+    await card.scrollIntoViewIfNeeded();
+    await p.waitForFunction(id=>{const i=document.querySelector('[data-life-operation="'+id+'"] img');return i?.complete&&i.naturalWidth>0;},await card.getAttribute('data-life-operation'));
+   }
+   await p.locator('.life-hero').scrollIntoViewIfNeeded();
    await p.waitForFunction(()=>[...document.querySelectorAll('.lifetime img')].every(i=>i.complete&&i.naturalWidth>0));
    await p.evaluate(()=>scrollTo(0,0));await p.screenshot({path:`output/playwright/lifetime-live-${width}.png`,fullPage:true});
    if(!await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth))throw Error('Overflow');

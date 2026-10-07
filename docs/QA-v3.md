@@ -85,3 +85,5 @@
 ## 2026-10-07 · 人生挑战与 Android 预览
 
 人生挑战十四项/十四枚章完成，桌面与 375px 接取、确认完成、只刻印对应章、暂放重试、真实备份往返、原加码与荣誉兼容均通过。138 项单测、最终 Web build/release 通过。Android 的本地存档、系统文件选择、返回键、安全区、键盘、离线启动与 3D 已接通；APK 构建与 lintDebug 通过。模拟器验证和明确边界见 [Android](ANDROID.md)、`output/android/verification.json`；美术与规则见 [人生挑战](LIFETIME-CHALLENGES.md)。大图片导出中复现 Activity Bundle 超限，改为原生暂存文件后再打开选择器，防止保存大备份/图片时退出。
+
+公开 Pages 已验收：`c60dff9` / Actions `37636563098` 成功，1280/375px 两击入口、十四卡片/图样和真实 3D 翻面、旧六项全部 PASS；28 份线上图片哈希与本地一致。已查看线上桌面及手机截图。证据 `output/playwright/lifetime-live-verification.txt`、`output/lifetime-live-assets.txt`。

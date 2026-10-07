@@ -24,3 +24,5 @@
 十四个原目标与十四枚独立图案已接入；浅浮雕、细边框、滚花和独立背铭共用观察器，列表约 1 MiB 预览图，原纹样只按需加载。桌面宽详情与手机纵向布局通过。获得状态从有效完成记录派生，原四章不受个人挑战影响。美术与提示词见 [十四章档案](art/lifetime-medals/README.md)。
 
 138 项完整测试通过（包括 Android 原生保存等待回归）；build / check:release 通过。个人挑战两宽度、原加码 DEV/正式 × 两宽度、旧四章 3D 交互/回退/释放全部 PASS。备份真实下载并导入新上下文，保留原条件、暂放历史和对应荣誉。证据 `output/lifetime-final-*.txt` 与 `output/playwright/lifetime-*-verification.txt`。Android 15 模拟器亦完成离线/原生存档/文件往返和触摸观察，详见 [Android](ANDROID.md)。
+
+应用提交 `c60dff921f6b25eb5f506ea395434918541efae9` 已发布；[Pages Actions 37636563098](https://github.com/ThySummer14/kuangye/actions/runs/37636563098) build/deploy 成功。公开地址的 1280/375px 检查全部 PASS，十四缩略图逐项加载、模型翻面、地图两击和旧六项可达，无 pageerror。14 PNG 与 14 WebP 全部 HTTP 200，SHA-256 与本地一致；脚本 `verify-challenger-assets.mjs --lifetime` 与 `qa-lifetime-live.js` 可复查。线上证据为 `output/lifetime-pages-deploy.json`、`output/lifetime-live-assets.txt` 和 `output/playwright/lifetime-live-*`。

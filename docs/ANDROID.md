@@ -30,6 +30,8 @@ npm run android:build
 
 `npm test` 138/138；Web build/release 通过，Android assembleDebug/lintDebug 通过。原生验收脚本 `scripts/native/qa-android.mjs --reset-fixture` 只允许运行在明确指定的模拟器，清理的是一次性测试 App 数据；需要 `ANDROID_HOME`、`ANDROID_SERIAL` 和既有 Playwright 缓存（也可设置 `PLAYWRIGHT_MODULE`）。
 
-验证覆盖地图两击到十四挑战、数学目标接取、键盘视口缩小且输入框可见、系统返回层级、真实 JSON 导出/恢复、恢复前副本内容、模拟一次原生写入失败后的回滚与重试、TXT 与约 570 KiB PNG 真实导出、离线杀进程重开保留进度、离线 3D、触摸旋转、关闭释放与横屏与横屏章详情无重叠/溢出。证据 `output/android/verification.json` 与具名 `*-native.png`。测试仅用 QA 文字，没有读取或修改真实用户存档。
+验证覆盖地图两击到十四挑战、数学目标接取、键盘视口缩小且输入框可见、系统返回层级、真实 JSON 导出/恢复、恢复前副本内容、模拟一次原生写入失败后的回滚与重试、TXT 与约 570 KiB PNG 真实导出、离线杀进程重开保留进度、离线 3D、触摸旋转、关闭释放、横屏及横屏章详情无重叠/溢出。证据 `output/android/verification.json` 与具名 `*-native.png`。测试仅用 QA 文字，没有读取或修改真实用户存档。
 
 已修复检查发现的 API 24 样式兼容问题、备份早于保存完成的问题和短横屏观察器高度；Gradle lint 仍有模板未使用资源与可升级版本的 warning，没有 error。实体手机、Android 7–14 / 16、不同厂商系统文件管理器未验收；不把模拟器结果作为真机性能结论。
+
+交付 APK SHA-256：`5ae830e544ea93f91116c4db7151e92e7c73c9b885a96be62708d5b2690767fd`（约 46 MiB）。Web 源码与已发布应用提交 `c60dff9` 一致，安装包及校验文本保存在 `output/android/`。

@@ -1,2 +1,5 @@
 # Release verification compares the exact upstream license bytes, including CRLF.
 app/public/licenses/* -text
+
+# Keep the generated Windows wrapper usable without CRLF diff noise.
+app/android/gradlew.bat text eol=crlf

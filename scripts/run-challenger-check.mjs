@@ -7,4 +7,5 @@ if(origin)code=code.replaceAll('https://thysummer14.github.io/kuangye/',origin).
 const r=spawnSync(`${process.env.HOME}/.codex/skills/playwright/scripts/playwright_cli.sh`,['-s=kuangye-challenger','run-code',code],{encoding:'utf8',maxBuffer:2*1024*1024});
 const match=r.stdout.match(/### Result\n([^\n]+)/),result=match?JSON.parse(match[1]):{error:r.stdout+r.stderr};
 writeFileSync(out,JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result,null,2));
-if(r.status||!Array.isArray(result)||result.some(r=>r.status!=='PASS'))process.exit(1);
+const checks=Array.isArray(result)?result:result.results;
+if(r.status||!Array.isArray(checks)||!checks.length||checks.some(r=>r.status!=='PASS'))process.exit(1);

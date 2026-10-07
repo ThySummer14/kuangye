@@ -6,7 +6,7 @@ import { prepareObservationWork, observationCraftImageSize } from './game/observ
 import { residentBrief, handInVisit } from "./game/residents.js";
 import { RESIDENT_VISITS } from "./data/residents.js";
 import { emptyTown, changeExterior, placeYard, repairLibrary, applyYardPlan } from "./game/town.js";
-import { challengeBrief, challengeCompletionIssue } from "./game/challenges.js";
+import { challengeBrief, lifetimeBrief, challengeCompletionIssue } from "./game/challenges.js";
 import { personalTask, taskXp } from "./game/personal-tasks.js";
 import { persistence } from './services/persistence.js';
 import { normalizeActionPlan } from "./game/action-plan.js";
@@ -15,7 +15,7 @@ import { expandRoom, addHomeMoment, normalizeDecor } from "./game/room.js";
 import { parseImport } from "./game/save.js";
 import { dayCount, bestRun, canBackfill } from "./game/rhythm.js";
 // Reactive API facade. Quest actions stay compatible; home rules and save migration are pure modules.
-import { reactive, watch, computed } from "vue";
+import { reactive, watch, computed, nextTick } from "vue";
 import { TASKS, DIFF, CATS } from "./data/tasks.js";
 import {
   emptyHome,
@@ -50,6 +50,11 @@ const emptyState = () => ({
 export const state = reactive(persistence.load() || emptyState());
 export const saveWarning = reactive({ text: persistence.notice, pending: false });
 let saveRequest = 0;
+let latestSave = Promise.resolve();
+export async function waitForSave() {
+  await nextTick();
+  await latestSave;
+}
 watch(
   state,
   () => {
@@ -68,11 +73,16 @@ watch(
     };
     try {
       const result = persistence.save(JSON.stringify(state));
+      latestSave = Promise.resolve(result);
       if (result?.then) {
         saveWarning.pending = true;
         result.then(saved, failed);
       } else saved();
-    } catch { failed(); }
+    } catch (error) {
+      latestSave = Promise.reject(error);
+      latestSave.catch(() => {});
+      failed();
+    }
   },
   { deep: true },
 );
@@ -94,6 +104,12 @@ export function acceptChallenge(operationId, termIds = []) {
   if (state.active.some(a => taskById[a.qid]?.challenge?.operationId === operationId))
     return { ok: false, why: '这个项目已经在进行中，先照顾眼前这次挑战。' };
   try { return createPersonalTask(challengeBrief(operationId, termIds)); }
+  catch (error) { return { ok: false, why: error.message }; }
+}
+export function acceptLifetimeChallenge(operationId, definition = '') {
+  if (state.active.some(a => taskById[a.qid]?.challenge?.operationId === operationId))
+    return { ok: false, why: '这个人生挑战已经在进行中，可以回到原来的记录。' };
+  try { return createPersonalTask(lifetimeBrief(operationId, definition)); }
   catch (error) { return { ok: false, why: error.message }; }
 }
 export function editPersonalTask(id, input) {

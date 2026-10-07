@@ -166,7 +166,7 @@ function log(a) {
         <div class="wall-slots" aria-hidden="true"><i v-for="n in 3" :key="n" :class="{ filled: n <= state.active.length }"><PlaceIcon v-if="n <= state.active.length" name="tasks" :size="18" /></i></div>
         <strong>{{ state.active.length }}<small> / 3 件</small></strong><p>{{ state.active.length ? '先照顾正在做的事。改变安排也没关系。' : '从一件做得到的小事开始。不必先把人生安排好。' }}</p></aside>
     </section>
-    <button class="challenger-entry" @click="emit('challenger')"><span class="challenger-entry-mark" aria-hidden="true">↗</span><span><small>THE CHALLENGER / 越界行动</small><strong>挑战者</strong><em>六项硬挑战，自选加码。把突破刻成勋章。</em></span><b>打开专辑 ↗</b></button>
+    <button class="challenger-entry" @click="emit('challenger')"><span class="challenger-entry-mark" aria-hidden="true">↗</span><span><small>THE LONG WAY / 人生挑战</small><strong>挑战者</strong><em>十四项人生挑战，十四枚专属蚀刻章。</em></span><b>打开专辑 ↗</b></button>
     <section v-if="state.active.length" class="active-section">
       <div class="section-title">
         <h3>
@@ -189,7 +189,7 @@ function log(a) {
           <p><strong v-if="taskById[a.qid].personal" class="personal-criterion">我的完成条件</strong>{{ taskById[a.qid].desc }}</p>
           <ActionPlan :active="a" :suggestion="fieldGuide(taskById[a.qid]).steps[0]" />
           <button v-if="studioWorkForTask(state.home.studio,a.qid)" class="text-button guide-link" @click="emit('studio',studioWorkForTask(state.home.studio,a.qid).id)">回画室带回作品 ↗</button>
-          <button v-else-if="taskById[a.qid].challenge" class="text-button guide-link" @click="emit('challenger')">查看本次挑战条件 ↗</button>
+          <button v-else-if="taskById[a.qid].challenge" class="text-button guide-link" @click="emit('challenger',taskById[a.qid].challenge.album)">查看本次挑战条件 ↗</button>
           <button v-else-if="taskById[a.qid].personal" class="text-button guide-link" @click="editingTask = taskById[a.qid]; writingSuggestion = null; writing = true">修改这件事 ↗</button>
           <button v-else class="text-button guide-link" @click="inspecting = taskById[a.qid]">打开出发手册 ↗</button>
           <RhythmStrip v-if="taskById[a.qid].type === 'streak'" :active="a" :target="taskById[a.qid].target" :today="today()" />

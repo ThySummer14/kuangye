@@ -52,12 +52,13 @@ function display() {
 }
 async function exportWork() {
   exporting.value = true; error.value = '';
-  try { downloadStudioFile(await workCard(work.value, { includeNote: includeNote.value }), '旷野-作品卡片.png', 'image/png'); }
+  try { await downloadStudioFile(await workCard(work.value, { includeNote: includeNote.value }), '旷野-作品卡片.png', 'image/png'); }
   catch (err) { error.value = err.message; }
   finally { exporting.value = false; }
 }
-function exportAlbum() {
-  downloadStudioFile(albumDocument(completed.value, { includeNote: includeNote.value }), '旷野-我的作品集.html', 'text/html;charset=utf-8');
+async function exportAlbum() {
+  try { await downloadStudioFile(albumDocument(completed.value, { includeNote: includeNote.value }), '旷野-我的作品集.html', 'text/html;charset=utf-8'); }
+  catch (error) { emit('toast', error.message); }
 }
 </script>
 <template>

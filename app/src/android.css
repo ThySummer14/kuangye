@@ -1,0 +1,15 @@
+/* Capacitor supplies corrected insets for both old and recent Android WebViews. */
+.android-app body {
+  padding: var(--safe-area-inset-top, env(safe-area-inset-top)) var(--safe-area-inset-right, env(safe-area-inset-right)) var(--safe-area-inset-bottom, env(safe-area-inset-bottom)) var(--safe-area-inset-left, env(safe-area-inset-left));
+}
+.android-app .topbar { top: var(--safe-area-inset-top, env(safe-area-inset-top)); }
+.android-app .game-modal {
+  max-height: calc(100dvh - var(--safe-area-inset-top, 0px) - var(--safe-area-inset-bottom, 0px) - 24px);
+}
+.android-app button, .android-app input, .android-app textarea { touch-action: manipulation; }
+.android-app .modal-close { min-width: 44px; min-height: 44px; }
+@media (max-height: 500px) {
+  .android-app .life-detail { display: block; }
+  .android-app .life-detail .medal-viewer-stage { height: 220px; }
+  .android-app .life-detail textarea { scroll-margin-block: 24px; }
+}

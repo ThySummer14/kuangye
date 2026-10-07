@@ -25,7 +25,7 @@ function fixture(t) {
 
 test('release checker accepts isolated inputs without a prior build', t => {
   const result = verifyRelease(fixture(t));
-  assert.equal(result.runtimePackages, 27);
+  assert.equal(result.runtimePackages, 28);
   assert.ok(result.resources.includes('PrivacyInfo.xcprivacy'));
 });
 test('CLI actually executes on Chinese paths and rejects missing dist index', t => {

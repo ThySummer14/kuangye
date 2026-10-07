@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import { mergeGeometries, mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
 
-export const MEDAL_MOTIFS = ['breach', 'resolve', 'versatile', 'summit'];
+import { MEDAL_ASSETS } from '../data/challenge-medal-assets.js';
+export const MEDAL_MOTIFS = Object.keys(MEDAL_ASSETS);
 // Six boundary landmarks of the original orthographic engraving atlas (1254²).
 // Clockwise in the image, counter-clockwise in model space, starting at the tip.
 const ATLAS_CORNERS = {
@@ -20,8 +21,8 @@ function polygon(points) {
 // The face is a sampled die relief: 55,296 triangles, not a flat image plane.
 // Artwork supplies fine engraving; its luminance supplies actual shallow height.
 // Independent solid rim, reeds, reverse and working pin supply the object structure.
-function engravedFace(motif,sampleEngraving) {
-  const corners=ATLAS_CORNERS[motif].map(([x,y])=>[x/1254,1-y/1254]);
+function engravedFace(motif,sampleEngraving,faceCorners) {
+  const corners=faceCorners ?? (ATLAS_CORNERS[motif]?.map(([x,y])=>[x/1254,1-y/1254]) ?? [[.5,1],[0,.75],[0,.25],[.5,0],[1,.25],[1,.75]]);
   const center=[corners.reduce((s,p)=>s+p[0],0)/6,corners.reduce((s,p)=>s+p[1],0)/6];
   const edge=hex(1.974),positions=[],uvs=[],indices=[],n=96;
   for(let side=0;side<6;side++){
@@ -29,14 +30,14 @@ function engravedFace(motif,sampleEngraving) {
     for(let i=0;i<=n;i++){
       rows[i]=[];
       for(let j=0;j<=n-i;j++){
-        const wa=i/n,wb=j/n,wc=1-wa-wb;
+        const wa=i/n,wb=j/n,wc=Math.max(0,1-wa-wb);
         const x=a[0]*wa+b[0]*wb,y=a[1]*wa+b[1]*wb;
         const u=ta[0]*wa+tb[0]*wb+center[0]*wc,v=ta[1]*wa+tb[1]*wb+center[1]*wc;
         // Ease the outer shoulder into the milled rim; no disconnected relief edges.
         const shoulder=THREE.MathUtils.smoothstep(wc,0,.035);
         const engraving=THREE.MathUtils.clamp(sampleEngraving?.(u,v)??0,0,1);
         const z=.076+shoulder*(.012+engraving*.036);
-        rows[i][j]=positions.length/3;positions.push(x,y,z);uvs.push(u,v);
+        rows[i][j]=positions.length/3;positions.push(x,y,z);uvs.push(THREE.MathUtils.clamp(u,0,1),THREE.MathUtils.clamp(v,0,1));
       }
     }
     for(let i=0;i<n;i++)for(let j=0;j<n-i;j++){
@@ -48,7 +49,7 @@ function engravedFace(motif,sampleEngraving) {
   const geometry=mergeVertices(raw,.00001);raw.dispose();geometry.computeVertexNormals();return geometry;
 }
 
-export function buildChallengeMedal(motif='summit',{sampleEngraving,artwork}={}) {
+export function buildChallengeMedal(motif='summit',{sampleEngraving,artwork,faceCorners}={}) {
   if(!MEDAL_MOTIFS.includes(motif))throw new Error('Unknown medal motif');
   const root=new THREE.Group();root.name=`challenge-medal-${motif}`;
   const materials={
@@ -101,7 +102,7 @@ export function buildChallengeMedal(motif='summit',{sampleEngraving,artwork}={})
   const pin=new THREE.CylinderGeometry(.017,.017,1.16,24);pin.rotateZ(Math.PI/2);pin.translate(0,.69,-.282);add(pin,'silver');
   const clasp=new THREE.TorusGeometry(.059,.011,10,48,Math.PI*1.7);clasp.rotateY(Math.PI/2);clasp.translate(-.55,.69,-.278);add(clasp,'edge');
   // The edition number also has a tangible indexing mark below the inscription.
-  const ordinal=MEDAL_MOTIFS.indexOf(motif)+1;
+  const ordinal=MEDAL_ASSETS[motif].ordinal;
   for(let i=0;i<ordinal;i++)line([(i-(ordinal-1)/2)*.1,-1.28],[(i-(ordinal-1)/2)*.1,-1.12],.007,-.159,'edge');
   for(const [name,parts] of buckets){
     const flat=parts.map(g=>{const f=g.index?g.toNonIndexed():g.clone();f.deleteAttribute('uv');g.dispose();return f;});
@@ -112,7 +113,7 @@ export function buildChallengeMedal(motif='summit',{sampleEngraving,artwork}={})
     const mesh=new THREE.Mesh(merged,materials[name]);mesh.name=name;mesh.castShadow=true;mesh.receiveShadow=true;root.add(mesh);
   }
   const faceMaterial=new THREE.MeshStandardMaterial({map:artwork??null,color:artwork?'#ffffff':'#244252',metalness:.42,roughness:.48,envMapIntensity:.6});faceMaterial.name='engraving';
-  const face=new THREE.Mesh(engravedFace(motif,sampleEngraving),faceMaterial);face.name='engraved-face';face.castShadow=true;face.receiveShadow=true;root.add(face);
+  const face=new THREE.Mesh(engravedFace(motif,sampleEngraving,faceCorners),faceMaterial);face.name='engraved-face';face.castShadow=true;face.receiveShadow=true;root.add(face);
   root.userData={motif,hasBackPin:true,hasRealDepth:true,design:'engraved-relief-v3',relief:'original-artwork-heightfield'};
   return root;
 }

@@ -69,7 +69,7 @@ export const CHALLENGE_OPERATIONS = [
   },
 ];
 export const CHALLENGE_MEDALS = [
-  { id: 'breach', name: '越界者', english: 'FIRST BREACH', motif: 'breach', condition: '完成任意一项挑战', target: 1, metric: 'clears', inscription: '那条线，是你自己跨过去的。' },
+  { id: 'breach', name: '越界者', english: 'FIRST BREACH', motif: 'breach', condition: '完成任意一项加码行动', target: 1, metric: 'clears', inscription: '那条线，是你自己跨过去的。' },
   { id: 'resolve', name: '淬火意志', english: 'TEMPERED WILL', motif: 'resolve', condition: '完成挑战等级达到 8 的行动', target: 8, metric: 'best', inscription: '阻力留下的刻痕，成了新的锋面。' },
   { id: 'versatile', name: '多面锋芒', english: 'BEYOND ONE PATH', motif: 'versatile', condition: '完成三种不同的挑战项目', target: 3, metric: 'variety', inscription: '你没有停在最熟悉的那个自己。' },
   { id: 'summit', name: '临界之上', english: 'ABOVE THE LIMIT', motif: 'summit', condition: '完成挑战等级达到 12 的行动', target: 12, metric: 'best', inscription: '所有条件都在场，而你完成了。' },

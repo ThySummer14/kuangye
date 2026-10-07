@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "serial": "emulator-5580",
+  "api": "35",
+  "viewport": [
+    412,
+    818
+  ],
+  "cards": 14,
+  "nativeSave": true,
+  "systemBack": true,
+  "keyboardResizes": true,
+  "backupRoundTrip": true,
+  "failedRestoreRolledBack": true,
+  "preRestoreSnapshotRetained": true,
+  "offlineRestart": true,
+  "offline3d": true,
+  "touchRotation": true,
+  "webglReleased": true,
+  "landscape": true,
+  "landscapeMedal": true,
+  "pngExport": true,
+  "errors": []
+}

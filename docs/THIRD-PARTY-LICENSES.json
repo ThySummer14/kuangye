@@ -44,6 +44,15 @@
       "sha256": "117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76"
     },
     {
+      "name": "@capacitor/android",
+      "version": "8.5.2",
+      "license": "MIT",
+      "source": "https://github.com/ionic-team/capacitor",
+      "text": "app/public/licenses/npm-capacitor--android-LICENSE",
+      "sourceFile": "app/node_modules/@capacitor/android/LICENSE",
+      "sha256": "9c6ebf3e5ab832ba4d5af38f340978e1fedbfee6e3d23662dfdb8917a9d864dd"
+    },
+    {
       "name": "@capacitor/core",
       "version": "8.5.2",
       "license": "MIT",

@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, useId } from 'vue';
 import { createMedalViewer } from '../scenes/challenge-medal-viewer.js';
+import { MEDAL_ASSETS } from '../data/challenge-medal-assets.js';
 import ChallengeEmblem from './ChallengeEmblem.vue';
 const props=defineProps({motif:{type:String,default:'summit'},name:String});
 const host=ref(null),failed=ref(false),spinning=ref(false),ready=ref(false),view=ref('front');
@@ -22,7 +23,7 @@ onMounted(start);onBeforeUnmount(()=>{loading?.abort();viewer?.dispose();});
   <div class="medal-viewer" :data-motif="motif" :data-spinning="spinning">
     <div class="medal-viewer-stage">
       <div class="medal-stage-orbit" aria-hidden="true"/>
-      <div class="medal-stage-label"><span>OBJECT / 0{{ ['breach','resolve','versatile','summit'].indexOf(motif)+1 }}</span><span>{{ failed?'图样预览':'360° INSPECTION' }}</span></div>
+      <div class="medal-stage-label"><span>{{ MEDAL_ASSETS[motif]?.series }} / {{ String(MEDAL_ASSETS[motif]?.ordinal).padStart(2,'0') }}</span><span>{{ failed?'图样预览':'360° INSPECTION' }}</span></div>
       <div v-show="!failed" ref="host" class="medal-canvas" tabindex="0" role="region" :aria-label="name+'立体模型'" :aria-describedby="hintId" @keydown="key"/>
       <div v-if="!ready&&!failed" class="medal-loading" role="status"><ChallengeEmblem :motif="motif"/><span>正在展开蚀刻细节…</span></div>
       <div v-if="failed" class="medal-render-fallback"><ChallengeEmblem :motif="motif"/><p>立体预览暂不可用，先看看章的图样。</p><button @click="start">重新加载立体预览</button></div>

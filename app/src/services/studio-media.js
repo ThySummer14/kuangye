@@ -1,4 +1,5 @@
 import { STUDIO_LIMITS } from '../game/studio.js';
+import { exportAndroidFile } from './android.js';
 const loadImage = source => new Promise((resolve, reject) => {
   const image = new Image();
   image.onload = () => resolve(image);
@@ -77,7 +78,8 @@ export async function workCard(work, { includeNote = false } = {}) {
   ctx.textAlign = 'right'; ctx.fillText('从一小步开始。', 1096, 1490);
   return new Promise((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(Error('作品卡片没能生成，请再试一次。')), 'image/png'));
 }
-export function downloadStudioFile(data, name, type) {
+export async function downloadStudioFile(data, name, type) {
+  if (await exportAndroidFile(data, name, type)) return;
   const url = URL.createObjectURL(data instanceof Blob ? data : new Blob([data], { type }));
   const a = document.createElement('a'); a.href = url; a.download = name; a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);

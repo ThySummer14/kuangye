@@ -1,12 +1,16 @@
 async(page)=>{
  const results=[],browser=page.context().browser();
  const assert=(value,label)=>{if(!value)throw Error(label);};
+ const selectContractAlbum=async target=>{
+  await target.getByRole('button',{name:/加码行动\s*06/}).click();
+  await target.locator('.operation-card').first().waitFor();
+ };
  for(const width of [1280,375]){
   const c=await browser.newContext({viewport:{width,height:900},hasTouch:width===375}),p=await c.newPage(),errors=[];
   p.on('pageerror',e=>errors.push(e.message));
   p.on('response',r=>{if(r.status()>=400&&r.url().includes('127.0.0.1:5193'))errors.push(`${r.status()} ${r.url()}`);});
   try{
-   await p.goto('http://127.0.0.1:5193/#challenger');await p.locator('.challenger').waitFor();
+   await p.goto('http://127.0.0.1:5193/#challenger');await p.locator('.challenger').waitFor();await selectContractAlbum(p);
    const saved=await p.evaluate(()=>localStorage.getItem('kuangye.v3'));
    assert(await p.locator('.medal-canvas canvas').count()===0,'gallery allocates WebGL');
    await p.getByRole('button',{name:'旋转观察临界之上蚀刻章',exact:true}).click();
@@ -76,7 +80,7 @@ async(page)=>{
   HTMLCanvasElement.prototype.getContext=function(kind,...args){return /^webgl/.test(kind)?null:original.call(this,kind,...args);};
   window.__restoreMedalContext=()=>{HTMLCanvasElement.prototype.getContext=original;};
  });
- await up.goto('http://127.0.0.1:5193/#challenger');await up.getByRole('button',{name:'旋转观察临界之上蚀刻章',exact:true}).click();
+ await up.goto('http://127.0.0.1:5193/#challenger');await up.locator('.challenger').waitFor();await selectContractAlbum(up);await up.getByRole('button',{name:'旋转观察临界之上蚀刻章',exact:true}).click();
  await up.locator('.medal-render-fallback').waitFor();
  assert(await up.locator('.medal-render-fallback img').evaluate(img=>img.complete&&img.naturalWidth>0),'WebGL unavailable fallback missing');
  await up.evaluate(()=>window.__restoreMedalContext());await up.getByRole('button',{name:'重新加载立体预览',exact:true}).click();
@@ -87,7 +91,7 @@ async(page)=>{
  await lp.addInitScript(()=>{const original=HTMLCanvasElement.prototype.getContext;window.__medalGLCalls=0;HTMLCanvasElement.prototype.getContext=function(kind,...args){if(/^webgl/.test(kind))window.__medalGLCalls++;return original.call(this,kind,...args);};});
  let release;
  await lp.route('**/challenger/engraving-atlas.png',route=>new Promise(resolve=>{release=async()=>{await route.continue();resolve();};}));
- await lp.goto('http://127.0.0.1:5193/#challenger');
+ await lp.goto('http://127.0.0.1:5193/#challenger');await lp.locator('.challenger').waitFor();await selectContractAlbum(lp);
  const before=await lp.evaluate(()=>window.__medalGLCalls);
  await lp.getByRole('button',{name:'旋转观察临界之上蚀刻章',exact:true}).click();await lp.locator('.medal-loading').waitFor();
  assert(await lp.locator('.medal-viewer-controls button:not(:disabled)').count()===0,'loading controls accept misleading actions');
@@ -98,7 +102,7 @@ async(page)=>{
  results.push({width:375,status:'PASS',closedDuringArtworkLoad:true,noLateWebGLAllocation:true});
  const missing=await browser.newContext({viewport:{width:375,height:900}}),mp=await missing.newPage();let block=true;
  await mp.route('**/challenger/engraving-atlas.png',route=>block?route.abort():route.continue());
- await mp.goto('http://127.0.0.1:5193/#challenger');await mp.getByRole('button',{name:'旋转观察临界之上蚀刻章',exact:true}).click();
+ await mp.goto('http://127.0.0.1:5193/#challenger');await mp.locator('.challenger').waitFor();await selectContractAlbum(mp);await mp.getByRole('button',{name:'旋转观察临界之上蚀刻章',exact:true}).click();
  await mp.locator('.medal-render-fallback').waitFor();block=false;
  await mp.getByRole('button',{name:'重新加载立体预览',exact:true}).click();await mp.locator('.medal-canvas[data-ready=true]').waitFor();await missing.close();
  results.push({width:375,status:'PASS',artworkFailureFallback:true,artworkRetry:true});

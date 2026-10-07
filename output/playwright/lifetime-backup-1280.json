@@ -1,0 +1,190 @@
+{
+  "app": "kuangye",
+  "version": 3,
+  "exportedAt": "2026-10-07T13:28:16.723Z",
+  "state": {
+    "customTasks": [
+      {
+        "challenge": {
+          "version": 2,
+          "album": "lifetime",
+          "operationId": "life-math",
+          "title": "学习数学",
+          "objective": "完成自己为这次数学挑战定下的学习目标。",
+          "definition": "学会导数的定义，能独立解释变化率并解出教材练习。"
+        },
+        "id": "personal-2da7363b-bc99-4b69-9e02-cd2dc12d6e27",
+        "title": "学习数学",
+        "desc": "完成自己为这次数学挑战定下的学习目标。",
+        "cat": "mind",
+        "type": "once",
+        "diff": "E",
+        "tier": "personal",
+        "personal": true
+      },
+      {
+        "challenge": {
+          "version": 2,
+          "album": "lifetime",
+          "operationId": "life-novel",
+          "title": "自己写一本小说",
+          "objective": "写完一本属于自己的小说，让故事走到结尾。",
+          "definition": "写完我一直想写的故事。"
+        },
+        "id": "personal-767c118e-bfb1-4240-b200-89ff79e6744a",
+        "title": "自己写一本小说",
+        "desc": "写完一本属于自己的小说，让故事走到结尾。",
+        "cat": "create",
+        "type": "once",
+        "diff": "E",
+        "tier": "personal",
+        "personal": true
+      },
+      {
+        "challenge": {
+          "version": 2,
+          "album": "lifetime",
+          "operationId": "life-vocal",
+          "title": "制作一首术曲",
+          "objective": "制作完成一首自己的术曲。"
+        },
+        "id": "personal-d19eab1f-8c68-4eb6-b43e-8fa4c7c80ed0",
+        "title": "制作一首术曲",
+        "desc": "制作完成一首自己的术曲。",
+        "cat": "create",
+        "type": "once",
+        "diff": "E",
+        "tier": "personal",
+        "personal": true
+      },
+      {
+        "challenge": {
+          "version": 2,
+          "album": "lifetime",
+          "operationId": "life-compose",
+          "title": "编一首曲",
+          "objective": "完成一首自己的曲子。"
+        },
+        "id": "personal-34f0f2b1-d5dd-45c2-977d-70b136d24e62",
+        "title": "编一首曲",
+        "desc": "完成一首自己的曲子。",
+        "cat": "create",
+        "type": "once",
+        "diff": "E",
+        "tier": "personal",
+        "personal": true
+      },
+      {
+        "challenge": {
+          "version": 2,
+          "album": "lifetime",
+          "operationId": "life-novel",
+          "title": "自己写一本小说",
+          "objective": "写完一本属于自己的小说，让故事走到结尾。",
+          "definition": "写到我认可的结尾。"
+        },
+        "id": "personal-16a29b7e-6329-431b-8160-88e0646bee0c",
+        "title": "自己写一本小说",
+        "desc": "写完一本属于自己的小说，让故事走到结尾。",
+        "cat": "create",
+        "type": "once",
+        "diff": "E",
+        "tier": "personal",
+        "personal": true
+      }
+    ],
+    "active": [
+      {
+        "qid": "personal-d19eab1f-8c68-4eb6-b43e-8fa4c7c80ed0",
+        "start": "2026-10-07",
+        "logs": [],
+        "shields": 2
+      },
+      {
+        "qid": "personal-34f0f2b1-d5dd-45c2-977d-70b136d24e62",
+        "start": "2026-10-07",
+        "logs": [],
+        "shields": 2
+      },
+      {
+        "qid": "personal-16a29b7e-6329-431b-8160-88e0646bee0c",
+        "start": "2026-10-07",
+        "logs": [],
+        "shields": 2
+      }
+    ],
+    "done": [
+      {
+        "qid": "personal-2da7363b-bc99-4b69-9e02-cd2dc12d6e27",
+        "xp": 0,
+        "at": "2026-10-07",
+        "review": "测试：完成导数学习，独立解释了变化率。",
+        "units": [],
+        "logs": []
+      }
+    ],
+    "abandoned": [
+      {
+        "qid": "personal-767c118e-bfb1-4240-b200-89ff79e6744a",
+        "reason": "测试：以后回来继续。",
+        "at": "2026-10-07"
+      }
+    ],
+    "home": {
+      "room": {
+        "w": 6,
+        "d": 6
+      },
+      "town": {
+        "exterior": {
+          "wall": "cream",
+          "roof": "clay",
+          "door": "oak",
+          "porch": "open",
+          "path": "stone"
+        },
+        "yard": [],
+        "library": 0
+      },
+      "reading": {
+        "books": []
+      },
+      "inquiry": {
+        "pages": []
+      },
+      "studio": {
+        "works": [],
+        "displayId": ""
+      },
+      "observations": {
+        "entries": []
+      },
+      "observationWorks": [],
+      "visits": [],
+      "decor": {
+        "wall": "meadow",
+        "floor": "oak",
+        "atmosphereVersion": 1,
+        "weather": "auto",
+        "light": "auto"
+      },
+      "moments": [],
+      "lumens": 0,
+      "earned": 0,
+      "spent": 0,
+      "refunded": 0,
+      "glimmerDays": [
+        "2026-10-07"
+      ],
+      "glimmerPaid": 0,
+      "inventory": [],
+      "placed": [],
+      "boundMemories": [],
+      "gifts": [],
+      "nextId": 1
+    },
+    "settings": {
+      "devDate": ""
+    }
+  }
+}

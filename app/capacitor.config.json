@@ -2,5 +2,6 @@
   "appId": "dev.kuangye.prototype",
   "appName": "旷野",
   "webDir": "dist",
-  "ios": { "contentInset": "never" }
+  "ios": { "contentInset": "never" },
+  "android": { "loggingBehavior": "none" }
 }

@@ -45,6 +45,8 @@ const validTabs = [
   "atelier",
   "challenger",
 ];
+const challengerCollection = ref('lifetime');
+function openChallenger(album) { challengerCollection.value = album === 'challenger' ? 'contract' : 'lifetime'; navigate('challenger'); }
 const tab = ref(
     validTabs.includes(location.hash.slice(1)) ? location.hash.slice(1) : "map",
   ),
@@ -204,7 +206,7 @@ async function takeMapTask() {
   const action = nextAction.value;
   if (!action) return;
   if (action.kind === "active") {
-    if (action.task.challenge) { navigate("challenger"); return; }
+    if (action.task.challenge) { openChallenger(action.task.challenge.album); return; }
     navigate("tasks");
     await nextTick();
     const card = [...document.querySelectorAll('[data-active-task]')].find(el => el.dataset.activeTask === action.active.qid);
@@ -357,7 +359,7 @@ async function takeMapTask() {
         @library="openLibrary"
         @entry-used="consumeQuestSuggestion"
         @studio="openStudio"
-        @challenger="tab = 'challenger'"
+        @challenger="openChallenger($event)"
       />
       <HomeView :return-furniture="returnFurniture" :focus-work="showHomeWork" @memory="openFurnitureMemory"
         v-else-if="tab === 'home'"
@@ -366,7 +368,7 @@ async function takeMapTask() {
         @toast="toast"
         @studio="openStudio"
       />
-      <ChallengerView v-else-if="tab === 'challenger'" @back="navigate('tasks')" @complete="completing=$event" @abandon="abandoning=$event" @toast="toast" />
+      <ChallengerView :initial-collection="challengerCollection" v-else-if="tab === 'challenger'" @back="navigate('tasks')" @complete="completing=$event" @abandon="abandoning=$event" @toast="toast" />
       <StudioView v-else-if="tab === 'atelier'" :focus-work="studioTarget" :album="studioAlbum" @complete="completing=$event" @abandon="abandoning=$event" @home="visitStudioHome" @visits="openLibrary('visits')" @observation="openObservationBook" @toast="toast" />
       <WoodshopView v-else-if="tab === 'woodshop'" @toast="toast" />
       <YardView v-else-if="tab === 'yard'" :desk="yardDesk" :focus-observation="observationTarget" @home="tab = 'home'" @toast="toast" @journal="memoryTarget=null; tab='panel'" @outside="visitOutsideTasks" @studio="openStudio" />
@@ -408,7 +410,7 @@ async function takeMapTask() {
       @done="toast"
       @shop="tab = 'shop'"
       @map="finishToMap"
-      @challenger="tab = 'challenger'"
+      @challenger="openChallenger($event)"
       @library="openLibrary('reading')"
       @studio="openStudio"
     /><AbandonModal

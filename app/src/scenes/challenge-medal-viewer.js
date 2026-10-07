@@ -2,9 +2,15 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { buildChallengeMedal, disposeChallengeMedal } from './challenge-medals.js';
 
-let artworkSource;
-function loadArtwork() {
-  if(!artworkSource)artworkSource=new Promise((resolve,reject)=>{
+import { MEDAL_ASSETS } from '../data/challenge-medal-assets.js';
+const artworkSources=new Map();
+function loadArtwork(motif) {
+  const asset=MEDAL_ASSETS[motif];
+  if(!asset)throw new Error('Unknown medal motif');
+  const key=asset.artwork;
+  if(!artworkSources.has(key)){
+    if(artworkSources.size>=3)artworkSources.delete(artworkSources.keys().next().value);
+    artworkSources.set(key,new Promise((resolve,reject)=>{
     const image=new Image();
     image.onload=()=>{
       try{
@@ -17,13 +23,23 @@ function loadArtwork() {
           const x=THREE.MathUtils.clamp(u*(image.width-1),0,image.width-2),y=THREE.MathUtils.clamp((1-v)*(image.height-1),0,image.height-2),ix=Math.floor(x),iy=Math.floor(y),fx=x-ix,fy=y-iy;
           return THREE.MathUtils.lerp(THREE.MathUtils.lerp(value(ix,iy),value(ix+1,iy),fx),THREE.MathUtils.lerp(value(ix,iy+1),value(ix+1,iy+1),fx),fy);
         };
-        resolve({image,sample});
+        let faceCorners;
+        if(asset.series==='LC'){
+          // Find the opaque medal boundary; ignore faint transparent edge halos.
+          let left=image.width,right=0,top=image.height,bottom=0;
+          for(let y=0;y<image.height;y++)for(let x=0;x<image.width;x++)if(pixels[(y*image.width+x)*4+3]>230){left=Math.min(left,x);right=Math.max(right,x);top=Math.min(top,y);bottom=Math.max(bottom,y);}
+          if(right<=left||bottom<=top)throw new Error('Empty medal artwork');
+          const cx=(left+right)/2,h=bottom-top;
+          faceCorners=[[cx,top],[left,top+h*.25],[left,bottom-h*.25],[cx,bottom],[right,bottom-h*.25],[right,top+h*.25]].map(([x,y])=>[x/image.width,1-y/image.height]);
+        }
+        resolve({image,sample,faceCorners});
       }catch(error){reject(error);}
     };
     image.onerror=()=>reject(new Error('Medal artwork could not be loaded'));
-    image.src=`${import.meta.env.BASE_URL}challenger/engraving-atlas.png`;
-  }).catch(error=>{artworkSource=undefined;throw error;});
-  return artworkSource;
+    image.src=`${import.meta.env.BASE_URL}${key}`;
+  }).catch(error=>{artworkSources.delete(key);throw error;}));
+  }
+  return artworkSources.get(key);
 }
 
 function studioEnvironment() {
@@ -49,14 +65,14 @@ function grainTexture() {
   const t=new THREE.CanvasTexture(canvas);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(2,2);return t;
 }
 function backInscription(motif) {
-  const n=['breach','resolve','versatile','summit'].indexOf(motif)+1;
+  const asset=MEDAL_ASSETS[motif],n=String(asset.ordinal).padStart(2,'0');
   const c=document.createElement('canvas');c.width=512;c.height=512;
   const x=c.getContext('2d');x.clearRect(0,0,512,512);x.textAlign='center';
   x.strokeStyle='#a49471';x.lineWidth=2;x.strokeRect(50,48,412,370);
-  x.fillStyle='#e0ce9c';x.font='22px monospace';x.fillText('THE CHALLENGER',256,107);
-  x.font='bold 104px monospace';x.fillText(`0${n}`,256,227);
+  x.fillStyle='#e0ce9c';x.font='22px monospace';x.fillText(asset.series==='LC'?'THE LONG WAY':'THE CHALLENGER',256,107);
+  x.font='bold 104px monospace';x.fillText(n,256,227);
   x.font='20px monospace';x.fillText('ON YOUR TERMS.',256,289);
-  x.font='17px monospace';x.fillText(`KY / CH-0${n}`,256,344);
+  x.font='17px monospace';x.fillText(`KY / ${asset.series}-${n}`,256,344);
   for(let i=0;i<27;i++)x.fillRect(137+i*9,373, i%3===0 ? 4:1,18);
   const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;
   const m=new THREE.Mesh(new THREE.PlaneGeometry(.93,.93),new THREE.MeshStandardMaterial({map:t,transparent:true,roughness:.6,metalness:.15,emissive:'#7f724d',emissiveIntensity:.2,depthWrite:false}));
@@ -64,7 +80,7 @@ function backInscription(motif) {
 }
 
 export async function createMedalViewer(host,{motif='summit',autoRotate=false,onInteraction=()=>{},onError=()=>{},onChange=()=>{},capture=false,signal}={}) {
-  const source=await loadArtwork();
+  const source=await loadArtwork(motif);
   if(signal?.aborted)throw new DOMException('Medal viewer closed','AbortError');
   let renderer,controls,environment,observer,intersection,model,raf=0,disposed=false,last=0,visible=true;
   const scene=new THREE.Scene();
@@ -122,7 +138,7 @@ export async function createMedalViewer(host,{motif='summit',autoRotate=false,on
     try{environment=pmrem.fromScene(room,.04);}finally{room.traverse(o=>{o.geometry?.dispose();o.material?.dispose();});room.clear();pmrem.dispose();}
     scene.environment=environment.texture;scene.environmentIntensity=1.05;
     const artwork=new THREE.Texture(source.image);artwork.colorSpace=THREE.SRGBColorSpace;artwork.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());artwork.needsUpdate=true;
-    model=buildChallengeMedal(motif,{artwork,sampleEngraving:source.sample});model.add(backInscription(motif));scene.add(model);
+    model=buildChallengeMedal(motif,{artwork,sampleEngraving:source.sample,faceCorners:source.faceCorners});model.add(backInscription(motif));scene.add(model);
     const grain=grainTexture();model.traverse(o=>{if(o.isMesh&&['silver','edge','armor','copper'].includes(o.material.name)){o.material.bumpMap=grain;o.material.bumpScale=.0012;o.material.needsUpdate=true;}});
     controls=new OrbitControls(camera,renderer.domElement);controls.enablePan=false;controls.enableDamping=false;controls.minDistance=4.7;controls.maxDistance=12;controls.minPolarAngle=.16;controls.maxPolarAngle=Math.PI-.16;controls.rotateSpeed=.7;controls.zoomSpeed=.65;
     controls.addEventListener('change',changed);
@@ -132,6 +148,6 @@ export async function createMedalViewer(host,{motif='summit',autoRotate=false,on
     observer=new ResizeObserver(resize);observer.observe(host);
     intersection=new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;schedule();});intersection.observe(host);
     resize();pose();spin(autoRotate&&!reduced.matches);host.dataset.ready='true';
-    return {dispose,pose,orbit,zoom,spin,draw,capture:()=>{draw();return renderer.domElement.toDataURL('image/png');}};
+    return {dispose,pose,orbit,zoom,spin,draw,capture:(format='image/png',quality)=>{draw();return renderer.domElement.toDataURL(format,quality);}};
   }catch(error){dispose();throw error;}
 }

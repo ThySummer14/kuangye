@@ -5,3 +5,6 @@ dist/
 *.log
 
 .playwright-cli/
+
+.android-qa/
+output/android/*.apk

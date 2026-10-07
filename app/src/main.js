@@ -3,6 +3,7 @@ import { initializeNativeStorage, nativePlatform } from './services/native.js'
 import './style.css'
 import './world.css'
 import './theme.css'
+import './android.css'
 
 // App.vue (and therefore store.js) must not be evaluated until the storage
 // driver holds the restored save: the store snapshots state at module load.

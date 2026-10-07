@@ -10,6 +10,7 @@ import {
   lifeMetrics,
   exportData,
   importData,
+  waitForSave,
   buddyMoment,
 } from "../store.js";
 import { CATS, METRICS } from "../data/tasks.js";
@@ -19,12 +20,14 @@ import JournalMemories from "./JournalMemories.vue";
 import GatheredDays from "./GatheredDays.vue";
 import EtchingCabinet from "./EtchingCabinet.vue";
 import { parseImport } from '../game/save.js';
+import { exportAndroidFile } from "../services/android.js";
 import { nativePlatform, exportBackup, pickBackup } from "../services/backup.js";
 const props=defineProps({focusMemory:Object});
 const view = ref('journal');
 const emit = defineEmits(["toast", "chains", "library", "back-furniture", "resume", "studio", "visits", "observation"]),
   file = ref(null),
   pendingImport = ref(""),
+  restoring = ref(false),
   importSummary = ref("");
 const observations=computed(()=>observationEntries(state.home.observations));
 const portfolio = computed(() => state.home.studio.works.filter(work => studioStatus(work,state)==='done'));
@@ -44,14 +47,16 @@ async function backup({ interactive = true } = {}) {
   if (nativePlatform) {
     try {
       await exportBackup(backupName(), text, { interactive });
-      if (interactive) emit("toast", "备份已存入「文件」，也可以分享到其他应用");
+      if (interactive) emit("toast", "备份已保存到所选位置");
+      return true;
     } catch (err) {
       emit("toast", "未能导出备份：" + err.message);
+      return false;
     }
-    return;
   }
   download(text, backupName());
   if (interactive) emit("toast", "已导出任务与小家备份");
+  return true;
 }
 async function importBackup() {
   if (!nativePlatform) {
@@ -81,17 +86,27 @@ async function readFile(e) {
     emit("toast", "未能读取备份：" + err.message);
   }
 }
-function restore() {
+async function restore() {
+  if (restoring.value) return;
+  restoring.value = true;
+  const original = exportData();
+  let applied = false;
   try {
-    backup({ interactive: false });
+    if (!await backup({ interactive: false })) throw Error("未能保留当前进度，已取消恢复");
     importData(pendingImport.value);
+    applied = true;
+    await waitForSave();
     pendingImport.value = "";
     emit("toast", "备份已恢复，原进度也已自动导出");
   } catch (err) {
+    if (applied) {
+      importData(original);
+      try { await waitForSave(); } catch { /* Original remains in memory and in the exported safety copy. */ }
+    }
     emit("toast", "导入失败：" + err.message);
-  }
+  } finally { restoring.value = false; }
 }
-function report() {
+async function report() {
   const lines = [
     "旷野 · 小家的成长报告",
     new Date().toLocaleDateString("zh-CN"),
@@ -113,7 +128,10 @@ function report() {
           `${furnitureById[i.fid].name}：${taskById[i.memory.qid]?.title} / ${i.memory.review}`,
       ),
   ];
-  download(lines.join("\n"), "旷野-成长报告.txt", "text/plain;charset=utf-8");
+  try {
+    if (!await exportAndroidFile(lines.join("\n"), "旷野-成长报告.txt", "text/plain"))
+      download(lines.join("\n"), "旷野-成长报告.txt", "text/plain;charset=utf-8");
+  } catch (error) { emit("toast", error.message); return; }
   buddyMoment("proud", 3000, "你看，我们一起走了这么远。");
 }
 </script>
@@ -215,8 +233,8 @@ function report() {
             此备份含
             {{ importSummary }}。恢复会替换当前进度，我们会先自动导出原进度。
           </p>
-          <button class="primary-button" @click="restore">恢复这份备份</button
-          ><button class="text-button" @click="pendingImport = ''">取消</button>
+          <button class="primary-button" :disabled="restoring" @click="restore">{{ restoring ? "正在保存与恢复…" : "恢复这份备份" }}</button
+          ><button class="text-button" :disabled="restoring" @click="pendingImport = ''">取消</button>
         </div>
       </section>
     </section>

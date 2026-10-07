@@ -1,0 +1,259 @@
+
+> android:build
+> node scripts/build-android.mjs
+
+
+> build
+> npm --prefix app run build && node scripts/stage-site.mjs
+
+
+> kuangye@0.1.0 build
+> vite build
+
+vite v6.4.3 building for production...
+transforming...
+✓ 208 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/emotion-lab.html                              1.04 kB │ gzip:  0.45 kB
+dist/index.html                                    1.33 kB │ gzip:  0.78 kB
+dist/assets/topo-CDOiOJGA.svg                      8.69 kB │ gzip:  3.69 kB
+dist/assets/SproutPortrait-DVcrL5WK.css            0.08 kB │ gzip:  0.10 kB
+dist/assets/WorldScene-BAXhxcUo.css                0.34 kB │ gzip:  0.24 kB
+dist/assets/StudioWorkPreview-CMOS8w4I.css         0.90 kB │ gzip:  0.41 kB
+dist/assets/TownScene-BpoCi6yN.css                 0.98 kB │ gzip:  0.43 kB
+dist/assets/ShopView-BhYSV5nn.css                  1.25 kB │ gzip:  0.48 kB
+dist/assets/HomeView-TKpLYD3p.css                  1.42 kB │ gzip:  0.57 kB
+dist/assets/ObservationCraftDialog-XOM7hKQC.css    1.69 kB │ gzip:  0.66 kB
+dist/assets/FurnitureDetail-B2RLF9mi.css           2.38 kB │ gzip:  0.82 kB
+dist/assets/ChallengeMedalViewer-BS0UVHd6.css      3.55 kB │ gzip:  1.13 kB
+dist/assets/lab-DyDmiaLS.css                       4.90 kB │ gzip:  1.64 kB
+dist/assets/WoodshopView-DmUMzyID.css              4.91 kB │ gzip:  1.44 kB
+dist/assets/ChallengerView-BgNWFb04.css           11.69 kB │ gzip:  3.10 kB
+dist/assets/StudioView-C2QSSUli.css               12.79 kB │ gzip:  2.64 kB
+dist/assets/YardView-BQIUO433.css                 14.56 kB │ gzip:  3.01 kB
+dist/assets/LibraryView-CKtjuPwM.css              23.23 kB │ gzip:  4.36 kB
+dist/assets/App-9t7feo6E.css                      77.17 kB │ gzip: 15.49 kB
+dist/assets/main-DJ5wWALw.css                     99.78 kB │ gzip: 21.86 kB
+dist/assets/FurnitureImage-bXJg59gO.js             0.59 kB │ gzip:  0.40 kB
+dist/assets/modulepreload-polyfill-B5Qt9EMX.js     0.71 kB │ gzip:  0.40 kB
+dist/assets/StudioWorkPreview-DwrfNXHK.js          1.01 kB │ gzip:  0.70 kB
+dist/assets/RoundedBoxGeometry-C65t6yE_.js         1.76 kB │ gzip:  0.83 kB
+dist/assets/TownScene-DFG4hwNv.js                  3.22 kB │ gzip:  1.82 kB
+dist/assets/FurnitureDetail-DzCoYTBK.js            4.28 kB │ gzip:  2.33 kB
+dist/assets/WoodshopView-BR4GlZA9.js               4.96 kB │ gzip:  2.42 kB
+dist/assets/WorldScene-DkYx6Dc5.js                 5.06 kB │ gzip:  2.74 kB
+dist/assets/BufferGeometryUtils-Dtab6tRo.js        5.30 kB │ gzip:  1.73 kB
+dist/assets/ShopView-Ouc39UVn.js                   5.39 kB │ gzip:  2.80 kB
+dist/assets/mascot-model-BGS7jEzk.js               6.58 kB │ gzip:  3.03 kB
+dist/assets/SproutPortrait-pDm3UAGd.js             8.72 kB │ gzip:  4.44 kB
+dist/assets/ObservationCraftDialog-D-Y6k0gB.js     9.86 kB │ gzip:  4.91 kB
+dist/assets/lab-XZXOoG-i.js                        9.93 kB │ gzip:  4.53 kB
+dist/assets/furniture-_Ew6lvJ4.js                 10.16 kB │ gzip:  4.49 kB
+dist/assets/StudioView-BOuxkB4h.js                21.32 kB │ gzip:  8.50 kB
+dist/assets/YardView-D8TNaqA2.js                  23.18 kB │ gzip:  9.09 kB
+dist/assets/ChallengerView-BS0BymsN.js            26.49 kB │ gzip:  8.85 kB
+dist/assets/HomeView-CeoW24bn.js                  27.88 kB │ gzip: 12.43 kB
+dist/assets/world-CtNlh52B.js                     32.90 kB │ gzip: 13.44 kB
+dist/assets/ChallengeMedalViewer-DjVy-rnp.js      36.36 kB │ gzip: 11.95 kB
+dist/assets/LibraryView-BIutvKjV.js               38.00 kB │ gzip: 13.70 kB
+dist/assets/vue-DHk2Y6MK.js                       70.84 kB │ gzip: 28.11 kB
+dist/assets/main-CffWpJZ8.js                      79.90 kB │ gzip: 32.49 kB
+dist/assets/App-DWza09R1.js                      209.01 kB │ gzip: 80.43 kB
+dist/assets/three-core-DkgqE7PL.js               210.46 kB │ gzip: 58.56 kB
+dist/assets/three-renderer-CPoCzi94.js           349.81 kB │ gzip: 86.17 kB
+✓ built in 1.35s
+
+> check:release
+> npm --prefix app run check:release
+
+
+> kuangye@0.1.0 check:release
+> node ../scripts/check-release-assets.mjs
+
+release assets OK: 24 etchings, 28 runtime packages, Privacy Manifest included
+✔ Copying web assets from dist to android/app/src/main/assets/public in 55.88ms
+✔ Creating capacitor.config.json in android/app/src/main/assets in 924.42μs
+✔ copy android in 60.73ms
+✔ Updating Android plugins in 430.29μs
+✔ update android in 24.37ms
+[info] Sync finished in 0.091s
+
+> Configure project :app
+WARNING: Using flatDir should be avoided because it doesn't support any meta-data formats.
+
+> Configure project :capacitor-cordova-android-plugins
+WARNING: Using flatDir should be avoided because it doesn't support any meta-data formats.
+
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :app:javaPreCompileDebug UP-TO-DATE
+> Task :capacitor-android:preBuild UP-TO-DATE
+> Task :capacitor-android:preDebugBuild UP-TO-DATE
+> Task :capacitor-android:writeDebugAarMetadata UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:preBuild UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:preDebugBuild UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:writeDebugAarMetadata
+> Task :capacitor-android:processDebugNavigationResources UP-TO-DATE
+> Task :app:checkDebugAarMetadata UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:processDebugNavigationResources
+> Task :app:processDebugNavigationResources UP-TO-DATE
+> Task :app:compileDebugNavigationResources UP-TO-DATE
+> Task :app:generateDebugResValues UP-TO-DATE
+> Task :capacitor-android:generateDebugResValues UP-TO-DATE
+> Task :capacitor-android:generateDebugResources UP-TO-DATE
+> Task :capacitor-android:packageDebugResources UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:generateDebugResValues
+> Task :capacitor-cordova-android-plugins:generateDebugResources
+> Task :capacitor-cordova-android-plugins:packageDebugResources
+> Task :app:mapDebugSourceSetPaths UP-TO-DATE
+> Task :app:generateDebugResources UP-TO-DATE
+> Task :app:mergeDebugResources UP-TO-DATE
+> Task :app:packageDebugResources UP-TO-DATE
+> Task :app:parseDebugLocalResources UP-TO-DATE
+> Task :app:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :app:extractDeepLinksDebug UP-TO-DATE
+> Task :capacitor-android:extractDeepLinksDebug UP-TO-DATE
+> Task :capacitor-android:processDebugManifest UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:extractDeepLinksDebug
+> Task :capacitor-android:compileDebugLibraryResources UP-TO-DATE
+> Task :capacitor-android:parseDebugLocalResources UP-TO-DATE
+> Task :capacitor-android:generateDebugRFile UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:processDebugManifest
+> Task :capacitor-cordova-android-plugins:compileDebugLibraryResources
+> Task :app:processDebugMainManifest UP-TO-DATE
+> Task :app:processDebugManifest UP-TO-DATE
+> Task :app:processDebugManifestForPackage UP-TO-DATE
+> Task :capacitor-android:javaPreCompileDebug UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:parseDebugLocalResources
+> Task :capacitor-android:compileDebugJavaWithJavac UP-TO-DATE
+> Task :capacitor-android:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :app:mergeDebugShaders UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:javaPreCompileDebug
+> Task :app:compileDebugShaders NO-SOURCE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :capacitor-android:mergeDebugShaders UP-TO-DATE
+> Task :capacitor-android:compileDebugShaders NO-SOURCE
+> Task :capacitor-android:generateDebugAssets UP-TO-DATE
+> Task :capacitor-android:mergeDebugAssets UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:generateDebugRFile
+> Task :capacitor-cordova-android-plugins:mergeDebugShaders
+> Task :app:processDebugResources UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:compileDebugJavaWithJavac NO-SOURCE
+> Task :capacitor-cordova-android-plugins:compileDebugShaders NO-SOURCE
+> Task :capacitor-cordova-android-plugins:generateDebugAssets UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:bundleLibCompileToJarDebug
+> Task :capacitor-cordova-android-plugins:mergeDebugAssets
+> Task :app:compileDebugJavaWithJavac
+> Task :app:mergeDebugAssets UP-TO-DATE
+> Task :app:compressDebugAssets UP-TO-DATE
+> Task :capacitor-android:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :app:desugarDebugFileDependencies UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:bundleLibRuntimeToJarDebug
+> Task :app:dexBuilderDebug
+> Task :app:processDebugJavaRes NO-SOURCE
+> Task :capacitor-android:processDebugJavaRes NO-SOURCE
+> Task :capacitor-cordova-android-plugins:processDebugJavaRes NO-SOURCE
+> Task :app:mergeDebugGlobalSynthetics UP-TO-DATE
+> Task :app:mergeDebugJavaResource UP-TO-DATE
+> Task :app:checkDebugDuplicateClasses UP-TO-DATE
+> Task :app:mergeExtDexDebug UP-TO-DATE
+> Task :capacitor-android:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:bundleLibRuntimeToDirDebug
+> Task :app:mergeDebugJniLibFolders UP-TO-DATE
+> Task :capacitor-android:mergeDebugJniLibFolders UP-TO-DATE
+> Task :capacitor-android:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-android:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :app:mergeLibDexDebug UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:mergeDebugJniLibFolders
+> Task :capacitor-cordova-android-plugins:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-cordova-android-plugins:copyDebugJniLibsProjectOnly
+> Task :app:mergeDebugNativeLibs NO-SOURCE
+> Task :app:stripDebugDebugSymbols NO-SOURCE
+> Task :app:validateSigningDebug UP-TO-DATE
+> Task :app:writeDebugAppMetadata UP-TO-DATE
+> Task :app:writeDebugSigningConfigVersions UP-TO-DATE
+> Task :capacitor-android:checkDebugAarMetadata UP-TO-DATE
+> Task :capacitor-android:stripDebugDebugSymbols NO-SOURCE
+> Task :capacitor-android:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :app:mergeProjectDexDebug
+> Task :capacitor-android:extractDebugAnnotations UP-TO-DATE
+> Task :capacitor-android:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :capacitor-android:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :capacitor-android:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :capacitor-android:prepareDebugArtProfile UP-TO-DATE
+> Task :capacitor-android:prepareLintJarForPublish UP-TO-DATE
+> Task :capacitor-android:mergeDebugJavaResource UP-TO-DATE
+> Task :capacitor-android:syncDebugLibJars UP-TO-DATE
+> Task :capacitor-android:bundleDebugAar UP-TO-DATE
+> Task :capacitor-android:assembleDebug UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:stripDebugDebugSymbols NO-SOURCE
+> Task :capacitor-cordova-android-plugins:copyDebugJniLibsProjectAndLocalJars
+> Task :capacitor-cordova-android-plugins:checkDebugAarMetadata
+> Task :capacitor-cordova-android-plugins:extractDebugAnnotations
+> Task :capacitor-cordova-android-plugins:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:prepareDebugArtProfile UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:prepareLintJarForPublish UP-TO-DATE
+> Task :capacitor-android:bundleDebugLocalLintAar UP-TO-DATE
+> Task :app:preDebugAndroidTestBuild SKIPPED
+> Task :capacitor-cordova-android-plugins:mergeDebugJavaResource
+> Task :app:generateDebugAndroidTestResValues UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:syncDebugLibJars
+> Task :app:bundleDebugClassesToCompileJar
+> Task :capacitor-cordova-android-plugins:bundleDebugAar
+> Task :capacitor-cordova-android-plugins:assembleDebug
+> Task :capacitor-cordova-android-plugins:bundleDebugLocalLintAar
+> Task :capacitor-android:createFullJarDebug UP-TO-DATE
+> Task :capacitor-android:writeDebugLintModelMetadata UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:createFullJarDebug
+> Task :capacitor-cordova-android-plugins:writeDebugLintModelMetadata
+> Task :app:generateDebugAndroidTestLintModel
+> Task :app:extractProguardFiles UP-TO-DATE
+> Task :capacitor-android:extractProguardFiles UP-TO-DATE
+> Task :capacitor-android:generateDebugLintModel UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:extractProguardFiles
+> Task :capacitor-cordova-android-plugins:generateDebugLintModel
+> Task :app:generateDebugLintReportModel
+> Task :app:preDebugUnitTestBuild UP-TO-DATE
+> Task :app:generateDebugUnitTestLintModel
+> Task :capacitor-android:lintAnalyzeDebug UP-TO-DATE
+> Task :app:packageDebug
+> Task :app:createDebugApkListingFileRedirect UP-TO-DATE
+> Task :app:assembleDebug
+> Task :capacitor-android:preDebugAndroidTestBuild UP-TO-DATE
+> Task :capacitor-android:generateDebugAndroidTestResValues UP-TO-DATE
+> Task :capacitor-android:generateDebugAndroidTestLintModel UP-TO-DATE
+> Task :capacitor-android:preDebugUnitTestBuild UP-TO-DATE
+> Task :capacitor-android:generateDebugUnitTestLintModel UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:preDebugAndroidTestBuild UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:generateDebugAndroidTestResValues
+> Task :capacitor-cordova-android-plugins:generateDebugAndroidTestLintModel
+> Task :capacitor-cordova-android-plugins:preDebugUnitTestBuild UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:generateDebugUnitTestLintModel
+> Task :capacitor-android:generateDebugLintReportModel UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:generateDebugLintReportModel
+> Task :app:lintAnalyzeDebugAndroidTest
+> Task :app:lintAnalyzeDebugUnitTest
+> Task :capacitor-android:lintAnalyzeDebugAndroidTest UP-TO-DATE
+> Task :capacitor-android:lintAnalyzeDebugUnitTest UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:lintAnalyzeDebugAndroidTest
+> Task :capacitor-cordova-android-plugins:lintAnalyzeDebugUnitTest
+> Task :capacitor-android:lintReportDebug UP-TO-DATE
+> Task :capacitor-android:lintDebug
+> Task :capacitor-cordova-android-plugins:lintAnalyzeDebug
+
+> Task :capacitor-cordova-android-plugins:lintReportDebug
+Wrote HTML report to file:///Users/thysummer/工作流/code/旷野/app/android/capacitor-cordova-android-plugins/build/reports/lint-results-debug.html
+
+> Task :capacitor-cordova-android-plugins:lintDebug
+> Task :app:lintAnalyzeDebug
+> Task :app:lintReportDebug UP-TO-DATE
+> Task :app:lintDebug
+
+BUILD SUCCESSFUL in 7s
+132 actionable tasks: 51 executed, 81 up-to-date
+Android preview: /Users/thysummer/工作流/code/旷野/output/android/kuangye-android-preview.apk
+SHA-256: 5ae830e544ea93f91116c4db7151e92e7c73c9b885a96be62708d5b2690767fd

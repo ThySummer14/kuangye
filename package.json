@@ -6,6 +6,7 @@
     "build": "npm --prefix app run build && node scripts/stage-site.mjs",
     "test": "npm --prefix app test",
     "check:release": "npm --prefix app run check:release",
-    "dev": "npm --prefix app run dev"
+    "dev": "npm --prefix app run dev",
+    "android:build": "node scripts/build-android.mjs"
   }
 }

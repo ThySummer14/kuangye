@@ -14,6 +14,10 @@ async (page) => {
       await p.screenshot({path:`output/playwright/challenger-${mode}-${name}-${width}.png`,fullPage:!modal});
     };
     const tab=async(name)=>p.locator('.challenge-tabs').getByRole('button',{name:new RegExp(name)}).click();
+    const selectContractAlbum=async(target=p)=>{
+      await target.getByRole('button',{name:/加码行动\s*06/}).click();
+      await target.locator('.operation-card').first().waitFor();
+    };
     const inspect=async(id)=>{await p.locator(`[data-operation="${id}"]`).click();await p.getByRole('dialog').waitFor();};
     const take=async(id,terms=[])=>{
       await tab('挑战一览');await inspect(id);
@@ -36,7 +40,7 @@ async (page) => {
       await p.locator('[data-place=tasks]').click();await p.locator('.challenger-entry').waitFor();
       await capture('entry');
       const initial=JSON.stringify(await read());
-      await p.locator('.challenger-entry').click();await p.locator('.operation-card').first().waitFor();
+      await p.locator('.challenger-entry').click();await selectContractAlbum();
       check(await p.locator('.operation-card').count()===6,'six operations not available');
       check(JSON.stringify(await read())===initial,'browsing wrote save');
       await p.waitForTimeout(1100);await capture('overview');
@@ -59,7 +63,7 @@ async (page) => {
       check(saved.customTasks[0].challenge.terms.length===3 && saved.home.lumens===0 && saved.done.length===0,'accept not frozen or pays');
       await inspect('prototype');check(await p.getByRole('button',{name:'此项目正在进行'}).isDisabled(),'duplicate project allowed');await p.keyboard.press('Escape');
       await p.getByRole('button',{name:'← 回到地图',exact:true}).click();await p.locator('.world-canvas[data-ready=true]').waitFor();
-      await p.getByRole('button',{name:'打开进行中',exact:true}).click();await p.locator('.challenger').waitFor();
+      await p.getByRole('button',{name:'打开进行中',exact:true}).click();await p.locator('.challenger').waitFor();await selectContractAlbum();
       check(p.url().endsWith('#challenger'),'map active does not return to album');
       await capture('active');
       // Complete via the ordinary task wall too: the same game boundary must hold.
@@ -81,7 +85,7 @@ async (page) => {
       await tab('蚀刻章');check(await p.locator('.challenge-medal.earned').count()===3,'rank12 should earn three medals');await capture('medals-earned');
       await tab('行动档案');check(await p.locator('.challenge-record').count()===1,'record missing');
       await p.locator('.challenge-record summary').click();check(await p.locator('.challenge-record li').count()===4,'frozen terms missing');await capture('records');
-      await p.reload();await p.locator('.challenger').waitFor();check((await read()).done.length===1,'reload lost completion');
+      await p.reload();await p.locator('.challenger').waitFor();await selectContractAlbum();check((await read()).done.length===1,'reload lost completion');
       const second=await take('deep-work',[0]);const third=await take('hard-book');await take('speak');
       const full=JSON.stringify(await read());await inspect('field-study');check(await p.getByRole('button',{name:'手里已经有 3 件事'}).isDisabled(),'fourth challenge allowed');await capture('full',true);await p.keyboard.press('Escape');
       check(JSON.stringify(await read())===full,'full state changed');
@@ -104,9 +108,9 @@ async (page) => {
       check(JSON.stringify(recovered.customTasks)===JSON.stringify(exported.customTasks),'restored challenge snapshots differ');
       check(JSON.stringify(recovered.done)===JSON.stringify(exported.done),'restored history differs');
       check(recovered.abandoned.length===1 && recovered.home.glimmerDays.length===1 && recovered.home.lumens===0,'restore changes economics/history');
-      await restore.goto(origin+'#challenger');await restore.locator('.challenge-tabs').getByRole('button',{name:/蚀刻章/}).click();check(await restore.locator('.challenge-medal.earned').count()===4,'restored medals lost');await restoreContext.close();
+      await restore.goto(origin+'#challenger');await selectContractAlbum(restore);await restore.locator('.challenge-tabs').getByRole('button',{name:/蚀刻章/}).click();check(await restore.locator('.challenge-medal.earned').count()===4,'restored medals lost');await restoreContext.close();
       // No animations remain in the album when the system asks to reduce motion.
-      await p.emulateMedia({reducedMotion:'reduce'});await p.goto(origin+'#challenger');await p.locator('.operation-card').first().waitFor();
+      await p.emulateMedia({reducedMotion:'reduce'});await p.goto(origin+'#challenger');await selectContractAlbum();
       const animated=await p.locator('.challenger').evaluate(el=>el.getAnimations({subtree:true}).filter(a=>a.playState==='running').length);
       check(animated===0,'reduced motion still animates album');
       await inspect('skill');await p.locator('.challenge-terms input').first().check();

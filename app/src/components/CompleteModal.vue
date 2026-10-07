@@ -19,7 +19,7 @@ import { fieldGuide } from "../data/field-guides.js";
 import { taskXp } from "../game/personal-tasks.js";
 import { lumenReward } from "../game/home.js";
 import { studioWorkForTask } from '../game/studio.js';
-import { challengeCriteria, challengeRating, challengeCompletionIssue, challengeHonors } from '../game/challenges.js';
+import { challengeCriteria, challengeRating, challengeCompletionIssue, allChallengeMedals, isLifetimeChallenge } from '../game/challenges.js';
 import ChallengeEmblem from './ChallengeEmblem.vue';
 import '../challenger.css';
 import BuddyFace from "./BuddyFace.vue";
@@ -39,9 +39,9 @@ const task = computed(() => taskById[props.active.qid]),
   glimmer = ref(0);
 async function confirm() {
   const before = state.home.glimmerPaid;
-  const earnedBefore = challenge.value ? challengeHonors(state).medals.filter(m => m.earned).map(m => m.id) : [];
+  const earnedBefore = challenge.value ? allChallengeMedals(state).filter(m => m.earned).map(m => m.id) : [];
   if (complete(props.active, review.value.trim(), confirmed.value)) {
-    if (challenge.value) newMedals.value = challengeHonors(state).medals.filter(m => m.earned && !earnedBefore.includes(m.id));
+    if (challenge.value) newMedals.value = allChallengeMedals(state).filter(m => m.earned && !earnedBefore.includes(m.id));
     glimmer.value = state.home.glimmerPaid - before;
     result.value = true;
     await nextTick();
@@ -117,14 +117,15 @@ function returnToMap() {
       </div></template
     ><template v-else
       ><div class="completion-result">
-        <div v-if="challenge" class="challenge-result"><ChallengeEmblem :motif="newMedals.at(-1)?.motif || 'breach'" /></div>
+        <div v-if="challenge" class="challenge-result"><ChallengeEmblem :motif="newMedals.at(-1)?.motif || (isLifetimeChallenge(challenge)?challenge.operationId:'breach')" /></div>
         <BuddyFace v-else :size="175" mood="celebrate" /><span class="eyebrow"
           >{{ challenge ? "ACTION COMPLETE / 行动完成" : task.personal ? "把这一刻留给自己" : "一点努力，一点光" }}</span
         >
         <h2 v-if="challenge">突破，已刻印。</h2>
         <h2 v-else-if="task.personal" class="personal-completion-heading">你想做的，做到了。</h2>
         <template v-else><h2>＋{{ lumenReward(xp) }} <small>光</small></h2><span class="completion-xp">＋{{ xp }} XP</span></template>
-        <p v-if="challenge" class="challenge-rating-result">挑战等级 {{ String(challengeRating(challenge)).padStart(2,'0') }} / {{ challenge.terms.length }} 条加码</p>
+        <p v-if="isLifetimeChallenge(challenge)" class="challenge-rating-result">人生挑战 / 这一枚，属于你的经历</p>
+        <p v-else-if="challenge" class="challenge-rating-result">挑战等级 {{ String(challengeRating(challenge)).padStart(2,'0') }} / {{ challenge.terms.length }} 条加码</p>
         <p v-if="newMedals.length" class="challenge-earned-result">新蚀刻章：{{ newMedals.map(m=>m.name).join('、') }}</p>
         <h3>{{ task.title }}</h3>
         <p>{{ review || "今天，又为自己完成了一件事。" }}</p>
@@ -146,7 +147,7 @@ function returnToMap() {
       >
         {{ (saveWarning.text || saveWarning.pending) ? "回到地图" : "收好了，回到地图" }}
       </button>
-      <button v-if="challenge" class="text-button completion-shop-link" @click="finish(); emit('challenger')">回挑战者，查看蚀刻章与档案 ↗</button>
+      <button v-if="challenge" class="text-button completion-shop-link" @click="finish(); emit('challenger',challenge.album)">回挑战者，查看蚀刻章与档案 ↗</button>
       <button v-if="task.chain === 'read' && readingMilestones(state.done) > (state.home.town?.library || 0)" class="text-button completion-shop-link" @click="emit('close'); emit('library')">去街角书屋，留下一点变化 ↗</button>
       <button v-if="work" class="text-button completion-shop-link" @click="emit('close'); emit('studio',work.id)">去画室看看这件作品 ↗</button>
       <button

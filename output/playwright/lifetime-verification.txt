@@ -1,0 +1,22 @@
+[
+  {
+    "width": 1280,
+    "status": "PASS",
+    "models": 14,
+    "saveUnchangedDuringInspection": true,
+    "onlyCorrespondingMedal": true,
+    "backupRoundTrip": true,
+    "legacyHonorsUnaffected": true,
+    "errors": []
+  },
+  {
+    "width": 375,
+    "status": "PASS",
+    "models": 14,
+    "saveUnchangedDuringInspection": true,
+    "onlyCorrespondingMedal": true,
+    "backupRoundTrip": true,
+    "legacyHonorsUnaffected": true,
+    "errors": []
+  }
+]

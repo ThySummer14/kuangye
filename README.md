@@ -6,9 +6,11 @@
 
 当前优先让项目好用，暂缓商品化；每次改版通过检查后发布 GitHub Pages。[在线预览](https://thysummer14.github.io/kuangye/) · [直接打开挑战者](https://thysummer14.github.io/kuangye/#challenger)。
 
+Android 可安装预览已接入同一套页面与本地存档：`npm run android:build` 生成 APK，安装、备份和验收说明见 [Android 预览](docs/ANDROID.md)。
+
 ## 可以做什么
 
-- 任务岩壁的「挑战者」专辑提供六项高投入挑战，各有三条自选加码；先看条件再接取，与普通任务共用三个名额。完成时逐项确认并记录实际结果，四枚原创蚀刻章依据真实记录解锁。随时暂放、可重新挑战、无倒计时或额外货币。深色工业界面、等级切换与刻印动效支持 reduced-motion，条件快照随 v3 备份保留。当前为按本轮用户要求开放的预览内容。见 [挑战者调研与规则](docs/CHALLENGER.md)。
+- 任务岩壁的「挑战者」默认展示十四项人生挑战，每项各有独立主题与可旋转浅浮雕章；没有截止日或排名，完成对应目标才刻印。数学可以写下自己的学习范围，其余保持原目标。原六项高投入加码行动仍在专辑内；先看条件再接取，与普通任务共用三个名额。完成时逐项确认并记录实际结果，四枚原创蚀刻章依据真实记录解锁。随时暂放、可重新挑战、无倒计时或额外货币。深色工业界面、等级切换与刻印动效支持 reduced-motion，条件快照随 v3 备份保留。见 [人生挑战](docs/LIFETIME-CHALLENGES.md)与[加码行动规则](docs/CHALLENGER.md)。
 - 地图上的小小画室可以开始自己的作品，带回正文与最多四张本地图片，收好后进入作品集，陈列／收回小家的纸面画框，从成长手记回望，并导出 PNG 卡片或完整 HTML 作品集。三个主题十二次原创练习在本地 DEV 可试用，待审内容不进入正式构建。任务共用三个名额，不另发任务光或 XP；放下时作品仍在，继续保留原任务历史。见 [画室作品集](docs/PORTFOLIO.md)。
 - 书屋的街角来访连接居民故事与真实创作：接下约定、在画室带回成果、明确交回，书屋和地图留下纸牌陈列，成长手记保存来往。第一位居民阿禾与明信片委托为本地待审草稿；已接取故事随备份保留，正式构建仍能继续。见 [街角居民](docs/RESIDENTS.md)。
 - 院子的观察册保存地点、日期与一个具体发现，可带两张本地图片；草稿自动保存，收好后可检索、分类、修订，从成长手记回到原页。记录不占任务名额、不自动完成任务或发奖励，画室与观察册共用图片容量。三个观察起点仅在 DEV 试用，正式构建可以自由记录。见 [院子观察册](docs/OBSERVATIONS.md)。
@@ -80,7 +82,7 @@ npm run build      # 构建 app/dist，再生成 Sites 使用的根 dist
 | `app/src/data/places.js` | 地图场所名称、用途、顶栏标题与线描图标身份 |
 | `app/src/store.js` | 兼容原 API 的响应式状态与任务操作门面 |
 | `app/src/data/challenges.js` / `game/challenges.js` | 挑战项目与加码声明、冻结条件清洗、诚实完成校验、荣誉只读投影 |
-| `app/src/components/ChallengerView.vue` / `ChallengeEmblem.vue` | 挑战专辑与原创 SVG 蚀刻章，不在渲染层结算奖励 |
+| `app/src/components/ChallengerView.vue` / `ChallengeEmblem.vue` | 挑战专辑、模型渲染缩略图与按需 3D 观察器，不在渲染层结算奖励 |
 | `app/src/game/map-recommendation.js` | 方向、时间与日期轮换的只读起步推荐，资格沿用 task-selection |
 | `app/src/game/home.js` | 光结算、微光、购买、铭牌、回收与赠礼 |
 | `app/src/game/reading.js` | 个人书架、书签与摘记，和奖励规则独立 |

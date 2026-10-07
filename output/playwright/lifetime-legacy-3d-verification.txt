@@ -1,0 +1,52 @@
+[
+  {
+    "width": 1280,
+    "status": "PASS",
+    "models": 4,
+    "drag": true,
+    "keyboard": true,
+    "zoom": true,
+    "touchPinch": false,
+    "back": true,
+    "pause": true,
+    "reducedMotion": true,
+    "contextDisposed": true,
+    "contextLossRecovery": true,
+    "saveUnchanged": true,
+    "errors": []
+  },
+  {
+    "width": 375,
+    "status": "PASS",
+    "models": 4,
+    "drag": true,
+    "keyboard": true,
+    "zoom": true,
+    "touchPinch": true,
+    "back": true,
+    "pause": true,
+    "reducedMotion": true,
+    "contextDisposed": true,
+    "contextLossRecovery": true,
+    "saveUnchanged": true,
+    "errors": []
+  },
+  {
+    "width": 375,
+    "status": "PASS",
+    "webglUnavailableFallback": true,
+    "retryAfterRecovery": true
+  },
+  {
+    "width": 375,
+    "status": "PASS",
+    "closedDuringArtworkLoad": true,
+    "noLateWebGLAllocation": true
+  },
+  {
+    "width": 375,
+    "status": "PASS",
+    "artworkFailureFallback": true,
+    "artworkRetry": true
+  }
+]

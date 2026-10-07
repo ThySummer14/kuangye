@@ -1,0 +1,48 @@
+{
+  "results": [
+    {
+      "mode": "dev",
+      "width": 1280,
+      "status": "PASS",
+      "done": 3,
+      "active": 1,
+      "abandoned": 1,
+      "medals": 4,
+      "errors": [],
+      "backupPath": "output/playwright/challenger-dev-backup-1280.json"
+    },
+    {
+      "mode": "dev",
+      "width": 375,
+      "status": "PASS",
+      "done": 3,
+      "active": 1,
+      "abandoned": 1,
+      "medals": 4,
+      "errors": [],
+      "backupPath": "output/playwright/challenger-dev-backup-375.json"
+    },
+    {
+      "mode": "release",
+      "width": 1280,
+      "status": "PASS",
+      "done": 3,
+      "active": 1,
+      "abandoned": 1,
+      "medals": 4,
+      "errors": [],
+      "backupPath": "output/playwright/challenger-release-backup-1280.json"
+    },
+    {
+      "mode": "release",
+      "width": 375,
+      "status": "PASS",
+      "done": 3,
+      "active": 1,
+      "abandoned": 1,
+      "medals": 4,
+      "errors": [],
+      "backupPath": "output/playwright/challenger-release-backup-375.json"
+    }
+  ]
+}

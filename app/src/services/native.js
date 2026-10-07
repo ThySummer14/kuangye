@@ -1,6 +1,7 @@
 import { Capacitor, registerPlugin } from '@capacitor/core';
 import { createFileStorage } from './storage.js';
 import { useStorageDriver } from './persistence.js';
+import { initializeAndroid } from './android.js';
 export const nativePlatform = Capacitor.isNativePlatform();
 export async function initializeNativeStorage() {
   if (!nativePlatform) return;
@@ -12,4 +13,5 @@ export async function initializeNativeStorage() {
   }, localStorage);
   useStorageDriver(driver);
   document.documentElement.classList.add('native-app');
+  initializeAndroid();
 }

@@ -21,9 +21,9 @@ function geometryFingerprint(root) {
   return hash.digest('hex');
 }
 
-test('四种奖章都是有厚度的有限几何，法线有效且按材质合并为少量 draw meshes', () => {
-  assert.equal(MEDAL_MOTIFS.length, 4);
-  assert.equal(new Set(MEDAL_MOTIFS).size, 4);
+test('十八种奖章都是有厚度的有限几何，法线有效且按材质合并为少量 draw meshes', () => {
+  assert.equal(MEDAL_MOTIFS.length, 18);
+  assert.equal(new Set(MEDAL_MOTIFS).size, 18);
   const fingerprints = new Set();
 
   for (const motif of MEDAL_MOTIFS) {
@@ -54,7 +54,7 @@ test('四种奖章都是有厚度的有限几何，法线有效且按材质合�
       disposeChallengeMedal(medal);
     }
   }
-  assert.equal(fingerprints.size, 4, 'each motif should have distinct geometry');
+  assert.equal(fingerprints.size, 14, 'edition indexing produces fourteen distinct solid reverses');
 });
 
 test('释放奖章会 dispose 所有几何、材质和贴图，atlas UV 有效且组节点清空', () => {

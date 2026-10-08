@@ -2,7 +2,9 @@ class_name TownState
 extends RefCounted
 
 const Catalog = preload("res://scripts/catalog.gd")
-const VERSION := 1
+const VERSION := 2
+const Creative = preload("res://scripts/creative.gd")
+var creative := Creative.new()
 var coins := 120 # Isolated prototype allowance, not a production reward or paid currency.
 var inventory: Dictionary = {}
 var placements: Array[Dictionary] = []
@@ -82,7 +84,7 @@ func add_note(text: String, date: String) -> bool:
 
 func serialize() -> Dictionary:
 	return {"version": VERSION, "coins": coins, "inventory": inventory, "placements": placements,
-		"notes": notes, "rewarded_dates": rewarded_dates, "next_id": next_id}
+		"notes": notes, "rewarded_dates": rewarded_dates, "next_id": next_id, "creative":creative.serialize()}
 
 func save_data() -> bool:
 	var file := FileAccess.open(path + ".tmp", FileAccess.WRITE)
@@ -104,10 +106,10 @@ func load_data() -> bool:
 	if parser.parse(FileAccess.get_file_as_string(path)) != OK:
 		return invalid_save()
 	var raw = parser.data
-	if not raw is Dictionary or raw.get("version") != VERSION:
+	if not raw is Dictionary or not is_integer_in_range(raw.get("version"),1,VERSION):
 		return invalid_save()
 	for key in raw:
-		if not ["version","coins","inventory","placements","notes","rewarded_dates","next_id"].has(key):
+		if not ["version","coins","inventory","placements","notes","rewarded_dates","next_id","creative"].has(key):
 			return invalid_save()
 	# Load into a candidate, so a malformed file never partly mutates live progress.
 	var candidate := TownState.new()
@@ -154,6 +156,9 @@ func load_data() -> bool:
 		if not date is String or not is_date(date) or candidate.rewarded_dates.has(date):
 			return invalid_save()
 		candidate.rewarded_dates.append(date)
+	if raw.has("creative") and not candidate.creative.load_data(raw.creative):return invalid_save()
+	if raw.version==VERSION and not raw.has("creative"):return invalid_save()
+	creative=candidate.creative
 	coins = candidate.coins
 	inventory = candidate.inventory
 	placements = candidate.placements
@@ -183,3 +188,12 @@ func is_date(value:String) -> bool:
 func invalid_save() -> bool:
 	last_error = "存档格式无法识别；已保留原文件。"
 	return false
+
+func complete_creative_work(id:String,date:String) -> bool:
+	if not creative.complete_work(id,date):return false
+	# Personal creations award zero XP in main. Share the existing daily light
+	# ledger with quick notes; completing and noting on one day never doubles it.
+	if not rewarded_dates.has(date):
+		rewarded_dates.append(date)
+		coins+=5
+	return true

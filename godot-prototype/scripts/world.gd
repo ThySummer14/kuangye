@@ -153,7 +153,7 @@ func build_town() -> void:
 	for x in [-3.43,-2.57]:
 		Art.box(self,Vector3(x,0.31,2.3),Vector3(0.10,0.63,0.33),"81765b")
 	Art.box(self,Vector3(-3,1.04,2.11),Vector3(1.10,0.38,0.09),"bba078")
-	hotspots.append({"id":"bench","name":"坐一会儿 · 留下一点发现","pos":Vector3(-3,0,3.0),"kind":"note"})
+	hotspots.append({"id":"bench","name":"坐一会儿 · 翻开观察册","pos":Vector3(-3,0,3.0),"kind":"observation"})
 	# Garden boundary collision, separated from decorative terrain.
 	solid(Vector3(-11.6,0.5,-1.5),Vector3(0.4,1,22.8))
 	solid(Vector3(11.6,0.5,-1.5),Vector3(0.4,1,22.8))
@@ -222,7 +222,7 @@ func build_room() -> void:
 				Art.box(self,Vector3(x-0.15,1.56,-1.98),Vector3(0.26,0.34,0.015),"c4ab77")
 			Art.furniture(self,"stool",Vector3(0.1,0,0))
 			Art.planter(self,Vector3(3.6,0,2.8))
-			hotspots.append({"id":"easel","name":"留下一幅生活小记","pos":Vector3(-0.8,0,-0.8),"kind":"note"})
+			hotspots.append({"id":"easel","name":"打开画室作品集","pos":Vector3(-0.8,0,-0.8),"kind":"creative"})
 
 func fireplace(p: Vector3) -> void:
 	var n := Art.group(self,p)
@@ -274,3 +274,20 @@ func update_light_budget(focus: Vector3) -> void:
 		lights[i].visible=i<6
 		if i<6:active+=1
 	light_budget_stats={"available":lights.size(),"active":active,"limit":6}
+
+func show_creation(item:Dictionary) -> void:
+	var old:=get_node_or_null("DisplayedCreation")
+	if old:
+		remove_child(old)
+		old.queue_free()
+	for h in hotspots:
+		if h.id=="desk":
+			h.kind="note" if item.is_empty() else "displayed-work"
+			h.name="整理今天的发现" if item.is_empty() else "翻开「"+str(item.title).left(12)+"」"
+	if location!="home" or item.is_empty():return
+	var n:=Art.group(self,Vector3(2.7,0.45,-2.8))
+	n.name="DisplayedCreation"
+	n.set_meta("creative_display",true)
+	Art.box(n,Vector3(0,0.54,0),Vector3(0.53,0.10,0.40),"d9c694")
+	Art.box(n,Vector3(0,0.60,0),Vector3(0.45,0.025,0.34),"e4dcc2")
+	for i in 4:Art.box(n,Vector3(0,0.62,-0.10+i*0.065),Vector3(0.29,0.005,0.012),"8c8670")

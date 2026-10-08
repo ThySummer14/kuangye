@@ -4,6 +4,8 @@ const State = preload("res://scripts/state.gd")
 const Catalog = preload("res://scripts/catalog.gd")
 const Art = preload("res://scripts/art.gd")
 const World = preload("res://scripts/world.gd")
+const CreativePanel = preload("res://scripts/creative_panel.gd")
+var creative_panel:RefCounted
 var state := State.new()
 var world: TownWorld
 var scene_view: SubViewport
@@ -97,6 +99,7 @@ func _ready() -> void:
 	image.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(image)
 	setup_hud()
+	creative_panel=CreativePanel.new(self)
 	change_location("town")
 	get_viewport().size_changed.connect(layout_ui)
 	get_window().focus_exited.connect(pause_input)
@@ -343,6 +346,7 @@ func change_location(place: String) -> void:
 	setup_navigation()
 	refresh_furniture()
 	world.show_memories(state.notes)
+	world.show_creation(state.creative.work(state.creative.home.studio.displayId))
 	refresh_hud()
 	layout_ui()
 
@@ -610,6 +614,9 @@ func interact() -> void:
 		"door": transition_to(nearby.id)
 		"shop": show_shop()
 		"note": show_note()
+		"observation": creative_panel.book()
+		"creative": creative_panel.studio()
+		"displayed-work": creative_panel.work_page(state.creative.home.studio.displayId)
 
 func transition_to(place: String) -> void:
 	if transitioning:
@@ -700,6 +707,9 @@ func make_modal(title: String) -> VBoxContainer:
 	return v
 
 func close_modal() -> void:
+	var focused:=get_viewport().gui_get_focus_owner()
+	if is_instance_valid(focused) and is_instance_valid(modal) and modal.is_ancestor_of(focused):focused.release_focus()
+	if DisplayServer.has_feature(DisplayServer.FEATURE_VIRTUAL_KEYBOARD):DisplayServer.virtual_keyboard_hide()
 	if is_instance_valid(note_editor):
 		note_draft = note_editor.text
 		if OS.has_feature("mobile"):DisplayServer.virtual_keyboard_hide()
@@ -794,6 +804,7 @@ func show_note() -> void:
 			refresh_hud()
 		else: status("留下一点内容，再收好吧。"))
 	v.add_child(keep)
+	writing_body.add_child(button("观察册与作品集",func():creative_panel.book()))
 	if not state.notes.is_empty():
 		note_history_button=button("翻看生活小记 · %d 条" % state.notes.size(),show_history)
 		v.add_child(note_history_button)

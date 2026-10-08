@@ -1,7 +1,7 @@
 extends RefCounted
 class_name Mascot
 
-const HEIGHT := 0.82
+const HEIGHT := 1.18
 const IMG_BOTTOM := 226.0
 const IMG_SPAN := 137.0
 const SCALE := HEIGHT / IMG_SPAN
@@ -27,20 +27,29 @@ static func create() -> Node3D:
 
 	var shell := MeshInstance3D.new()
 	shell.mesh = body_mesh
-	shell.scale = Vector3(1.09, 1.07, 1.09)
-	var outline := Visuals.flat(Color.html("#6a5348"))
+	shell.scale = Vector3(1.035, 1.028, 1.035)
+	var outline := Visuals.flat(Color.html("#8a6d60"))
 	outline.cull_mode = BaseMaterial3D.CULL_FRONT
+	outline.render_priority = -1
 	shell.material_override = outline
+	shell.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	visual.add_child(shell)
 
 	_horn(visual, 91.0, 87.0, 22.0, 28.0, 18.0)
 	_horn(visual, 174.0, 101.0, 17.0, 20.0, 15.0)
 	_sprout(visual)
-	_eye(visual, -32.0)
-	_eye(visual, 32.0)
-	_blush(visual, -36.0)
-	_blush(visual, 36.0)
-	_mouth(visual)
+	var face := Node3D.new()
+	face.name = "Face"
+	var face_y := (IMG_BOTTOM - 156.0) * SCALE
+	var face_z := _radius_at(156.0) * SCALE * DEPTH
+	face.position = Vector3(0, face_y, face_z * 0.72)
+	face.rotation.x = -1.05
+	visual.add_child(face)
+	_eye(face, -34.0)
+	_eye(face, 34.0)
+	_blush(face, -40.0)
+	_blush(face, 40.0)
+	_mouth(face)
 	_hand(visual, -1.0)
 	_hand(visual, 1.0)
 
@@ -126,15 +135,16 @@ static func _eye(parent: Node3D, ix: float) -> void:
 	mesh.radial_segments = 8
 	mesh.rings = 4
 	mi.mesh = mesh
-	var y := (IMG_BOTTOM - 150.0) * SCALE
-	var z := _radius_at(150.0) * SCALE * DEPTH + 0.012
-	mi.position = Vector3(ix * SCALE, y, z)
-	mi.scale = Vector3(0.12, 0.145, 0.05)
+	mi.position = Vector3(ix * SCALE, 0.03, 0.09)
+	mi.scale = Vector3(0.28, 0.32, 0.08)
 	var mat := Visuals.flat(Color.html("#d9af68"))
 	mat.emission_enabled = true
 	mat.emission = Color.html("#d9af68")
-	mat.emission_energy_multiplier = 0.35
+	mat.emission_energy_multiplier = 0.22
+	mat.render_priority = 2
 	mi.material_override = mat
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mi.sorting_offset = 0.08
 	parent.add_child(mi)
 
 static func _blush(parent: Node3D, ix: float) -> void:
@@ -145,23 +155,30 @@ static func _blush(parent: Node3D, ix: float) -> void:
 	mesh.radial_segments = 8
 	mesh.rings = 3
 	mi.mesh = mesh
-	var y := (IMG_BOTTOM - 168.0) * SCALE
-	var z := _radius_at(168.0) * SCALE * DEPTH + 0.01
-	mi.position = Vector3(ix * SCALE, y, z)
-	mi.scale = Vector3(0.13, 0.085, 0.035)
-	mi.material_override = Visuals.flat(Color.html("#fdd1cf"))
+	mi.position = Vector3(ix * SCALE, -0.07, 0.055)
+	mi.scale = Vector3(0.16, 0.1, 0.04)
+	var mat := Visuals.flat(Color.html("#fdd1cf"))
+	mat.render_priority = 2
+	mi.material_override = mat
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mi.sorting_offset = 0.08
 	parent.add_child(mi)
 
 static func _mouth(parent: Node3D) -> void:
-	var y := (IMG_BOTTOM - 176.0) * SCALE
-	var z := _radius_at(176.0) * SCALE * DEPTH + 0.012
-	var mat := Visuals.flat(Color.html("#d48980"))
+	var mat := Visuals.flat(Color.html("#c46a62"))
+	mat.render_priority = 2
 	var root := Node3D.new()
-	root.position = Vector3(0, y, z)
+	root.position = Vector3(0, -0.12, 0.06)
 	parent.add_child(root)
-	Visuals.box(root, Vector3(-0.035, 0.012, 0), Vector3(0.045, 0.012, 0.012), mat, Vector3(0, 0, 0.5))
-	Visuals.box(root, Vector3(0.0, -0.004, 0), Vector3(0.04, 0.012, 0.012), mat, Vector3(0, 0, -0.15))
-	Visuals.box(root, Vector3(0.035, 0.012, 0), Vector3(0.045, 0.012, 0.012), mat, Vector3(0, 0, -0.5))
+	var specs: Array = [
+		[Vector3(-0.055, 0.016, 0), Vector3(0.07, 0.016, 0.014), Vector3(0, 0, 0.55)],
+		[Vector3(0.0, -0.006, 0), Vector3(0.055, 0.016, 0.014), Vector3(0, 0, -0.1)],
+		[Vector3(0.055, 0.016, 0), Vector3(0.07, 0.016, 0.014), Vector3(0, 0, -0.55)],
+	]
+	for piece in specs:
+		var part := Visuals.box(root, piece[0], piece[1], mat, piece[2])
+		part.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		part.sorting_offset = 0.08
 
 static func _hand(parent: Node3D, side: float) -> void:
 	var mi := MeshInstance3D.new()

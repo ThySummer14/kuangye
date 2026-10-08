@@ -10,6 +10,8 @@ var camera: Camera3D
 var world_env: WorldEnvironment
 var sun: DirectionalLight3D
 var cam_offset := Vector3.ZERO
+var cam_look := Vector3(0, 0.32, 0)
+var cam_fixed := false
 var cam_basis := Basis.IDENTITY
 var places := {}
 var items: Node3D
@@ -34,6 +36,9 @@ var touch_seen := false
 var door_cool := 0.0
 var ui_hits: Array = []
 var coin_label: Label
+var coin_icon: TextureRect
+var build_icon: Texture2D
+var walk_icon: Texture2D
 var build_button: Button
 var near_button: Button
 var shop_panel: PanelContainer
@@ -150,20 +155,20 @@ func _make_env(indoors: bool) -> Environment:
 	sky.sky_material = sky_mat
 	if indoors:
 		env.background_mode = Environment.BG_COLOR
-		env.background_color = Color.html("#b08968")
+		env.background_color = Color.html("#1a1410")
 	else:
 		env.background_mode = Environment.BG_SKY
 		env.sky = sky
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.ambient_light_color = Color.html("#e6d0b0") if indoors else Color.html("#cbb59a")
-	env.ambient_light_energy = 1.05 if indoors else 0.4
+	env.ambient_light_color = Color.html("#a08068") if indoors else Color.html("#cbb59a")
+	env.ambient_light_energy = 0.42 if indoors else 0.4
 	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
-	env.tonemap_exposure = 1.15 if indoors else 0.8
-	env.tonemap_white = 6.0
+	env.tonemap_exposure = 0.8 if indoors else 0.8
+	env.tonemap_white = 4.2 if indoors else 6.0
 	env.glow_enabled = false
 	env.adjustment_enabled = true
-	env.adjustment_contrast = 1.06
-	env.adjustment_saturation = 1.08
+	env.adjustment_contrast = 1.16 if indoors else 1.06
+	env.adjustment_saturation = 1.02 if indoors else 1.08
 	return env
 
 func _build_ui() -> void:
@@ -172,6 +177,12 @@ func _build_ui() -> void:
 	fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	fade.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(fade)
+	coin_icon = TextureRect.new()
+	coin_icon.texture = _coin_texture()
+	coin_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	coin_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	coin_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(coin_icon)
 	coin_label = Label.new()
 	coin_label.position = Vector2(28, 22)
 	coin_label.add_theme_font_size_override("font_size", 34)
@@ -181,7 +192,12 @@ func _build_ui() -> void:
 	coin_label.add_theme_constant_override("shadow_offset_y", 2)
 	add_child(coin_label)
 	ui_hits.append(coin_label)
+	build_icon = _mode_texture(false)
+	walk_icon = _mode_texture(true)
 	build_button = _button("布置")
+	build_button.icon = build_icon
+	build_button.expand_icon = true
+	build_button.alignment = HORIZONTAL_ALIGNMENT_CENTER
 	build_button.pressed.connect(_toggle_build)
 	add_child(build_button)
 	ui_hits.append(build_button)
@@ -261,6 +277,57 @@ func _panel_style(color: Color) -> StyleBoxFlat:
 	style.content_margin_bottom = 8
 	return style
 
+func _park_joystick(s: Vector2) -> void:
+	var d := s.y * 0.2
+	joy_base.size = Vector2(d, d)
+	joy_knob.size = Vector2(d * 0.42, d * 0.42)
+	_paint_circle(joy_base, Color(0.95, 0.86, 0.74, 0.4))
+	_paint_circle(joy_knob, Color(0.98, 0.92, 0.84, 0.82))
+	var origin := Vector2(s.x * 0.1, s.y * 0.78)
+	joy_base.position = origin - joy_base.size * 0.5
+	joy_knob.position = origin - joy_knob.size * 0.5
+	joy_base.visible = true
+	joy_knob.visible = true
+
+func _paint_circle(panel: Panel, color: Color) -> void:
+	var style := panel.get_theme_stylebox("panel") as StyleBoxFlat
+	if style == null:
+		style = StyleBoxFlat.new()
+		panel.add_theme_stylebox_override("panel", style)
+	style.bg_color = color
+	style.set_corner_radius_all(int(maxf(panel.size.x, panel.size.y)))
+
+func _coin_texture() -> Texture2D:
+	var n := 32
+	var img := Image.create(n, n, false, Image.FORMAT_RGBA8)
+	img.fill(Color(0, 0, 0, 0))
+	for y in n:
+		for x in n:
+			var d := Vector2(x - 15.5, y - 16.5).length()
+			if d < 12.5 and d > 9.2:
+				img.set_pixel(x, y, Color.html("#c4923e"))
+			elif d <= 9.2:
+				img.set_pixel(x, y, Color.html("#f0d48a"))
+			if y < 13 and y > 5 and abs(x - 16) <= 1:
+				img.set_pixel(x, y, Color.html("#7dae4a"))
+			if y == 6 and x >= 12 and x <= 20 and abs(x - 16) > 1:
+				img.set_pixel(x, y, Color.html("#c7ef90"))
+	return ImageTexture.create_from_image(img)
+
+func _mode_texture(walking: bool) -> Texture2D:
+	var n := 32
+	var img := Image.create(n, n, false, Image.FORMAT_RGBA8)
+	img.fill(Color(0, 0, 0, 0))
+	var ink := Color.html("#f6ead8")
+	if walking:
+		img.fill_rect(Rect2i(6, 18, 7, 5), ink)
+		img.fill_rect(Rect2i(16, 10, 7, 5), ink)
+	else:
+		for gx in 2:
+			for gy in 2:
+				img.fill_rect(Rect2i(6 + gx * 11, 6 + gy * 11, 8, 8), ink)
+	return ImageTexture.create_from_image(img)
+
 func _circle(diameter: float, color: Color) -> Panel:
 	var panel := Panel.new()
 	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -290,9 +357,16 @@ func _layout_ui() -> void:
 		return
 	var pad := s.y * 0.045
 	var bh := s.y * 0.11
+	var icon := s.y * 0.055
+	coin_icon.position = Vector2(pad, pad * 0.7)
+	coin_icon.size = Vector2(icon, icon)
+	coin_label.position = Vector2(pad + icon + 8, pad * 0.55)
 	coin_label.add_theme_font_size_override("font_size", int(clampf(s.y * 0.05, 22, 54)))
+	build_button.add_theme_constant_override("icon_max_width", int(bh * 0.55))
 	build_button.position = Vector2(s.x - pad - bh * 2.3, s.y - pad - bh)
 	build_button.size = Vector2(bh * 2.1, bh)
+	if stick_id == -1:
+		_park_joystick(s)
 	near_button.position = Vector2(s.x - pad - bh * 1.6, s.y * 0.4)
 	near_button.size = Vector2(bh * 1.5, bh)
 	rotate_button.position = Vector2(s.x - pad - bh * 3.6, s.y - pad - bh)
@@ -371,20 +445,22 @@ func _move_player(pos: Vector3, yaw: float) -> void:
 	player.rotation.y = yaw
 
 func _follow_camera() -> void:
-	var target := player.global_position + Vector3(0, 0.32, 0)
-	var desired := target + cam_offset
+	var anchor := cam_look if cam_fixed else player.global_position + Vector3(0, 0.32, 0)
+	var desired := anchor + cam_offset
 	var pixel := camera.size / float(PIXEL.y)
 	desired.x = round(desired.x / pixel) * pixel
 	desired.y = round(desired.y / pixel) * pixel
 	desired.z = round(desired.z / pixel) * pixel
 	camera.global_transform = Transform3D(cam_basis, desired)
 
-func _apply_rig(offset: Vector3, size: float) -> void:
+func _apply_rig(offset: Vector3, size: float, look := Vector3(0, 0.32, 0), fixed := false) -> void:
 	cam_offset = offset
+	cam_look = look
+	cam_fixed = fixed
 	camera.size = size
-	var target := Vector3(0, 0.32, 0)
-	camera.global_position = target + offset
-	camera.look_at(target, Vector3.UP)
+	var anchor := look if fixed else Vector3(0, 0.32, 0)
+	camera.global_position = anchor + offset
+	camera.look_at(anchor, Vector3.UP)
 	cam_basis = camera.global_transform.basis
 
 func _enter(id: String, do_save: bool) -> void:
@@ -397,13 +473,20 @@ func _enter(id: String, do_save: bool) -> void:
 	_move_player(place.spawn, float(place.yaw))
 	var offset: Vector3 = place.cam_offset
 	var size: float = place.cam_size
+	var look: Vector3 = place.get("cam_look", Vector3(0, 0.32, 0))
+	var fixed: bool = bool(place.get("cam_fixed", false))
 	if id == "home" and build_mode:
 		offset = WorldBuild.BUILD_CAM
 		size = WorldBuild.BUILD_SIZE
-	_apply_rig(offset, size)
-	world_env.environment = _make_env(id != "town")
-	sun.light_energy = 0.72 if id != "town" else 0.66
-	sun.rotation_degrees = Vector3(-42, 70, 0) if id != "town" else Vector3(-48, -28, 0)
+		look = WorldBuild.BUILD_LOOK
+		fixed = true
+	_apply_rig(offset, size, look, fixed)
+	var indoors := id != "town"
+	world_env.environment = _make_env(indoors)
+	sun.light_energy = 0.5 if indoors else 0.66
+	sun.rotation_degrees = Vector3(-54, 36, 0) if indoors else Vector3(-48, -28, 0)
+	sun.shadow_blur = 0.2 if indoors else 1.35
+	sun.shadow_bias = 0.02 if indoors else 0.05
 	if id != "home":
 		build_mode = false
 		shop_open = false
@@ -433,7 +516,10 @@ func _set_build(on: bool) -> void:
 		ghost.visible = false
 		selected_uid = ""
 	if place_id == "home":
-		_apply_rig(WorldBuild.BUILD_CAM if build_mode else WorldBuild.ROOM_CAM, WorldBuild.BUILD_SIZE if build_mode else WorldBuild.ROOM_SIZE)
+		if build_mode:
+			_apply_rig(WorldBuild.BUILD_CAM, WorldBuild.BUILD_SIZE, WorldBuild.BUILD_LOOK, true)
+		else:
+			_apply_rig(WorldBuild.ROOM_CAM, WorldBuild.ROOM_SIZE, WorldBuild.ROOM_LOOK, true)
 	_refresh_ui()
 
 func _open_shop() -> void:
@@ -455,6 +541,7 @@ func _refresh_near() -> void:
 	near_button.visible = show
 	build_button.visible = place_id == "home"
 	build_button.text = "走动" if build_mode else "布置"
+	build_button.icon = walk_icon if build_mode else build_icon
 	rotate_button.visible = build_mode and selected_uid != ""
 	sell_button.visible = build_mode and selected_uid != ""
 	task_row.visible = place_id == "tasks" and not editor_open
@@ -767,14 +854,14 @@ func _compose(which: String) -> void:
 	match which:
 		"town":
 			_enter("town", false)
-			_move_player(Vector3(0.2, 0, 1.72), 0.15)
+			_move_player(Vector3(0.2, 0, 1.72), 0.0)
 		"door":
 			_enter("town", false)
 			_move_player(Vector3(4.38, 0, -2.05), 1.05)
 			Mascot.animate(mascot, true, 1.15)
 		"build":
 			_enter("home", false)
-			_move_player(Vector3(0.62, 0, 0.22), 0.2)
+			_move_player(Vector3(0.15, 0, 0.35), 0.0)
 			_set_build(true)
 		"shop":
 			_enter("home", false)
@@ -785,7 +872,7 @@ func _compose(which: String) -> void:
 		"placed":
 			_enter("home", false)
 			_seed_placed()
-			_move_player(Vector3(0.72, 0, 0.55), 0.25)
+			_move_player(Vector3(0.35, 0, 0.45), 0.0)
 			_close_shop()
 			_set_build(true)
 	_sync_items()

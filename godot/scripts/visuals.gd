@@ -8,7 +8,7 @@ static func shader() -> Shader:
 		_shader = load("res://shaders/soft_lit.gdshader")
 	return _shader
 
-static func lit(color: Color, tex: Texture2D = null, uv_scale := Vector2.ONE, emission := Color(0, 0, 0), emission_strength := 0.0) -> ShaderMaterial:
+static func lit(color: Color, tex: Texture2D = null, uv_scale := Vector2.ONE, emission := Color(0, 0, 0), emission_strength := 0.0, wrap := 0.5, light_cap := 0.7) -> ShaderMaterial:
 	var mat := ShaderMaterial.new()
 	mat.shader = shader()
 	mat.set_shader_parameter("albedo", color)
@@ -18,7 +18,12 @@ static func lit(color: Color, tex: Texture2D = null, uv_scale := Vector2.ONE, em
 		mat.set_shader_parameter("uv_scale", uv_scale)
 	mat.set_shader_parameter("emission_color", emission)
 	mat.set_shader_parameter("emission_strength", emission_strength)
+	mat.set_shader_parameter("wrap", wrap)
+	mat.set_shader_parameter("light_cap", light_cap)
 	return mat
+
+static func room(color: Color, tex: Texture2D = null, uv_scale := Vector2.ONE) -> ShaderMaterial:
+	return lit(color, tex, uv_scale, Color(0, 0, 0), 0.0, 0.16, 0.88)
 
 static func flat(color: Color, alpha := 1.0) -> StandardMaterial3D:
 	var mat := StandardMaterial3D.new()
@@ -71,16 +76,31 @@ static func sphere(parent: Node3D, pos: Vector3, radius: float, mat: Material, s
 	return mi
 
 static func cobble_tex() -> ImageTexture:
-	var n := 64
+	var n := 96
 	var img := Image.create(n, n, false, Image.FORMAT_RGB8)
-	var colors := [Color.html("#8a7564"), Color.html("#9a8672"), Color.html("#746556"), Color.html("#a08b76")]
-	var stone := 8
-	for y in n:
-		for x in n:
-			var c: Color = colors[((x / stone) * 3 + (y / stone) * 5) % colors.size()]
-			if x % stone == 0 or y % stone == 0:
-				c = Color.html("#5c5148")
-			img.set_pixel(x, y, c)
+	var mortar := Color.html("#5a4e44")
+	var stones := [
+		Color.html("#8d7866"), Color.html("#a08b76"), Color.html("#6f5e50"),
+		Color.html("#b39a84"), Color.html("#7d6a58"), Color.html("#967f6c"),
+	]
+	img.fill(mortar)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 14
+	for i in 42:
+		var w := rng.randi_range(7, 16)
+		var h := rng.randi_range(6, 13)
+		var x0 := rng.randi_range(1, n - w - 2)
+		var y0 := rng.randi_range(1, n - h - 2)
+		var tone: Color = stones[rng.randi_range(0, stones.size() - 1)]
+		var chip := rng.randf_range(-0.04, 0.05)
+		for y in h:
+			for x in w:
+				if x == 0 or y == 0 or x == w - 1 or y == h - 1:
+					continue
+				var px := x0 + x
+				var py := y0 + y
+				if img.get_pixel(px, py).is_equal_approx(mortar) or rng.randf() > 0.35:
+					img.set_pixel(px, py, tone.lightened(chip))
 	return ImageTexture.create_from_image(img)
 
 static func path_tex() -> ImageTexture:
@@ -100,15 +120,15 @@ static func plank_tex() -> ImageTexture:
 	var w := 32
 	var h := 32
 	var img := Image.create(w, h, false, Image.FORMAT_RGB8)
-	var bands: Array[Color] = [Color.html("#c9a477"), Color.html("#d3b285"), Color.html("#bd976c")]
+	var bands: Array[Color] = [Color.html("#a67c52"), Color.html("#d7b48a"), Color.html("#7a5438"), Color.html("#c49a6a")]
 	for y in h:
-		var band: Color = bands[int(y / 6) % bands.size()]
+		var band: Color = bands[int(y / 8) % bands.size()]
 		for x in w:
 			var c: Color = band
-			if y % 6 == 0:
-				c = Color.html("#8f6d4c")
-			elif x % 16 == 0 and (y / 6) % 2 == 0:
-				c = Color.html("#a8845e")
+			if y % 8 == 0:
+				c = Color.html("#4e3424")
+			elif x % 16 == 0:
+				c = Color.html("#5c4030")
 			img.set_pixel(x, y, c)
 	return ImageTexture.create_from_image(img)
 
@@ -172,6 +192,10 @@ static func grid_tex() -> ImageTexture:
 static func furniture_node(fid: String) -> Node3D:
 	var root := Node3D.new()
 	root.name = fid
+	var shade := flat(Color(0.2, 0.1, 0.06, 0.45), 0.45)
+	var shadow := cyl(root, Vector3(0, 0.015, 0.02), 0.22, 0.012, shade, 8)
+	shadow.scale = Vector3(1.2, 1, 0.75)
+	shadow.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	var item := GameRules.furniture(fid)
 	var tint := Color.html(str(item.get("color", "#b68b62")))
 	match fid:
@@ -192,12 +216,12 @@ static func furniture_node(fid: String) -> Node3D:
 			sphere(root, Vector3(0.08, 0.46, 0.02), 0.08, lit(Color.html("#8fb56a")))
 		"lamp":
 			cyl(root, Vector3(0, 0.16, 0), 0.035, 0.28, lit(Color.html("#8a5a3c")), 6)
-			sphere(root, Vector3(0, 0.36, 0), 0.16, lit(tint, null, Vector2.ONE, Color.html("#ffb066"), 0.55), Vector3(1.15, 0.55, 1.15), 8)
+			sphere(root, Vector3(0, 0.36, 0), 0.16, lit(tint, null, Vector2.ONE, Color.html("#e09048"), 0.28), Vector3(1.15, 0.55, 1.15), 8)
 			var glow := OmniLight3D.new()
 			glow.position = Vector3(0, 0.32, 0)
-			glow.light_color = Color.html("#ffb15e")
-			glow.light_energy = 0.42
-			glow.omni_range = 1.7
+			glow.light_color = Color.html("#e09048")
+			glow.light_energy = 0.22
+			glow.omni_range = 1.35
 			glow.shadow_enabled = false
 			root.add_child(glow)
 		"books":

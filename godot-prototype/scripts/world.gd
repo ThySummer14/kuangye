@@ -189,6 +189,12 @@ func build_room() -> void:
 	main_light.shadow_enabled = true
 	main_light.set_meta("priority_light",true)
 	Art.box(self,Vector3(0,-0.035,4.2),Vector3(1.7,0.08,0.7),"d2bb91")
+	# The threshold is a real landing, not only a visible mesh. Back/side stops
+	# protect the open cutaway while a transition is cancelled or paused.
+	solid(Vector3(0,-0.08,4.35),Vector3(2.9,0.16,1.10))
+	solid(Vector3(0,0.50,4.75),Vector3(3.2,1.0,0.16))
+	for side in [-1,1]:
+		solid(Vector3(side*1.53,0.50,4.43),Vector3(0.16,1.0,0.80))
 	hotspots.append({"id":"town","name":"出门回小镇","pos":Vector3(0,0,3.45),"kind":"door"})
 	match location:
 		"home":

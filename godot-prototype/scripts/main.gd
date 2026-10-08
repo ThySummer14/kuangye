@@ -49,6 +49,7 @@ var touch_joystick := false
 var joystick_base: Panel
 var joystick_knob: Panel
 var transitioning := false
+var room_exit_latched := false
 var fade: ColorRect
 var transition_tween: Tween
 var save_locked := false
@@ -303,6 +304,7 @@ func ui_keyboard_height() -> float:
 	return float(DisplayServer.virtual_keyboard_get_height()) if OS.has_feature("mobile") else 0.0
 
 func change_location(place: String) -> void:
+	room_exit_latched = false
 	clear_touch()
 	route.clear()
 	queued_interaction = ""
@@ -422,6 +424,13 @@ func _physics_process(delta: float) -> void:
 	player.velocity.z = direction.y*3.0
 	player.velocity.y = -1.0 if player.is_on_floor() else maxf(-10,player.velocity.y-18*delta)
 	player.move_and_slide()
+	# Walking through a doorway is an interaction too. Trigger on the supported
+	# indoor threshold, before the decorative cutaway's former drop-off.
+	if location!="town" and not transitioning and not build_mode and not is_instance_valid(modal):
+		if player.position.z<3.2:room_exit_latched=false
+		if not room_exit_latched and player.position.z>=3.6 and absf(player.position.x)<=1.45 and direction.y>0.01:
+			room_exit_latched=true
+			transition_to("town")
 	var body: Node3D = mascot.get_node("BodyShape")
 	if direction.length()>0.1:
 		mascot.rotation.y = lerp_angle(mascot.rotation.y,atan2(direction.x,direction.y),minf(1,delta*12))
@@ -464,7 +473,8 @@ func update_nearby() -> void:
 	var best := 1.45
 	for point in world.hotspots:
 		var distance := Vector2(player.position.x-point.pos.x,player.position.z-point.pos.z).length()
-		if distance<best:
+		var on_exit_landing:bool = location!="town" and point.id=="town" and absf(player.position.x)<=1.35 and player.position.z>=3.1
+		if distance<best or on_exit_landing:
 			nearby = point
 			best = distance
 	action_button.visible = not nearby.is_empty() and not build_mode and not is_instance_valid(modal) and not transitioning
@@ -633,6 +643,9 @@ func transition_to(place: String) -> void:
 	transition_tween.tween_callback(func(): transitioning=false)
 
 func cancel_transition() -> void:
+	# A cancelled auto-exit remains cancelled until the player steps back, or
+	# explicitly uses E/the interaction button. The physical landing stays safe.
+	room_exit_latched = true
 	if is_instance_valid(transition_tween):
 		transition_tween.kill()
 	fade.color.a = 0

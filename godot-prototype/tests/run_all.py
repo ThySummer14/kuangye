@@ -24,6 +24,7 @@ def main() -> int:
         ("import", ["--editor", "--import", "--quit"], 120),
         ("state", ["--script", "res://tests/test_state.gd"], 30),
         ("creative", ["--script", "res://tests/test_creative.gd"], 40),
+        ("ui-layout", ["--script", "res://tests/test_ui_layout.gd"], 40),
         ("room-return", ["--script", "res://tests/test_room_return.gd"], 45),
         ("integration", ["--", "--qa"], 40),
         ("portrait", ["--script", "res://tests/test_scene_boundaries.gd"], 40),

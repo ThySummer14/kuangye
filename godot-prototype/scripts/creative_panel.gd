@@ -10,7 +10,7 @@ func today() -> String:return Time.get_date_string_from_system()
 func model():return app.state.creative
 
 func body(title:String) -> VBoxContainer:
-	var v:VBoxContainer=app.make_modal(title)
+	var v:VBoxContainer=app.make_modal(title,620.0,630.0)
 	var scroll:=ScrollContainer.new()
 	scroll.size_flags_vertical=Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED
@@ -39,6 +39,9 @@ func action(v:VBoxContainer,text:String,callback:Callable) -> Button:
 
 func confirm(text:String,callback:Callable) -> void:
 	primary=action(app.modal.get_child(0),text,callback)
+	var style:StyleBoxFlat=app.panel_style("d3c09a",10)
+	primary.add_theme_stylebox_override("normal",style)
+	primary.add_theme_color_override("font_color",Color("253d34"))
 	app.layout_ui()
 
 func persisted(message:String) -> void:
@@ -177,16 +180,24 @@ func edit_work(id:String) -> void:
 func work_page(id:String) -> void:
 	var item:Dictionary=model().work(id)
 	if item.is_empty():studio();return
-	var v:=body("作品 · "+item.title.left(10))
-	prose(v,item.title)
+	var v:=body("作品")
+	var work_title:Label=app.label(item.title,25)
+	work_title.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+	v.add_child(work_title)
 	prose(v,item.body if not item.body.strip_edges().is_empty() else "成果还空着，先写下你做出的这一版。")
 	if not item.note.is_empty():prose(v,"留给自己的话："+item.note,true)
 	var source:Dictionary=model().source_for(id)
 	if not source.is_empty():
 		prose(v,"当时的素材 · "+source.observedOn+" · "+source.place,true)
 		prose(v,source.body,true)
-	action(v,"编辑这一版",func():edit_work(id))
-	action(v,"回到作品集",studio)
+	var secondary:=HBoxContainer.new()
+	secondary.add_theme_constant_override("separation",10)
+	v.add_child(secondary)
+	for spec in [["编辑这一版",func():edit_work(id)],["回到作品集",studio]]:
+		var link:Button=app.button(spec[0],spec[1])
+		link.flat=true
+		link.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+		secondary.add_child(link)
 	match model().status(item):
 		"working":
 			action(v,"先放一放",func():
@@ -200,6 +211,12 @@ func work_page(id:String) -> void:
 			var shown:bool=model().home.studio.displayId==id
 			confirm("从小家收回" if shown else "陈列到小家",func():
 				if model().display_work("" if shown else id):persisted("作品和记录都还在。" if shown else "小家的桌上，多了你的作品。");work_page(id))
+
+	app.modal.set_meta("fit_content",true)
+	var modal_id:int=app.modal.get_instance_id()
+	v.minimum_size_changed.connect(func():
+		if is_instance_valid(app.modal) and app.modal.get_instance_id()==modal_id:app.call_deferred("layout_ui"))
+	app.call_deferred("layout_ui")
 
 func completion(id:String) -> void:
 	var item:Dictionary=model().work(id)

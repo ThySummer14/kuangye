@@ -134,6 +134,9 @@ func setup_theme() -> void:
 	t.set_stylebox("normal","TextEdit",panel_style("1b302c",10))
 	t.set_color("font_color","TextEdit",Color("f3e9d5"))
 	t.set_color("caret_color","TextEdit",Color("edc78e"))
+	t.set_stylebox("normal","LineEdit",panel_style("1b302c",10))
+	t.set_color("font_color","LineEdit",Color("f3e9d5"))
+	t.set_color("caret_color","LineEdit",Color("edc78e"))
 	t.set_constant("line_spacing","Label",4)
 	theme = t
 
@@ -246,7 +249,7 @@ func layout_ui() -> void:
 	retry_save_button.position = Vector2(s.x-151,61 if not mobile else 94)
 	retry_save_button.size = Vector2(127,46)
 	title_label.add_theme_font_size_override("font_size",26 if not mobile else 22)
-	subtitle_label.visible = not mobile
+	subtitle_label.visible = not mobile and not is_instance_valid(modal)
 	note_button.position = Vector2(s.x-159,s.y-78)
 	note_button.size = Vector2(135,48)
 	build_button.position = Vector2(s.x-159,s.y-134)
@@ -255,7 +258,7 @@ func layout_ui() -> void:
 	action_button.position = Vector2((s.x-action_button.size.x)/2,s.y-80 if not mobile else s.y-214)
 	hint_label.position = Vector2(0,s.y-27)
 	hint_label.size = Vector2(s.x,20)
-	hint_label.visible = not mobile and not build_mode
+	hint_label.visible = not mobile and not build_mode and not is_instance_valid(modal)
 	var status_y := 100.0 if mobile else 88.0
 	if unsaved_changes and not save_locked: status_y = retry_save_button.position.y+retry_save_button.size.y+8
 	status_label.position = Vector2(16,status_y)
@@ -263,20 +266,63 @@ func layout_ui() -> void:
 	status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	joystick_base.position = Vector2(28,s.y-157)
 	joystick_base.size = Vector2(104,104)
-	joystick_base.visible = mobile or OS.has_feature("mobile") or touch_id>=0
+	joystick_base.visible = (mobile or OS.has_feature("mobile") or touch_id>=0) and not build_mode and not is_instance_valid(modal)
 	joystick_knob.size = Vector2(44,44)
 	joystick_knob.position = Vector2(30,30)+touch_movement*26
 	if is_instance_valid(modal):
-		var top := 16.0 if keyboard_height>0 or usable_height<650 else (80.0 if mobile else 90.0)
-		var modal_height := minf(555,usable_height-top-16)
+		# In a landscape keyboard viewport, retain both touch targets without
+		# reducing the editable body to a single clipped label.
+		var compact:bool=usable_height<300
+		var modal_stack:VBoxContainer=modal.get_child(0)
+		modal_stack.add_theme_constant_override("separation",6 if compact else 13)
+		if compact:
+			var compact_style:StyleBoxFlat=get_theme_stylebox("panel","PanelContainer").duplicate()
+			compact_style.set_content_margin_all(8)
+			modal.add_theme_stylebox_override("panel",compact_style)
+		else:modal.remove_theme_stylebox_override("panel")
+		var fixed_buttons:Array[Button]=[]
+		for node in modal_stack.get_children():
+			if node is Button:fixed_buttons.append(node)
+			elif node is HBoxContainer:
+				for child in node.get_children():
+					if child is Button:fixed_buttons.append(child)
+		for fixed in fixed_buttons:
+			if not fixed.has_meta("normal_spacing"):
+				var original:Dictionary={}
+				for style_name in ["normal","hover","pressed","disabled","focus"]:
+					original[style_name]=fixed.get_theme_stylebox(style_name).duplicate()
+				fixed.set_meta("normal_spacing",original)
+			for style_name in fixed.get_meta("normal_spacing"):
+				var fixed_style:StyleBoxFlat=fixed.get_meta("normal_spacing")[style_name].duplicate()
+				if compact:fixed_style.content_margin_top=8;fixed_style.content_margin_bottom=8
+				fixed.add_theme_stylebox_override(style_name,fixed_style)
+			fixed.custom_minimum_size.y=44 if compact else 46
+		var preferred_width:float=float(modal.get_meta("preferred_width",500.0))
+		var preferred_height:float=float(modal.get_meta("preferred_height",520.0))
+		var margin:=12.0 if mobile else 24.0
+		var modal_width:=minf(preferred_width,s.x-margin*2)
+		var modal_height:=minf(preferred_height,usable_height-(8 if compact else 32))
+		if modal.get_meta("fit_content",false):
+			var stack:VBoxContainer=modal.get_child(0)
+			var wanted:float=modal.get_theme_stylebox("panel").get_minimum_size().y
+			var visible_count:=0
+			for child in stack.get_children():
+				if child is Control and child.visible:
+					visible_count+=1
+					if child is ScrollContainer and child.get_child_count()>0:
+						wanted+=child.get_child(0).get_combined_minimum_size().y
+					else:wanted+=child.get_combined_minimum_size().y
+			wanted+=maxi(0,visible_count-1)*stack.get_theme_constant("separation")
+			modal_height=minf(wanted,minf(usable_height-24,usable_height*0.8 if not mobile else usable_height-24))
+		var top:=4.0 if compact else (maxf(16,usable_height-modal_height-12) if mobile else maxf(16,(usable_height-modal_height)*0.5))
 		if is_instance_valid(note_body_scroll):
-			note_body_scroll.custom_minimum_size.y = clampf(modal_height-175,24,80)
+			note_body_scroll.custom_minimum_size.y=clampf(modal_height-(116 if compact else 175),44 if compact else 24,80)
 		if is_instance_valid(note_editor):
-			note_editor.custom_minimum_size.y = 120 if keyboard_height>0 or usable_height<600 else 190
+			note_editor.custom_minimum_size.y=120 if keyboard_height>0 or usable_height<600 else 190
 		if is_instance_valid(note_history_button):
-			note_history_button.visible = usable_height>=380 and keyboard_height<=0
-		modal.position = Vector2(s.x-minf(372,s.x-32)-24,top) if not mobile else Vector2(16,top)
-		modal.size = Vector2(minf(372,s.x-32),modal_height)
+			note_history_button.visible=usable_height>=380 and keyboard_height<=0
+		modal.position=Vector2((s.x-modal_width)*0.5,top)
+		modal.size=Vector2(modal_width,modal_height)
 	if is_instance_valid(build_bar):
 		build_bar.position = Vector2(12,s.y-181)
 		build_bar.size = Vector2(s.x-24,156)
@@ -657,6 +703,8 @@ func refresh_hud() -> void:
 		return
 	title_label.text = {"town":"旷野 · 暮色小镇","home":"小家","shop":"阿榆的木匠铺","studio":"生活画室"}.get(location,"旷野")
 	subtitle_label.text = {"town":"把生活的一点发现，带回家。","home":"你留下的发现，会变成墙上的小画。","shop":"看看实物，再慢慢挑。","studio":"写下一点看见的、完成的、创造的。"}[location]
+	title_label.visible=not is_instance_valid(modal)
+	coins_label.visible=not is_instance_valid(modal)
 	coins_label.text = "微光  %d%s" % [state.coins," · 待保存" if unsaved_changes else ""]
 	retry_save_button.visible = unsaved_changes and not save_locked and not is_instance_valid(modal)
 	build_button.visible = location=="home" and not build_mode and not is_instance_valid(modal)
@@ -693,7 +741,7 @@ func status(text: String) -> void:
 	get_tree().create_timer(4.8).timeout.connect(func():
 		if is_instance_valid(status_label) and status_label.text==this_text: status_label.text="")
 
-func make_modal(title: String) -> VBoxContainer:
+func make_modal(title: String,preferred_width:=500.0,preferred_height:=520.0) -> VBoxContainer:
 	close_modal()
 	route.clear()
 	queued_interaction = ""
@@ -705,6 +753,8 @@ func make_modal(title: String) -> VBoxContainer:
 		if e is InputEventMouseButton and e.pressed and e.button_index==MOUSE_BUTTON_LEFT: close_modal())
 	hud.add_child(modal_shade)
 	modal = PanelContainer.new()
+	modal.set_meta("preferred_width",preferred_width)
+	modal.set_meta("preferred_height",preferred_height)
 	hud.add_child(modal)
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation",13)
@@ -738,7 +788,8 @@ func close_modal() -> void:
 	refresh_hud()
 
 func show_shop() -> void:
-	var v := make_modal("选一件带回家")
+	var v := make_modal("选一件带回家",540.0,540.0)
+	v.add_child(label("手里有 %d 微光" % state.coins,17,"edcf94"))
 	var caption_text := "阿榆把木屑拂开，给你看看今天的家具。"
 	if unsaved_changes:
 		caption_text = "旧存档已保留，这次变化仅在当前会话。" if save_locked else "还没保存到本机，关窗后可点「重试保存」。"
@@ -774,7 +825,7 @@ func buy_item(kind: String) -> void:
 
 func show_note() -> void:
 	if build_mode: end_build()
-	var v := make_modal("把今天带回来")
+	var v := make_modal("把今天带回来",500.0,500.0)
 	note_body_scroll = ScrollContainer.new()
 	note_body_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	note_body_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED

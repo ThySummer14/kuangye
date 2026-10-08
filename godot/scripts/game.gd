@@ -155,7 +155,7 @@ func _make_env(indoors: bool) -> Environment:
 	sky.sky_material = sky_mat
 	if indoors:
 		env.background_mode = Environment.BG_COLOR
-		env.background_color = Color.html("#1a1410")
+		env.background_color = Color.html("#2a211c")
 	else:
 		env.background_mode = Environment.BG_SKY
 		env.sky = sky
@@ -344,6 +344,8 @@ func _process(delta: float) -> void:
 		_walk(delta)
 	Mascot.animate(mascot, stick_vec.length() > 0.2 or _keys_down(), Time.get_ticks_msec() / 1000.0)
 	_follow_camera()
+	Mascot.aim_face(mascot, camera.global_position)
+	_fade_occluders()
 	if door_cool > 0.0:
 		door_cool = maxf(0.0, door_cool - delta)
 	_refresh_near()
@@ -443,6 +445,31 @@ func _door_under(pos: Vector3) -> Dictionary:
 func _move_player(pos: Vector3, yaw: float) -> void:
 	player.global_position = Vector3(pos.x, 0, pos.z)
 	player.rotation.y = yaw
+
+func _fade_occluders() -> void:
+	if not places.has(place_id):
+		return
+	var indoors := place_id != "town"
+	var cam_pos := camera.global_position
+	var target := player.global_position + Vector3(0, 0.34, 0)
+	var span := target - cam_pos
+	var span_len2 := span.length_squared()
+	var root: Node = places[place_id].node
+	_fade_node(root, indoors, cam_pos, target, span, span_len2)
+
+func _fade_node(node: Node, indoors: bool, cam_pos: Vector3, target: Vector3, span: Vector3, span_len2: float) -> void:
+	if node is MeshInstance3D and node != mascot:
+		var mesh := node as MeshInstance3D
+		var fade := 0.0
+		if indoors and span_len2 > 0.01 and mesh.global_position.y > 0.22:
+			var along := clampf((mesh.global_position - cam_pos).dot(span) / span_len2, 0.0, 1.0)
+			var closest := cam_pos + span * along
+			var dist := mesh.global_position.distance_to(closest)
+			if along < 0.9 and along > 0.12 and dist < 0.48:
+				fade = 0.92
+		mesh.transparency = fade
+	for child in node.get_children():
+		_fade_node(child, indoors, cam_pos, target, span, span_len2)
 
 func _follow_camera() -> void:
 	var anchor := cam_look if cam_fixed else player.global_position + Vector3(0, 0.32, 0)
@@ -854,25 +881,25 @@ func _compose(which: String) -> void:
 	match which:
 		"town":
 			_enter("town", false)
-			_move_player(Vector3(0.2, 0, 1.72), 0.0)
+			_move_player(Vector3(-0.85, 0, 1.05), 0.0)
 		"door":
 			_enter("town", false)
 			_move_player(Vector3(4.38, 0, -2.05), 1.05)
 			Mascot.animate(mascot, true, 1.15)
 		"build":
 			_enter("home", false)
-			_move_player(Vector3(0.15, 0, 0.35), 0.0)
+			_move_player(Vector3(0.05, 0, 0.25), 0.0)
 			_set_build(true)
 		"shop":
 			_enter("home", false)
-			_move_player(Vector3(-0.05, 0, -0.05), 0.35)
+			_move_player(Vector3(-0.35, 0, -0.15), 0.35)
 			if _inventory_row_fid("stool").is_empty():
 				GameRules.buy(state, "stool")
 			_open_shop()
 		"placed":
 			_enter("home", false)
 			_seed_placed()
-			_move_player(Vector3(0.35, 0, 0.45), 0.0)
+			_move_player(Vector3(-0.15, 0, 0.9), 0.0)
 			_close_shop()
 			_set_build(true)
 	_sync_items()

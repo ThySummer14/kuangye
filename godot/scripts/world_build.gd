@@ -1,14 +1,14 @@
 extends RefCounted
 class_name WorldBuild
 
-const TOWN_CAM := Vector3(0.15, 1.85, 7.2)
-const TOWN_SIZE := 4.55
-const ROOM_CAM := Vector3(0.0, 1.62, 3.25)
-const ROOM_SIZE := 1.68
-const ROOM_LOOK := Vector3(0.0, 0.72, -0.25)
-const BUILD_CAM := Vector3(0.0, 2.05, 3.15)
-const BUILD_SIZE := 1.82
-const BUILD_LOOK := Vector3(0.0, 0.48, -0.05)
+const TOWN_CAM := Vector3(0.25, 4.4, 9.2)
+const TOWN_SIZE := 5.0
+const ROOM_CAM := Vector3(0.0, 5.7, 5.15)
+const ROOM_SIZE := 3.2
+const ROOM_LOOK := Vector3(0.0, 0.32, -0.08)
+const BUILD_CAM := Vector3(0.0, 6.05, 4.55)
+const BUILD_SIZE := 3.35
+const BUILD_LOOK := Vector3(0.0, 0.15, -0.05)
 
 static func build(font: Font) -> Dictionary:
 	var root := Node3D.new()
@@ -78,9 +78,9 @@ static func _buildings() -> Array:
 
 static func _ground(town: Node3D, cobble: Texture2D, path: Texture2D) -> void:
 	var grass := Visuals.lit(Color.html("#6f8a52"))
-	Visuals.box(town, Vector3(0, -0.08, -0.4), Vector3(24, 0.12, 20), grass)
-	Visuals.box(town, Vector3(0.1, 0.02, -0.6), Vector3(16.5, 0.08, 13.2), Visuals.lit(Color.WHITE, cobble, Vector2(8, 6)))
-	Visuals.box(town, Vector3(0.2, 0.07, 0.4), Vector3(1.7, 0.06, 8.2), Visuals.lit(Color.WHITE, path, Vector2(1, 6)))
+	Visuals.box(town, Vector3(0, -0.08, 0.3), Vector3(26, 0.12, 24), grass)
+	Visuals.box(town, Vector3(0.1, 0.02, 0.8), Vector3(18.5, 0.08, 17.2), Visuals.lit(Color.WHITE, cobble, Vector2(9, 8)))
+	Visuals.box(town, Vector3(0.2, 0.07, 1.15), Vector3(1.7, 0.06, 10.4), Visuals.lit(Color.WHITE, path, Vector2(1, 8)))
 	Visuals.box(town, Vector3(2.3, 0.07, -1.6), Vector3(4.6, 0.06, 1.35), Visuals.lit(Color.WHITE, path, Vector2(4, 1)))
 	Visuals.box(town, Vector3(-3.4, 0.07, -1.5), Vector3(5.2, 0.06, 1.25), Visuals.lit(Color.WHITE, path, Vector2(4, 1)))
 
@@ -205,9 +205,26 @@ static func _dress_town(town: Node3D, font: Font) -> void:
 	_laundry(town)
 	_bulbs(town)
 	_plaza_life(town)
-	for bush_at in [Vector3(-0.9, 0, 3.15), Vector3(1.4, 0, 3.25), Vector3(4.8, 0, 1.6), Vector3(-5.6, 0, 1.2)]:
+	for bush_at in [Vector3(-0.9, 0, 3.15), Vector3(1.4, 0, 3.25), Vector3(4.8, 0, 1.6), Vector3(-5.6, 0, 1.2), Vector3(-2.3, 0, 4.55), Vector3(1.85, 0, 4.85)]:
 		Visuals.sphere(town, bush_at + Vector3(0, 0.22, 0), 0.28, Visuals.lit(Color.html("#5f7a45")), Vector3(1.3, 0.7, 1.1), 7)
 		Visuals.sphere(town, bush_at + Vector3(0.16, 0.3, 0.05), 0.16, Visuals.lit(Color.html("#7e9a5c")), Vector3.ONE, 6)
+	_foreground(town)
+
+static func _foreground(town: Node3D) -> void:
+	var rock := Visuals.lit(Color.html("#8d8276"))
+	var dark := Visuals.lit(Color.html("#6f655c"))
+	Visuals.sphere(town, Vector3(-1.15, 0.07, 4.15), 0.11, rock, Vector3(1.4, 0.4, 1.1), 6)
+	Visuals.sphere(town, Vector3(0.85, 0.06, 5.05), 0.09, dark, Vector3(1.2, 0.38, 0.9), 6)
+	Visuals.sphere(town, Vector3(2.55, 0.08, 3.85), 0.1, rock, Vector3(1.35, 0.42, 1.0), 6)
+	var slab := Visuals.lit(Color.html("#b7a08c"))
+	Visuals.box(town, Vector3(-0.35, 0.05, 4.7), Vector3(0.7, 0.04, 0.46), slab)
+	Visuals.box(town, Vector3(1.15, 0.05, 3.55), Vector3(0.55, 0.04, 0.62), Visuals.lit(Color.html("#7a6758")))
+	var tuft := Visuals.lit(Color.html("#6d8a48"))
+	var tuft_hi := Visuals.lit(Color.html("#8eae62"))
+	for at in [Vector3(0.35, 0, 3.7), Vector3(-1.7, 0, 5.15), Vector3(2.15, 0, 5.25), Vector3(-0.2, 0, 5.45)]:
+		Visuals.box(town, at + Vector3(0, 0.08, 0), Vector3(0.16, 0.1, 0.08), tuft)
+		Visuals.box(town, at + Vector3(0.07, 0.1, 0.03), Vector3(0.1, 0.12, 0.06), tuft_hi)
+	_flowers(town, Vector3(-2.55, 0, 3.55), Color.html("#e6c98a"))
 
 static func _tree(town: Node3D, pos: Vector3, scale: float, salt: int) -> void:
 	var greens := [Color.html("#6f8f52"), Color.html("#7e9a5c"), Color.html("#5d7844")]
@@ -300,23 +317,20 @@ static func _home(root: Node3D, plank: Texture2D, font: Font) -> Dictionary:
 	var node := Node3D.new()
 	node.name = "Home"
 	root.add_child(node)
-	var floor_mat := Visuals.room(Color(1.0, 0.96, 0.88), plank, Vector2(3.2, 2.8))
-	Visuals.box(node, Vector3(0, -0.04, 0.05), Vector3(5.6, 0.1, 4.6), floor_mat)
+	var floor_mat := Visuals.room(Color(1.0, 0.96, 0.88), plank, Vector2(5.2, 3.6))
+	Visuals.box(node, Vector3(0, -0.04, -0.15), Vector3(8.8, 0.1, 5.6), floor_mat)
 	var wall := Visuals.room(Color.html("#4a9158"))
 	var trim := Visuals.room(Color.html("#c9c6ae"))
 	var beam := Visuals.room(Color.html("#6a4634"))
-	var back := Visuals.box(node, Vector3(0, 1.35, -1.62), Vector3(5.6, 2.7, 0.18), wall)
+	var back := Visuals.box(node, Vector3(0, 1.7, -2.15), Vector3(8.4, 3.5, 0.22), wall)
 	back.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	var side_l := Visuals.box(node, Vector3(-2.75, 1.35, 0.15), Vector3(0.18, 2.7, 3.8), wall)
-	var side_r := Visuals.box(node, Vector3(2.75, 1.35, 0.15), Vector3(0.18, 2.7, 3.8), wall)
+	var side_l := Visuals.box(node, Vector3(-3.85, 1.7, -0.25), Vector3(0.24, 3.5, 4.0), wall)
+	var side_r := Visuals.box(node, Vector3(3.85, 1.7, -0.25), Vector3(0.24, 3.5, 4.0), wall)
 	side_l.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	side_r.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	var rib := Visuals.box(node, Vector3(0, 2.55, -0.4), Vector3(5.4, 0.12, 0.16), beam)
+	var rib := Visuals.box(node, Vector3(0, 3.25, -2.02), Vector3(8.0, 0.12, 0.16), beam)
 	rib.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	Visuals.box(node, Vector3(0, 0.16, 1.72), Vector3(5.4, 0.32, 0.16), trim)
-	Visuals.box(node, Vector3(-1.15, 0.85, 1.72), Vector3(0.22, 1.35, 0.16), wall)
-	Visuals.box(node, Vector3(1.15, 0.85, 1.72), Vector3(0.22, 1.35, 0.16), wall)
-	Visuals.box(node, Vector3(0, 1.48, 1.72), Vector3(2.1, 0.18, 0.16), beam)
+	Visuals.box(node, Vector3(0, 0.08, 1.7), Vector3(2.2, 0.1, 0.1), trim)
 	var frame := Visuals.room(Color.html("#6a4634"))
 	Visuals.box(node, Vector3(1.42, 1.15, -0.35), Vector3(0.1, 0.78, 0.62), frame)
 	Visuals.box(node, Vector3(1.38, 1.15, -0.35), Vector3(0.04, 0.52, 0.4), Visuals.flat(Color.html("#c47a45")))

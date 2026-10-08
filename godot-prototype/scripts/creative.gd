@@ -1,8 +1,9 @@
 class_name TownCreative
 extends RefCounted
 
-# Text-only port of main's observations/studio/observation-craft rules. Canonical
-# field names and immutable source snapshots are retained. This is not an importer.
+# Main-compatible field names and immutable observation snapshots.
+# Local image copies are bounded; this is not a main-save importer.
+const Images=preload("res://scripts/studio_images.gd")
 var home := {"observations":{"entries":[]},"studio":{"works":[],"displayId":""},"observationWorks":[]}
 var customTasks: Array = []
 var active: Array = []
@@ -97,17 +98,52 @@ func start_work(observation_id:String,title:String,criterion:String,at:String) -
 	home.observationWorks.append({"observationId":observation_id,"workId":id,"startedAt":at,"source":{"place":entry.place,"body":entry.body,"kind":entry.kind,"observedOn":entry.observedOn,"images":[]}})
 	return id
 
-func update_work(id:String,title:String,body:String,note:String,at:String) -> bool:
+func start_direct_work(title:String,criterion:String,at:String)->String:
+	if busy_count()>=3:fail("手里最多放 3 件事，先完成或暂放一件。");return ""
+	if home.studio.works.size()>=200 or not text_valid(title,60,true) or not text_valid(criterion,240,true) or not date_valid(at):fail("给作品起名，并写下完成时会留下什么。");return ""
+	var id:=identity("work");var qid:=add_task(title.strip_edges(),criterion.strip_edges(),at)
+	home.studio.works.push_front({"id":id,"title":title.strip_edges(),"body":"","note":"","images":[],"theme":"own","exerciseId":"","taskIds":[qid],"created":at,"updated":at})
+	return id
+
+static func image_fields(images:Variant)->bool:
+	if not images is Array or images.size()>Images.MAX_IMAGES:return false
+	var seen:Dictionary={}
+	for image in images:
+		if not Images.valid_data(image) or seen.has(image):return false
+		seen[image]=true
+	return true
+
+func image_chars(except_work:="")->int:
+	var count:=0
+	for item in home.studio.works:
+		if item.id!=except_work:
+			for image in item.images:count+=image.length()
+	for entry in home.observations.entries:
+		for image in entry.images:count+=image.length()
+	for link in home.observationWorks:
+		for image in link.source.images:count+=image.length()
+	return count
+
+func validate_work_images(id:String,images:Variant)->bool:
+	if not image_fields(images):return fail("每件作品最多4张不同的静态图片；图片副本需要完整且不超过容量。")
+	var count:=image_chars(id)
+	for image in images:count+=image.length()
+	if count>Images.ALL_IMAGE_CHARS:return fail("本机图片容量已满。已有图片都保留着；请先导出备份，再自行移除不需要的副本。")
+	return true
+
+func update_work(id:String,title:String,body:String,note:String,at:String,images:Variant=null) -> bool:
 	var item:=work(id)
 	if item.is_empty() or not text_valid(title,60,true) or not text_valid(body,12000) or not text_valid(note,240) or not date_valid(at):return fail("标题必填，正文最多 12000 字，私语最多 240 字。")
-	if status(item)=="done" and body.strip_edges().is_empty():return fail("已收好的作品需要保留正文。原版还在。")
-	item.title=title.strip_edges();item.body=body;item.note=note;item.updated=at
+	var next_images:Array=item.images if images==null else images if images is Array else []
+	if images!=null and not validate_work_images(id,images):return false
+	if status(item)=="done" and body.strip_edges().is_empty() and next_images.is_empty():return fail("已收好的作品需要保留正文或图片。原版还在。")
+	item.title=title.strip_edges();item.body=body;item.note=note;item.updated=at;item.images=next_images.duplicate()
 	return true
 
 func complete_work(id:String,at:String) -> bool:
 	var item:=work(id)
 	if item.is_empty() or status(item)!="working" or not date_valid(at):return fail("这件作品不在进行中。")
-	if item.body.strip_edges().is_empty():return fail("先保存作品正文，再确认完成。")
+	if item.body.strip_edges().is_empty() and item.images.is_empty():return fail("先保存作品正文或图片，再确认完成。")
 	var qid:String=item.taskIds[-1]
 	done.append({"qid":qid,"xp":0,"at":at,"review":"","units":[],"logs":[]})
 	active=active.filter(func(r):return r.qid!=qid)
@@ -137,7 +173,7 @@ func display_work(id:String) -> bool:
 	return true
 
 func serialize() -> Dictionary:
-	return {"schema":1,"home":home,"customTasks":customTasks,"active":active,"done":done,"abandoned":abandoned,"next_id":next_id}
+	return {"schema":2,"home":home,"customTasks":customTasks,"active":active,"done":done,"abandoned":abandoned,"next_id":next_id}
 
 static func text_valid(v:Variant,limit:int,required:=false) -> bool:
 	return v is String and v.length()<=limit and (not required or not v.strip_edges().is_empty())
@@ -158,9 +194,8 @@ static func observation_fields(entry:Dictionary) -> bool:
 	return text_valid(entry.get("place"),100) and text_valid(entry.get("body"),3000) and text_valid(entry.get("hint"),500) and ["plant","sky","street","other"].has(entry.get("kind")) and date_valid(entry.get("observedOn")) and entry.get("images") is Array and entry.images.is_empty()
 
 func load_data(raw:Variant) -> bool:
-	# Strict candidate validation: unsupported images and future fields are retained
-	# on disk via TownState's save lock, never silently dropped by this text slice.
-	if not keys_exact(raw,["schema","home","customTasks","active","done","abandoned","next_id"]) or not (raw.schema is int or raw.schema is float) or raw.schema!=1:return false
+	# Strict candidate validation never silently drops unknown fields or pictures.
+	if not keys_exact(raw,["schema","home","customTasks","active","done","abandoned","next_id"]) or not (raw.schema is int or raw.schema is float) or (raw.schema!=1 and raw.schema!=2):return false
 	if not keys_exact(raw.home,["observations","studio","observationWorks"]):return false
 	if not keys_exact(raw.home.observations,["entries"]) or not keys_exact(raw.home.studio,["works","displayId"]):return false
 	for list in [raw.home.observations.entries,raw.home.studio.works,raw.home.observationWorks,raw.customTasks,raw.active,raw.done,raw.abandoned]:
@@ -192,23 +227,27 @@ func load_data(raw:Variant) -> bool:
 	if recorded.size()!=task_ids.size():return false
 	var linked:Dictionary={}
 	for item in raw.home.studio.works:
-		if not keys_exact(item,["id","title","body","note","images","theme","exerciseId","taskIds","created","updated"]) or not valid_id(item.id,"work",seen,raw.next_id) or not text_valid(item.title,60,true) or not text_valid(item.body,12000) or not text_valid(item.note,240) or item.theme!="notice" or item.exerciseId!="" or not item.images is Array or not item.images.is_empty() or not date_valid(item.created) or not date_valid(item.updated) or not item.taskIds is Array or item.taskIds.is_empty():return false
+		if not keys_exact(item,["id","title","body","note","images","theme","exerciseId","taskIds","created","updated"]) or not valid_id(item.id,"work",seen,raw.next_id) or not text_valid(item.title,60,true) or not text_valid(item.body,12000) or not text_valid(item.note,240) or not item.theme in (["notice"] if raw.schema==1 else ["notice","own"]) or item.exerciseId!="" or not image_fields(item.images) or (raw.schema==1 and not item.images.is_empty()) or not date_valid(item.created) or not date_valid(item.updated) or not item.taskIds is Array or item.taskIds.is_empty():return false
 		for qid in item.taskIds:
 			if not qid is String or not task_ids.has(qid) or linked.has(qid):return false
 			linked[qid]=true
-		if raw.done.any(func(r):return item.taskIds.has(r.qid)) and item.body.strip_edges().is_empty():return false
+		if raw.done.any(func(r):return item.taskIds.has(r.qid)) and item.body.strip_edges().is_empty() and item.images.is_empty():return false
 		for qid in item.taskIds.slice(0,-1):
 			if not raw.abandoned.any(func(r):return r.qid==qid):return false
 	if linked.size()!=task_ids.size():return false
 	var linked_observations:Dictionary={};var linked_works:Dictionary={}
 	for link in raw.home.observationWorks:
 		if not keys_exact(link,["observationId","workId","startedAt","source"]) or not link.observationId is String or not link.workId is String or linked_observations.has(link.observationId) or linked_works.has(link.workId) or not date_valid(link.startedAt):return false
-		if not raw.home.observations.entries.any(func(e):return e.id==link.observationId and e.status=="kept") or not raw.home.studio.works.any(func(w):return w.id==link.workId):return false
+		if not raw.home.observations.entries.any(func(e):return e.id==link.observationId and e.status=="kept") or not raw.home.studio.works.any(func(w):return w.id==link.workId and w.theme=="notice"):return false
 		if not keys_exact(link.source,["place","body","kind","observedOn","images"]):return false
 		var source:Dictionary=link.source.duplicate(true);source.hint=""
 		if not observation_fields(source) or source.place.strip_edges().is_empty() or source.body.strip_edges().is_empty():return false
 		linked_observations[link.observationId]=true;linked_works[link.workId]=true
-	if linked_works.size()!=raw.home.studio.works.size():return false
+	if linked_works.size()!=raw.home.studio.works.filter(func(w):return w.theme=="notice").size():return false
+	var total_image_chars:=0
+	for item in raw.home.studio.works:
+		for image in item.images:total_image_chars+=image.length()
+	if total_image_chars>Images.ALL_IMAGE_CHARS:return false
 	if not raw.home.studio.displayId is String:return false
 	if raw.home.studio.displayId!="":
 		var shown:Array=raw.home.studio.works.filter(func(w):return w.id==raw.home.studio.displayId)

@@ -89,7 +89,7 @@ func run()->void:
 	check(not cb.resume(active,cc),"resume cannot overflow the shared limit")
 	cc.rest_work(first,"2026-10-08");check(cb.resume(active,cc),"resume succeeds after another item rests")
 	check(not cc.resume_work(first,"2026-10-08"),"creation resume also respects challenge occupancy")
-	s.path="user://badge-roundtrip.json";check(s.save_data(),"full v3 prototype save succeeds")
+	s.path="user://badge-roundtrip.json";check(s.save_data(),"full current prototype save succeeds")
 	var loaded:=State.new();loaded.path=s.path
 	check(loaded.load_data() and loaded.serialize()==s.serialize(),"full save preserves furniture, creative records, badge snapshots and daily ledger")
 	var valid_text:=FileAccess.get_file_as_string(s.path)
@@ -109,16 +109,16 @@ func run()->void:
 	var original_text:=JSON.stringify(old)
 	f=FileAccess.open(legacy_path,FileAccess.WRITE);f.store_string(original_text);f.close()
 	var migrated:=State.new();migrated.path=upgraded_path
-	check(migrated.load_data(legacy_path) and migrated.coins==s.coins and migrated.creative.serialize()==s.creative.serialize(),"missing v3 reads a complete existing v2 file")
+	check(migrated.load_data(legacy_path) and migrated.coins==s.coins and migrated.creative.serialize()==s.creative.serialize(),"missing current save reads a complete existing v2 file")
 	check(migrated.badges.attempts.is_empty() and migrated.save_data(),"first new-schema save creates a separate current file")
-	check(FileAccess.get_file_as_string(legacy_path)==original_text and JSON.parse_string(FileAccess.get_file_as_string(upgraded_path)).version==3,"upgrade preserves old file byte-for-byte for rollback")
+	check(FileAccess.get_file_as_string(legacy_path)==original_text and JSON.parse_string(FileAccess.get_file_as_string(upgraded_path)).version==State.VERSION,"upgrade preserves old file byte-for-byte for rollback")
 	migrated.coins+=5;migrated.save_data();var fresh:=State.new();fresh.path=upgraded_path
-	check(fresh.load_data(legacy_path) and fresh.coins==migrated.coins,"existing v3 takes precedence over the old snapshot")
+	check(fresh.load_data(legacy_path) and fresh.coins==migrated.coins,"existing current save takes precedence over the old snapshot")
 	f=FileAccess.open(upgraded_path,FileAccess.WRITE);f.store_string("invalid-current-file");f.close()
 	check(not fresh.load_data(legacy_path) and FileAccess.get_file_as_string(upgraded_path)=="invalid-current-file","invalid current file is preserved rather than silently falling back")
 	old.coins+=17;f=FileAccess.open(legacy_path,FileAccess.WRITE);f.store_string(JSON.stringify(old));f.close()
 	migrated.save_data()
-	check(fresh.load_data(legacy_path) and fresh.coins==migrated.coins and fresh.coins!=old.coins,"later rollback-era edits in old file do not overwrite an existing v3")
+	check(fresh.load_data(legacy_path) and fresh.coins==migrated.coins and fresh.coins!=old.coins,"later rollback-era edits in old file do not overwrite an existing current save")
 	var failed_upgrade:=State.new();failed_upgrade.path="user://missing-migration-directory/new-v3.json"
 	var rollback_bytes:=FileAccess.get_file_as_string(legacy_path)
 	check(failed_upgrade.load_data(legacy_path) and not failed_upgrade.save_data() and not FileAccess.file_exists(failed_upgrade.path) and FileAccess.get_file_as_string(legacy_path)==rollback_bytes,"failed first v3 write preserves old bytes and leaves no false migration marker")

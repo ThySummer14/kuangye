@@ -787,6 +787,7 @@ func make_modal(title: String,preferred_width:=500.0,preferred_height:=520.0) ->
 	return v
 
 func close_modal(resume_world:=true) -> void:
+	if creative_panel!=null:creative_panel.cancel_media()
 	var focused:=get_viewport().gui_get_focus_owner()
 	if is_instance_valid(focused) and is_instance_valid(modal) and modal.is_ancestor_of(focused):focused.release_focus()
 	if DisplayServer.has_feature(DisplayServer.FEATURE_VIRTUAL_KEYBOARD):DisplayServer.virtual_keyboard_hide()

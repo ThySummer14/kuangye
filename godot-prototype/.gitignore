@@ -18,3 +18,9 @@ user-data/
 **/migration-*-fixture.json
 **/migration-target-*.json
 **/mascot-motion-fixture.json
+
+# Image workflow QA stores must never become default game data.
+**/studio-media-*-fixture.json
+**/studio-media-roundtrip.json
+**/manual-media-fixture.json
+**/web-media-fixture.json

@@ -1,8 +1,9 @@
 class_name TownState
 extends RefCounted
 
+const Bytes=preload("res://scripts/local_bytes.gd")
 const Catalog = preload("res://scripts/catalog.gd")
-const VERSION := 3
+const VERSION := 4
 const Badges=preload("res://scripts/badges.gd")
 var badges:=Badges.new()
 const Creative = preload("res://scripts/creative.gd")
@@ -14,7 +15,8 @@ var notes: Array[Dictionary] = []
 var rewarded_dates: Array[String] = []
 var next_id := 1
 var last_error := ""
-const SAVE_PATH="user://town-prototype-v3.json"
+const SAVE_PATH="user://town-prototype-v4.json"
+const PREVIOUS_PATH="user://town-prototype-v3.json"
 const LEGACY_PATH="user://town-prototype-v1.json"
 var path := SAVE_PATH
 
@@ -96,9 +98,14 @@ func save_data() -> bool:
 	if file == null:
 		last_error = "存档写入失败，当前进度仍在内存中。"
 		return false
-	file.store_string(JSON.stringify(serialize(), "\t"))
+	var expected:=JSON.stringify(serialize(), "\t").to_utf8_buffer()
+	var written:=file.store_buffer(expected)
 	file.flush()
+	var write_error:=file.get_error()
 	file.close()
+	if not written or write_error!=OK or not Bytes.matches(path+".tmp",expected):
+		last_error="存档没有完整写入，旧存档未替换。"
+		return false
 	var result := DirAccess.rename_absolute(path + ".tmp", path)
 	if result != OK:
 		last_error = "无法替换存档，旧存档未删除。"
@@ -107,11 +114,11 @@ func save_data() -> bool:
 func load_data(legacy_override:="") -> bool:
 	var read_path:=path
 	if not FileAccess.file_exists(read_path):
-		var legacy:String=LEGACY_PATH if path==SAVE_PATH else legacy_override
+		var legacy:String=(PREVIOUS_PATH if FileAccess.file_exists(PREVIOUS_PATH) else LEGACY_PATH) if path==SAVE_PATH else legacy_override
 		if legacy.is_empty() or not FileAccess.file_exists(legacy):return false
 		read_path=legacy
-	# The new schema writes to its own file. The original v1/v2 file remains an
-	# untouched pre-upgrade snapshot if the user rolls back the application.
+	# Once v4 exists it takes priority. v3 and older files remain unchanged;
+	# progress later made in a rolled-back app is not merged into existing v4.
 	var parser := JSON.new()
 	if parser.parse(FileAccess.get_file_as_string(read_path)) != OK:
 		return invalid_save()

@@ -22,6 +22,10 @@ def main() -> int:
         return 2
     checks = [
         ("import", ["--editor", "--import", "--quit"], 120),
+        ("studio-images", ["--script", "res://tests/test_studio_images.gd"], 40),
+        ("studio-media-model", ["--script", "res://tests/test_studio_media_model.gd"], 60),
+        ("studio-export", ["--script", "res://tests/test_studio_export.gd"], 40),
+        ("studio-media-ui", ["--script", "res://tests/test_studio_media_ui.gd"], 40),
         ("state", ["--script", "res://tests/test_state.gd"], 30),
         ("badges", ["--script", "res://tests/test_badges.gd"], 40),
         ("badge-ui", ["--script", "res://tests/test_badge_ui.gd"], 40),
@@ -41,6 +45,7 @@ def main() -> int:
     results = []
     with tempfile.TemporaryDirectory(prefix="kuangye-godot-qa-") as temp:
         env = os.environ.copy()
+        env["KUANGYE_DISPOSABLE_TEST_DATA"] = "1"
         for key, directory in (("XDG_DATA_HOME", "data"), ("XDG_CONFIG_HOME", "config"), ("XDG_CACHE_HOME", "cache")):
             target = Path(temp) / directory
             target.mkdir()

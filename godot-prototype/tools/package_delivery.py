@@ -17,7 +17,7 @@ WEB_FILES = {'index.html', 'index.js', 'index.pck', 'index.wasm.gz', 'index.audi
              'index.audio.position.worklet.js', 'kuangye-engine-loader.js', '_headers',
              'GODOT_ENGINE_NOTICES.txt', 'NotoSansSC-LICENSE.txt', 'PROJECT-LICENSE.txt'}
 FORBIDDEN = {'.git', '.godot', '.openai', '.aws', '.ssh', '.codex', '.agents', '__pycache__'}
-SAVE = re.compile(r'^(town-(?:prototype|qa|fixture).*|creative-(?:ui|e2e|roundtrip)|badge-(?:ui-fixture|roundtrip)|migration-(?:source-fixture|target-[0-9]+)|mascot-motion-fixture)\.json$')
+SAVE = re.compile(r'^(town-(?:prototype|qa|fixture).*|creative-(?:ui|e2e|roundtrip)|badge-(?:ui-fixture|roundtrip)|migration-(?:source-fixture|target-[0-9]+)|mascot-motion-fixture|studio-media-(?:roundtrip|ui-fixture)|manual-media-fixture|web-media-fixture)\.json$')
 
 def safe_name(name: str) -> None:
     path = Path(name)

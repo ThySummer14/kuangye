@@ -297,4 +297,13 @@ func show_creation(item:Dictionary) -> void:
 	n.set_meta("creative_display",true)
 	Art.box(n,Vector3(0,0.54,0),Vector3(0.53,0.10,0.40),"d9c694")
 	Art.box(n,Vector3(0,0.60,0),Vector3(0.45,0.025,0.34),"e4dcc2")
-	for i in 4:Art.box(n,Vector3(0,0.62,-0.10+i*0.065),Vector3(0.29,0.005,0.012),"8c8670")
+	if item.get("images",[]).is_empty():
+		for i in 4:Art.box(n,Vector3(0,0.62,-0.10+i*0.065),Vector3(0.29,0.005,0.012),"8c8670")
+	else:
+		var texture:Texture2D=preload("res://scripts/studio_images.gd").thumbnail(item.images[0],512)
+		if texture==null:return
+		var page:=MeshInstance3D.new();var quad:=QuadMesh.new()
+		var ratio:=minf(.43/texture.get_width(),.32/texture.get_height());quad.size=texture.get_size()*ratio
+		page.mesh=quad;page.rotation.x=-PI/2;page.position.y=.62
+		var material:=StandardMaterial3D.new();material.shading_mode=BaseMaterial3D.SHADING_MODE_UNSHADED;material.albedo_texture=texture
+		page.material_override=material;page.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;n.add_child(page)

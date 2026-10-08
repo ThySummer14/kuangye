@@ -1,0 +1,10 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>旷野图片文件组件验收</title><style>body{font:18px system-ui;background:#f4efe4;color:#253d34;max-width:900px;margin:40px auto;padding:24px}button,a{font:inherit;padding:12px;margin:8px}pre{white-space:pre-wrap;word-break:break-all;background:#fffdf8;padding:16px}</style><h1>旷野 · 文件组件验收</h1><p>只测试同生产选择脚本与Godot下载函数的浏览器部分。此页不运行WASM游戏或IndexedDB，不代表完整Web集成通过。</p><button id="choose">选择原创QA图片</button><pre id="selection">尚未选择</pre><button id="png" disabled onclick="downloadFixture('png')">下载PNG样本</button><button id="html" disabled onclick="downloadFixture('html')">下载HTML样本</button><p id="download-status"></p><p><a href="album.html">查看完整HTML产物</a> <a href="page.png">查看PNG产物</a></p><script src="picker.js"></script><script src="download.js"></script><script>
+let token=0,lastGood=[],pending=[];const output=document.getElementById('selection');
+document.getElementById('choose').addEventListener('click',()=>{token++;pending=[];window.__kuangyeLocalImages.choose(token,async(kind,id,bytes,mime)=>{
+ if(id!==token)return;
+ if(kind==='image'){pending.push(crypto.subtle.digest('SHA-256',bytes).then(d=>({bytes:bytes.byteLength,mime,sha256:Array.from(new Uint8Array(d),b=>b.toString(16).padStart(2,'0')).join('')})));}
+ else if(kind==='done'){lastGood=await Promise.all(pending);output.textContent=JSON.stringify({state:'done',count:lastGood.length,files:lastGood},null,2);}
+ else if(kind==='cancel')output.textContent=JSON.stringify({state:'cancel',retained:lastGood.length});
+ else if(kind==='error')output.textContent=JSON.stringify({state:'error',message:bytes,retained:lastGood.length});
+ });});
+</script></html>

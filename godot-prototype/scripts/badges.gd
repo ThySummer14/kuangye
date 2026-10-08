@@ -106,6 +106,7 @@ func ready_issue(id:String,creative:TownCreative,at:String)->String:
 	if not Creative.date_valid(at) or at<a.acceptedAt:return "完成日期早于接取，或无法识别。"
 	var work:=creative.work(a.linked.workId)
 	if work.is_empty() or creative.status(work)!="done":return "先关联并在画室收好一件文字作品。"
+	if work.body.strip_edges().is_empty():return "这项挑战需要文字证据，图片作品本身不能替代整本完成自述或实地结论。"
 	if has_completed(a.challenge.operationId,a.linked.workId):return "这件作品已经留下同项完成记录，请使用新的成果。"
 	if not evidence_valid(a.challenge,collect_evidence(a,creative),a.linked.workId,at):return "实地求证需12条观察、3处地点、600非空白字结论；二次求证还需三个地点各有两天记录。"
 	return ""

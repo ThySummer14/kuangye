@@ -12,7 +12,7 @@ class DeliveryTests(unittest.TestCase):
     def test_rejects_metadata_env_saves_and_traversal(self):
         for name in ('web/.git/config', 'source/.env', 'source/.env.local',
                      'assets/.openai/hosting.json', 'town-prototype-v1.json',
-                     'creative-e2e.json', 'town-prototype-v3.json', 'badge-ui-fixture.json', 'badge-roundtrip.json', 'migration-source-fixture.json', 'migration-target-1234.json', 'mascot-motion-fixture.json', '../outside', '/absolute', 'key.pem'):
+                     'creative-e2e.json', 'town-prototype-v4.json', 'studio-media-ui-fixture.json', 'studio-media-roundtrip.json', 'manual-media-fixture.json', 'web-media-fixture.json', 'town-prototype-v3.json', 'badge-ui-fixture.json', 'badge-roundtrip.json', 'migration-source-fixture.json', 'migration-target-1234.json', 'mascot-motion-fixture.json', '../outside', '/absolute', 'key.pem'):
             with self.subTest(name=name), self.assertRaises(ValueError):
                 delivery.safe_name(name)
 

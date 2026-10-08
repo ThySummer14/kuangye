@@ -29,3 +29,9 @@ python3 godot/tools/serve.py godot/web 8765
 ```
 
 线上不要部署到仓库的 GitHub Pages 根目录，那是 main 上的网页版。本分支的导出放在 `godot/web/`，用提交哈希从静态 CDN 打开，避免覆盖 https://thysummer14.github.io/kuangye/ 。
+
+当前可玩地址（提交 `d1cc2c9`，单线程，`.wasm` 为 `application/wasm` 且未预压缩）：
+
+https://raw.githack.com/ThySummer14/kuangye/d1cc2c9e4ce417e66d94e2ed2973537abfdc4808/godot/web/index.html
+
+手机浏览器第一次打开会先看到该站的确认页，点 Open the page 后进入游戏，再把屏幕转成横向。jsDelivr 不托管超过 20MB 的文件，所以不能用它发这颗 `.wasm`。

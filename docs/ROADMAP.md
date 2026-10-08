@@ -64,7 +64,11 @@
 
 改成什么：在 `godot/` 用 Godot 4.7 做横屏 2.5D 原型（480×216 正交像素画面，最近邻放大）。小芽按 `docs/mascot.md` 的七条铁律。四个场所对应现有功能：小家（买家具、布置、旋转、回收）、岩壁（最多 3 件，完成给光，放下不扣）、书屋、画室。家具价格、占格、退款 70% 和光的计算公式沿用 `app/src/data/furniture.js` 与 `app/src/game/home.js`。存档键是 `kuangye.godot.v1`，不动网页版 `kuangye.v3`。不改 `app/`，不推 main。
 
-怎么验收：手机横屏打开本分支的网页导出（单线程，不靠 COOP/COEP，`.wasm` 不以 gzip 裸发）。走进小家，向木匠买一件，布置模式里摆上并旋转，刷新后还在。画面暖、高光不发白、小芽五官看得清、地面不是碎噪点。截图在 `godot/screenshots/`，导出说明在 `godot/EXPORT.md`。
+怎么验收：手机横屏打开下面的链接（单线程导出，不靠 COOP/COEP，`.wasm` 原样发送，类型是 `application/wasm`）。第一次会先看到托管站的确认页，点 Open the page 才进游戏，然后把手机横过来。走进小家，向木匠买一件，布置模式里摆上并旋转，刷新后还在。画面暖、高光不发白、小芽五官看得清、地面不是碎噪点。
+
+可玩地址：https://raw.githack.com/ThySummer14/kuangye/d1cc2c9e4ce417e66d94e2ed2973537abfdc4808/godot/web/index.html
+
+jsDelivr 拒收超过 20MB 的 `.wasm`，本仓库的 GitHub Pages 只从 main 发布网页版，这条分支没有去覆盖它。截图在 `godot/screenshots/`，导出说明在 `godot/EXPORT.md`。
 
 网页版自己的下一步不变，见下一节。
 

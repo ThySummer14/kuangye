@@ -30,7 +30,11 @@ python3 godot/tools/serve.py godot/web 8765
 
 线上不要部署到仓库的 GitHub Pages 根目录，那是 main 上的网页版。本分支的导出放在 `godot/web/`，用提交哈希从静态 CDN 打开，避免覆盖 https://thysummer14.github.io/kuangye/ 。
 
-当前可玩地址（提交 `d1cc2c9`，单线程，`.wasm` 为 `application/wasm` 且未预压缩）：
+当前可玩地址（提交 `746ace9`，单线程，`.wasm` 为 `application/wasm` 且未预压缩）：
+
+https://raw.githack.com/ThySummer14/kuangye/746ace946dbfe8ac59f4538d0c92bf692c78e7ca/godot/web/index.html
+
+上一版 `d1cc2c9` 仍然可开，没有被这次提交覆盖：
 
 https://raw.githack.com/ThySummer14/kuangye/d1cc2c9e4ce417e66d94e2ed2973537abfdc4808/godot/web/index.html
 

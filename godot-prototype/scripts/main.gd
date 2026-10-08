@@ -67,9 +67,14 @@ var last_keyboard_height := 0.0
 var last_safe_rect := Rect2()
 var note_body_scroll: ScrollContainer
 var note_history_button: Button
+var qa_target_size := Vector2i.ZERO
 
 func _ready() -> void:
 	qa_mode = OS.get_cmdline_user_args().has("--qa")
+	for argument in OS.get_cmdline_user_args():
+		if argument.begins_with("--qa-size="):
+			var dimensions := argument.trim_prefix("--qa-size=").split("x")
+			if dimensions.size()==2:qa_target_size=Vector2i(int(dimensions[0]),int(dimensions[1]))
 	ui_density = ui_density_override if ui_density_override>0 else (clampf(DisplayServer.screen_get_scale(),1.0,3.5) if OS.has_feature("mobile") else 1.0)
 	Art.font = load("res://assets/NotoSansSC-Regular.otf")
 	setup_theme()
@@ -275,7 +280,7 @@ func layout_ui() -> void:
 		camera.size = 13.5 if location=="town" else 10.0
 		if mobile:
 			camera.keep_aspect = Camera3D.KEEP_WIDTH
-			camera.size = 7.5 if location=="town" else 7.0
+			camera.size = 10.0 if location=="town" else 8.5
 		else:
 			camera.keep_aspect = Camera3D.KEEP_HEIGHT
 
@@ -636,7 +641,7 @@ func refresh_hud() -> void:
 	retry_save_button.visible = unsaved_changes and not save_locked and not is_instance_valid(modal)
 	build_button.visible = location=="home" and not build_mode and not is_instance_valid(modal)
 	note_button.visible = not build_mode and not is_instance_valid(modal)
-	if build_mode:
+	if build_mode or is_instance_valid(modal) or transitioning:
 		action_button.visible = false
 	layout_ui()
 
@@ -1027,6 +1032,15 @@ func qa_check(ok: bool, message: String) -> void:
 
 func run_integration_qa() -> void:
 	await get_tree().process_frame
+	if qa_target_size!=Vector2i.ZERO:
+		get_window().mode=Window.MODE_WINDOWED
+		get_window().unresizable=false
+		get_window().size=qa_target_size
+		get_window().position=Vector2i(80,90)
+		await get_tree().process_frame
+		await get_tree().process_frame
+		layout_ui()
+		qa_check(Vector2i(get_viewport_rect().size)==qa_target_size,"native viewport matches requested graphical QA size")
 	qa_check(location=="town" and world.hotspots.size()==4,"town has three usable buildings and a memory bench")
 	var start := player.position
 	qa_check(navigate_to(Vector3(0,0,1.0)),"tap-navigation produces a walkable path")

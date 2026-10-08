@@ -5,6 +5,35 @@ extends RefCounted
 # ported from the existing app, following docs/mascot.md and its approved turnaround.
 static var materials: Dictionary = {}
 static var font: Font
+const BODY_PROFILE := [[226,0],[225,43],[221,67],[212,80],[196,87],[172,86],[149,78],[127,65],[108,47],[95,25],[89,0]]
+
+static func mascot_mat(hex:String) -> StandardMaterial3D:
+	var key:="mascot:"+hex
+	if materials.has(key):return materials[key]
+	var material:=StandardMaterial3D.new()
+	material.albedo_color=Color(hex)
+	material.shading_mode=BaseMaterial3D.SHADING_MODE_UNSHADED
+	material.vertex_color_use_as_albedo=true
+	materials[key]=material
+	return material
+
+static func body_depth(x:float,y:float) -> float:
+	var py:=226.0-(y-0.02)*190.0
+	for i in BODY_PROFILE.size()-1:
+		if py<=BODY_PROFILE[i][0] and py>=BODY_PROFILE[i+1][0]:
+			var t:float=(float(BODY_PROFILE[i][0])-py)/(float(BODY_PROFILE[i][0])-float(BODY_PROFILE[i+1][0]))
+			var r:=lerpf(float(BODY_PROFILE[i][1]),float(BODY_PROFILE[i+1][1]),t)/190.0
+			return sqrt(maxf(0,r*r-x*x))*0.84
+	return 0
+
+static func face_patch(parent:Node3D,center:Vector2,radius:Vector2,color:String) -> MeshInstance3D:
+	var surface:=SurfaceTool.new()
+	surface.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for i in 24:
+		for p in [center,center+Vector2(cos((i+1)*TAU/24),sin((i+1)*TAU/24))*radius,center+Vector2(cos(i*TAU/24),sin(i*TAU/24))*radius]:
+			surface.add_vertex(Vector3(p.x,p.y,body_depth(p.x,p.y)+0.013))
+	surface.generate_normals()
+	return mesh(parent,surface.commit(),Vector3.ZERO,mascot_mat(color))
 
 static func mat(hex: String, glow := 0.0, alpha := 1.0) -> StandardMaterial3D:
 	var key := hex + str(glow) + str(alpha)
@@ -72,10 +101,10 @@ static func label(parent: Node3D, p: Vector3, text: String, size := 26) -> Label
 	n.text = text
 	n.font = font
 	n.font_size = size
-	n.pixel_size = 0.008
+	n.pixel_size = 0.012
 	n.modulate = Color("fff0ce")
 	n.outline_modulate = Color("302d2c")
-	n.outline_size = 7
+	n.outline_size = 3
 	n.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	n.position = p
 	parent.add_child(n)
@@ -115,7 +144,7 @@ static func mascot(parent: Node3D) -> Node3D:
 	var shape := group(root)
 	shape.name = "BodyShape"
 	# The same bottom-to-top radial profile as app/src/game/mascot.js.
-	var profile := [[226, 0], [225, 43], [221, 67], [212, 80], [196, 87], [172, 86], [149, 78], [127, 65], [108, 47], [95, 25], [89, 0]]
+	var profile := BODY_PROFILE
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	for j in profile.size() - 1:
@@ -127,18 +156,29 @@ static func mascot(parent: Node3D) -> Node3D:
 				quad.append(Vector3(cos(a) * row[1] / 190.0, (226.0 - row[0]) / 190.0 + 0.02, sin(a) * row[1] / 190.0 * 0.84))
 			# Godot uses clockwise front faces; the original Three.js winding is reversed.
 			for idx in [0, 1, 2, 1, 3, 2]:
+				st.set_color(Color("f7ece3").lerp(Color("fdf7f1"),clampf(quad[idx].y/0.5,0,1)))
 				st.add_vertex(quad[idx])
 	st.generate_normals()
-	mesh(shape, st.commit(), Vector3.ZERO, mat("fdf7f1", 0.18)).name = "body"
-	sphere(shape, Vector3(-37.0 / 190.0, 139.0 / 190.0, -0.015), Vector3(44.0, 56.0, 36.0) / 190.0, "fdf7f1", 0.18).name = "horn-left-tall"
-	sphere(shape, Vector3(46.0 / 190.0, 125.0 / 190.0, -0.015), Vector3(34.0, 40.0, 30.0) / 190.0, "fdf7f1", 0.18).name = "horn-right-short"
+	mesh(shape, st.commit(), Vector3.ZERO, mascot_mat("ffffff")).name = "body"
+	var left:=sphere(shape, Vector3(-37.0 / 190.0, 139.0 / 190.0, -0.015), Vector3(44.0, 56.0, 36.0) / 190.0, "fdf7f1")
+	left.name="horn-left-tall"
+	left.material_override=mascot_mat("fdf7f1")
+	var right:=sphere(shape, Vector3(46.0 / 190.0, 125.0 / 190.0, -0.015), Vector3(34.0, 40.0, 30.0) / 190.0, "fdf7f1")
+	right.name="horn-right-short"
+	right.material_override=mascot_mat("fdf7f1")
 	for side in [-1, 1]:
-		sphere(shape, Vector3(side * 0.425, 0.20, 0.08), Vector3(0.15, 0.16, 0.13), "fdf7f1", 0.18).name = "hand" + str(side)
-		sphere(shape, Vector3(side * 0.17, 0.43, 0.306), Vector3(0.060, 0.099, 0.012), "d9af68", 0.22).name = "eye" + str(side)
-		sphere(shape, Vector3(side * 0.255, 0.31, 0.292), Vector3(0.12, 0.049, 0.009), "fdd1cf", 0.10)
+		var hand:=sphere(shape, Vector3(side * 0.425, 0.20, 0.08), Vector3(0.15, 0.16, 0.13), "fdf7f1")
+		hand.name="hand"+str(side)
+		hand.material_override=mascot_mat("fdf7f1")
+		face_patch(shape,Vector2(side*0.17,0.43),Vector2(0.030,0.0495),"d9af68").name="eye"+str(side)
+		face_patch(shape,Vector2(side*0.255,0.31),Vector2(0.060,0.0245),"fdd1cf").name="cheek"+str(side)
 	var mouth := [Vector3(-0.048,0.358,0.364), Vector3(-0.035,0.337,0.366), Vector3(-0.015,0.337,0.367), Vector3(0,0.353,0.368), Vector3(0.015,0.337,0.367), Vector3(0.035,0.337,0.366), Vector3(0.048,0.358,0.364)]
 	for i in mouth.size() - 1:
-		beam(shape, mouth[i], mouth[i+1], 0.012, "d9af68").name = "mouth-w"
+		mouth[i].z=body_depth(mouth[i].x,mouth[i].y)+0.013
+		mouth[i+1].z=body_depth(mouth[i+1].x,mouth[i+1].y)+0.013
+		var stroke:=beam(shape, mouth[i], mouth[i+1], 0.012, "d9af68")
+		stroke.name="mouth-w"
+		stroke.material_override=mascot_mat("d9af68")
 	var sprout := group(shape, Vector3(0, 0.72, 0))
 	sprout.name = "two-leaf-sprout"
 	beam(sprout, Vector3.ZERO, Vector3(0.035, 0.17, 0), 0.024, "a7e160")
@@ -146,6 +186,27 @@ static func mascot(parent: Node3D) -> Node3D:
 		var leaf := sphere(sprout, Vector3(0.035 + side * 0.064, 0.19, 0), Vector3(0.16, 0.085, 0.055), "c7ef90", 0.55)
 		leaf.rotation.z = side * 0.4
 		leaf.name = "leaf" + str(side)
+		leaf.material_override=mascot_mat("c7ef90")
+	var gradient:=Gradient.new()
+	gradient.offsets=PackedFloat32Array([0.0,0.5,1.0])
+	gradient.colors=PackedColorArray([Color(0.78,0.94,0.56,0.20),Color(0.78,0.94,0.56,0.08),Color(0.78,0.94,0.56,0.0)])
+	var texture:=GradientTexture2D.new()
+	texture.gradient=gradient
+	texture.width=32
+	texture.height=32
+	texture.fill=GradientTexture2D.FILL_RADIAL
+	texture.fill_from=Vector2(0.5,0.5)
+	texture.fill_to=Vector2(1.0,0.5)
+	var halo_material:=StandardMaterial3D.new()
+	halo_material.shading_mode=BaseMaterial3D.SHADING_MODE_UNSHADED
+	halo_material.transparency=BaseMaterial3D.TRANSPARENCY_ALPHA
+	halo_material.billboard_mode=BaseMaterial3D.BILLBOARD_ENABLED
+	halo_material.albedo_texture=texture
+	var halo_quad:=QuadMesh.new()
+	halo_quad.size=Vector2(0.44,0.30)
+	var halo:=mesh(sprout,halo_quad,Vector3(0.035,0.19,0),halo_material)
+	halo.name="sprout-halo"
+	halo.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	root.rotation.y = 0.35
 	return root
 
@@ -233,6 +294,13 @@ static func house(parent: Node3D, p: Vector3, kind: String) -> Node3D:
 	var wall_color := "c4ba9b" if kind == "studio" else ("b6a383" if kind == "shop" else "dfcaae")
 	box(n,Vector3(0,0.17,0),Vector3(4.7,0.35,3.7),"7b8275")
 	box(n,Vector3(0,1.40,0),Vector3(4.35,2.4,3.35),wall_color)
+	for side in [-1,1]:
+		var gable := SurfaceTool.new()
+		gable.begin(Mesh.PRIMITIVE_TRIANGLES)
+		var corners := [Vector3(-2.18,2.50,side*1.68),Vector3(0,3.52,side*1.68),Vector3(2.18,2.50,side*1.68)]
+		for index in ([0,1,2] if side==1 else [2,1,0]):gable.add_vertex(corners[index])
+		gable.generate_normals()
+		mesh(n,gable.commit(),Vector3.ZERO,mat(wall_color))
 	# Timber framing and shallow weatherboarding stay legible in the low-resolution world.
 	for x in [-2.1,-0.78,0.78,2.1]:
 		box(n,Vector3(x,1.38,1.70),Vector3(0.13,2.45,0.13),"75654f")

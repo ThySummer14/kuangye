@@ -38,6 +38,12 @@ func run() -> void:
 	check(body.find_children("*leg*","",true,false).is_empty(),"mascot has no legs")
 	var eye: StandardMaterial3D = body.get_node("eye-1").material_override
 	check(eye.albedo_color.is_equal_approx(Color("d9af68")),"mascot eyes use approved solid amber")
+	var features_outside:=true
+	for feature in body.find_children("*","MeshInstance3D",false,false):
+		if str(feature.name).begins_with("eye") or str(feature.name).begins_with("cheek"):
+			for vertex in feature.mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]:
+				if vertex.z<Art.body_depth(vertex.x,vertex.y)+0.01:features_outside=false
+	check(features_outside,"every eye and cheek vertex sits above the curved body surface")
 	var shell: Mesh = body.get_node("body").mesh
 	var arrays := shell.surface_get_arrays(0)
 	var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]

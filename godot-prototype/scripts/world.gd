@@ -24,14 +24,15 @@ func _ready() -> void:
 	settings.background_color = Color("344b53")
 	settings.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	settings.ambient_light_color = Color("c8d6da")
-	settings.ambient_light_energy = 0.65 if location == "town" else 0.52
-	settings.tonemap_mode = Environment.TONE_MAPPER_FILMIC
+	settings.ambient_light_energy = 0.40 if location == "town" else 0.38
+	settings.tonemap_mode = Environment.TONE_MAPPER_LINEAR
+	settings.tonemap_exposure = 0.82
 	environment.environment = settings
 	add_child(environment)
 	sun = DirectionalLight3D.new()
 	sun.rotation_degrees = Vector3(-32, -38, 0)
-	sun.light_color = Color("ffd8a5")
-	sun.light_energy = 1.4 if location == "town" else 0.72
+	sun.light_color = Color("fff0d9")
+	sun.light_energy = 0.60 if location == "town" else 0.24
 	sun.shadow_enabled = true
 	sun.directional_shadow_max_distance = 45.0
 	sun.shadow_blur = 0.4
@@ -112,7 +113,7 @@ func build_town() -> void:
 			var wx := x*0.5
 			var wz := z*0.5
 			if absf(wx)<1.3 or (wz>-0.6 and wz<1.4) or (wz>-2.1 and wz<-0.6 and absf(wx-4.5)<0.9):
-				Art.box(self,Vector3(wx,0.005,wz),Vector3(0.48,0.028,0.48),["bcb598","b6b193","c3ba9d","adae91"][rng.randi_range(0,3)])
+				Art.box(self,Vector3(wx,0.005,wz),Vector3(0.498,0.018,0.498),["aaa68e","a8a48b","b0ab93","a6a38a"][rng.randi_range(0,3)])
 	for place in [{"id":"home","pos":Vector3(-5,0,-2.5),"name":"小家"},{"id":"shop","pos":Vector3(4.7,0,-3.0),"name":"木匠铺"},{"id":"studio","pos":Vector3(-0.5,0,-8.5),"name":"画室"}]:
 		Art.house(self,place.pos,place.id)
 		var building_body:=solid(place.pos+Vector3(0,1.3,0),Vector3(4.3,2.6,3.35))
@@ -162,8 +163,11 @@ func build_town() -> void:
 func build_room() -> void:
 	solid(Vector3(0,-0.15,0),Vector3(9.5,0.30,8.4),"776957")
 	for x in 19:
-		for z in 6:
-			Art.box(self,Vector3(-4.5+x*0.5,0.001,-3.4+z*1.35),Vector3(0.482,0.028,1.32),["b69a74","bba17c","c3a985","ad926d"][(x+z*3)%4])
+		for z in 7:
+			var start := maxf(-4.0,-4.9+z*1.35+(x%3)*0.45)
+			var finish := minf(4.0,-3.55+z*1.35+(x%3)*0.45)
+			if finish>start:
+				Art.box(self,Vector3(-4.5+x*0.5,0.001,(start+finish)*0.5),Vector3(0.498,0.028,finish-start-0.006),["a48c6e","a78f72","aa9275","a48d70"][(x+z*3)%4])
 	solid(Vector3(0,1.45,-4.1),Vector3(9.5,2.9,0.20),"d4c2a1")
 	solid(Vector3(-4.65,1.45,0),Vector3(0.20,2.9,8.4),"b8b394")
 	# Front/right cutaway walls are only knee high, so movement and furniture remain visible.
@@ -180,8 +184,8 @@ func build_room() -> void:
 	var shaft := Art.box(self,Vector3(0.15,0.10,-2.55),Vector3(1.63,0.012,2.5),"f8d39a")
 	shaft.material_override = Art.mat("f8d39a",0.2,0.20)
 	shaft.rotation.y = -0.18
-	Art.light(self,Vector3(0,1.8,-2.6),"ffd7a5",1.0,5.0)
-	var main_light := Art.light(self,Vector3(0.9,2.7,1.2),"ffdcaf",1.1,7.5)
+	Art.light(self,Vector3(0,1.8,-2.6),"ffd7a5",0.38,5.0)
+	var main_light := Art.light(self,Vector3(0.9,2.7,1.2),"ffdcaf",0.52,7.5)
 	main_light.shadow_enabled = true
 	main_light.set_meta("priority_light",true)
 	Art.box(self,Vector3(0,-0.035,4.2),Vector3(1.7,0.08,0.7),"d2bb91")
@@ -195,7 +199,6 @@ func build_room() -> void:
 			Art.furniture(self,"shelf",Vector3(-4.0,0,-1.25))
 			Art.furniture(self,"rug",Vector3(-2.8,0,-1.2)).scale = Vector3(2.1,1,2.1)
 			hotspots.append({"id":"desk","name":"整理今天的发现","pos":Vector3(2.7,0,-1.95),"kind":"note"})
-			Art.label(self,Vector3(0.2,2.75,-3.8),"把生活的一点光，带回家。",21)
 		"shop":
 			for x in [-3.2,-2.0,2.8,4.0]:
 				Art.furniture(self,"shelf",Vector3(x,0,-3.2))
@@ -220,7 +223,6 @@ func build_room() -> void:
 			Art.furniture(self,"stool",Vector3(0.1,0,0))
 			Art.planter(self,Vector3(3.6,0,2.8))
 			hotspots.append({"id":"easel","name":"留下一幅生活小记","pos":Vector3(-0.8,0,-0.8),"kind":"note"})
-			Art.label(self,Vector3(0,2.75,-3.8),"从真实的一天，长出作品。",21)
 
 func fireplace(p: Vector3) -> void:
 	var n := Art.group(self,p)
@@ -253,10 +255,11 @@ func show_memories(notes: Array[Dictionary]) -> void:
 	if location != "home" and location != "studio":
 		return
 	for i in mini(notes.size(),4):
-		var p := Vector3(-1.4+i*0.89,2.22,-3.79)
+		var p := Vector3(1.9+i*0.68,2.22,-3.79)
 		Art.box(memory_root,p,Vector3(0.58,0.45,0.055),"9f835e")
 		Art.box(memory_root,p+Vector3(0,0,0.031),Vector3(0.48,0.35,0.015),["d4b888","b7c1a1","c4a796","abbdbe"][i])
-		Art.label(memory_root,p+Vector3(0,-0.02,0.05),notes[notes.size()-1-i].text.left(6),12)
+		for line in 3:
+			Art.box(memory_root,p+Vector3(0,0.08-line*0.065,0.045),Vector3(0.32-line*0.04,0.015,0.012),"7b866e")
 
 func update_light_budget(focus: Vector3) -> void:
 	# Mobile/Compatibility support eight omni lights per mesh. Keep a conservative

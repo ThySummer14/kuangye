@@ -3,3 +3,13 @@ artifacts/*
 !artifacts/.gitkeep
 exports/
 *.tmp
+*.zip
+.env
+.env.*
+__pycache__/
+user-data/
+**/town-prototype-*.json
+**/town-qa-*.json
+**/creative-ui.json
+**/creative-e2e.json
+**/creative-roundtrip.json

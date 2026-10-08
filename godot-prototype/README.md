@@ -25,3 +25,7 @@
 ## 许可
 
 环境几何为原创程序化模型，小芽沿用本仓库既有设计。项目 MIT 许可见 PROJECT-LICENSE.txt。中文字体 Noto Sans CJK SC 使用 SIL Open Font License 1.1，见 assets/NotoSansSC-LICENSE.txt。
+
+## 干净打包
+
+`python3 godot-prototype/tools/package_delivery.py --web-dir /path/to/dist --output /path/to/new-delivery.zip` 按明确白名单打包，不遍历整个仓库或 Site 工作目录。可重复指定 `--evidence /path/to/check.png` 加入具名验证文件。拒绝 Git/环境元数据、测试存档、密钥文件、越界路径和符号链接；已有输出不会被覆盖。运行 `python3 godot-prototype/tests/test_package_delivery.py` 验证这些边界。

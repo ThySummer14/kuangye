@@ -44,8 +44,9 @@ func confirm(text:String,callback:Callable) -> void:
 	primary.add_theme_color_override("font_color",Color("253d34"))
 	app.layout_ui()
 
-func persisted(message:String) -> void:
+func persisted(message:String,reaction:="happy") -> void:
 	var ok:bool=app.save()
+	if ok:app.mascot_feedback(reaction)
 	app.world.show_creation(model().work(model().home.studio.displayId))
 	app.saved_status(ok,message)
 
@@ -75,6 +76,7 @@ func observation_page(id:String) -> void:
 	confirm("带到画室创作",func():begin_work(id))
 
 func field(v:VBoxContainer,key:String,title:String,value:String,limit:int,multiline:=false) -> void:
+	app.modal.set_meta("mascot_mood","focused")
 	prose(v,title,true)
 	if multiline:
 		var edit:=TextEdit.new()
@@ -232,5 +234,5 @@ func completion(id:String) -> void:
 	confirm("收好作品",func():
 		if not checked.button_pressed:app.status("做到时再勾选，现在也可以回去继续。");return
 		if not app.state.complete_creative_work(id,today()):app.status(model().last_error);return
-		persisted("你做出的这一版，收好了。")
+		persisted("你做出的这一版，收好了。","proud")
 		work_page(id))

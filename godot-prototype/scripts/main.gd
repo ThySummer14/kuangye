@@ -4,6 +4,9 @@ const State = preload("res://scripts/state.gd")
 const Catalog = preload("res://scripts/catalog.gd")
 const Art = preload("res://scripts/art.gd")
 const World = preload("res://scripts/world.gd")
+const MascotMotion = preload("res://scripts/mascot_motion.gd")
+var mascot_motion := MascotMotion.new()
+var pending_mascot_reaction := ""
 const CreativePanel = preload("res://scripts/creative_panel.gd")
 var creative_panel:RefCounted
 var state := State.new()
@@ -104,6 +107,7 @@ func _ready() -> void:
 	change_location("town")
 	get_viewport().size_changed.connect(layout_ui)
 	get_window().focus_exited.connect(pause_input)
+	get_window().focus_entered.connect(func():mascot_motion.set_suspended(false))
 	layout_ui()
 	if save_locked:
 		status(state.last_error)
@@ -350,6 +354,7 @@ func ui_keyboard_height() -> float:
 	return float(DisplayServer.virtual_keyboard_get_height()) if OS.has_feature("mobile") else 0.0
 
 func change_location(place: String) -> void:
+	pending_mascot_reaction=""
 	room_exit_latched = false
 	clear_touch()
 	route.clear()
@@ -374,6 +379,7 @@ func change_location(place: String) -> void:
 	world.add_child(player)
 	mascot = Art.mascot(player)
 	mascot.scale = Vector3.ONE*1.25
+	mascot_motion.bind(mascot)
 	if place == "town":
 		player.position = Vector3(0,0.12,3.8)
 		if previous_door != "":
@@ -477,14 +483,10 @@ func _physics_process(delta: float) -> void:
 		if not room_exit_latched and player.position.z>=3.6 and absf(player.position.x)<=1.45 and direction.y>0.01:
 			room_exit_latched=true
 			transition_to("town")
-	var body: Node3D = mascot.get_node("BodyShape")
 	if direction.length()>0.1:
 		mascot.rotation.y = lerp_angle(mascot.rotation.y,atan2(direction.x,direction.y),minf(1,delta*12))
-		body.position.y = absf(sin(elapsed*9))*0.045
-		body.scale = Vector3(1+sin(elapsed*18)*0.025,1-sin(elapsed*18)*0.025,1)
-	else:
-		body.position.y = sin(elapsed*2)*0.01
-		body.scale = Vector3(1,1+sin(elapsed*2)*0.012,1)
+	mascot_motion.set_context(str(modal.get_meta("mascot_mood","curious")) if is_instance_valid(modal) else ("focused" if build_mode else "idle"))
+	mascot_motion.step(delta,direction.length()>0.1)
 	update_nearby()
 	if not queued_interaction.is_empty() and route.is_empty():
 		var target := queued_interaction
@@ -605,11 +607,14 @@ func clear_touch() -> void:
 		joystick_knob.position = Vector2(30,30)
 
 func pause_input() -> void:
+	pending_mascot_reaction=""
+	mascot_motion.set_suspended(true)
 	clear_touch()
 	route.clear()
 	queued_interaction=""
 
 func _notification(what:int) -> void:
+	if what==NOTIFICATION_APPLICATION_RESUMED:mascot_motion.set_suspended(false)
 	if what==NOTIFICATION_APPLICATION_PAUSED and is_instance_valid(hud):
 		pause_input()
 		if unsaved_changes:save()
@@ -666,6 +671,7 @@ func pick_world(screen:Vector2) -> Dictionary:
 func interact() -> void:
 	if nearby.is_empty() or transitioning or build_mode:
 		return
+	mascot_motion.react("curious",0.9)
 	match nearby.kind:
 		"door": transition_to(nearby.id)
 		"shop": show_shop()
@@ -727,6 +733,10 @@ func save() -> bool:
 	refresh_hud()
 	return true
 
+func mascot_feedback(mood:String) -> void:
+	if is_instance_valid(modal):pending_mascot_reaction=mood
+	else:mascot_motion.react(mood)
+
 func saved_status(persisted: bool, success_text: String) -> void:
 	if persisted:
 		status(success_text)
@@ -742,7 +752,7 @@ func status(text: String) -> void:
 		if is_instance_valid(status_label) and status_label.text==this_text: status_label.text="")
 
 func make_modal(title: String,preferred_width:=500.0,preferred_height:=520.0) -> VBoxContainer:
-	close_modal()
+	close_modal(false)
 	route.clear()
 	queued_interaction = ""
 	clear_touch()
@@ -769,7 +779,7 @@ func make_modal(title: String,preferred_width:=500.0,preferred_height:=520.0) ->
 	layout_ui()
 	return v
 
-func close_modal() -> void:
+func close_modal(resume_world:=true) -> void:
 	var focused:=get_viewport().gui_get_focus_owner()
 	if is_instance_valid(focused) and is_instance_valid(modal) and modal.is_ancestor_of(focused):focused.release_focus()
 	if DisplayServer.has_feature(DisplayServer.FEATURE_VIRTUAL_KEYBOARD):DisplayServer.virtual_keyboard_hide()
@@ -785,6 +795,9 @@ func close_modal() -> void:
 	if is_instance_valid(modal_shade):
 		modal_shade.queue_free()
 	modal_shade = null
+	if resume_world and not pending_mascot_reaction.is_empty():
+		mascot_motion.react(pending_mascot_reaction)
+		pending_mascot_reaction=""
 	refresh_hud()
 
 func show_shop() -> void:
@@ -839,6 +852,7 @@ func show_note() -> void:
 	caption.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	writing_body.add_child(caption)
 	var edit := TextEdit.new()
+	modal.set_meta("mascot_mood","focused")
 	note_editor = edit
 	edit.text = note_draft
 	edit.placeholder_text = "比如：路边桂花的香味，走过拐角后才闻见。"
@@ -864,6 +878,7 @@ func show_note() -> void:
 			edit.text = ""
 			note_draft = ""
 			close_modal()
+			if persisted:mascot_feedback("happy")
 			saved_status(persisted,"已收好。小家与画室多了一幅属于今天的小画。")
 			refresh_hud()
 		else: status("留下一点内容，再收好吧。"))

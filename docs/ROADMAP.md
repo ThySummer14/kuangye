@@ -58,6 +58,24 @@
 
 接续原聊天的 Android 手机软件要求。沿用 Capacitor 8.5.2 和同一 Vue/three 页面，只补匹配的 Android 平台包；接上原生原子存档、系统文件选择、返回键和安全区，打出可安装的 debug APK。用一次性模拟器存档验收离线、重启保留、备份往返、键盘与横竖屏，同时完成 14 项专辑的 Pages 发布。
 
+## Godot 小镇试验（2026-10-08，分支，不合并）
+
+现有方案哪里错了：网页版在手机上字太多，同一件事反复说；开屏像网页（长按出选区、顶栏穿进画面、双指不稳）。Hal 要的是少界面，操纵小芽走进房间，而不是在面板之间点。
+
+改成什么：在 `godot/` 用 Godot 4.7 做横屏 2.5D 原型（480×216 正交像素画面，最近邻放大）。小芽按 `docs/mascot.md` 的七条铁律。四个场所对应现有功能：小家（买家具、布置、旋转、回收）、岩壁（最多 3 件，完成给光，放下不扣）、书屋、画室。家具价格、占格、退款 70% 和光的计算公式沿用 `app/src/data/furniture.js` 与 `app/src/game/home.js`。存档键是 `kuangye.godot.v1`，不动网页版 `kuangye.v3`。不改 `app/`，不推 main。
+
+怎么验收：手机横屏打开下面的链接（单线程导出，不靠 COOP/COEP，`.wasm` 原样发送，类型是 `application/wasm`）。第一次会先看到托管站的确认页，点 Open the page 才进游戏，然后把手机横过来。走进小家，向木匠买一件，布置模式里摆上并旋转，刷新后还在。画面暖、高光不发白、小芽五官看得清、地面不是碎噪点。
+
+可玩地址（2026-10-08 画面二修：室内拉远能看见整间和格子，小芽比门和长凳窄，眼睛是平的琥珀椭圆，近处地面铺满石头）：https://raw.githack.com/ThySummer14/kuangye/de439a55adf18de4df3900267ed3f6028497ae93/godot/web/index.html
+
+上一版链接仍然可开：https://raw.githack.com/ThySummer14/kuangye/746ace946dbfe8ac59f4538d0c92bf692c78e7ca/godot/web/index.html
+
+再上一版：https://raw.githack.com/ThySummer14/kuangye/d1cc2c9e4ce417e66d94e2ed2973537abfdc4808/godot/web/index.html
+
+jsDelivr 拒收超过 20MB 的 `.wasm`，本仓库的 GitHub Pages 只从 main 发布网页版，这条分支没有去覆盖它。截图在 `godot/screenshots/`，导出说明在 `godot/EXPORT.md`。
+
+网页版自己的下一步不变，见下一节。
+
 ## 下一步：一个具体动作
 
 让地图进行中创作的「打开进行中」直接回到关联作品；普通任务仍定位原岩壁卡片。核对当前 active 与作品最后 taskId 的关联，避免打开旧版本，复用具体作品定位和标题焦点；不自动完成或发奖励，不新增主导航。暂放作品已经一击可达，下一步补齐正在做的原件入口。

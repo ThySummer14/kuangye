@@ -66,9 +66,11 @@
 
 怎么验收：手机横屏打开下面的链接（单线程导出，不靠 COOP/COEP，`.wasm` 原样发送，类型是 `application/wasm`）。第一次会先看到托管站的确认页，点 Open the page 才进游戏，然后把手机横过来。走进小家，向木匠买一件，布置模式里摆上并旋转，刷新后还在。画面暖、高光不发白、小芽五官看得清、地面不是碎噪点。
 
-可玩地址（2026-10-08 画面一修，室内压暗、墙面铺满、小芽正脸、摇杆常显）：https://raw.githack.com/ThySummer14/kuangye/746ace946dbfe8ac59f4538d0c92bf692c78e7ca/godot/web/index.html
+可玩地址（2026-10-08 画面二修：室内拉远能看见整间和格子，小芽比门和长凳窄，眼睛是平的琥珀椭圆，近处地面铺满石头）：https://raw.githack.com/ThySummer14/kuangye/de439a55adf18de4df3900267ed3f6028497ae93/godot/web/index.html
 
-上一版链接仍然可开：https://raw.githack.com/ThySummer14/kuangye/d1cc2c9e4ce417e66d94e2ed2973537abfdc4808/godot/web/index.html
+上一版链接仍然可开：https://raw.githack.com/ThySummer14/kuangye/746ace946dbfe8ac59f4538d0c92bf692c78e7ca/godot/web/index.html
+
+再上一版：https://raw.githack.com/ThySummer14/kuangye/d1cc2c9e4ce417e66d94e2ed2973537abfdc4808/godot/web/index.html
 
 jsDelivr 拒收超过 20MB 的 `.wasm`，本仓库的 GitHub Pages 只从 main 发布网页版，这条分支没有去覆盖它。截图在 `godot/screenshots/`，导出说明在 `godot/EXPORT.md`。
 

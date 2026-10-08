@@ -21,11 +21,11 @@
 | 观察→创作 | `game/observation-craft.js`；immutable source 快照、双向关联、同一观察只接一作品、共享图片预算 | 本轮文字快照与一对一关联；修改原页不改变当时素材；重复进入不占新任务 | 图片快照容量与双向跳转细化 |
 | 作品卡片/作品集导出 | `services/studio-media.js`：PNG取首图/一页正文，HTML保留全部，私语默认不导出 | 未迁移 | 移动下载/分享、导出确认与隐私默认 |
 | 居民来访和委托 | `ResidentDesk.vue`、`game/residents.js`、`store.js` 有接取、交付与快照实现；`data/residents.js`区分待审内容 | v6 家具 NPC 交易；来访规则未迁移 | 内容发布门槛、委托接取/交付、不重复发奖 |
-| 人生挑战与蚀刻章 | `lifetime-challenges.js`、`LifetimeChallenges.vue`、`game/challenges.js`：14挑战对应14章；完成条件和成果自述；数学项需自己的约定 | 未迁移 | 14章资格、历史、3D查看；不凭购买/光兑换 |
-| 越界行动与蚀刻章 | `challenges.js`：6项目，每个3加码条件；`ContractChallenges.vue`；4荣誉章按次数/等级/种类取得 | 未迁移 | 条件冻结、逐项确认、档案/4章、转动/缩放 |
-| 旧系列蚀刻柜 | `EtchingCabinet.vue`、`etching-art.js`：8原创图样×3预览阶段；`etchings.js` ETCHINGS为空、模板disabled，明确无铸章/评估/存档集成 | 未迁移 | 属预览与内容设计，不能误称已实装可获得荣誉 |
+| 人生挑战与蚀刻章 | `lifetime-challenges.js`、`LifetimeChallenges.vue`、`game/challenges.js`：14挑战对应14章；完成条件和成果自述；数学项需自己的约定 | v7.4 14条件/原缩略图可看；小说完整记录流程与世界落笔可获得 | 其余13人生章依赖、3D查看；不凭购买/光兑换 |
+| 越界行动与蚀刻章 | `challenges.js`：6项目，每个3加码条件；`ContractChallenges.vue`；4荣誉章按次数/等级/种类取得 | v7.4 实地求证条件冻结、证据、自述/逐项确认、历史；越界者/淬火意志可获得 | 其余5行动、多面锋芒/临界之上、原浮雕转动/缩放 |
+| 旧系列蚀刻柜 | `EtchingCabinet.vue`、`etching-art.js`：8原创图样×3预览阶段；`etchings.js` ETCHINGS为空、模板disabled，明确无铸章/评估/存档集成 | v7.4 明确列为旧预览，无领取 | 原三阶图样预览器未迁移，不当作可获得荣誉 |
 | 小芽陪伴、表情、氛围 | `mascot-model.js`、`emotions.js`、`RoamingBuddy.vue`、`AtmosphereControl.vue` | v6 既有标准形象、行走、固定暖光 | 全表情/互动、昼夜/天气与操作偏好 |
-| 本地存档与导入导出 | `game/save.js`、`services/persistence.js`、`backup.js`；main v3保留旧键，Web/Android/iOS不同存储桥接 | v6 原子保存/失败重试；本轮Godot v1→v2兼容旧原型、坏档保护 | main v3完整导入/导出未做；不会自动读取或重写原Web/APK数据 |
+| 本地存档与导入导出 | `game/save.js`、`services/persistence.js`、`backup.js`；main v3保留旧键，Web/Android/iOS不同存储桥接 | v6 原子保存/失败重试；v7.4 原型v1/v2→独立v3，保留旧文件/坏档保护 | main v3完整导入/导出未做；不会自动读取或重写原Web/APK数据 |
 
 ## 本轮最小完整流程
 
@@ -36,3 +36,8 @@
 个人创作在 main 为零 XP；这里同样不引入 XP 奖励。作品完成与旧随手记共用当天一次 5 微光，重复点完成或同日记录不能重复发放。最多3件进行中作品是未来全局任务上限的子集，后续接普通任务时应共享同一账本。
 
 验证区分：离线状态/视口/软键盘高度代理检查可以证明规则与矩形边界；实际输入法、触屏手势、图片选择、设备性能必须真实手机验证。原生图形与 Web 图形分别留证，不能彼此代替。
+
+
+## v7.4 章柜增量
+
+18枚原章条件与缩略图可看；小说、实地求证两条接取→证据→本人确认→完成记录流程已接入。支持世界落笔/越界者/淬火意志三枚真实解锁，其他15枚依赖未接入且不颁发。旧8系列继续明确外观预览。使用本机文字与观察作关联证据，无定位、访谈上传或外部自动联系。存档v3首次读取旧v1/v2后独立保存，原文件保留，但旧版后续变化不会自动合并到已有v3。图片、成果导出、其余挑战和原立体浮雕仍未迁移。

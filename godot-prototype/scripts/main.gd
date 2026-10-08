@@ -7,6 +7,8 @@ const World = preload("res://scripts/world.gd")
 const MascotMotion = preload("res://scripts/mascot_motion.gd")
 var mascot_motion := MascotMotion.new()
 var pending_mascot_reaction := ""
+const BadgePanel=preload("res://scripts/badge_panel.gd")
+var badge_panel:RefCounted
 const CreativePanel = preload("res://scripts/creative_panel.gd")
 var creative_panel:RefCounted
 var state := State.new()
@@ -104,6 +106,7 @@ func _ready() -> void:
 	add_child(image)
 	setup_hud()
 	creative_panel=CreativePanel.new(self)
+	badge_panel=BadgePanel.new(self)
 	change_location("town")
 	get_viewport().size_changed.connect(layout_ui)
 	get_window().focus_exited.connect(pause_input)
@@ -274,6 +277,8 @@ func layout_ui() -> void:
 	joystick_knob.size = Vector2(44,44)
 	joystick_knob.position = Vector2(30,30)+touch_movement*26
 	if is_instance_valid(modal):
+		var badge_grid:GridContainer=modal.get_meta("badge_grid") if modal.has_meta("badge_grid") else null
+		if is_instance_valid(badge_grid):badge_grid.columns=2 if mobile else 3
 		# In a landscape keyboard viewport, retain both touch targets without
 		# reducing the editable body to a single clipped label.
 		var compact:bool=usable_height<300
@@ -678,6 +683,7 @@ func interact() -> void:
 		"note": show_note()
 		"observation": creative_panel.book()
 		"creative": creative_panel.studio()
+		"badges": badge_panel.cabinet()
 		"displayed-work": creative_panel.work_page(state.creative.home.studio.displayId)
 
 func transition_to(place: String) -> void:
@@ -753,6 +759,7 @@ func status(text: String) -> void:
 
 func make_modal(title: String,preferred_width:=500.0,preferred_height:=520.0) -> VBoxContainer:
 	close_modal(false)
+	if not unsaved_changes:status_label.text=""
 	route.clear()
 	queued_interaction = ""
 	clear_touch()

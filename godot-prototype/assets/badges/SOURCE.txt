@@ -1,0 +1,1 @@
+Unmodified original Kuangye medal thumbnails from main 764e83d95a48dbbe1cd4eff2b35cefc713acaf82 app/public/challenger. Reused under the repository MIT license. Original project artwork, no external-game assets. Full relief model remains pending.

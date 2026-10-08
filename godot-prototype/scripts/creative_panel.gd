@@ -154,7 +154,8 @@ func begin_work(id:String) -> void:
 
 func studio() -> void:
 	var v:=body("我的作品集")
-	prose(v,"正在做 %d / 3 件" % model().active.size(),true)
+	prose(v,"手上进行中 %d / 3 · 作品 %d 件" % [model().busy_count(),model().active.size()],true)
+	action(v,"蚀刻章柜",app.badge_panel.cabinet)
 	action(v,"从观察册开始",book)
 	if model().home.studio.works.is_empty():prose(v,"把一页发现，做成真正属于你的一版。")
 	for item in model().home.studio.works:

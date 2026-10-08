@@ -10,6 +10,9 @@ var done: Array = []
 var abandoned: Array = []
 var next_id := 1
 var last_error := ""
+var other_active:Callable
+
+func busy_count()->int:return active.size()+(int(other_active.call()) if other_active.is_valid() else 0)
 
 func fail(message:String) -> bool:
 	last_error=message
@@ -86,7 +89,7 @@ func start_work(observation_id:String,title:String,criterion:String,at:String) -
 		if link.observationId==observation_id:return link.workId
 	var entry:=observation(observation_id)
 	if entry.is_empty() or entry.status!="kept":fail("先把具体发现收进观察册。");return ""
-	if active.size()>=3:fail("手里最多放 3 件事，先完成或暂放一件。");return ""
+	if busy_count()>=3:fail("手里最多放 3 件事，先完成或暂放一件。");return ""
 	if home.studio.works.size()>=200 or not text_valid(title,60,true) or not text_valid(criterion,240,true) or not date_valid(at):fail("给作品起名，并写下完成时会留下什么。");return ""
 	var id:=identity("work")
 	var qid:=add_task(title.strip_edges(),criterion.strip_edges(),at)
@@ -121,7 +124,7 @@ func rest_work(id:String,at:String) -> bool:
 func resume_work(id:String,at:String) -> bool:
 	var item:=work(id)
 	if item.is_empty() or status(item)!="rest" or not date_valid(at):return fail("这件作品不能重新接起。")
-	if active.size()>=3:return fail("手里最多放 3 件事，先完成或暂放一件。")
+	if busy_count()>=3:return fail("手里最多放 3 件事，先完成或暂放一件。")
 	var original:=task_for(item)
 	item.taskIds.append(add_task(item.title,original.desc,at))
 	return true

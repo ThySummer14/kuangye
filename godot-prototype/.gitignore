@@ -13,3 +13,8 @@ user-data/
 **/creative-ui.json
 **/creative-e2e.json
 **/creative-roundtrip.json
+**/badge-*-fixture.json
+**/badge-roundtrip.json
+**/migration-*-fixture.json
+**/migration-target-*.json
+**/mascot-motion-fixture.json

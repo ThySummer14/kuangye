@@ -23,6 +23,9 @@ def main() -> int:
     checks = [
         ("import", ["--editor", "--import", "--quit"], 120),
         ("state", ["--script", "res://tests/test_state.gd"], 30),
+        ("badges", ["--script", "res://tests/test_badges.gd"], 40),
+        ("badge-ui", ["--script", "res://tests/test_badge_ui.gd"], 40),
+        ("badge-notice", ["--script", "res://tests/test_badge_notice.gd"], 40),
         ("creative", ["--script", "res://tests/test_creative.gd"], 40),
         ("ui-layout", ["--script", "res://tests/test_ui_layout.gd"], 40),
         ("mascot-motion", ["--script", "res://tests/test_mascot_motion.gd"], 40),

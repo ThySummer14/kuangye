@@ -205,6 +205,7 @@ func build_room() -> void:
 			Art.furniture(self,"shelf",Vector3(-4.0,0,-1.25))
 			Art.furniture(self,"rug",Vector3(-2.8,0,-1.2)).scale = Vector3(2.1,1,2.1)
 			hotspots.append({"id":"desk","name":"整理今天的发现","pos":Vector3(2.7,0,-1.95),"kind":"note"})
+			hotspots.append({"id":"medal-shelf","name":"看看蚀刻章柜","pos":Vector3(-3.45,0,-0.85),"kind":"badges"})
 		"shop":
 			for x in [-3.2,-2.0,2.8,4.0]:
 				Art.furniture(self,"shelf",Vector3(x,0,-3.2))

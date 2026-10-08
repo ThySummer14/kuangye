@@ -2,7 +2,9 @@ class_name TownState
 extends RefCounted
 
 const Catalog = preload("res://scripts/catalog.gd")
-const VERSION := 2
+const VERSION := 3
+const Badges=preload("res://scripts/badges.gd")
+var badges:=Badges.new()
 const Creative = preload("res://scripts/creative.gd")
 var creative := Creative.new()
 var coins := 120 # Isolated prototype allowance, not a production reward or paid currency.
@@ -12,9 +14,12 @@ var notes: Array[Dictionary] = []
 var rewarded_dates: Array[String] = []
 var next_id := 1
 var last_error := ""
-var path := "user://town-prototype-v1.json"
+const SAVE_PATH="user://town-prototype-v3.json"
+const LEGACY_PATH="user://town-prototype-v1.json"
+var path := SAVE_PATH
 
 func _init() -> void:
+	creative.other_active=badges.active_count
 	for kind in Catalog.ITEMS:
 		inventory[kind] = 0
 	inventory.stool = 1
@@ -84,7 +89,7 @@ func add_note(text: String, date: String) -> bool:
 
 func serialize() -> Dictionary:
 	return {"version": VERSION, "coins": coins, "inventory": inventory, "placements": placements,
-		"notes": notes, "rewarded_dates": rewarded_dates, "next_id": next_id, "creative":creative.serialize()}
+		"notes": notes, "rewarded_dates": rewarded_dates, "next_id": next_id, "creative":creative.serialize(),"badges":badges.serialize()}
 
 func save_data() -> bool:
 	var file := FileAccess.open(path + ".tmp", FileAccess.WRITE)
@@ -99,17 +104,22 @@ func save_data() -> bool:
 		last_error = "无法替换存档，旧存档未删除。"
 	return result == OK
 
-func load_data() -> bool:
-	if not FileAccess.file_exists(path):
-		return false
+func load_data(legacy_override:="") -> bool:
+	var read_path:=path
+	if not FileAccess.file_exists(read_path):
+		var legacy:String=LEGACY_PATH if path==SAVE_PATH else legacy_override
+		if legacy.is_empty() or not FileAccess.file_exists(legacy):return false
+		read_path=legacy
+	# The new schema writes to its own file. The original v1/v2 file remains an
+	# untouched pre-upgrade snapshot if the user rolls back the application.
 	var parser := JSON.new()
-	if parser.parse(FileAccess.get_file_as_string(path)) != OK:
+	if parser.parse(FileAccess.get_file_as_string(read_path)) != OK:
 		return invalid_save()
 	var raw = parser.data
 	if not raw is Dictionary or not is_integer_in_range(raw.get("version"),1,VERSION):
 		return invalid_save()
 	for key in raw:
-		if not ["version","coins","inventory","placements","notes","rewarded_dates","next_id","creative"].has(key):
+		if not ["version","coins","inventory","placements","notes","rewarded_dates","next_id","creative","badges"].has(key):
 			return invalid_save()
 	# Load into a candidate, so a malformed file never partly mutates live progress.
 	var candidate := TownState.new()
@@ -157,7 +167,10 @@ func load_data() -> bool:
 			return invalid_save()
 		candidate.rewarded_dates.append(date)
 	if raw.has("creative") and not candidate.creative.load_data(raw.creative):return invalid_save()
-	if raw.version==VERSION and not raw.has("creative"):return invalid_save()
+	if raw.version>=2 and not raw.has("creative"):return invalid_save()
+	if raw.has("badges") and not candidate.badges.load_data(raw.badges,candidate.creative):return invalid_save()
+	if raw.version>=3 and not raw.has("badges"):return invalid_save()
+	badges=candidate.badges
 	creative=candidate.creative
 	coins = candidate.coins
 	inventory = candidate.inventory
@@ -196,4 +209,10 @@ func complete_creative_work(id:String,date:String) -> bool:
 	if not rewarded_dates.has(date):
 		rewarded_dates.append(date)
 		coins+=5
+	return true
+
+func complete_badge_attempt(id:String,review:String,confirmed:Array,date:String)->bool:
+	if not badges.complete(id,creative,review,confirmed,date):return false
+	if not rewarded_dates.has(date):
+		rewarded_dates.append(date);coins+=5
 	return true

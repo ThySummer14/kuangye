@@ -51,6 +51,8 @@ var touch_origin := Vector2.ZERO
 var touch_current := Vector2.ZERO
 var touch_movement := Vector2.ZERO
 var touch_joystick := false
+var touch_build_preview := false
+var touch_preview_start := Vector2i.ZERO
 var joystick_base: Panel
 var joystick_knob: Panel
 var transitioning := false
@@ -562,13 +564,13 @@ func _unhandled_input(event: InputEvent) -> void:
 				if build_mode and moving_id>=0: return_selected()
 			KEY_F6:
 				capture("manual-"+str(Time.get_unix_time_from_system()).replace(".","-"))
-	if event is InputEventMouseButton and event.pressed:
+	if event is InputEventMouseButton and event.pressed and event.device!=InputEvent.DEVICE_ID_EMULATION:
 		if event.button_index==MOUSE_BUTTON_RIGHT:
 			if build_mode: end_build()
 			else: route.clear()
 		elif event.button_index==MOUSE_BUTTON_LEFT and touch_id<0:
 			world_click(event.position)
-	if event is InputEventMouseMotion and build_mode and not selected_kind.is_empty() and not is_instance_valid(modal):
+	if event is InputEventMouseMotion and event.device!=InputEvent.DEVICE_ID_EMULATION and touch_id<0 and build_mode and not selected_kind.is_empty() and not is_instance_valid(modal):
 		update_ghost_at(event.position)
 
 func _input(event: InputEvent) -> void:
@@ -584,9 +586,16 @@ func _input(event: InputEvent) -> void:
 			touch_id = event.index
 			touch_origin = event.position
 			touch_current = event.position
+			touch_build_preview = build_mode and not selected_kind.is_empty()
+			touch_preview_start = selected_cell
 			var local_touch:Vector2 = (event.position-hud.position)/ui_density
 			touch_joystick = local_touch.x<hud.size.x*0.36 and local_touch.y>hud.size.y*0.60 and not build_mode
 		elif not event.pressed and event.index==touch_id:
+			if touch_build_preview:
+				var canceled:bool = event.canceled or screen_over_controls(event.position) or ground_point(event.position)==null
+				if not canceled:update_ghost_at(event.position)
+				clear_touch(canceled)
+				return
 			if not event.canceled and not touch_joystick and touch_origin.distance_to(event.position)<18*ui_density:
 				# UI controls receive their own tap. Only the world rectangle is handled here.
 				if not screen_over_controls(event.position):
@@ -597,6 +606,8 @@ func _input(event: InputEvent) -> void:
 		if touch_joystick:
 			touch_movement = ((touch_current-touch_origin)/(52*ui_density)).limit_length()
 			joystick_knob.position = Vector2(30,30)+touch_movement*26
+		elif touch_build_preview and not screen_over_controls(event.position):
+			update_ghost_at(event.position)
 
 func screen_over_controls(p: Vector2) -> bool:
 	for control in [note_button,build_button,action_button,retry_save_button,build_bar,modal]:
@@ -604,7 +615,13 @@ func screen_over_controls(p: Vector2) -> bool:
 			return true
 	return false
 
-func clear_touch() -> void:
+func clear_touch(cancel_preview:bool=true) -> void:
+	# A gesture only positions the preview. Interrupted gestures restore their start;
+	# inventory and saved placements change exclusively through explicit actions.
+	if cancel_preview and touch_build_preview and build_mode and not selected_kind.is_empty():
+		selected_cell = touch_preview_start
+		refresh_ghost()
+	touch_build_preview = false
 	touch_id = -1
 	touch_movement = Vector2.ZERO
 	touch_joystick = false
@@ -945,7 +962,7 @@ func toggle_build() -> void:
 	world.grid_root.visible = true
 	show_build_bar()
 	refresh_hud()
-	status("选家具，指向空格，再按「放下」。点已有家具可移动。")
+	status("选家具，轻点或拖动找位置，再按「放下」。")
 
 func show_build_bar() -> void:
 	if is_instance_valid(build_bar):
@@ -983,6 +1000,7 @@ func show_build_bar() -> void:
 	layout_ui()
 
 func choose_item(kind: String) -> void:
+	clear_touch()
 	selected_kind = kind
 	moving_id = -1
 	selected_rotation = 0
@@ -998,6 +1016,7 @@ func select_existing(p: Vector3) -> void:
 			return
 
 func select_existing_id(id:int) -> void:
+	clear_touch()
 	for item in state.placements:
 		if int(item.id)==id:
 			moving_id = int(item.id)
@@ -1011,10 +1030,13 @@ func select_existing_id(id:int) -> void:
 func update_ghost_at(screen: Vector2) -> void:
 	var p = ground_point(screen)
 	if p!=null:
-		selected_cell = Vector2i(floori(p.x/0.5),floori(p.z/0.5))
+		var next_cell := Vector2i(floori(p.x/0.5),floori(p.z/0.5))
+		if next_cell==selected_cell:return
+		selected_cell = next_cell
 		refresh_ghost()
 
 func rotate_ghost() -> void:
+	clear_touch()
 	if selected_kind.is_empty(): return
 	selected_rotation = posmod(selected_rotation+1,4)
 	refresh_ghost()
@@ -1044,6 +1066,8 @@ func set_ghost_material(node: Node, material: Material) -> void:
 		set_ghost_material(child,material)
 
 func commit_placement() -> void:
+	# A second finger on the toolbar must not place an in-flight preview.
+	if touch_id>=0:return
 	if selected_kind.is_empty(): return
 	if placement_over_player():
 		status("给小芽留一点站的位置，再摆下去吧。")
@@ -1071,6 +1095,7 @@ func placement_over_player() -> bool:
 	return r.has_point(Vector2(player.position.x,player.position.z))
 
 func return_selected() -> void:
+	clear_touch()
 	if moving_id<0: return
 	if state.return_item(moving_id):
 		var persisted := save()
@@ -1083,6 +1108,7 @@ func return_selected() -> void:
 		saved_status(persisted,"已收进家具箱。")
 
 func end_build() -> void:
+	clear_touch()
 	build_mode = false
 	selected_kind = ""
 	moving_id = -1

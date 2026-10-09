@@ -38,6 +38,7 @@ def main() -> int:
         ("portrait", ["--script", "res://tests/test_scene_boundaries.gd"], 40),
         ("desktop", ["--script", "res://tests/test_scene_boundaries.gd", "--", "--desktop"], 40),
         ("hidpi", ["--script", "res://tests/test_scene_boundaries.gd", "--", "--hidpi"], 40),
+        ("touch-furnishing", ["--script", "res://tests/test_touch_furnishing.gd"], 40),
         ("product-paths", ["--script", "res://tests/test_product_paths.gd"], 40),
         ("sequences", ["--script", "res://tests/test_state_sequences.gd"], 120),
         ("scene-soak", ["--script", "res://tests/test_scene_soak.gd"], 120),

@@ -140,6 +140,12 @@ func run()->void:
 	await process_frame
 	check(app.touch_id==-1 and app.touch_movement==Vector2.ZERO,"rotation clears the steering finger")
 	touch(app,0,stick+Vector2(30,0),false)
+	root.size=Vector2i(700,340)
+	await process_frame
+	check(app.camera.keep_aspect==Camera3D.KEEP_HEIGHT,"short landscape phone keeps height-fit framing")
+	root.size=Vector2i(375,812)
+	await process_frame
+	check(app.camera.keep_aspect==Camera3D.KEEP_WIDTH,"portrait phone keeps width-fit framing")
 	root.size=Vector2i(375,812)
 	await process_frame;await process_frame
 

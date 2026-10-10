@@ -306,7 +306,7 @@ func layout_ui() -> void:
 	action_button.position = Vector2((s.x-action_button.size.x)/2,s.y-80 if not mobile else s.y-214)
 	hint_label.position = Vector2(0,s.y-27)
 	hint_label.size = Vector2(s.x,20)
-	hint_label.visible = not mobile and not build_mode and not is_instance_valid(modal)
+	hint_label.visible = not mobile and not touch_first() and not build_mode and not is_instance_valid(modal)
 	var status_y := 100.0 if mobile else 88.0
 	if unsaved_changes and not save_locked: status_y = retry_save_button.position.y+retry_save_button.size.y+8
 	status_label.position = Vector2(16,status_y)
@@ -314,7 +314,7 @@ func layout_ui() -> void:
 	status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	joystick_base.position = Vector2(28,s.y-157)
 	joystick_base.size = Vector2(104,104)
-	joystick_base.visible = (mobile or OS.has_feature("mobile") or touch_id>=0) and not build_mode and not is_instance_valid(modal)
+	joystick_base.visible = (mobile or touch_first() or touch_id>=0) and not build_mode and not is_instance_valid(modal)
 	joystick_knob.size = Vector2(44,44)
 	joystick_knob.position = Vector2(30,30)+touch_movement*26
 	if is_instance_valid(modal):
@@ -378,7 +378,8 @@ func layout_ui() -> void:
 		build_bar.size = Vector2(s.x-24,156)
 	if is_instance_valid(camera):
 		camera.size = 13.5 if location=="town" else 10.0
-		if mobile:
+		# Width-fit framing is for portrait; on a short landscape phone it zooms in too far.
+		if mobile and s.y>=s.x:
 			camera.keep_aspect = Camera3D.KEEP_WIDTH
 			camera.size = 10.0 if location=="town" else 8.5
 		else:
@@ -396,6 +397,9 @@ func ui_safe_rect() -> Rect2:
 		var safe := screen_rect.intersection(native_rect)
 		if safe.size.x>0 and safe.size.y>0:return safe
 	return screen_rect
+
+func touch_first() -> bool:
+	return OS.has_feature("mobile") or OS.has_feature("web_android") or OS.has_feature("web_ios")
 
 func ui_keyboard_height() -> float:
 	if keyboard_height_override>=0:return keyboard_height_override

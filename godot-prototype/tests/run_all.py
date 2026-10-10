@@ -40,6 +40,7 @@ def main() -> int:
         ("hidpi", ["--script", "res://tests/test_scene_boundaries.gd", "--", "--hidpi"], 40),
         ("touch-furnishing", ["--script", "res://tests/test_touch_furnishing.gd"], 40),
         ("product-paths", ["--script", "res://tests/test_product_paths.gd"], 40),
+        ("interrupts", ["--script", "res://tests/test_interrupts.gd"], 60),
         ("sequences", ["--script", "res://tests/test_state_sequences.gd"], 120),
         ("scene-soak", ["--script", "res://tests/test_scene_soak.gd"], 120),
     ]

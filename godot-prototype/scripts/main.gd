@@ -78,6 +78,38 @@ var last_safe_rect := Rect2()
 var note_body_scroll: ScrollContainer
 var note_history_button: Button
 var qa_target_size := Vector2i.ZERO
+const WalkSpot = preload("res://scripts/walk_spot.gd")
+var walk_spot := WalkSpot.new()
+var walk_unsettled := false
+var walk_still_time := 0.0
+var movement_keys_latched := false
+var ui_touch_id := -1
+var ui_touch_button: Button
+var ui_touch_origin := Vector2.ZERO
+var last_viewport_size := Vector2.ZERO
+var web_safe_rect := Rect2()
+var page_callback: Variant
+const PAGE_HOOK_SCRIPT := """
+(()=>{
+ if(window.__kuangyePageHook)return;
+ window.__kuangyePageHook=true;
+ const send=hidden=>{const cb=window.__kuangyePageEvent;if(typeof cb==='function')cb(hidden);};
+ document.addEventListener('visibilitychange',()=>send(document.visibilityState==='hidden'));
+ window.addEventListener('pagehide',()=>send(true));
+ window.addEventListener('pageshow',()=>send(document.visibilityState==='hidden'));
+})();
+"""
+const SAFE_INSET_SCRIPT := """
+(()=>{
+ const probe=document.createElement('div');
+ probe.style.cssText='position:fixed;visibility:hidden;pointer-events:none;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)';
+ document.body.appendChild(probe);
+ const s=getComputedStyle(probe),n=v=>parseFloat(v)||0;
+ const out=[n(s.paddingTop),n(s.paddingRight),n(s.paddingBottom),n(s.paddingLeft),window.innerWidth||0];
+ probe.remove();
+ return JSON.stringify(out);
+})()
+"""
 
 func _ready() -> void:
 	qa_mode = OS.get_cmdline_user_args().has("--qa")
@@ -85,7 +117,7 @@ func _ready() -> void:
 		if argument.begins_with("--qa-size="):
 			var dimensions := argument.trim_prefix("--qa-size=").split("x")
 			if dimensions.size()==2:qa_target_size=Vector2i(int(dimensions[0]),int(dimensions[1]))
-	ui_density = ui_density_override if ui_density_override>0 else (clampf(DisplayServer.screen_get_scale(),1.0,3.5) if OS.has_feature("mobile") else 1.0)
+	ui_density = ui_density_override if ui_density_override>0 else pick_ui_density(OS.has_feature("mobile"),OS.has_feature("web"),DisplayServer.screen_get_scale())
 	Art.font = load("res://assets/NotoSansSC-Regular.otf")
 	setup_theme()
 	if qa_mode or fixture_mode:
@@ -94,6 +126,7 @@ func _ready() -> void:
 		state.load_data()
 		# Never overwrite an unrecognized save simply by opening the prototype.
 		save_locked = not state.last_error.is_empty()
+		walk_spot.path = WalkSpot.PATH
 	scene_view = SubViewport.new()
 	scene_view.size = Vector2i(640,360)
 	scene_view.own_world_3d = true
@@ -109,10 +142,16 @@ func _ready() -> void:
 	setup_hud()
 	creative_panel=CreativePanel.new(self)
 	badge_panel=BadgePanel.new(self)
-	change_location("town")
-	get_viewport().size_changed.connect(layout_ui)
+	var spot:=walk_spot.read()
+	if spot.get("place","town")!="town":previous_door=spot.place
+	change_location(spot.get("place","town"))
+	if not spot.is_empty():restore_walk_spot(spot)
+	last_viewport_size = get_viewport_rect().size
+	refresh_web_metrics()
+	get_viewport().size_changed.connect(on_viewport_resized)
 	get_window().focus_exited.connect(pause_input)
-	get_window().focus_entered.connect(func():mascot_motion.set_suspended(false))
+	get_window().focus_entered.connect(resume_input)
+	install_page_hook()
 	layout_ui()
 	if save_locked:
 		status(state.last_error)
@@ -267,7 +306,7 @@ func layout_ui() -> void:
 	action_button.position = Vector2((s.x-action_button.size.x)/2,s.y-80 if not mobile else s.y-214)
 	hint_label.position = Vector2(0,s.y-27)
 	hint_label.size = Vector2(s.x,20)
-	hint_label.visible = not mobile and not build_mode and not is_instance_valid(modal)
+	hint_label.visible = not mobile and not touch_first() and not build_mode and not is_instance_valid(modal)
 	var status_y := 100.0 if mobile else 88.0
 	if unsaved_changes and not save_locked: status_y = retry_save_button.position.y+retry_save_button.size.y+8
 	status_label.position = Vector2(16,status_y)
@@ -275,7 +314,7 @@ func layout_ui() -> void:
 	status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	joystick_base.position = Vector2(28,s.y-157)
 	joystick_base.size = Vector2(104,104)
-	joystick_base.visible = (mobile or OS.has_feature("mobile") or touch_id>=0) and not build_mode and not is_instance_valid(modal)
+	joystick_base.visible = (mobile or touch_first() or touch_id>=0) and not build_mode and not is_instance_valid(modal)
 	joystick_knob.size = Vector2(44,44)
 	joystick_knob.position = Vector2(30,30)+touch_movement*26
 	if is_instance_valid(modal):
@@ -339,7 +378,8 @@ func layout_ui() -> void:
 		build_bar.size = Vector2(s.x-24,156)
 	if is_instance_valid(camera):
 		camera.size = 13.5 if location=="town" else 10.0
-		if mobile:
+		# Width-fit framing is for portrait; on a short landscape phone it zooms in too far.
+		if mobile and s.y>=s.x:
 			camera.keep_aspect = Camera3D.KEEP_WIDTH
 			camera.size = 10.0 if location=="town" else 8.5
 		else:
@@ -349,12 +389,17 @@ func ui_safe_rect() -> Rect2:
 	var screen_rect := Rect2(Vector2.ZERO,get_viewport_rect().size)
 	if safe_area_override.size.x>0 and safe_area_override.size.y>0:
 		return screen_rect.intersection(safe_area_override)
+	if web_safe_rect.size.x>0 and web_safe_rect.size.y>0:
+		return screen_rect.intersection(web_safe_rect)
 	if OS.has_feature("mobile"):
 		var native_rect := Rect2(DisplayServer.get_display_safe_area())
 		native_rect.position -= Vector2(get_window().position)
 		var safe := screen_rect.intersection(native_rect)
 		if safe.size.x>0 and safe.size.y>0:return safe
 	return screen_rect
+
+func touch_first() -> bool:
+	return OS.has_feature("mobile") or OS.has_feature("web_android") or OS.has_feature("web_ios")
 
 func ui_keyboard_height() -> float:
 	if keyboard_height_override>=0:return keyboard_height_override
@@ -465,6 +510,11 @@ func _physics_process(delta: float) -> void:
 	var direction := Vector2.ZERO
 	if not transitioning and not build_mode and not is_instance_valid(modal):
 		var keys := Vector2(float(Input.is_physical_key_pressed(KEY_D) or Input.is_physical_key_pressed(KEY_RIGHT))-float(Input.is_physical_key_pressed(KEY_A) or Input.is_physical_key_pressed(KEY_LEFT)),float(Input.is_physical_key_pressed(KEY_S) or Input.is_physical_key_pressed(KEY_DOWN))-float(Input.is_physical_key_pressed(KEY_W) or Input.is_physical_key_pressed(KEY_UP)))
+		# A browser may drop the key-up that happened while the page was hidden.
+		# Keys held across an interruption count only after they are released once.
+		if movement_keys_latched:
+			if any_movement_key_pressed():keys = Vector2.ZERO
+			else:movement_keys_latched = false
 		if keys.length()>0 or touch_movement.length()>0.1:
 			keys += touch_movement
 			keys = keys.limit_length()
@@ -492,6 +542,15 @@ func _physics_process(delta: float) -> void:
 			transition_to("town")
 	if direction.length()>0.1:
 		mascot.rotation.y = lerp_angle(mascot.rotation.y,atan2(direction.x,direction.y),minf(1,delta*12))
+		walk_unsettled = true
+		walk_still_time = 0.0
+	elif walk_unsettled:
+		# Record a spot once the player pauses, while the page is still visible:
+		# Web storage syncs on a later frame, which a hidden tab may never run.
+		walk_still_time += delta
+		if walk_still_time>=0.6:
+			walk_unsettled = false
+			persist_walk_spot()
 	mascot_motion.set_context(str(modal.get_meta("mascot_mood","curious")) if is_instance_valid(modal) else ("focused" if build_mode else "idle"))
 	mascot_motion.step(delta,direction.length()>0.1)
 	update_nearby()
@@ -500,11 +559,7 @@ func _physics_process(delta: float) -> void:
 		queued_interaction = ""
 		if not nearby.is_empty() and nearby.id==target:
 			interact()
-	var small_screen := get_viewport_rect().size.x/ui_density < 760
-	var target_focus := Vector3(player.position.x*0.62,0,player.position.z*0.62-0.5) if location=="town" else Vector3.ZERO
-	if small_screen:
-		target_focus = Vector3(player.position.x,0,player.position.z-0.4)
-	camera_target = camera_target.lerp(target_focus,1-exp(-delta*2.3))
+	camera_target = camera_target.lerp(player_focus(),1-exp(-delta*2.3))
 	# Snap the orthographic camera focus to world pixels, avoiding subpixel swimming.
 	var focus := snap_camera_focus(camera_target)
 	camera.position = focus+camera_offset
@@ -513,6 +568,11 @@ func _physics_process(delta: float) -> void:
 		world.wind_objects[i].rotation.z = sin(elapsed*0.7+i)*0.009
 	if is_instance_valid(world.npc_model):
 		world.npc_model.rotation.y = sin(elapsed*0.35)*0.10
+
+func player_focus() -> Vector3:
+	if get_viewport_rect().size.x/ui_density < 760:
+		return Vector3(player.position.x,0,player.position.z-0.4)
+	return Vector3(player.position.x*0.62,0,player.position.z*0.62-0.5) if location=="town" else Vector3.ZERO
 
 func snap_camera_focus(target: Vector3) -> Vector3:
 	var pixel := camera.size/float(scene_view.size.x if camera.keep_aspect==Camera3D.KEEP_WIDTH else scene_view.size.y)
@@ -579,6 +639,24 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		return
 	if event is InputEventScreenTouch:
+		# Touch-to-mouse emulation follows only the first finger. While that finger
+		# steers, route a second finger's tap on the HUD buttons here instead.
+		if not event.pressed and event.index==ui_touch_id:
+			var target := ui_touch_button
+			var moved := ui_touch_origin.distance_to(event.position)>=18*ui_density
+			clear_ui_touch()
+			if not event.canceled and not moved and is_instance_valid(target) and target.is_visible_in_tree() and not target.disabled and target.get_global_rect().has_point(event.position):
+				target.pressed.emit()
+			get_viewport().set_input_as_handled()
+			return
+		if event.pressed and touch_id>=0 and event.index!=touch_id and ui_touch_id<0 and not touch_build_preview and not is_instance_valid(modal) and not transitioning:
+			var target := hud_button_at(event.position)
+			if target!=null:
+				ui_touch_id = event.index
+				ui_touch_button = target
+				ui_touch_origin = event.position
+				get_viewport().set_input_as_handled()
+				return
 		if event.pressed and touch_id<0 and not is_instance_valid(modal) and not transitioning:
 			# UI owns its touch for the whole gesture, including a drag off the button.
 			# Checking only on release lets the joystick move the actor under a button.
@@ -609,6 +687,16 @@ func _input(event: InputEvent) -> void:
 		elif touch_build_preview and not screen_over_controls(event.position):
 			update_ghost_at(event.position)
 
+func hud_button_at(p: Vector2) -> Button:
+	for control in [action_button,note_button,retry_save_button]:
+		if is_instance_valid(control) and control.is_visible_in_tree() and not control.disabled and control.get_global_rect().has_point(p):
+			return control
+	return null
+
+func clear_ui_touch() -> void:
+	ui_touch_id = -1
+	ui_touch_button = null
+
 func screen_over_controls(p: Vector2) -> bool:
 	for control in [note_button,build_button,action_button,retry_save_button,build_bar,modal]:
 		if is_instance_valid(control) and control.visible and control.get_global_rect().has_point(p):
@@ -632,14 +720,95 @@ func pause_input() -> void:
 	pending_mascot_reaction=""
 	mascot_motion.set_suspended(true)
 	clear_touch()
+	clear_ui_touch()
 	route.clear()
 	queued_interaction=""
+	movement_keys_latched = any_movement_key_pressed()
+	persist_walk_spot()
+
+func resume_input() -> void:
+	mascot_motion.set_suspended(false)
+
+func interrupt_session() -> void:
+	if not is_instance_valid(hud):return
+	pause_input()
+	if unsaved_changes:save()
 
 func _notification(what:int) -> void:
-	if what==NOTIFICATION_APPLICATION_RESUMED:mascot_motion.set_suspended(false)
-	if what==NOTIFICATION_APPLICATION_PAUSED and is_instance_valid(hud):
-		pause_input()
-		if unsaved_changes:save()
+	if what==NOTIFICATION_APPLICATION_RESUMED:resume_input()
+	if what==NOTIFICATION_APPLICATION_PAUSED or what==NOTIFICATION_WM_CLOSE_REQUEST:
+		interrupt_session()
+
+func any_movement_key_pressed() -> bool:
+	for code in [KEY_W,KEY_A,KEY_S,KEY_D,KEY_UP,KEY_DOWN,KEY_LEFT,KEY_RIGHT]:
+		if Input.is_physical_key_pressed(code):return true
+	return false
+
+func persist_walk_spot() -> void:
+	# A locked session is read-only on disk, including this sidecar.
+	if save_locked or not is_instance_valid(player):return
+	walk_spot.write(location,player.position.x,player.position.z)
+
+func restore_walk_spot(spot: Dictionary) -> bool:
+	if spot.get("place","")!=location:return false
+	var cell := Vector2i(roundi(float(spot.x)/0.5),roundi(float(spot.z)/0.5))
+	if not navigation.is_in_boundsv(cell) or navigation.is_point_solid(cell):return false
+	# Never resume on an indoor exit landing, where a first step would leave the room.
+	if location!="town" and float(spot.z)>=3.1:return false
+	player.position = Vector3(float(spot.x),0.12,float(spot.z))
+	camera_target = player_focus()
+	camera.position = camera_target+camera_offset
+	camera.look_at(camera_target)
+	return true
+
+func on_viewport_resized() -> void:
+	var size := get_viewport_rect().size
+	if size!=last_viewport_size:
+		# Rotation remaps the screen; an in-flight finger no longer means the same spot.
+		last_viewport_size = size
+		clear_touch()
+		clear_ui_touch()
+		refresh_web_metrics()
+	layout_ui()
+
+func install_page_hook() -> void:
+	if not OS.has_feature("web") or not Engine.has_singleton("JavaScriptBridge"):return
+	var bridge:Object = Engine.get_singleton("JavaScriptBridge")
+	page_callback = bridge.create_callback(_on_page_event)
+	bridge.eval(PAGE_HOOK_SCRIPT,true)
+	var page:Object = bridge.get_interface("window")
+	if page!=null:page.set("__kuangyePageEvent",page_callback)
+
+func _on_page_event(args: Array) -> void:
+	# Some mobile browsers hide a tab without moving window focus.
+	if args.is_empty() or bool(args[0]):interrupt_session()
+	else:resume_input()
+
+func refresh_web_metrics() -> void:
+	if not OS.has_feature("web") or not Engine.has_singleton("JavaScriptBridge"):return
+	var bridge:Object = Engine.get_singleton("JavaScriptBridge")
+	if ui_density_override<=0:
+		ui_density = pick_ui_density(false,true,DisplayServer.screen_get_scale())
+	var parser := JSON.new()
+	var raw = bridge.eval(SAFE_INSET_SCRIPT,true)
+	if raw is String and parser.parse(raw)==OK:
+		web_safe_rect = web_inset_rect(get_viewport_rect().size,parser.data)
+
+static func pick_ui_density(mobile: bool, web: bool, screen_scale: float) -> float:
+	# Web canvases are sized in device pixels, like native phones.
+	return clampf(screen_scale,1.0,3.5) if mobile or web else 1.0
+
+static func web_inset_rect(viewport_size: Vector2, css: Variant) -> Rect2:
+	# css = [top, right, bottom, left, innerWidth] in CSS pixels.
+	if not css is Array or css.size()!=5:return Rect2()
+	for value in css:
+		if not (value is float or value is int) or not is_finite(float(value)) or float(value)<0:return Rect2()
+	if float(css[4])<=0:return Rect2()
+	var ratio := viewport_size.x/float(css[4])
+	var top_left := Vector2(float(css[3]),float(css[0]))*ratio
+	var bottom_right := Vector2(float(css[1]),float(css[2]))*ratio
+	var rect := Rect2(top_left,viewport_size-top_left-bottom_right)
+	return rect if rect.size.x>=viewport_size.x*0.5 and rect.size.y>=viewport_size.y*0.5 else Rect2()
 
 func ground_point(screen: Vector2) -> Variant:
 	if not image.get_global_rect().has_point(screen): return null
@@ -713,7 +882,9 @@ func transition_to(place: String) -> void:
 		previous_door = place
 	transition_tween = create_tween()
 	transition_tween.tween_property(fade,"color:a",1.0,0.24)
-	transition_tween.tween_callback(func(): change_location(place))
+	transition_tween.tween_callback(func():
+		change_location(place)
+		persist_walk_spot())
 	transition_tween.tween_property(fade,"color:a",0.0,0.28)
 	transition_tween.tween_callback(func(): transitioning=false)
 

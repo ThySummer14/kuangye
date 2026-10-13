@@ -58,7 +58,7 @@
 
 接续原聊天的 Android 手机软件要求。沿用 Capacitor 8.5.2 和同一 Vue/three 页面，只补匹配的 Android 平台包；接上原生原子存档、系统文件选择、返回键和安全区，打出可安装的 debug APK。用一次性模拟器存档验收离线、重启保留、备份往返、键盘与横竖屏，同时完成 14 项专辑的 Pages 发布。
 
-## Godot 长期分支 · 光影还原（2026-10-13，本地验收完成）
+## Godot 长期分支 · 光影还原（2026-10-13，已发布）
 
 接续 `filisi/kuangye-original-godot-recovery-20261008` 的 v7.5.1（`d64c01c`），与另一 `godot/` 横屏试验分开。用户本轮要求还原原网址展示效果并继续光影研究；本分支只改 `godot-prototype/`，保留主站与原型各自存档。
 
@@ -67,6 +67,8 @@
 验收：Godot 4.6.3 Compatibility 原生与 Web 的桌面／375px 日夜截图；固定镜头比较三种光线，检查摆放／进出房间／六盏灯预算、外观规范和存档零写入；既有聚合测试、Vue test/build。独立分支提交和预览，不合并 main。
 
 收尾恢复了被归档工作区的快照 `b4f5923`。23 组隔离 Godot 回归、原生两尺寸各 85 项、Vue 138 项与 build/release、打包工具 4 项均通过；研究正文、参考实验 MIT 源码备份和固定镜头图归档到 [LIGHTING_STUDY](../godot-prototype/docs/LIGHTING_STUDY.md)。Web 桌面与 375px／DPR 3 的进屋、三种光、实际触摸拖动／明确放下、门槛离开和刷新保留家具均通过，无控制台错误；GitHub Pages 通过独立子目录发布该分支的官方 Web 导出，主站仅补发布流水线，不合并 Godot 源码。实体手机未验收。
+
+发布回执：Godot 导出 `3a841ab` 已推长期分支，main 发布配置 `6a57380` 的 [Actions 38421458494](https://github.com/ThySummer14/kuangye/actions/runs/38421458494) build／deploy 成功；[线上预览](https://thysummer14.github.io/kuangye/godot-lighting/) 的桌面／375px DPR 3 操作和 15 个文件的 HTTP 200／完整 SHA-256 均通过。首次加载仍偏大，本机移动模拟 PCK 冷下载为 173 秒，不能当手机性能基准。当前源码、文档与测试证据已收尾；下一步边界见下方。
 
 ## 下一步：一个具体动作
 

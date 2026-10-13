@@ -79,6 +79,12 @@
 
 触屏模拟实际拖动后，家具箱仍有一张小凳；明确「放下」后小凳从箱中移出，生成真实几何。刷新并重新进屋后，原摆放仍保留，光线回到日间；该证明只覆盖本次浏览器刷新，不能外推到进程关闭、存储回收或其他浏览器。控制台无错误，刷新时出现过需要用户手势启动 AudioContext 的浏览器提示。
 
+正式 Pages 的 [Actions 38421458494](https://github.com/ThySummer14/kuangye/actions/runs/38421458494) 已完成 build／deploy，发布配置提交 `6a57380411ede5e01612c5b87b5d6195943e672b` 固定读取 Godot 导出提交 `3a841ab77ecd396cbed0ddf4ad941adf2a8ea94a`。CI 重新通过原站 138 项与 release 资产检查，并校验 14 项 Web 文件 SHA-256。上线桌面与 375px／DPR 3 两组实际 WebGL2 均能进屋、开窗边面板和切换夜间，无控制台错误或横向溢出；[线上操作记录](lighting-evidence/browser-qa.json) 保存了具体边界。
+
+公开地址的 15 个文件（13 个运行文件、BUILD 与 SHA 清单）都返回 HTTP 200，长度与 SHA-256 匹配本地。小文件经终端流式读取；PCK 和 WASM 另由浏览器读取完整响应并用 Web Crypto 计算，[线上文件回执](lighting-evidence/live-assets.json) 写明逐项方法。浏览器完成两份二进制校验后停止了重复的终端原始 WASM 下载，不把那个未完成的重复请求记为通过。
+
+首载体积仍偏大：PCK 原始约 14.5 MB、WASM 约 37.7 MB，Pages 为 WASM 提供 gzip（本次 HEAD 为约 9.6 MB），原始大小不等于网络传输量。本轮移动模拟的冷下载分别为 173.3 秒／77.3 秒，是一次本机网络样本；首次 60 秒等待因此超时，下载完成后原操作流程全部通过。这是加载体验问题，不能解释成手机 GPU 帧时。
+
 | 窗边选择 | 拖动后仍为预览 | 明确放下 | 刷新恢复 |
 |---|---|---|---|
 | ![触屏选择](lighting-evidence/web-selector-hidpi-375.png) | ![拖动预览](lighting-evidence/web-dragged-hidpi-375.png) | ![真实摆放](lighting-evidence/web-placed-hidpi-375.png) | ![刷新后](lighting-evidence/web-reopened-hidpi-375.png) |

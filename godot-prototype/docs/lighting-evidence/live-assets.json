@@ -1,0 +1,133 @@
+{
+  "date": "2026-10-13",
+  "url": "https://thysummer14.github.io/kuangye/godot-lighting/",
+  "godot_export_commit": "3a841ab77ecd396cbed0ddf4ad941adf2a8ea94a",
+  "pages_commit": "6a57380411ede5e01612c5b87b5d6195943e672b",
+  "actions": "https://github.com/ThySummer14/kuangye/actions/runs/38421458494",
+  "files": [
+    {
+      "file": "FONT-LICENSE.txt",
+      "http": 200,
+      "bytes": 14712,
+      "sha256": "849f4ea9c214fa4ac3593b770c699f387534b11ce671264c1b10d85bdcb5997b",
+      "passed": true,
+      "method": "HTTPS urllib stream, completed PASS observed in this session"
+    },
+    {
+      "file": "GODOT_ENGINE_NOTICES.txt",
+      "http": 200,
+      "bytes": 99755,
+      "sha256": "668b8158124696b7cfeea93e98eecbdefdcdffb69b7d697fbd508709f0da0fc0",
+      "passed": true,
+      "method": "HTTPS urllib stream, completed PASS observed in this session"
+    },
+    {
+      "file": "LICENSES.txt",
+      "http": 200,
+      "bytes": 216,
+      "sha256": "2460f3e412a7d29d59d68466933ad3c855f985c96dd01b0bdad66c7dc24a10de",
+      "passed": true,
+      "method": "HTTPS urllib stream, completed PASS observed in this session"
+    },
+    {
+      "file": "PROJECT-LICENSE.txt",
+      "http": 200,
+      "bytes": 1068,
+      "sha256": "45ecc371e07aaa82c6a18ffe936bfe2c72c9edc4235cd56a31fb00938dba5703",
+      "passed": true,
+      "method": "HTTPS urllib stream, completed PASS observed in this session"
+    },
+    {
+      "file": "index.apple-touch-icon.png",
+      "http": 200,
+      "bytes": 11952,
+      "sha256": "9b374ecbc8558f480421e646f38aaa8a69d5b1d65ff7b48d0735da214c46773a",
+      "passed": true,
+      "method": "HTTPS urllib stream, completed PASS observed in this session"
+    },
+    {
+      "file": "index.audio.position.worklet.js",
+      "http": 200,
+      "bytes": 2973,
+      "sha256": "be33985bc7160d6bf9646f259cd86b259cd67b02ccb297ee5c44f8ac84327bc8",
+      "passed": true,
+      "method": "HTTPS urllib stream, completed PASS observed in this session"
+    },
+    {
+      "file": "index.audio.worklet.js",
+      "http": 200,
+      "bytes": 7298,
+      "sha256": "5b476a9c9ce642c0ee4256436d1bc31d9c38f868aca0f9a8e2a57c18d2dec2a3",
+      "passed": true,
+      "method": "HTTPS urllib stream, completed PASS observed in this session"
+    },
+    {
+      "file": "index.html",
+      "http": 200,
+      "bytes": 5454,
+      "sha256": "72d01c9a27bb9dbfa8440d1445825a1c2a54d8a95f8d2fbd897f8211ac0c455b",
+      "passed": true,
+      "method": "HTTPS urllib stream, completed PASS observed in this session"
+    },
+    {
+      "file": "index.icon.png",
+      "http": 200,
+      "bytes": 5702,
+      "sha256": "08808dd5397e9a502cb3624944151f87a9705b5b66b5c365c5ca4c6ab51525f5",
+      "passed": true,
+      "method": "HTTPS urllib stream, completed PASS observed in this session"
+    },
+    {
+      "file": "index.js",
+      "http": 200,
+      "bytes": 315759,
+      "sha256": "e3f56ee40e6f84371053db06692cfac15e2c8659547b11c6b2dfa1996dabd981",
+      "passed": true,
+      "method": "HTTPS urllib stream, completed PASS observed in this session"
+    },
+    {
+      "file": "index.pck",
+      "http": 200,
+      "bytes": 14543232,
+      "sha256": "22f6c2f06b73ae94c5a8a31722cd3a672fc7b37d4fb1e327aebed7b542f77d89",
+      "content_type": "application/octet-stream",
+      "passed": true,
+      "method": "HTTPS browser fetch and Web Crypto SHA-256"
+    },
+    {
+      "file": "index.png",
+      "http": 200,
+      "bytes": 21443,
+      "sha256": "3cb4495c0b98dfbe4b663cbf2b6836473572339beb66d902367893162a70be0e",
+      "passed": true,
+      "method": "HTTPS urllib stream, completed PASS observed in this session"
+    },
+    {
+      "file": "index.wasm",
+      "http": 200,
+      "bytes": 37700666,
+      "sha256": "26b61ce95247012ab3dca3ff51e96d1cdbff44ee91a8c20a83e150afca83f1b6",
+      "content_type": "application/wasm",
+      "passed": true,
+      "method": "HTTPS browser fetch and Web Crypto SHA-256"
+    },
+    {
+      "file": "BUILD.json",
+      "http": 200,
+      "bytes": 1946,
+      "sha256": "c9ff2e3b921dd315a26ed6979647aa42ff21bfdd6e3ef6c53bdc2a252148cf9a",
+      "passed": true,
+      "method": "HTTPS urllib stream, completed PASS observed in this session"
+    },
+    {
+      "file": "SHA256SUMS",
+      "http": 200,
+      "bytes": 1158,
+      "sha256": "16744f17137b8e229420b78166ae35c4ce600e3510f15cbf73978f671ca218e6",
+      "passed": true,
+      "method": "HTTPS urllib stream, completed PASS observed in this session"
+    }
+  ],
+  "passed": true,
+  "note": "Combined terminal and browser verification. The redundant raw terminal WASM download was stopped after the browser verified both full binary responses; no aggregate terminal completion is claimed."
+}

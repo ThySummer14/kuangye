@@ -42,7 +42,20 @@
     "console_errors": 0,
     "console_warnings": [
       "AudioContext requires user gesture on a reload"
-    ]
+    ],
+    "indexeddb_readback": {
+      "found": true,
+      "version": 4,
+      "coins": 120,
+      "stool_inventory": 0,
+      "placed_stool": {
+        "id": 1,
+        "kind": "stool",
+        "rotation": 0,
+        "x": -5,
+        "z": 2
+      }
+    }
   },
   "screenshots": [
     "web-town-1280.png",
@@ -64,5 +77,72 @@
   "limitations": [
     "emulated touch is not physical-device acceptance",
     "browser process restart, eviction, private mode and other browsers unverified"
-  ]
+  ],
+  "staged_subpath": {
+    "url": "http://127.0.0.1:8770/godot-lighting/",
+    "verified": "WebGL2 starts and mouse enters home",
+    "screenshot": "staged-home-1280.png"
+  },
+  "live": {
+    "url": "https://thysummer14.github.io/kuangye/godot-lighting/",
+    "pages_run": "https://github.com/ThySummer14/kuangye/actions/runs/38421458494",
+    "pages_run_result": "success",
+    "desktop": {
+      "viewport": [
+        1280,
+        720
+      ],
+      "dpr": 1,
+      "verified": [
+        "startup WebGL2",
+        "mouse enters home",
+        "window selector opens",
+        "night profile applies"
+      ],
+      "console_errors": 0,
+      "horizontal_overflow": false
+    },
+    "touch_emulation": {
+      "viewport": [
+        375,
+        812
+      ],
+      "dpr": 3,
+      "canvas": [
+        1125,
+        2436
+      ],
+      "verified": [
+        "startup WebGL2",
+        "tap enters home",
+        "selector fits viewport",
+        "night profile applies"
+      ],
+      "console_errors": 0,
+      "horizontal_overflow": false
+    },
+    "first_downloads_observed": [
+      {
+        "file": "index.wasm",
+        "duration_ms": 77317,
+        "bytes": 37700666
+      },
+      {
+        "file": "index.pck",
+        "duration_ms": 173256,
+        "bytes": 14543232
+      }
+    ],
+    "limit": "One local network sample of cold downloads, not phone hardware performance; the first 60-second browser wait expired before the download completed, then the loaded page passed the same UI checks.",
+    "screenshots": [
+      "live-town-1280.png",
+      "live-home-day-1280.png",
+      "live-selector-1280.png",
+      "live-home-night-1280.png",
+      "live-town-hidpi-375.png",
+      "live-home-day-hidpi-375.png",
+      "live-selector-hidpi-375.png",
+      "live-home-night-hidpi-375.png"
+    ]
+  }
 }

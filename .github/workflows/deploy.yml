@@ -29,6 +29,20 @@ jobs:
         run: npm ci && npm test && npm run build
       - name: Check release assets
         run: npm run check:release
+      - name: Check out the independent Godot lighting export
+        uses: actions/checkout@v4
+        with:
+          ref: 3a841ab77ecd396cbed0ddf4ad941adf2a8ea94a
+          path: .godot-lighting-source
+          sparse-checkout: godot-prototype/web
+      - name: Verify and stage Godot lighting preview
+        run: |
+          cd .godot-lighting-source/godot-prototype/web
+          sha256sum --check SHA256SUMS
+          cd "$GITHUB_WORKSPACE"
+          mkdir -p app/dist/godot-lighting
+          cp -a .godot-lighting-source/godot-prototype/web/. app/dist/godot-lighting/
+          rm app/dist/godot-lighting/.gdignore
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

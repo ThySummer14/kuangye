@@ -6,6 +6,8 @@
 
 当前优先让项目好用，暂缓商品化；每次改版通过检查后发布 GitHub Pages。[在线预览](https://thysummer14.github.io/kuangye/) · [直接打开挑战者](https://thysummer14.github.io/kuangye/#challenger)。
 
+独立 Godot 长期分支的 [光影预览](https://thysummer14.github.io/kuangye/godot-lighting/)：点小家，走到窗边选择日间／黄昏／夜间。[研究文档与对照证据](https://github.com/ThySummer14/kuangye/blob/filisi/kuangye-original-godot-recovery-20261008/godot-prototype/docs/LIGHTING_STUDY.md) 留在 Godot 分支，Pages 仅取固定提交的 Web 导出并校验 SHA-256。原型不读取主站存档，实体手机仍待验收。
+
 Android 可安装预览已接入同一套页面与本地存档：`npm run android:build` 生成 APK，安装、备份和验收说明见 [Android 预览](docs/ANDROID.md)。
 
 ## 可以做什么

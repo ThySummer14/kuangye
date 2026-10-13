@@ -4,7 +4,7 @@
 
 最新交付：十四项「一生去挑战」与十四枚专属可旋转蚀刻章，并增加 Android 可安装预览。原六项加码和四章仍可访问；个人目标共用三名额，永久保留、完成对应刻印。138 项测试、Web build/release、桌面/375px 浏览器回归、Android assembleDebug/lintDebug 通过。模拟器核对系统返回、键盘、原生存档、真实备份往返、失败回滚、离线重启、3D 触摸与横屏。见 [人生挑战](LIFETIME-CHALLENGES.md)、[Android 预览](ANDROID.md)。应用提交 `c60dff9` 已发布，[Pages Actions 37636563098](https://github.com/ThySummer14/kuangye/actions/runs/37636563098) 成功。线上桌面/375px 两击入口、十四图样、3D 翻面与旧加码均通过；28 份图片 HTTP 200 且 SHA-256 与本地相同。[在线预览](https://thysummer14.github.io/kuangye/#challenger)。
 
-Godot 独立预览（2026-10-13）：长期分支的光影还原与研究归档已验收，Pages 流水线将固定提交 `3a841ab77ecd396cbed0ddf4ad941adf2a8ea94a` 的 Web 导出放在 `/godot-lighting/` 并校验 SHA-256，不合入 Godot 源码。[研究文档](https://github.com/ThySummer14/kuangye/blob/filisi/kuangye-original-godot-recovery-20261008/godot-prototype/docs/LIGHTING_STUDY.md)，[预览入口](https://thysummer14.github.io/kuangye/godot-lighting/)。23 组 Godot／两尺寸各 85 项／Vue 138 项与 build/release／打包 4 项／桌面和 375px DPR 3 浏览器通过，实体手机仍待验收；部署与线上回执随后补充。
+Godot 独立预览（2026-10-13）：长期分支的光影还原与研究归档已验收，Pages 流水线将固定提交 `3a841ab77ecd396cbed0ddf4ad941adf2a8ea94a` 的 Web 导出放在 `/godot-lighting/` 并校验 SHA-256，不合入 Godot 源码。[研究文档](https://github.com/ThySummer14/kuangye/blob/filisi/kuangye-original-godot-recovery-20261008/godot-prototype/docs/LIGHTING_STUDY.md)，[预览入口](https://thysummer14.github.io/kuangye/godot-lighting/)。23 组 Godot／两尺寸各 85 项／Vue 138 项与 build/release／打包 4 项／桌面和 375px DPR 3 浏览器通过，实体手机仍待验收。发布配置 `6a57380` 的 [Actions 38421458494](https://github.com/ThySummer14/kuangye/actions/runs/38421458494) build／deploy 成功；线上桌面／375px DPR 3 的进屋与窗边换光、15 个文件的 HTTP 200／完整 SHA-256 均通过。首载仍偏大，一次移动模拟 PCK 冷下载为 173 秒。
 
 进行中：界面质感整理（第四十八切片）在分支 `cursor/ui-polish-d1d4` 等 Hal 审 PR，未合并、未发布 Pages；方向与改动见 RUNLOG 第四十八切片。
 

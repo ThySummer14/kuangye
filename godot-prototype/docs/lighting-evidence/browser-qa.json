@@ -1,0 +1,68 @@
+{
+  "date": "2026-10-13",
+  "url": "http://127.0.0.1:8769/",
+  "engine": "4.6.3-stable (official)",
+  "renderer": "WebGL2 / Compatibility",
+  "evidence_method": "Playwright browser inputs; screenshots reviewed visually by primary agent, not OCR or synthetic Godot events",
+  "desktop": {
+    "css_viewport": [
+      1280,
+      720
+    ],
+    "dpr": 1,
+    "verified": [
+      "mouse enters home",
+      "window opens selector",
+      "day/sunset/night apply",
+      "final export reload renders night"
+    ],
+    "console_errors": 0
+  },
+  "touch_emulation": {
+    "css_viewport": [
+      375,
+      812
+    ],
+    "dpr": 3,
+    "canvas": [
+      1125,
+      2436
+    ],
+    "verified": [
+      "tap enters home",
+      "window selector fits viewport",
+      "all three profiles apply",
+      "single finger CDP drag moves preview",
+      "release keeps inventory and preview",
+      "explicit place consumes one stool and displays real geometry",
+      "walking through threshold returns town with current light",
+      "browser refresh retains placed stool and resets light to day"
+    ],
+    "horizontal_overflow": false,
+    "console_errors": 0,
+    "console_warnings": [
+      "AudioContext requires user gesture on a reload"
+    ]
+  },
+  "screenshots": [
+    "web-town-1280.png",
+    "web-home-day-1280.png",
+    "web-home-sunset-1280.png",
+    "web-home-night-1280.png",
+    "web-selector-1280.png",
+    "web-town-hidpi-375.png",
+    "web-home-day-hidpi-375.png",
+    "web-home-sunset-hidpi-375.png",
+    "web-home-night-hidpi-375.png",
+    "web-selector-hidpi-375.png",
+    "web-preview-hidpi-375.png",
+    "web-dragged-hidpi-375.png",
+    "web-placed-hidpi-375.png",
+    "web-door-hidpi-375.png",
+    "web-reopened-hidpi-375.png"
+  ],
+  "limitations": [
+    "emulated touch is not physical-device acceptance",
+    "browser process restart, eviction, private mode and other browsers unverified"
+  ]
+}

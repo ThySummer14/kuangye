@@ -8,8 +8,8 @@
 				"static_batches": 47
 			},
 			"draw_calls": 251.0,
-			"frame_ms_median": 8.207,
-			"frame_ms_p95": 12.572,
+			"frame_ms_median": 1.109,
+			"frame_ms_p95": 2.889,
 			"frame_samples": 60,
 			"local_lights": {
 				"active": 2,
@@ -30,8 +30,8 @@
 				"static_batches": 47
 			},
 			"draw_calls": 251.0,
-			"frame_ms_median": 7.583,
-			"frame_ms_p95": 11.568,
+			"frame_ms_median": 1.032,
+			"frame_ms_p95": 1.86,
 			"frame_samples": 60,
 			"local_lights": {
 				"active": 2,
@@ -52,8 +52,8 @@
 				"static_batches": 47
 			},
 			"draw_calls": 251.0,
-			"frame_ms_median": 7.669,
-			"frame_ms_p95": 11.728,
+			"frame_ms_median": 0.994,
+			"frame_ms_p95": 1.678,
 			"frame_samples": 60,
 			"local_lights": {
 				"active": 2,

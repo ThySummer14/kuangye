@@ -38,4 +38,23 @@ class DeliveryTests(unittest.TestCase):
             with self.assertRaises(ValueError):delivery.package(root, site, Path(temp) / 'bad.zip')
             self.assertFalse((Path(temp) / 'bad.zip').exists())
 
+    def test_official_uncompressed_export_keeps_licenses_and_skips_import_sentinel(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / 'project';root.mkdir();(root / 'project.godot').write_text('config_version=5')
+            web = Path(temp) / 'web';web.mkdir()
+            files = {'index.html', 'index.js', 'index.pck', 'index.wasm', 'index.png',
+                     'index.icon.png', 'index.apple-touch-icon.png', 'FONT-LICENSE.txt',
+                     'LICENSES.txt', 'GODOT_ENGINE_NOTICES.txt', 'PROJECT-LICENSE.txt',
+                     'BUILD.json', 'SHA256SUMS'}
+            for name in files:(web / name).write_bytes(b'fixture')
+            (web / '.gdignore').write_text('')
+            output = Path(temp) / 'official.zip'
+            delivery.package(root, web, output)
+            with zipfile.ZipFile(output) as archive:
+                self.assertEqual({name.removeprefix('web-preview/dist/') for name in archive.namelist()
+                                  if name.startswith('web-preview/dist/')}, files)
+            (web / 'unexpected.js').write_text('fixture')
+            with self.assertRaises(ValueError):delivery.package(root, web, Path(temp) / 'bad.zip')
+            self.assertFalse((Path(temp) / 'bad.zip').exists())
+
 if __name__ == '__main__':unittest.main()

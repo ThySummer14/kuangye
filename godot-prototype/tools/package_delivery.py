@@ -13,9 +13,11 @@ import zipfile
 
 ROOT_FILES = {'.gitignore', 'README.md', 'PROJECT-LICENSE.txt', 'project.godot', 'main.tscn', 'export_presets.cfg'}
 SOURCE_DIRS = ('assets', 'scripts', 'tests', 'tools', 'docs')
-WEB_FILES = {'index.html', 'index.js', 'index.pck', 'index.wasm.gz', 'index.audio.worklet.js',
+WEB_FILES = {'index.html', 'index.js', 'index.pck', 'index.wasm', 'index.wasm.gz', 'index.audio.worklet.js',
              'index.audio.position.worklet.js', 'kuangye-engine-loader.js', '_headers',
-             'GODOT_ENGINE_NOTICES.txt', 'NotoSansSC-LICENSE.txt', 'PROJECT-LICENSE.txt'}
+             'index.png', 'index.icon.png', 'index.apple-touch-icon.png',
+             'GODOT_ENGINE_NOTICES.txt', 'NotoSansSC-LICENSE.txt', 'FONT-LICENSE.txt',
+             'LICENSES.txt', 'PROJECT-LICENSE.txt', 'BUILD.json', 'SHA256SUMS'}
 FORBIDDEN = {'.git', '.godot', '.openai', '.aws', '.ssh', '.codex', '.agents', '__pycache__'}
 SAVE = re.compile(r'^(town-(?:prototype|qa|fixture).*|creative-(?:ui|e2e|roundtrip)|badge-(?:ui-fixture|roundtrip)|migration-(?:source-fixture|target-[0-9]+)|mascot-motion-fixture|studio-media-(?:roundtrip|ui-fixture)|manual-media-fixture|web-media-fixture|touch-furnishing-fixture)\.json$')
 
@@ -40,14 +42,16 @@ def add_file(archive, file: Path, root: Path, prefix: str, manifest: dict) -> No
 def package(project: Path, web: Path | None, output: Path, evidence=()) -> dict:
     if not (project / 'project.godot').is_file():
         raise ValueError('The source root must be this Godot project')
-    if web and not all((web / f).is_file() for f in ('index.html', 'index.js', 'index.pck', 'index.wasm.gz')):
+    if web and (not all((web / f).is_file() for f in ('index.html', 'index.js', 'index.pck'))
+                or not any((web / f).is_file() for f in ('index.wasm', 'index.wasm.gz'))):
         raise ValueError('--web-dir must be the exported dist directory, not a Site checkout')
     # Validate names before creating the archive so a failure never leaves a
     # seemingly complete artifact. A normal source-root .git is outside the list.
     source = [project / name for name in sorted(ROOT_FILES) if (project / name).is_file()]
     for name in SOURCE_DIRS:
         source.extend(f for f in sorted((project / name).rglob('*')) if f.is_file() and '__pycache__' not in f.parts)
-    web_files = [f for f in sorted(web.rglob('*')) if f.is_file()] if web else []
+    # Godot's explicit import sentinel is not part of the deployed runtime.
+    web_files = [f for f in sorted(web.rglob('*')) if f.is_file() and f != web / '.gdignore'] if web else []
     for f in source:
         safe_name('godot-prototype/' + f.relative_to(project).as_posix())
         if f.is_symlink(): raise ValueError('Source symlinks are not packaged')

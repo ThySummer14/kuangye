@@ -8,8 +8,8 @@
 				"static_batches": 47
 			},
 			"draw_calls": 253.0,
-			"frame_ms_median": 8.009,
-			"frame_ms_p95": 12.824,
+			"frame_ms_median": 1.751,
+			"frame_ms_p95": 2.52,
 			"frame_samples": 60,
 			"local_lights": {
 				"active": 2,
@@ -30,8 +30,8 @@
 				"static_batches": 47
 			},
 			"draw_calls": 253.0,
-			"frame_ms_median": 8.289,
-			"frame_ms_p95": 11.905,
+			"frame_ms_median": 1.634,
+			"frame_ms_p95": 2.028,
 			"frame_samples": 60,
 			"local_lights": {
 				"active": 2,
@@ -52,8 +52,8 @@
 				"static_batches": 47
 			},
 			"draw_calls": 253.0,
-			"frame_ms_median": 8.267,
-			"frame_ms_p95": 12.206,
+			"frame_ms_median": 1.241,
+			"frame_ms_p95": 1.71,
 			"frame_samples": 60,
 			"local_lights": {
 				"active": 2,
@@ -230,7 +230,7 @@
 			"window": "(1280, 720)"
 		}
 	],
-	"checks": 84,
+	"checks": 85,
 	"engine": "4.6.3-stable (official)",
 	"failed": 0,
 	"limit": "Short native samples with VSync; not a mobile benchmark. Physics/animation frozen for static comparisons.",

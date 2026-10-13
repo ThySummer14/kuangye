@@ -4,6 +4,7 @@ artifacts/*
 exports/
 *.tmp
 *.zip
+!docs/lighting-evidence/reference-lab-source.zip
 .env
 .env.*
 __pycache__/

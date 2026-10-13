@@ -2,6 +2,7 @@ class_name TownWorld
 extends Node3D
 
 const Art = preload("res://scripts/art.gd")
+const Lighting = preload("res://scripts/lighting.gd")
 var hotspots: Array[Dictionary] = []
 var blockers: Array[Rect2] = []
 var location := "town"
@@ -10,6 +11,10 @@ var grid_root: Node3D
 var memory_root: Node3D
 var npc_model: Node3D
 var sun: DirectionalLight3D
+var fill: DirectionalLight3D
+var settings: Environment
+var window_glass: MeshInstance3D
+var light_mode := "day"
 var wind_objects: Array[Node3D] = []
 var batch_stats: Dictionary = {}
 var light_budget_stats: Dictionary = {}
@@ -19,28 +24,37 @@ func _init(place := "town") -> void:
 
 func _ready() -> void:
 	var environment := WorldEnvironment.new()
-	var settings := Environment.new()
+	settings = Environment.new()
 	settings.background_mode = Environment.BG_COLOR
-	settings.background_color = Color("344b53")
 	settings.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	settings.ambient_light_color = Color("c8d6da")
-	settings.ambient_light_energy = 0.40 if location == "town" else 0.38
 	settings.tonemap_mode = Environment.TONE_MAPPER_LINEAR
 	settings.tonemap_exposure = 0.82
 	environment.environment = settings
 	add_child(environment)
 	sun = DirectionalLight3D.new()
-	sun.rotation_degrees = Vector3(-32, -38, 0)
-	sun.light_color = Color("fff0d9")
-	sun.light_energy = 0.60 if location == "town" else 0.24
 	sun.shadow_enabled = true
-	sun.directional_shadow_max_distance = 45.0
-	sun.shadow_blur = 0.4
+	sun.directional_shadow_max_distance = 45.0 if location == "town" else 36.0
+	sun.directional_shadow_mode = DirectionalLight3D.SHADOW_ORTHOGONAL
+	sun.shadow_bias = 0.1
+	sun.shadow_normal_bias = 2.0
+	sun.shadow_blur = 1.0
 	add_child(sun)
+	fill = DirectionalLight3D.new()
+	fill.rotation_degrees = Vector3(-48,25,0)
+	fill.shadow_enabled = true
+	fill.shadow_caster_mask = 1
+	fill.directional_shadow_mode = DirectionalLight3D.SHADOW_ORTHOGONAL
+	fill.directional_shadow_max_distance = 36.0
+	fill.shadow_opacity = 0.55
+	fill.shadow_bias = 0.1
+	fill.shadow_normal_bias = 2.0
+	fill.shadow_blur = 1.0
+	add_child(fill)
 	if location == "town":
 		build_town()
 	else:
 		build_room()
+	set_lighting(light_mode)
 	batch_static()
 	furniture_root = Art.group(self)
 	furniture_root.name = "PlacedFurniture"
@@ -56,12 +70,19 @@ func _ready() -> void:
 			var line := Art.box(grid_root,Vector3(0,0.028,z*0.5),Vector3(8,0.003,0.011),"b8c4aa")
 			line.material_override = Art.mat("b8c4aa",0,0.35)
 
+func set_lighting(mode: String) -> bool:
+	if not Lighting.MODES.has(mode): return false
+	light_mode = mode
+	Lighting.apply(self, mode)
+	return true
+
 func batch_static() -> void:
 	# Material batches preserve collision proxies, lamps and labels. Furniture/player/NPC
 	# remain independent. Do not draw thousands of decorative roof tiles separately.
 	var groups: Dictionary = {}
 	var source_count := 0
 	for node in find_children("*","MeshInstance3D",true,false):
+		if node.get_meta("dynamic_material",false): continue
 		if is_instance_valid(npc_model) and npc_model.is_ancestor_of(node):
 			continue
 		var material: Material = node.material_override
@@ -71,18 +92,21 @@ func batch_static() -> void:
 			continue # Keep water and future animated surfaces independently culled.
 		if material is StandardMaterial3D and material.transparency != BaseMaterial3D.TRANSPARENCY_DISABLED:
 			continue # Transparent shafts must retain their own sorting origin.
-		var key := material.get_instance_id()
+		var key := str(material.get_instance_id())+":"+str(node.cast_shadow)+":"+str(node.layers)
 		if not groups.has(key):
 			var builder := SurfaceTool.new()
 			builder.begin(Mesh.PRIMITIVE_TRIANGLES)
-			groups[key] = {"tool":builder,"material":material}
+			groups[key] = {"tool":builder,"material":material,"shadow":node.cast_shadow,"layers":node.layers}
 		for surface in node.mesh.get_surface_count():
 			groups[key].tool.append_from(node.mesh,surface,global_transform.affine_inverse()*node.global_transform)
 		source_count += 1
 		node.queue_free()
 	for key in groups:
 		var combined: Mesh = groups[key].tool.commit()
-		Art.mesh(self,combined,Vector3.ZERO,groups[key].material).name = "StaticMaterialBatch"
+		var batch := Art.mesh(self,combined,Vector3.ZERO,groups[key].material)
+		batch.name = "StaticMaterialBatch"
+		batch.cast_shadow = groups[key].shadow
+		batch.layers = groups[key].layers
 	wind_objects.clear()
 	batch_stats = {"original_meshes":source_count,"static_batches":groups.size()}
 
@@ -113,7 +137,8 @@ func build_town() -> void:
 			var wx := x*0.5
 			var wz := z*0.5
 			if absf(wx)<1.3 or (wz>-0.6 and wz<1.4) or (wz>-2.1 and wz<-0.6 and absf(wx-4.5)<0.9):
-				Art.box(self,Vector3(wx,0.005,wz),Vector3(0.498,0.018,0.498),["aaa68e","a8a48b","b0ab93","a6a38a"][rng.randi_range(0,3)])
+				var slab := Art.box(self,Vector3(wx,0.005,wz),Vector3(0.5,0.018,0.5),["aaa68e","a8a48b","b0ab93","a6a38a"][rng.randi_range(0,3)])
+				slab.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	for place in [{"id":"home","pos":Vector3(-5,0,-2.5),"name":"小家"},{"id":"shop","pos":Vector3(4.7,0,-3.0),"name":"木匠铺"},{"id":"studio","pos":Vector3(-0.5,0,-8.5),"name":"画室"}]:
 		Art.house(self,place.pos,place.id)
 		var building_body:=solid(place.pos+Vector3(0,1.3,0),Vector3(4.3,2.6,3.35))
@@ -167,27 +192,39 @@ func build_room() -> void:
 			var start := maxf(-4.0,-4.9+z*1.35+(x%3)*0.45)
 			var finish := minf(4.0,-3.55+z*1.35+(x%3)*0.45)
 			if finish>start:
-				Art.box(self,Vector3(-4.5+x*0.5,0.001,(start+finish)*0.5),Vector3(0.498,0.028,finish-start-0.006),["a48c6e","a78f72","aa9275","a48d70"][(x+z*3)%4])
-	solid(Vector3(0,1.45,-4.1),Vector3(9.5,2.9,0.20),"d4c2a1")
-	solid(Vector3(-4.65,1.45,0),Vector3(0.20,2.9,8.4),"b8b394")
+				var board := Art.box(self,Vector3(-4.5+x*0.5,0.001,(start+finish)*0.5),Vector3(0.5,0.028,finish-start),["c4a276","c9a97e","cfb085","c6a67c"][(x+z*3)%4])
+				# Flush floorboards receive shadows, but must not shadow their coplanar neighbours.
+				board.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var wall := "a2ae8e" if location == "home" else "c7bea4"
+	var trim := "e5e5cf" if location == "home" else "b9a784"
+	# Collision remains a whole wall. Visible segments leave a real window aperture.
+	var back := solid(Vector3(0,1.45,-4.1),Vector3(9.5,2.9,0.20))
+	back.set_meta("door_id","window-light")
+	for side in [-1,1]:
+		Art.box(self,Vector3(side*2.82,1.45,-4.1),Vector3(3.86,2.9,0.20),wall)
+	Art.box(self,Vector3(0,0.66,-4.1),Vector3(1.78,1.32,0.20),wall)
+	Art.box(self,Vector3(0,2.55,-4.1),Vector3(1.78,0.70,0.20),wall)
+	# Cutaway roof remains invisible to the camera but blocks overhead sunlight.
+	var ceiling := Art.box(self,Vector3(0,2.98,0),Vector3(9.5,0.16,8.4),wall)
+	ceiling.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY
+	ceiling.layers = 2
+	solid(Vector3(-4.65,1.45,0),Vector3(0.20,2.9,8.4),wall)
 	# Front/right cutaway walls are only knee high, so movement and furniture remain visible.
 	solid(Vector3(4.65,0.30,0),Vector3(0.20,0.60,8.4),"b4a183")
 	for x in [-3.0,3.0]:
 		solid(Vector3(x,0.3,4.1),Vector3(3.1,0.6,0.20),"c0ac8b")
 	for y in [0.13,2.8]:
-		Art.box(self,Vector3(0,y,-3.95),Vector3(9.4,0.15,0.14),"8e7659")
-		Art.box(self,Vector3(-4.5,y,0),Vector3(0.14,0.15,8.2),"8e7659")
+		Art.box(self,Vector3(0,y,-3.95),Vector3(9.4,0.15,0.14),trim)
+		Art.box(self,Vector3(-4.5,y,0),Vector3(0.14,0.15,8.2),trim)
 	for x in [-4.45,-1.45,1.45,4.45]:
-		Art.box(self,Vector3(x,1.45,-3.92),Vector3(0.14,2.8,0.14),"947d60")
-	Art.window_front(self,0,1.75,-3.84,1.65)
-	# Crossed paper-like shafts are local geometry, supported in both Mobile and Compatibility.
-	var shaft := Art.box(self,Vector3(0.15,0.10,-2.55),Vector3(1.63,0.012,2.5),"f8d39a")
-	shaft.material_override = Art.mat("f8d39a",0.2,0.20)
-	shaft.rotation.y = -0.18
-	Art.light(self,Vector3(0,1.8,-2.6),"ffd7a5",0.38,5.0)
-	var main_light := Art.light(self,Vector3(0.9,2.7,1.2),"ffdcaf",0.52,7.5)
-	main_light.shadow_enabled = true
-	main_light.set_meta("priority_light",true)
+		Art.box(self,Vector3(x,1.45,-3.92),Vector3(0.075,2.8,0.08),trim)
+	window_glass = Art.room_window(self)
+	hotspots.append({"id":"window-light","name":"看看窗外的光","pos":Vector3(0,0,-2.6),"kind":"lighting"})
+	if location == "home":
+		Art.box(self,Vector3(0,0.8,-3.95),Vector3(9.4,0.055,0.075),trim)
+		Art.box(self,Vector3(-4.5,0.8,0),Vector3(0.075,0.055,8.2),trim)
+		Art.room_string_lights(self)
+	# The sky fill models the open dollhouse side; the ceiling only blocks the sun.
 	Art.box(self,Vector3(0,-0.035,4.2),Vector3(1.7,0.08,0.7),"d2bb91")
 	# The threshold is a real landing, not only a visible mesh. Back/side stops
 	# protect the open cutaway while a transition is cancelled or paused.

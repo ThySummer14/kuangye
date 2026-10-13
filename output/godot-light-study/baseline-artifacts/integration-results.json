@@ -1,0 +1,58 @@
+[
+	{
+		"name": "native viewport matches requested graphical QA size",
+		"passed": true
+	},
+	{
+		"name": "town has three usable buildings and a memory bench",
+		"passed": true
+	},
+	{
+		"name": "tap-navigation produces a walkable path",
+		"passed": true
+	},
+	{
+		"name": "mascot physically walks with collisions",
+		"passed": false
+	},
+	{
+		"name": "door enters the furnished NPC shop",
+		"passed": true
+	},
+	{
+		"name": "NPC purchase deducts correct price exactly once",
+		"passed": true
+	},
+	{
+		"name": "building places rotated purchased furniture",
+		"passed": true
+	},
+	{
+		"name": "cancelled preview does not consume furniture",
+		"passed": true
+	},
+	{
+		"name": "overlapping furniture is blocked",
+		"passed": true
+	},
+	{
+		"name": "door clearance is blocked",
+		"passed": true
+	},
+	{
+		"name": "saved note, coins, and placements survive reopening",
+		"passed": true
+	},
+	{
+		"name": "cancelled transition stays in the room",
+		"passed": true
+	},
+	{
+		"name": "real note appears on studio wall",
+		"passed": true
+	},
+	{
+		"name": "focus loss clears touch movement",
+		"passed": true
+	}
+]

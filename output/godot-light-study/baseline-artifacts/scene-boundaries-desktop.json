@@ -1,0 +1,12 @@
+{
+	"failed": 0,
+	"note": "Headless structural checks, not GPU or device performance.",
+	"passed": 58,
+	"scene_resolution": "(640, 360)",
+	"town": {
+		"original_meshes": 1490,
+		"static_batches": 77
+	},
+	"ui_density": 1.0,
+	"viewport": "(1280, 720)"
+}

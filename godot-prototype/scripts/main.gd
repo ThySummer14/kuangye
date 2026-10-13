@@ -22,6 +22,7 @@ var navigation: AStarGrid2D
 var route := PackedVector2Array()
 var queued_interaction := ""
 var location := "town"
+var light_mode := "day"
 var previous_door := "home"
 var camera_target := Vector3(0,0,-1.5)
 var camera_offset := Vector3(14,20,26)
@@ -86,6 +87,9 @@ func _ready() -> void:
 			var dimensions := argument.trim_prefix("--qa-size=").split("x")
 			if dimensions.size()==2:qa_target_size=Vector2i(int(dimensions[0]),int(dimensions[1]))
 	ui_density = ui_density_override if ui_density_override>0 else (clampf(DisplayServer.screen_get_scale(),1.0,3.5) if OS.has_feature("mobile") else 1.0)
+	# Web canvas uses device pixels even on desktop; controls use CSS-sized targets.
+	if OS.has_feature("web") and ui_density_override<=0:
+		ui_density = clampf(float(JavaScriptBridge.eval("window.devicePixelRatio || 1",true)),1.0,3.5)
 	Art.font = load("res://assets/NotoSansSC-Regular.otf")
 	setup_theme()
 	if qa_mode or fixture_mode:
@@ -338,10 +342,10 @@ func layout_ui() -> void:
 		build_bar.position = Vector2(12,s.y-181)
 		build_bar.size = Vector2(s.x-24,156)
 	if is_instance_valid(camera):
-		camera.size = 13.5 if location=="town" else 10.0
+		camera.size = 13.5 if location=="town" else 11.8
 		if mobile:
 			camera.keep_aspect = Camera3D.KEEP_WIDTH
-			camera.size = 10.0 if location=="town" else 8.5
+			camera.size = 10.0 if location=="town" else 13.8
 		else:
 			camera.keep_aspect = Camera3D.KEEP_HEIGHT
 
@@ -396,10 +400,10 @@ func change_location(place: String) -> void:
 		camera_target = Vector3(0,0,-1.6)
 	else:
 		player.position = Vector3(0,0.12,2.55)
-		camera_target = Vector3(0,0,0)
+		camera_target = Vector3(0,0.65,0)
 	camera = Camera3D.new()
 	camera.projection = Camera3D.PROJECTION_ORTHOGONAL
-	camera.size = 13.5 if place=="town" else 10.0
+	camera.size = 13.5 if place=="town" else 11.8
 	camera.far = 100
 	world.add_child(camera)
 	camera.position = camera_target+camera_offset
@@ -501,8 +505,8 @@ func _physics_process(delta: float) -> void:
 		if not nearby.is_empty() and nearby.id==target:
 			interact()
 	var small_screen := get_viewport_rect().size.x/ui_density < 760
-	var target_focus := Vector3(player.position.x*0.62,0,player.position.z*0.62-0.5) if location=="town" else Vector3.ZERO
-	if small_screen:
+	var target_focus := Vector3(player.position.x*0.62,0,player.position.z*0.62-0.5) if location=="town" else Vector3(0,0.65,0)
+	if small_screen and location=="town":
 		target_focus = Vector3(player.position.x,0,player.position.z-0.4)
 	camera_target = camera_target.lerp(target_focus,1-exp(-delta*2.3))
 	# Snap the orthographic camera focus to world pixels, avoiding subpixel swimming.
@@ -701,7 +705,26 @@ func interact() -> void:
 		"observation": creative_panel.book()
 		"creative": creative_panel.studio()
 		"badges": badge_panel.cabinet()
+		"lighting": show_lighting()
 		"displayed-work": creative_panel.work_page(state.creative.home.studio.displayId)
+
+func show_lighting() -> void:
+	var v := make_modal("窗外的光",400,310)
+	modal.set_meta("fit_content",true)
+	var description := label("挑一个此刻，让小家慢下来。",15,"c6cbb6")
+	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	v.add_child(description)
+	for mode in World.Lighting.MODES:
+		var choice: String = mode
+		var option := button(World.Lighting.LABELS[choice]+(" · 此刻" if choice==light_mode else ""),func():
+			light_mode=choice
+			world.set_lighting(choice)
+			close_modal())
+		option.name = "Light_"+choice
+		v.add_child(option)
+	layout_ui()
+	# Wrapped text needs its final container width before measuring the short panel.
+	call_deferred("layout_ui")
 
 func transition_to(place: String) -> void:
 	if transitioning:
@@ -730,8 +753,8 @@ func cancel_transition() -> void:
 func refresh_hud() -> void:
 	if not is_instance_valid(title_label):
 		return
-	title_label.text = {"town":"旷野 · 暮色小镇","home":"小家","shop":"阿榆的木匠铺","studio":"生活画室"}.get(location,"旷野")
-	subtitle_label.text = {"town":"把生活的一点发现，带回家。","home":"你留下的发现，会变成墙上的小画。","shop":"看看实物，再慢慢挑。","studio":"写下一点看见的、完成的、创造的。"}[location]
+	title_label.text = {"town":"旷野 · 小镇","home":"小家","shop":"阿榆的木匠铺","studio":"生活画室"}.get(location,"旷野")
+	subtitle_label.text = {"town":"把生活的一点发现，带回家。","home":"走到窗边，看看一天里不同的光。","shop":"看看实物，再慢慢挑。","studio":"写下一点看见的、完成的、创造的。"}[location]
 	title_label.visible=not is_instance_valid(modal)
 	coins_label.visible=not is_instance_valid(modal)
 	coins_label.text = "微光  %d%s" % [state.coins," · 待保存" if unsaved_changes else ""]
@@ -1141,6 +1164,7 @@ func refresh_furniture() -> void:
 				body.add_child(c)
 				world.furniture_root.add_child(body)
 	setup_navigation()
+	world.set_lighting(light_mode)
 	world.update_light_budget(player.position)
 
 func capture(name: String) -> void:

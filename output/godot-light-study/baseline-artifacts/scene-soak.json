@@ -1,0 +1,252 @@
+{
+	"baseline": {
+		"label": "baseline-town",
+		"nodes": 191,
+		"resources": 21,
+		"static_bytes": 122682449
+	},
+	"cycles": 32,
+	"elapsed_ms": 510,
+	"engine": "4.6.3-stable (official)",
+	"failed": 0,
+	"final": {
+		"label": "7-town",
+		"nodes": 191,
+		"resources": 21,
+		"scene_build_ms": 21,
+		"static_bytes": 122709517
+	},
+	"mode": "headless; no GPU frame-rate claim",
+	"samples": [
+		{
+			"label": "baseline-town",
+			"nodes": 191,
+			"resources": 21,
+			"static_bytes": 122682449
+		},
+		{
+			"label": "0-home",
+			"nodes": 163,
+			"resources": 20,
+			"scene_build_ms": 15,
+			"static_bytes": 121138818
+		},
+		{
+			"label": "0-shop",
+			"nodes": 143,
+			"resources": 20,
+			"scene_build_ms": 12,
+			"static_bytes": 121103346
+		},
+		{
+			"label": "0-studio",
+			"nodes": 119,
+			"resources": 20,
+			"scene_build_ms": 15,
+			"static_bytes": 120809534
+		},
+		{
+			"label": "0-town",
+			"nodes": 191,
+			"resources": 21,
+			"scene_build_ms": 20,
+			"static_bytes": 122686589
+		},
+		{
+			"label": "1-home",
+			"nodes": 163,
+			"resources": 20,
+			"scene_build_ms": 15,
+			"static_bytes": 121142130
+		},
+		{
+			"label": "1-shop",
+			"nodes": 143,
+			"resources": 20,
+			"scene_build_ms": 14,
+			"static_bytes": 121106602
+		},
+		{
+			"label": "1-studio",
+			"nodes": 119,
+			"resources": 20,
+			"scene_build_ms": 14,
+			"static_bytes": 120812766
+		},
+		{
+			"label": "1-town",
+			"nodes": 191,
+			"resources": 21,
+			"scene_build_ms": 19,
+			"static_bytes": 122689773
+		},
+		{
+			"label": "2-home",
+			"nodes": 163,
+			"resources": 20,
+			"scene_build_ms": 15,
+			"static_bytes": 121145670
+		},
+		{
+			"label": "2-shop",
+			"nodes": 143,
+			"resources": 20,
+			"scene_build_ms": 13,
+			"static_bytes": 121109998
+		},
+		{
+			"label": "2-studio",
+			"nodes": 119,
+			"resources": 20,
+			"scene_build_ms": 14,
+			"static_bytes": 120816102
+		},
+		{
+			"label": "2-town",
+			"nodes": 191,
+			"resources": 21,
+			"scene_build_ms": 21,
+			"static_bytes": 122693261
+		},
+		{
+			"label": "3-home",
+			"nodes": 163,
+			"resources": 20,
+			"scene_build_ms": 14,
+			"static_bytes": 121148946
+		},
+		{
+			"label": "3-shop",
+			"nodes": 143,
+			"resources": 20,
+			"scene_build_ms": 15,
+			"static_bytes": 121113254
+		},
+		{
+			"label": "3-studio",
+			"nodes": 119,
+			"resources": 20,
+			"scene_build_ms": 13,
+			"static_bytes": 120819358
+		},
+		{
+			"label": "3-town",
+			"nodes": 191,
+			"resources": 21,
+			"scene_build_ms": 22,
+			"static_bytes": 122696517
+		},
+		{
+			"label": "4-home",
+			"nodes": 163,
+			"resources": 20,
+			"scene_build_ms": 14,
+			"static_bytes": 121152058
+		},
+		{
+			"label": "4-shop",
+			"nodes": 143,
+			"resources": 20,
+			"scene_build_ms": 15,
+			"static_bytes": 121116366
+		},
+		{
+			"label": "4-studio",
+			"nodes": 119,
+			"resources": 20,
+			"scene_build_ms": 14,
+			"static_bytes": 120822686
+		},
+		{
+			"label": "4-town",
+			"nodes": 191,
+			"resources": 21,
+			"scene_build_ms": 21,
+			"static_bytes": 122699845
+		},
+		{
+			"label": "5-home",
+			"nodes": 163,
+			"resources": 20,
+			"scene_build_ms": 15,
+			"static_bytes": 121155386
+		},
+		{
+			"label": "5-shop",
+			"nodes": 143,
+			"resources": 20,
+			"scene_build_ms": 14,
+			"static_bytes": 121119694
+		},
+		{
+			"label": "5-studio",
+			"nodes": 119,
+			"resources": 20,
+			"scene_build_ms": 14,
+			"static_bytes": 120825798
+		},
+		{
+			"label": "5-town",
+			"nodes": 191,
+			"resources": 21,
+			"scene_build_ms": 22,
+			"static_bytes": 122702957
+		},
+		{
+			"label": "6-home",
+			"nodes": 163,
+			"resources": 20,
+			"scene_build_ms": 15,
+			"static_bytes": 121158498
+		},
+		{
+			"label": "6-shop",
+			"nodes": 143,
+			"resources": 20,
+			"scene_build_ms": 14,
+			"static_bytes": 121122806
+		},
+		{
+			"label": "6-studio",
+			"nodes": 119,
+			"resources": 20,
+			"scene_build_ms": 13,
+			"static_bytes": 120828910
+		},
+		{
+			"label": "6-town",
+			"nodes": 191,
+			"resources": 21,
+			"scene_build_ms": 21,
+			"static_bytes": 122706405
+		},
+		{
+			"label": "7-home",
+			"nodes": 163,
+			"resources": 20,
+			"scene_build_ms": 14,
+			"static_bytes": 121162074
+		},
+		{
+			"label": "7-shop",
+			"nodes": 143,
+			"resources": 20,
+			"scene_build_ms": 15,
+			"static_bytes": 121126254
+		},
+		{
+			"label": "7-studio",
+			"nodes": 119,
+			"resources": 20,
+			"scene_build_ms": 14,
+			"static_bytes": 120832358
+		},
+		{
+			"label": "7-town",
+			"nodes": 191,
+			"resources": 21,
+			"scene_build_ms": 21,
+			"static_bytes": 122709517
+		}
+	]
+}

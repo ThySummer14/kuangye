@@ -1,0 +1,95 @@
+{
+  "comparisons": [
+    {
+      "a": "01_flat",
+      "b": "02_correct_normal",
+      "roi_xyxy": null,
+      "pixels": 130560,
+      "changed_pixels": 9880,
+      "max_channel_delta": 48,
+      "mean_absolute_channel_delta": 0.845156760620915
+    },
+    {
+      "a": "02_correct_normal",
+      "b": "03_wrong_green",
+      "roi_xyxy": null,
+      "pixels": 130560,
+      "changed_pixels": 10713,
+      "max_channel_delta": 109,
+      "mean_absolute_channel_delta": 1.4623417075163399
+    },
+    {
+      "a": "02_correct_normal",
+      "b": "04_no_alpha_clip",
+      "roi_xyxy": null,
+      "pixels": 130560,
+      "changed_pixels": 7096,
+      "max_channel_delta": 195,
+      "mean_absolute_channel_delta": 5.417838541666667
+    },
+    {
+      "a": "02_correct_normal",
+      "b": "05_no_shadow",
+      "roi_xyxy": null,
+      "pixels": 130560,
+      "changed_pixels": 48139,
+      "max_channel_delta": 124,
+      "mean_absolute_channel_delta": 6.905085784313726
+    },
+    {
+      "a": "02_correct_normal",
+      "b": "06_cool_local_light",
+      "roi_xyxy": null,
+      "pixels": 130560,
+      "changed_pixels": 39258,
+      "max_channel_delta": 54,
+      "mean_absolute_channel_delta": 2.7890599468954247
+    },
+    {
+      "a": "02_correct_normal",
+      "b": "07_without_blocker",
+      "roi_xyxy": null,
+      "pixels": 130560,
+      "changed_pixels": 1975,
+      "max_channel_delta": 173,
+      "mean_absolute_channel_delta": 1.0855034722222223
+    },
+    {
+      "a": "02_correct_normal",
+      "b": "08_static_repeat",
+      "roi_xyxy": null,
+      "pixels": 130560,
+      "changed_pixels": 0,
+      "max_channel_delta": 0,
+      "mean_absolute_channel_delta": 0.0
+    },
+    {
+      "a": "09_canvas_height_0",
+      "b": "10_canvas_height_80",
+      "roi_xyxy": null,
+      "pixels": 130560,
+      "changed_pixels": 18720,
+      "max_channel_delta": 203,
+      "mean_absolute_channel_delta": 7.736843852124183
+    },
+    {
+      "a": "10_canvas_height_80",
+      "b": "11_canvas_flat_height_80",
+      "roi_xyxy": null,
+      "pixels": 130560,
+      "changed_pixels": 14868,
+      "max_channel_delta": 61,
+      "mean_absolute_channel_delta": 1.6255897671568627
+    }
+  ],
+  "scope": "Pixel differences establish an observable toggle, not artistic correctness; inspect the actual PNGs.",
+  "static_repeat_exact": true,
+  "capture_size": [
+    960,
+    640
+  ],
+  "internal_view_size": [
+    480,
+    272
+  ]
+}

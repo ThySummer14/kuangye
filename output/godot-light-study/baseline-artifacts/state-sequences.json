@@ -1,0 +1,10 @@
+{
+	"coins": 0,
+	"error": "",
+	"expected_operations": 5000,
+	"notes": 803,
+	"operations": 5000,
+	"passed": true,
+	"placements": 1,
+	"seed": 20261008
+}

@@ -1,0 +1,493 @@
+{
+  "adapter": "Apple M5",
+  "captures": [
+    {
+      "alpha_clip": true,
+      "camera_position": [
+        5.30000019073486,
+        5.09999990463257,
+        8.80000019073486
+      ],
+      "camera_projection": "orthographic",
+      "camera_size_world_units": 5.19999980926514,
+      "internal_viewport": [
+        480,
+        272
+      ],
+      "key_light_position": [
+        -3.0,
+        5.0,
+        4.0
+      ],
+      "local_light_energy": 0.850000023841858,
+      "local_light_position": [
+        2.29999995231628,
+        1.79999995231628,
+        2.29999995231628
+      ],
+      "name": "01_flat",
+      "normal_mode": 0,
+      "normal_space": "tangent OpenGL +X +Y +Z; image +y down converted during derivative",
+      "page_2d": false,
+      "pointlight2d_height_pixels": null,
+      "shadow_bias": 0.100000001490116,
+      "shadow_mode": 0,
+      "shadow_normal_bias": 2.0,
+      "shadows": true,
+      "time_usec": 856282,
+      "warm_local_light": true,
+      "window_pixels": [
+        960,
+        640
+      ]
+    },
+    {
+      "alpha_clip": true,
+      "camera_position": [
+        5.30000019073486,
+        5.09999990463257,
+        8.80000019073486
+      ],
+      "camera_projection": "orthographic",
+      "camera_size_world_units": 5.19999980926514,
+      "internal_viewport": [
+        480,
+        272
+      ],
+      "key_light_position": [
+        -3.0,
+        5.0,
+        4.0
+      ],
+      "local_light_energy": 0.850000023841858,
+      "local_light_position": [
+        2.29999995231628,
+        1.79999995231628,
+        2.29999995231628
+      ],
+      "name": "02_correct_normal",
+      "normal_mode": 1,
+      "normal_space": "tangent OpenGL +X +Y +Z; image +y down converted during derivative",
+      "page_2d": false,
+      "pointlight2d_height_pixels": null,
+      "shadow_bias": 0.100000001490116,
+      "shadow_mode": 0,
+      "shadow_normal_bias": 2.0,
+      "shadows": true,
+      "time_usec": 903046,
+      "warm_local_light": true,
+      "window_pixels": [
+        960,
+        640
+      ]
+    },
+    {
+      "alpha_clip": true,
+      "camera_position": [
+        5.30000019073486,
+        5.09999990463257,
+        8.80000019073486
+      ],
+      "camera_projection": "orthographic",
+      "camera_size_world_units": 5.19999980926514,
+      "internal_viewport": [
+        480,
+        272
+      ],
+      "key_light_position": [
+        -3.0,
+        5.0,
+        4.0
+      ],
+      "local_light_energy": 0.850000023841858,
+      "local_light_position": [
+        2.29999995231628,
+        1.79999995231628,
+        2.29999995231628
+      ],
+      "name": "03_wrong_green",
+      "normal_mode": 2,
+      "normal_space": "tangent OpenGL +X +Y +Z; image +y down converted during derivative",
+      "page_2d": false,
+      "pointlight2d_height_pixels": null,
+      "shadow_bias": 0.100000001490116,
+      "shadow_mode": 0,
+      "shadow_normal_bias": 2.0,
+      "shadows": true,
+      "time_usec": 926107,
+      "warm_local_light": true,
+      "window_pixels": [
+        960,
+        640
+      ]
+    },
+    {
+      "alpha_clip": false,
+      "camera_position": [
+        5.30000019073486,
+        5.09999990463257,
+        8.80000019073486
+      ],
+      "camera_projection": "orthographic",
+      "camera_size_world_units": 5.19999980926514,
+      "internal_viewport": [
+        480,
+        272
+      ],
+      "key_light_position": [
+        -3.0,
+        5.0,
+        4.0
+      ],
+      "local_light_energy": 0.850000023841858,
+      "local_light_position": [
+        2.29999995231628,
+        1.79999995231628,
+        2.29999995231628
+      ],
+      "name": "04_no_alpha_clip",
+      "normal_mode": 1,
+      "normal_space": "tangent OpenGL +X +Y +Z; image +y down converted during derivative",
+      "page_2d": false,
+      "pointlight2d_height_pixels": null,
+      "shadow_bias": 0.100000001490116,
+      "shadow_mode": 0,
+      "shadow_normal_bias": 2.0,
+      "shadows": true,
+      "time_usec": 970084,
+      "warm_local_light": true,
+      "window_pixels": [
+        960,
+        640
+      ]
+    },
+    {
+      "alpha_clip": true,
+      "camera_position": [
+        5.30000019073486,
+        5.09999990463257,
+        8.80000019073486
+      ],
+      "camera_projection": "orthographic",
+      "camera_size_world_units": 5.19999980926514,
+      "internal_viewport": [
+        480,
+        272
+      ],
+      "key_light_position": [
+        -3.0,
+        5.0,
+        4.0
+      ],
+      "local_light_energy": 0.850000023841858,
+      "local_light_position": [
+        2.29999995231628,
+        1.79999995231628,
+        2.29999995231628
+      ],
+      "name": "05_no_shadow",
+      "normal_mode": 1,
+      "normal_space": "tangent OpenGL +X +Y +Z; image +y down converted during derivative",
+      "page_2d": false,
+      "pointlight2d_height_pixels": null,
+      "shadow_bias": 0.100000001490116,
+      "shadow_mode": 0,
+      "shadow_normal_bias": 2.0,
+      "shadows": false,
+      "time_usec": 1159464,
+      "warm_local_light": true,
+      "window_pixels": [
+        960,
+        640
+      ]
+    },
+    {
+      "alpha_clip": true,
+      "camera_position": [
+        5.30000019073486,
+        5.09999990463257,
+        8.80000019073486
+      ],
+      "camera_projection": "orthographic",
+      "camera_size_world_units": 5.19999980926514,
+      "internal_viewport": [
+        480,
+        272
+      ],
+      "key_light_position": [
+        -3.0,
+        5.0,
+        4.0
+      ],
+      "local_light_energy": 0.850000023841858,
+      "local_light_position": [
+        2.29999995231628,
+        1.79999995231628,
+        2.29999995231628
+      ],
+      "name": "06_cool_local_light",
+      "normal_mode": 1,
+      "normal_space": "tangent OpenGL +X +Y +Z; image +y down converted during derivative",
+      "page_2d": false,
+      "pointlight2d_height_pixels": null,
+      "shadow_bias": 0.100000001490116,
+      "shadow_mode": 0,
+      "shadow_normal_bias": 2.0,
+      "shadows": true,
+      "time_usec": 1192871,
+      "warm_local_light": false,
+      "window_pixels": [
+        960,
+        640
+      ]
+    },
+    {
+      "alpha_clip": true,
+      "camera_position": [
+        5.30000019073486,
+        5.09999990463257,
+        8.80000019073486
+      ],
+      "camera_projection": "orthographic",
+      "camera_size_world_units": 5.19999980926514,
+      "internal_viewport": [
+        480,
+        272
+      ],
+      "key_light_position": [
+        -3.0,
+        5.0,
+        4.0
+      ],
+      "local_light_energy": 0.850000023841858,
+      "local_light_position": [
+        2.29999995231628,
+        1.79999995231628,
+        2.29999995231628
+      ],
+      "name": "07_without_blocker",
+      "normal_mode": 1,
+      "normal_space": "tangent OpenGL +X +Y +Z; image +y down converted during derivative",
+      "page_2d": false,
+      "pointlight2d_height_pixels": null,
+      "shadow_bias": 0.100000001490116,
+      "shadow_mode": 0,
+      "shadow_normal_bias": 2.0,
+      "shadows": true,
+      "time_usec": 1243961,
+      "warm_local_light": true,
+      "window_pixels": [
+        960,
+        640
+      ]
+    },
+    {
+      "alpha_clip": true,
+      "camera_position": [
+        5.30000019073486,
+        5.09999990463257,
+        8.80000019073486
+      ],
+      "camera_projection": "orthographic",
+      "camera_size_world_units": 5.19999980926514,
+      "internal_viewport": [
+        480,
+        272
+      ],
+      "key_light_position": [
+        -3.0,
+        5.0,
+        4.0
+      ],
+      "local_light_energy": 0.850000023841858,
+      "local_light_position": [
+        2.29999995231628,
+        1.79999995231628,
+        2.29999995231628
+      ],
+      "name": "08_static_repeat",
+      "normal_mode": 1,
+      "normal_space": "tangent OpenGL +X +Y +Z; image +y down converted during derivative",
+      "page_2d": false,
+      "pointlight2d_height_pixels": null,
+      "shadow_bias": 0.100000001490116,
+      "shadow_mode": 0,
+      "shadow_normal_bias": 2.0,
+      "shadows": true,
+      "time_usec": 11409344,
+      "warm_local_light": true,
+      "window_pixels": [
+        960,
+        640
+      ]
+    },
+    {
+      "alpha_clip": true,
+      "camera_position": [
+        5.30000019073486,
+        5.09999990463257,
+        8.80000019073486
+      ],
+      "camera_projection": "orthographic",
+      "camera_size_world_units": 5.19999980926514,
+      "internal_viewport": [
+        480,
+        272
+      ],
+      "key_light_position": [
+        -3.0,
+        5.0,
+        4.0
+      ],
+      "local_light_energy": 0.850000023841858,
+      "local_light_position": [
+        2.29999995231628,
+        1.79999995231628,
+        2.29999995231628
+      ],
+      "name": "09_canvas_height_0",
+      "normal_mode": 1,
+      "normal_space": "tangent OpenGL +X +Y +Z; image +y down converted during derivative",
+      "page_2d": true,
+      "pointlight2d_height_pixels": 0.0,
+      "shadow_bias": 0.100000001490116,
+      "shadow_mode": 0,
+      "shadow_normal_bias": 2.0,
+      "shadows": true,
+      "time_usec": 11518112,
+      "warm_local_light": true,
+      "window_pixels": [
+        960,
+        640
+      ]
+    },
+    {
+      "alpha_clip": true,
+      "camera_position": [
+        5.30000019073486,
+        5.09999990463257,
+        8.80000019073486
+      ],
+      "camera_projection": "orthographic",
+      "camera_size_world_units": 5.19999980926514,
+      "internal_viewport": [
+        480,
+        272
+      ],
+      "key_light_position": [
+        -3.0,
+        5.0,
+        4.0
+      ],
+      "local_light_energy": 0.850000023841858,
+      "local_light_position": [
+        2.29999995231628,
+        1.79999995231628,
+        2.29999995231628
+      ],
+      "name": "10_canvas_height_80",
+      "normal_mode": 1,
+      "normal_space": "tangent OpenGL +X +Y +Z; image +y down converted during derivative",
+      "page_2d": true,
+      "pointlight2d_height_pixels": 80.0,
+      "shadow_bias": 0.100000001490116,
+      "shadow_mode": 0,
+      "shadow_normal_bias": 2.0,
+      "shadows": true,
+      "time_usec": 11545196,
+      "warm_local_light": true,
+      "window_pixels": [
+        960,
+        640
+      ]
+    },
+    {
+      "alpha_clip": true,
+      "camera_position": [
+        5.30000019073486,
+        5.09999990463257,
+        8.80000019073486
+      ],
+      "camera_projection": "orthographic",
+      "camera_size_world_units": 5.19999980926514,
+      "internal_viewport": [
+        480,
+        272
+      ],
+      "key_light_position": [
+        -3.0,
+        5.0,
+        4.0
+      ],
+      "local_light_energy": 0.850000023841858,
+      "local_light_position": [
+        2.29999995231628,
+        1.79999995231628,
+        2.29999995231628
+      ],
+      "name": "11_canvas_flat_height_80",
+      "normal_mode": 0,
+      "normal_space": "tangent OpenGL +X +Y +Z; image +y down converted during derivative",
+      "page_2d": true,
+      "pointlight2d_height_pixels": 80.0,
+      "shadow_bias": 0.100000001490116,
+      "shadow_mode": 0,
+      "shadow_normal_bias": 2.0,
+      "shadows": true,
+      "time_usec": 11579134,
+      "warm_local_light": true,
+      "window_pixels": [
+        960,
+        640
+      ]
+    }
+  ],
+  "claims": "Real native Compatibility screenshots. No browser/WebGL2 runtime test. Cloud llvmpipe timings are not user device estimates.",
+  "display": "macOS",
+  "engine": "4.6.3-stable (official)",
+  "performance": [
+    {
+      "draw_calls": 12.0,
+      "duration_ms": 2500.306,
+      "frames": 844,
+      "index": 0,
+      "median_ms": 2.03,
+      "normal_mode": 0,
+      "p95_ms": 9.863,
+      "static_memory_bytes": 33723903
+    },
+    {
+      "draw_calls": 12.0,
+      "duration_ms": 2508.679,
+      "frames": 597,
+      "index": 1,
+      "median_ms": 4.038,
+      "normal_mode": 1,
+      "p95_ms": 8.834,
+      "static_memory_bytes": 33716895
+    },
+    {
+      "draw_calls": 12.0,
+      "duration_ms": 2500.388,
+      "frames": 923,
+      "index": 2,
+      "median_ms": 1.034,
+      "normal_mode": 0,
+      "p95_ms": 8.217,
+      "static_memory_bytes": 33725807
+    },
+    {
+      "draw_calls": 12.0,
+      "duration_ms": 2501.119,
+      "frames": 2029,
+      "index": 3,
+      "median_ms": 0.47,
+      "normal_mode": 1,
+      "p95_ms": 5.435,
+      "static_memory_bytes": 33759239
+    }
+  ],
+  "renderer": "gl_compatibility",
+  "script_sha256": "d7ed2510981be3e2261efa7587409643365cc8921c1e5ef980aec29eab178a9c",
+  "shader_sha256": "3aa650c3691f87ebe8c0a14a7551562a2d39f32eda50f6e9ae4f0f08529846f1"
+}

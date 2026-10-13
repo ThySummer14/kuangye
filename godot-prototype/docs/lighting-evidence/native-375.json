@@ -1,0 +1,238 @@
+{
+	"adapter": "Apple M5",
+	"captures": [
+		{
+			"ambient_energy": 0.639999985694885,
+			"batches": {
+				"original_meshes": 274,
+				"static_batches": 47
+			},
+			"draw_calls": 251.0,
+			"frame_ms_median": 8.207,
+			"frame_ms_p95": 12.572,
+			"frame_samples": 60,
+			"local_lights": {
+				"active": 2,
+				"available": 2,
+				"limit": 6
+			},
+			"mode": "day",
+			"place": "home",
+			"static_repeat_equal": true,
+			"sun_energy": 0.850000023841858,
+			"viewport": "(187, 406)",
+			"window": "(374, 812)"
+		},
+		{
+			"ambient_energy": 0.46000000834465,
+			"batches": {
+				"original_meshes": 274,
+				"static_batches": 47
+			},
+			"draw_calls": 251.0,
+			"frame_ms_median": 7.583,
+			"frame_ms_p95": 11.568,
+			"frame_samples": 60,
+			"local_lights": {
+				"active": 2,
+				"available": 2,
+				"limit": 6
+			},
+			"mode": "sunset",
+			"place": "home",
+			"static_repeat_equal": true,
+			"sun_energy": 0.720000028610229,
+			"viewport": "(187, 406)",
+			"window": "(374, 812)"
+		},
+		{
+			"ambient_energy": 0.28999999165535,
+			"batches": {
+				"original_meshes": 274,
+				"static_batches": 47
+			},
+			"draw_calls": 251.0,
+			"frame_ms_median": 7.669,
+			"frame_ms_p95": 11.728,
+			"frame_samples": 60,
+			"local_lights": {
+				"active": 2,
+				"available": 2,
+				"limit": 6
+			},
+			"mode": "night",
+			"place": "home",
+			"static_repeat_equal": true,
+			"sun_energy": 0.239999994635582,
+			"viewport": "(187, 406)",
+			"window": "(374, 812)"
+		},
+		{
+			"ambient_energy": 0.639999985694885,
+			"batches": {
+				"original_meshes": 1490,
+				"static_batches": 77
+			},
+			"draw_calls": 201.0,
+			"local_lights": {
+				"active": 6,
+				"available": 8,
+				"limit": 6
+			},
+			"mode": "day",
+			"place": "town",
+			"sun_energy": 0.850000023841858,
+			"viewport": "(187, 406)",
+			"window": "(374, 812)"
+		},
+		{
+			"ambient_energy": 0.46000000834465,
+			"batches": {
+				"original_meshes": 1490,
+				"static_batches": 77
+			},
+			"draw_calls": 201.0,
+			"local_lights": {
+				"active": 6,
+				"available": 8,
+				"limit": 6
+			},
+			"mode": "sunset",
+			"place": "town",
+			"sun_energy": 0.720000028610229,
+			"viewport": "(187, 406)",
+			"window": "(374, 812)"
+		},
+		{
+			"ambient_energy": 0.28999999165535,
+			"batches": {
+				"original_meshes": 1490,
+				"static_batches": 77
+			},
+			"draw_calls": 201.0,
+			"local_lights": {
+				"active": 6,
+				"available": 8,
+				"limit": 6
+			},
+			"mode": "night",
+			"place": "town",
+			"sun_energy": 0.239999994635582,
+			"viewport": "(187, 406)",
+			"window": "(374, 812)"
+		},
+		{
+			"ambient_energy": 0.639999985694885,
+			"batches": {
+				"original_meshes": 307,
+				"static_batches": 42
+			},
+			"draw_calls": 279.0,
+			"local_lights": {
+				"active": 2,
+				"available": 2,
+				"limit": 6
+			},
+			"mode": "day",
+			"place": "shop",
+			"sun_energy": 0.850000023841858,
+			"viewport": "(187, 406)",
+			"window": "(374, 812)"
+		},
+		{
+			"ambient_energy": 0.46000000834465,
+			"batches": {
+				"original_meshes": 307,
+				"static_batches": 42
+			},
+			"draw_calls": 279.0,
+			"local_lights": {
+				"active": 2,
+				"available": 2,
+				"limit": 6
+			},
+			"mode": "sunset",
+			"place": "shop",
+			"sun_energy": 0.720000028610229,
+			"viewport": "(187, 406)",
+			"window": "(374, 812)"
+		},
+		{
+			"ambient_energy": 0.28999999165535,
+			"batches": {
+				"original_meshes": 307,
+				"static_batches": 42
+			},
+			"draw_calls": 279.0,
+			"local_lights": {
+				"active": 2,
+				"available": 2,
+				"limit": 6
+			},
+			"mode": "night",
+			"place": "shop",
+			"sun_energy": 0.239999994635582,
+			"viewport": "(187, 406)",
+			"window": "(374, 812)"
+		},
+		{
+			"ambient_energy": 0.639999985694885,
+			"batches": {
+				"original_meshes": 240,
+				"static_batches": 40
+			},
+			"draw_calls": 221.0,
+			"local_lights": {
+				"active": 1,
+				"available": 1,
+				"limit": 6
+			},
+			"mode": "day",
+			"place": "studio",
+			"sun_energy": 0.850000023841858,
+			"viewport": "(187, 406)",
+			"window": "(374, 812)"
+		},
+		{
+			"ambient_energy": 0.46000000834465,
+			"batches": {
+				"original_meshes": 240,
+				"static_batches": 40
+			},
+			"draw_calls": 221.0,
+			"local_lights": {
+				"active": 1,
+				"available": 1,
+				"limit": 6
+			},
+			"mode": "sunset",
+			"place": "studio",
+			"sun_energy": 0.720000028610229,
+			"viewport": "(187, 406)",
+			"window": "(374, 812)"
+		},
+		{
+			"ambient_energy": 0.28999999165535,
+			"batches": {
+				"original_meshes": 240,
+				"static_batches": 40
+			},
+			"draw_calls": 221.0,
+			"local_lights": {
+				"active": 1,
+				"available": 1,
+				"limit": 6
+			},
+			"mode": "night",
+			"place": "studio",
+			"sun_energy": 0.239999994635582,
+			"viewport": "(187, 406)",
+			"window": "(374, 812)"
+		}
+	],
+	"checks": 85,
+	"engine": "4.6.3-stable (official)",
+	"failed": 0,
+	"limit": "Short native samples with VSync; not a mobile benchmark. Physics/animation frozen for static comparisons.",
+	"renderer": "gl_compatibility"
+}

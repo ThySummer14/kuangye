@@ -1,0 +1,128 @@
+{
+	"failed": 0,
+	"native": false,
+	"passed": 29,
+	"physical_phone": false,
+	"samples": [
+		{
+			"floor": true,
+			"label": "keyboard-home-exit",
+			"place": "town",
+			"position": [
+				-4.35997247695923,
+				-0.00915803387761116,
+				1.73863530158997
+			]
+		},
+		{
+			"floor": true,
+			"label": "keyboard-shop-exit",
+			"place": "town",
+			"position": [
+				5.34003210067749,
+				-0.00915857870131731,
+				1.2386360168457
+			]
+		},
+		{
+			"floor": true,
+			"label": "keyboard-studio-exit",
+			"place": "town",
+			"position": [
+				0.116329938173294,
+				-0.00915803387761116,
+				-4.30538892745972
+			]
+		},
+		{
+			"floor": true,
+			"label": "touch-home-exit",
+			"place": "town",
+			"position": [
+				-5.0,
+				-0.00988282263278961,
+				0.549999892711639
+			]
+		},
+		{
+			"floor": true,
+			"label": "touch-shop-exit",
+			"place": "town",
+			"position": [
+				4.69999980926514,
+				-0.00988282263278961,
+				0.0499998927116394
+			]
+		},
+		{
+			"floor": true,
+			"label": "touch-studio-exit",
+			"place": "town",
+			"position": [
+				-0.5,
+				-0.00988282263278961,
+				-5.45000028610229
+			]
+		},
+		{
+			"floor": true,
+			"label": "home-cancelled-held-input",
+			"place": "home",
+			"position": [
+				1.15986967086792,
+				0.000414782960433513,
+				4.37905836105347
+			]
+		},
+		{
+			"floor": true,
+			"label": "home-mouse-exit-after-cancel",
+			"place": "town",
+			"position": [
+				-5.0,
+				-0.00988282263278961,
+				0.549999892711639
+			]
+		},
+		{
+			"floor": true,
+			"label": "shop-cancelled-held-input",
+			"place": "shop",
+			"position": [
+				1.15978538990021,
+				0.000731668900698423,
+				4.37905979156494
+			]
+		},
+		{
+			"floor": true,
+			"label": "shop-mouse-exit-after-cancel",
+			"place": "town",
+			"position": [
+				4.69999980926514,
+				-0.00988282263278961,
+				0.0499998927116394
+			]
+		},
+		{
+			"floor": true,
+			"label": "studio-cancelled-held-input",
+			"place": "studio",
+			"position": [
+				1.15978538990021,
+				0.000731668900698423,
+				4.37905979156494
+			]
+		},
+		{
+			"floor": true,
+			"label": "studio-mouse-exit-after-cancel",
+			"place": "town",
+			"position": [
+				-0.5,
+				-0.00988282263278961,
+				-5.45000028610229
+			]
+		}
+	]
+}

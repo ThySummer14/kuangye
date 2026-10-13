@@ -1,0 +1,132 @@
+{
+  "mode": "headless CPU/logic only; GPU and actual devices not verified",
+  "checks": [
+    {
+      "name": "import",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 2.484
+    },
+    {
+      "name": "studio-images",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 0.346
+    },
+    {
+      "name": "studio-media-model",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 0.4
+    },
+    {
+      "name": "studio-export",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 0.295
+    },
+    {
+      "name": "studio-media-ui",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 0.619
+    },
+    {
+      "name": "state",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 0.355
+    },
+    {
+      "name": "badges",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 0.343
+    },
+    {
+      "name": "badge-ui",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 4.743
+    },
+    {
+      "name": "badge-notice",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 2.461
+    },
+    {
+      "name": "creative",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 0.725
+    },
+    {
+      "name": "ui-layout",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 3.766
+    },
+    {
+      "name": "mascot-motion",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 0.515
+    },
+    {
+      "name": "room-return",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 24.667
+    },
+    {
+      "name": "integration",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 4.211
+    },
+    {
+      "name": "portrait",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 1.519
+    },
+    {
+      "name": "desktop",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 1.48
+    },
+    {
+      "name": "hidpi",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 1.528
+    },
+    {
+      "name": "touch-furnishing",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 0.514
+    },
+    {
+      "name": "product-paths",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 0.518
+    },
+    {
+      "name": "sequences",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 0.296
+    },
+    {
+      "name": "scene-soak",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 0.996
+    }
+  ],
+  "passed": true
+}

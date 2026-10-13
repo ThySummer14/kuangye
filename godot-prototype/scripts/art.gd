@@ -17,6 +17,23 @@ static func mascot_mat(hex:String) -> StandardMaterial3D:
 	materials[key]=material
 	return material
 
+static func body_material(hex: String) -> StandardMaterial3D:
+	var key := "body-lit:"+hex
+	if materials.has(key): return materials[key]
+	var material := StandardMaterial3D.new()
+	material.albedo_color = Color(hex)*0.22
+	material.albedo_color.a = 1.0
+	material.vertex_color_use_as_albedo = true
+	material.roughness = 1.0
+	material.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
+	# An art-directed cream baseline plus 22% diffuse response preserves the
+	# approved shallow body shadows. This is not a physically based white material.
+	material.emission_enabled = true
+	material.emission = Color("f7ece3")
+	material.emission_energy_multiplier = 1.04
+	materials[key] = material
+	return material
+
 static func body_depth(x:float,y:float) -> float:
 	var py:=226.0-(y-0.02)*190.0
 	for i in BODY_PROFILE.size()-1:
@@ -159,17 +176,17 @@ static func mascot(parent: Node3D) -> Node3D:
 				st.set_color(Color("f7ece3").lerp(Color("fdf7f1"),clampf(quad[idx].y/0.5,0,1)))
 				st.add_vertex(quad[idx])
 	st.generate_normals()
-	mesh(shape, st.commit(), Vector3.ZERO, mascot_mat("ffffff")).name = "body"
+	mesh(shape, st.commit(), Vector3.ZERO, body_material("ffffff")).name = "body"
 	var left:=sphere(shape, Vector3(-37.0 / 190.0, 139.0 / 190.0, -0.015), Vector3(44.0, 56.0, 36.0) / 190.0, "fdf7f1")
 	left.name="horn-left-tall"
-	left.material_override=mascot_mat("fdf7f1")
+	left.material_override=body_material("fdf7f1")
 	var right:=sphere(shape, Vector3(46.0 / 190.0, 125.0 / 190.0, -0.015), Vector3(34.0, 40.0, 30.0) / 190.0, "fdf7f1")
 	right.name="horn-right-short"
-	right.material_override=mascot_mat("fdf7f1")
+	right.material_override=body_material("fdf7f1")
 	for side in [-1, 1]:
 		var hand:=sphere(shape, Vector3(side * 0.425, 0.20, 0.08), Vector3(0.15, 0.16, 0.13), "fdf7f1")
 		hand.name="hand"+str(side)
-		hand.material_override=mascot_mat("fdf7f1")
+		hand.material_override=body_material("fdf7f1")
 		face_patch(shape,Vector2(side*0.17,0.43),Vector2(0.030,0.0495),"d9af68").name="eye"+str(side)
 		face_patch(shape,Vector2(side*0.255,0.31),Vector2(0.060,0.0245),"fdd1cf").name="cheek"+str(side)
 	var mouth := [Vector3(-0.048,0.358,0.364), Vector3(-0.035,0.337,0.366), Vector3(-0.015,0.337,0.367), Vector3(0,0.353,0.368), Vector3(0.015,0.337,0.367), Vector3(0.035,0.337,0.366), Vector3(0.048,0.358,0.364)]
@@ -287,6 +304,37 @@ static func window_front(parent: Node3D, x: float, y: float, z: float, width := 
 		box(parent,Vector3(x+dx,y,z+0.11),Vector3(0.055,0.88,0.045),"847052")
 	box(parent,Vector3(x,y,z+0.11),Vector3(width,0.05,0.045),"847052")
 	box(parent,Vector3(x,y-0.49,z+0.12),Vector3(width+0.28,0.12,0.32),"b2936e")
+
+static func room_window(parent: Node3D) -> MeshInstance3D:
+	# Glazing never casts a solid shadow across the aperture. Four frame bars do.
+	var glass := box(parent,Vector3(0,1.76,-4.13),Vector3(1.76,0.88,0.018),"dce9df")
+	glass.material_override = mat("dce9df",0.12).duplicate()
+	glass.material_override.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	glass.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	glass.set_meta("dynamic_material",true)
+	glass.name = "WindowGlass"
+	for x in [-0.88,0.0,0.88]:
+		box(parent,Vector3(x,1.76,-3.94),Vector3(0.055,0.98,0.11),"e7e7d6")
+	for y in [1.29,1.76,2.23]:
+		box(parent,Vector3(0,y,-3.94),Vector3(1.86,0.055,0.11),"e7e7d6")
+	box(parent,Vector3(0,1.22,-3.8),Vector3(2.15,0.13,0.43),"bd9d70")
+	box(parent,Vector3(0,2.42,-3.79),Vector3(2.62,0.09,0.10),"e7e7d6")
+	for side in [-1,1]:
+		for fold in 5:
+			var curtain := box(parent,Vector3(side*(1.02+fold*0.055),1.77,-3.77+(fold%2)*0.025),Vector3(0.068,1.17,0.10),"dedfc8" if fold%2 else "ece9d5")
+			curtain.rotation.z = side*0.025
+	return glass
+
+static func room_string_lights(parent: Node3D) -> void:
+	var previous := Vector3(-4.3,2.7,-3.73)
+	for i in range(1,19):
+		var t := i/18.0
+		var p := Vector3(lerpf(-4.3,4.3,t),2.7-sin(t*PI)*0.24,-3.73)
+		beam(parent,previous,p,0.014,"776f56")
+		if i%2 == 1:
+			beam(parent,p,p-Vector3(0,0.09,0),0.014,"776f56")
+			sphere(parent,p-Vector3(0,0.12,0),Vector3(0.075,0.10,0.075),"f7d59b",0.5)
+		previous=p
 
 static func house(parent: Node3D, p: Vector3, kind: String) -> Node3D:
 	var n := group(parent,p)

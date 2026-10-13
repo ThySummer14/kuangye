@@ -160,10 +160,10 @@ func run() -> void:
 		spare_lights.append(Art.furniture(app.world,"lamp",Vector3(-3+(i%6),0,-2+int(i/6))))
 	app.world.update_light_budget(app.player.position)
 	check(app.world.light_budget_stats.available>8 and app.world.light_budget_stats.active==6,"large lamp collections stay within six active omni lights")
-	var priority_visible:=false
-	for light in app.world.find_children("*","OmniLight3D",true,false):
-		if light.get_meta("priority_light",false):priority_visible=light.visible
-	check(priority_visible,"main room shadow light is preserved by budget priority")
+	# Room shadows now come from the sun and cutaway sky fill, outside the local
+	# lamp pool. Buying many lamps must still never evict either shadow source.
+	check(app.world.sun.visible and app.world.sun.shadow_enabled and app.world.fill.visible and app.world.fill.shadow_enabled,
+		"room shadow sources survive a full local-lamp budget")
 	for lamp in spare_lights:lamp.queue_free()
 	await process_frame
 	app.toggle_build()

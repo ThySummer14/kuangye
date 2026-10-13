@@ -1,0 +1,6 @@
+{
+	"failed": 0,
+	"input_fixture_source": "original procedural color patterns",
+	"passed": 55,
+	"source_pixel_limit": 16000000
+}

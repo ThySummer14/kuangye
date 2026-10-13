@@ -1,0 +1,5 @@
+Kuangye Godot lighting preview
+
+Project / procedural artwork: PROJECT-LICENSE.txt (MIT)
+Godot 4.6.3 and third-party components: GODOT_ENGINE_NOTICES.txt
+Noto Sans CJK SC: FONT-LICENSE.txt (SIL Open Font License 1.1)

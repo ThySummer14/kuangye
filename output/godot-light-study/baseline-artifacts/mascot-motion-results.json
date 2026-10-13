@@ -1,0 +1,12 @@
+{
+	"enabled_moods": [
+		"idle",
+		"curious",
+		"happy",
+		"proud",
+		"focused"
+	],
+	"failed": 0,
+	"native": false,
+	"passed": 34
+}

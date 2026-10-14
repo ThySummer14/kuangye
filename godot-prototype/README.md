@@ -1,5 +1,7 @@
 # 旷野 · 原始 Godot 小镇试作
 
+维护者与 Agent 规则见 [AGENTS.md](AGENTS.md)。
+
 这份工程恢复自 2026-10-08 的原始私有工程备份，源状态对应本地提交 d42d269852eccde0ac440dc480928e1748ad5225。它是 `godot-prototype/` 原型，与另一独立实现 `godot/` 分开。此分支不修改现有 `app/` 或 main。
 
 ## 恢复边界

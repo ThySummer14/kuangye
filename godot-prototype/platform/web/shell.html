@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>$GODOT_PROJECT_NAME</title>
+  <style>
+    :root { color-scheme: light; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; color: #344b40; background: #e9eadf; }
+    * { box-sizing: border-box; }
+    body { margin: 0; overflow: hidden; }
+    #canvas { display: block; width: 100%; height: 100%; outline: none; touch-action: none; }
+    #status { position: fixed; inset: 0; z-index: 2; display: grid; place-items: center; padding: max(24px, env(safe-area-inset-top)) 26px max(24px, env(safe-area-inset-bottom)); background: #e9eadf; }
+    .arrival { width: min(100%, 340px); }
+    .place { margin: 0 0 32px; font-size: 14px; letter-spacing: .16em; color: #65725c; }
+    .window { width: 88px; height: 88px; margin-bottom: 26px; color: #879773; }
+    h1 { margin: 0 0 16px; font-size: 27px; font-weight: 500; letter-spacing: .05em; }
+    #status-detail { margin: 0; min-height: 3.4em; font-size: 15px; line-height: 1.8; color: #66705f; }
+    progress { display: block; width: 100%; height: 4px; margin: 27px 0 12px; border: 0; background: #d5dacb; accent-color: #647c58; }
+    progress::-webkit-progress-bar { background: #d5dacb; }
+    progress::-webkit-progress-value { background: #647c58; }
+    progress::-moz-progress-bar { background: #647c58; }
+    #status-size { min-height: 1.5em; font-size: 12px; line-height: 1.5; color: #737d6b; font-variant-numeric: tabular-nums; }
+    #retry { min-height: 46px; margin-top: 20px; padding: 10px 22px; border: 1px solid #7b8d70; border-radius: 6px; background: transparent; color: #344b40; font: inherit; cursor: pointer; }
+    #retry:focus-visible { outline: 2px solid #344b40; outline-offset: 4px; }
+    [hidden] { display: none !important; }
+    .note { margin: 35px 0 0; padding-top: 15px; border-top: 1px solid #cbd2c1; font-size: 12px; line-height: 1.8; color: #78816e; }
+    noscript { position: fixed; inset: 0; z-index: 3; display: grid; place-items: center; padding: 28px; background: #e9eadf; line-height: 1.8; }
+    @media (max-height: 500px) { .window { display: none; } .place { margin-bottom: 14px; } .note { margin-top: 18px; } }
+  </style>
+  $GODOT_HEAD_INCLUDE
+</head>
+<body>
+  <canvas id="canvas" tabindex="0" aria-label="旷野小镇"></canvas>
+  <main id="status" aria-busy="true">
+    <section class="arrival" aria-labelledby="status-title">
+      <p class="place">旷野 · 小镇</p>
+      <svg class="window" viewBox="0 0 88 88" fill="none" aria-hidden="true"><path d="M14 70V18h60v52M8 75h72M44 18v52M14 43h60" stroke="currentColor" stroke-width="2"/><path d="M22 25v38M66 25v38" stroke="currentColor" stroke-width="4"/><path d="m53 51 14 14m-21-7 14 14" stroke="#c6b681" stroke-width="3"/></svg>
+      <h1 id="status-title" aria-live="polite">小镇在等你</h1>
+      <p id="status-detail">正在把小镇带到这里。<br>第一次打开，会需要多等一会儿。</p>
+      <progress id="status-progress" aria-label="小镇下载进度"></progress>
+      <div id="status-size">正在连接…</div>
+      <button id="retry" type="button" hidden>再试一次</button>
+      <p class="note">带着小芽，把生活的一点发现带回家。</p>
+    </section>
+  </main>
+  <noscript>小镇需要 JavaScript 才能打开。<br>请开启后重新加载。</noscript>
+  <script>
+    (() => {
+      const config = $GODOT_CONFIG;
+      const overlay = document.getElementById('status');
+      const title = document.getElementById('status-title');
+      const detail = document.getElementById('status-detail');
+      const progress = document.getElementById('status-progress');
+      const size = document.getElementById('status-size');
+      const retry = document.getElementById('retry');
+      let settled = false;
+      retry.addEventListener('click', () => location.reload());
+      const fail = (error, unsupported = false) => {
+        if (settled) return;
+        settled = true;
+        overlay.setAttribute('aria-busy', 'false');
+        title.textContent = unsupported ? '这里暂时画不出小镇' : '小镇暂时没能打开';
+        detail.textContent = unsupported ? '请使用支持 WebGL 2 的较新浏览器，并开启图形加速后再试。' : '检查网络连接后，再试一次。重试只会重新打开小镇。';
+        progress.hidden = true;
+        size.textContent = '';
+        retry.hidden = false;
+        console.error('Kuangye startup:', error);
+      };
+      const script = document.createElement('script');
+      script.src = '$GODOT_URL';
+      script.onerror = () => fail(new Error('Engine script failed to load'));
+      script.onload = () => {
+        try {
+          if (Engine.getMissingFeatures({threads: false}).length) { fail(new Error('Required browser features unavailable'), true); return; }
+          const engine = new Engine(config);
+          engine.startGame({onProgress(current, total) {
+            if (settled) return;
+            if (total > 0 && current >= 0) {
+              progress.max = total;
+              progress.value = Math.min(current, total);
+              if (current >= total) {
+                title.textContent = '小镇正在醒来';
+                detail.textContent = '东西都到了，正在点亮窗灯。';
+                size.textContent = '下载完成 · 准备画面';
+              } else {
+                title.textContent = '小镇在等你';
+                detail.textContent = '正在把小镇带到这里。第一次打开，会需要多等一会儿。';
+                size.textContent = `${(current / 1048576).toFixed(1)} / ${(total / 1048576).toFixed(1)} MB`;
+              }
+            } else {
+              progress.removeAttribute('value');
+              size.textContent = '正在连接…';
+            }
+          }}).then(() => {
+            if (settled) return;
+            settled = true;
+            overlay.remove();
+          }).catch(error => fail(error));
+        } catch (error) { fail(error); }
+      };
+      document.body.appendChild(script);
+    })();
+  </script>
+</body>
+</html>

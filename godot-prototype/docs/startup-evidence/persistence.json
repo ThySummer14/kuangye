@@ -1,0 +1,75 @@
+{
+  "mode": "Chromium full WebGL2 game, persistent fixture profile; actual browser close/reopen, not page reload",
+  "before": {
+    "version": 4,
+    "bytes": 790,
+    "sha256": "518a10f8a2ae91fcd509a2069175eddd9036e3b6df5694dc24d366d9fb517d48",
+    "coins": 125,
+    "inventory": {
+      "lamp": 0,
+      "plant": 1,
+      "rug": 0,
+      "shelf": 0,
+      "stool": 0,
+      "table": 0
+    },
+    "placements": [
+      {
+        "id": 1,
+        "kind": "stool",
+        "rotation": 0,
+        "x": -5,
+        "z": 4
+      }
+    ],
+    "note": "v7.7 reopen fixture: 窗边有暖光，龘与 A/B 123 都留在小记。",
+    "notes_count": 1
+  },
+  "after": {
+    "version": 4,
+    "bytes": 790,
+    "sha256": "518a10f8a2ae91fcd509a2069175eddd9036e3b6df5694dc24d366d9fb517d48",
+    "coins": 125,
+    "inventory": {
+      "lamp": 0,
+      "plant": 1,
+      "rug": 0,
+      "shelf": 0,
+      "stool": 0,
+      "table": 0
+    },
+    "placements": [
+      {
+        "id": 1,
+        "kind": "stool",
+        "rotation": 0,
+        "x": -5,
+        "z": 4
+      }
+    ],
+    "note": "v7.7 reopen fixture: 窗边有暖光，龘与 A/B 123 都留在小记。",
+    "notes_count": 1
+  },
+  "browser_pids": [
+    36057,
+    39064,
+    42174
+  ],
+  "all_bytes_identical": true,
+  "limits": [
+    "Synthetic Unicode keydown/up; OS IME not tested",
+    "Desktop Chromium iPhone13 viewport emulation is not a physical phone"
+  ],
+  "density_change": {
+    "css": [
+      1280,
+      720
+    ],
+    "dpr": [
+      2,
+      1
+    ],
+    "reload_between_density_changes": false,
+    "ui_fits": true
+  }
+}

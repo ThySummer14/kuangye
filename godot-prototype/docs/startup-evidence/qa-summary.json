@@ -1,0 +1,152 @@
+{
+  "mode": "headless CPU/logic only; GPU and actual devices not verified",
+  "project_name": "Kuangye-QA-416c179c242e45f6be63f723872c74d1",
+  "user_data_dir_isolated": true,
+  "checks": [
+    {
+      "name": "import",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 2.811
+    },
+    {
+      "name": "font",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 0.923
+    },
+    {
+      "name": "studio-images",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 0.343
+    },
+    {
+      "name": "studio-media-model",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 0.51
+    },
+    {
+      "name": "studio-export",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 0.724
+    },
+    {
+      "name": "studio-media-ui",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 1.367
+    },
+    {
+      "name": "state",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 0.295
+    },
+    {
+      "name": "badges",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 0.346
+    },
+    {
+      "name": "badge-ui",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 5.934
+    },
+    {
+      "name": "badge-notice",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 3.406
+    },
+    {
+      "name": "creative",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 1.695
+    },
+    {
+      "name": "ui-layout",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 4.992
+    },
+    {
+      "name": "mascot-motion",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 1.746
+    },
+    {
+      "name": "room-return",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 25.589
+    },
+    {
+      "name": "integration",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 5.046
+    },
+    {
+      "name": "lighting",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 1.796
+    },
+    {
+      "name": "lighting-portrait",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 1.477
+    },
+    {
+      "name": "portrait",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 2.517
+    },
+    {
+      "name": "desktop",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 2.812
+    },
+    {
+      "name": "hidpi",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 2.546
+    },
+    {
+      "name": "touch-furnishing",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 1.471
+    },
+    {
+      "name": "product-paths",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 1.692
+    },
+    {
+      "name": "sequences",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 0.289
+    },
+    {
+      "name": "scene-soak",
+      "passed": true,
+      "returncode": 0,
+      "seconds": 2.06
+    }
+  ],
+  "passed": true
+}

@@ -12,7 +12,7 @@ import re
 import zipfile
 
 ROOT_FILES = {'.gitignore', 'README.md', 'PROJECT-LICENSE.txt', 'project.godot', 'main.tscn', 'export_presets.cfg'}
-SOURCE_DIRS = ('assets', 'scripts', 'tests', 'tools', 'docs')
+SOURCE_DIRS = ('assets', 'scripts', 'tests', 'tools', 'docs', 'platform')
 WEB_FILES = {'index.html', 'index.js', 'index.pck', 'index.wasm', 'index.wasm.gz', 'index.audio.worklet.js',
              'index.audio.position.worklet.js', 'kuangye-engine-loader.js', '_headers',
              'index.png', 'index.icon.png', 'index.apple-touch-icon.png',

@@ -22,10 +22,11 @@ class DeliveryTests(unittest.TestCase):
             (root / 'project.godot').write_text('config_version=5')
             (root / '.git').mkdir();(root / '.git/config').write_text('not for delivery')
             (root / 'artifacts').mkdir();(root / 'artifacts/creative-e2e.json').write_text('{}')
+            (root / 'platform/web').mkdir(parents=True);(root / 'platform/web/shell.html').write_text('<canvas></canvas>')
             output = Path(temp) / 'output.zip'
             delivery.package(root, None, output)
             with zipfile.ZipFile(output) as archive:
-                self.assertEqual(set(archive.namelist()), {'godot-prototype/project.godot', 'FILES_SHA256.json'})
+                self.assertEqual(set(archive.namelist()), {'godot-prototype/project.godot', 'godot-prototype/platform/web/shell.html', 'FILES_SHA256.json'})
             with self.assertRaises(FileExistsError):delivery.package(root, None, output)
 
     def test_rejects_site_checkout_and_nested_metadata(self):

@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-15",
+  "source": "NotoSansSC-Regular.otf",
+  "source_sha256": "14cf6d8e1a9923fa2a02337bbbe2b03f9a2bf3ce78913f2dc25bb3d432de9210",
+  "woff2": "NotoSansSC-Regular.woff2",
+  "woff2_sha256": "83586247991ed749d9ab3f3de64bd121d15b8b760357bd9b6eabcdb14d886a70",
+  "source_bytes": 11055120,
+  "woff2_bytes": 7765532,
+  "character_count": 21462,
+  "glyph_count": 39166,
+  "unicode_cmap_equal": true,
+  "glyph_order_equal": true,
+  "metrics_equal": true,
+  "fontTools_version": "4.66.1",
+  "build_note": "FontTools used once for lossless packaging; runtime/build uses committed WOFF2, no project dependency added. Original OTF retained."
+}

@@ -28,7 +28,7 @@ func run()->void:
 	check(not Export.album([]).ok,"empty album refuses an empty success")
 	var invalid:Dictionary=work.duplicate(true);invalid.images=["data:image/svg+xml;base64,PHN2Zz4="]
 	check(not Export.album([invalid]).ok,"invalid active image format blocks incomplete export")
-	var font:Font=load("res://assets/NotoSansSC-Regular.otf")
+	var font:Font=load("res://assets/NotoSansSC-Regular.woff2")
 	var lines:=Export.lines("长文字".repeat(1000),font,30,990,4)
 	check(lines.lines.size()==4 and lines.truncated and lines.lines[-1].ends_with("…"),"long page text has a bounded layout with visible ellipsis")
 	check(Export.lines("第一行\n第二行",font,30,990,4).lines==["第一行","第二行"],"explicit line breaks are retained")

@@ -1,0 +1,38 @@
+[
+  {
+    "file": "light-home-day-1280.png",
+    "v76_sha256": "2b3e63142feb985d6a79a3565801be3639b83ca88a8ca2f21c9b6618676052d2",
+    "v77_sha256": "2b3e63142feb985d6a79a3565801be3639b83ca88a8ca2f21c9b6618676052d2",
+    "identical": true
+  },
+  {
+    "file": "light-home-sunset-1280.png",
+    "v76_sha256": "f302fa85f3a5f58822f7bf59c6b27ee113f34f355e4b1433f320fb86045b1fad",
+    "v77_sha256": "f302fa85f3a5f58822f7bf59c6b27ee113f34f355e4b1433f320fb86045b1fad",
+    "identical": true
+  },
+  {
+    "file": "light-home-night-1280.png",
+    "v76_sha256": "6d126914bf2e22677118e9b9995f31e08b1caf442f1790e88e662202a58b85e2",
+    "v77_sha256": "6d126914bf2e22677118e9b9995f31e08b1caf442f1790e88e662202a58b85e2",
+    "identical": true
+  },
+  {
+    "file": "light-home-day-375.png",
+    "v76_sha256": "480ba9c2068263774eccf98afff186596cb8333804420eb6bb0757144b9cbe77",
+    "v77_sha256": "480ba9c2068263774eccf98afff186596cb8333804420eb6bb0757144b9cbe77",
+    "identical": true
+  },
+  {
+    "file": "light-home-sunset-375.png",
+    "v76_sha256": "6466677af5d1ad4f7ccbddb9f37f543259bd73b2b141d3c5e0952ccbdbba0ffe",
+    "v77_sha256": "6466677af5d1ad4f7ccbddb9f37f543259bd73b2b141d3c5e0952ccbdbba0ffe",
+    "identical": true
+  },
+  {
+    "file": "light-home-night-375.png",
+    "v76_sha256": "bb116232295c1f2136b76b411bb658e2b35d85ca14898ac2d098c616e2020b50",
+    "v77_sha256": "bb116232295c1f2136b76b411bb658e2b35d85ca14898ac2d098c616e2020b50",
+    "identical": true
+  }
+]

@@ -86,11 +86,8 @@ func _ready() -> void:
 		if argument.begins_with("--qa-size="):
 			var dimensions := argument.trim_prefix("--qa-size=").split("x")
 			if dimensions.size()==2:qa_target_size=Vector2i(int(dimensions[0]),int(dimensions[1]))
-	ui_density = ui_density_override if ui_density_override>0 else (clampf(DisplayServer.screen_get_scale(),1.0,3.5) if OS.has_feature("mobile") else 1.0)
-	# Web canvas uses device pixels even on desktop; controls use CSS-sized targets.
-	if OS.has_feature("web") and ui_density_override<=0:
-		ui_density = clampf(float(JavaScriptBridge.eval("window.devicePixelRatio || 1",true)),1.0,3.5)
-	Art.font = load("res://assets/NotoSansSC-Regular.otf")
+	ui_density = display_ui_density()
+	Art.font = load("res://assets/NotoSansSC-Regular.woff2")
 	setup_theme()
 	if qa_mode or fixture_mode:
 		state.path = "user://town-qa-fixture.json"
@@ -235,9 +232,19 @@ func setup_hud() -> void:
 	add_child(fade)
 	refresh_hud()
 
+func display_ui_density() -> float:
+	if ui_density_override>0: return ui_density_override
+	if OS.has_feature("web"):
+		# The canvas can resize after startup or move between screens. Match its
+		# actual backing pixels to CSS width, rather than caching the initial DPR.
+		var css_width := float(JavaScriptBridge.eval("window.innerWidth || 1",true))
+		return clampf(get_viewport_rect().size.x/maxf(1.0,css_width),1.0,3.5)
+	return clampf(DisplayServer.screen_get_scale(),1.0,3.5) if OS.has_feature("mobile") else 1.0
+
 func layout_ui() -> void:
 	if not is_instance_valid(hud):
 		return
+	ui_density = display_ui_density()
 	var physical_size := get_viewport_rect().size
 	var safe_rect := ui_safe_rect()
 	var keyboard_height := ui_keyboard_height()
@@ -460,7 +467,7 @@ func _physics_process(delta: float) -> void:
 	ui_metrics_timer-=delta
 	if ui_metrics_timer<=0:
 		ui_metrics_timer=0.15
-		if not is_equal_approx(ui_keyboard_height(),last_keyboard_height) or ui_safe_rect()!=last_safe_rect:
+		if not is_equal_approx(display_ui_density(),ui_density) or not is_equal_approx(ui_keyboard_height(),last_keyboard_height) or ui_safe_rect()!=last_safe_rect:
 			layout_ui()
 	light_update_timer-=delta
 	if light_update_timer<=0:

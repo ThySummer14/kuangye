@@ -65,6 +65,7 @@ def main() -> int:
         return 2
     checks = [
         ("import", ["--editor", "--import", "--quit"], 120),
+        ("font", ["--script", "res://tests/test_font.gd"], 40),
         ("studio-images", ["--script", "res://tests/test_studio_images.gd"], 40),
         ("studio-media-model", ["--script", "res://tests/test_studio_media_model.gd"], 60),
         ("studio-export", ["--script", "res://tests/test_studio_export.gd"], 40),

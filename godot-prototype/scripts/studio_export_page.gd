@@ -4,7 +4,7 @@ const Export=preload("res://scripts/studio_export.gd")
 const Images=preload("res://scripts/studio_images.gd")
 var work:Dictionary
 var include_note:=false
-var font:Font=preload("res://assets/NotoSansSC-Regular.otf")
+var font:Font=preload("res://assets/NotoSansSC-Regular.woff2")
 var picture:Texture2D
 var title_lines:Dictionary
 var body_lines:Dictionary

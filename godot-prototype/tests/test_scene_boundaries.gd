@@ -68,6 +68,12 @@ func run() -> void:
 	check(absf(snapped_focus.dot(app.camera.basis.x)/world_pixel-roundf(snapped_focus.dot(app.camera.basis.x)/world_pixel))<0.001 and absf(snapped_focus.dot(app.camera.basis.y)/world_pixel-roundf(snapped_focus.dot(app.camera.basis.y)/world_pixel))<0.001,"orthographic focus snaps in screen axes rather than world axes")
 	check(app.note_button.get_global_rect().end.x<=app.get_viewport_rect().size.x,"quick note fits visible viewport")
 	check(app.note_button.size.y>=44,"quick note keeps touch-sized target")
+	var initial_density: float = app.ui_density
+	app.ui_density_override = 2.0 if initial_density!=2.0 else 1.0
+	app.layout_ui()
+	check(is_equal_approx(app.hud.scale.x,app.ui_density_override),"layout re-reads changed UI density rather than caching startup scale")
+	app.ui_density_override = initial_density if high_dpi else 0.0
+	app.layout_ui()
 	check(app.note_button.get_global_rect().position.y>app.get_viewport_rect().size.y*0.6,"quick note stays in reachable lower region")
 	# Verify every building has a path from the central lane, not merely a clickable label.
 	app.player.position = Vector3(0,0.12,2.0)

@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-15",
+  "url": "https://thysummer14.github.io/kuangye/godot-lighting/",
+  "source_commit": "4c1a0fa758e579e6bd83b8c4cf1c3df39b43b91d",
+  "pages_commit": "0c4f300bb787d31c739a3dbfda4a311bd76a90f7",
+  "actions_url": "https://github.com/ThySummer14/kuangye/actions/runs/38687379474",
+  "actions_build": "success",
+  "actions_deploy": "success",
+  "ci_vue_tests": 138,
+  "ci_export_sha256": 14,
+  "mobile_emulation": {
+    "engine": "Chromium WebGL2",
+    "css_width": 375,
+    "css_height": 812,
+    "dpr": 3,
+    "canvas": [
+      1125,
+      2436
+    ],
+    "flow": [
+      "startup",
+      "enter home",
+      "window selector",
+      "night"
+    ],
+    "console_errors": 0,
+    "page_errors": 0,
+    "horizontal_overflow": false
+  },
+  "physical_phone": false,
+  "desktop": {
+    "engine": "Chromium WebGL2",
+    "css_width": 1280,
+    "css_height": 720,
+    "dpr": 1,
+    "canvas": [
+      1280,
+      720
+    ],
+    "flow": [
+      "startup",
+      "enter home",
+      "window selector",
+      "night"
+    ],
+    "console_errors": 0,
+    "page_errors": 0,
+    "horizontal_overflow": false
+  },
+  "public_files_full_sha256_verified": 15
+}

@@ -70,11 +70,13 @@
 
 发布回执：Godot 导出 `3a841ab` 已推长期分支，main 发布配置 `6a57380` 的 [Actions 38421458494](https://github.com/ThySummer14/kuangye/actions/runs/38421458494) build／deploy 成功；[线上预览](https://thysummer14.github.io/kuangye/godot-lighting/) 的桌面／375px DPR 3 操作和 15 个文件的 HTTP 200／完整 SHA-256 均通过。首次加载仍偏大，本机移动模拟 PCK 冷下载为 173 秒，不能当手机性能基准。当前源码、文档与测试证据已收尾；下一步边界见下方。
 
-## Godot v7.7 · 首载与重开（2026-10-15，本地验收完成）
+## Godot v7.7 · 首载与重开（2026-10-15，已发布）
 
 没有可用实体手机连接，保留真机验收边界。本轮处理上次已测出的冷加载与未完成的浏览器进程重开：独立检查确认 PCK 没有夹带文档或导出，最大资源是约 9.8 MB 的字体缓存。尝试同一字体完整字符集的 WOFF2 封装（不裁字符、不改字形，原 OTF 留作来源），再以原生与 Web 验证；同时将默认黑屏进度换成符合小镇的真实下载／启动状态、错误后的明确重试，不碰游戏规则或存档路径。验收包含字体覆盖／尺寸、24 组 Godot 回归、Vue test/build/release、桌面与 375px DPR 3 日夜、慢载／失败重试／不支持环境，以及持久化浏览器关闭重开。完成后更新独立分支及 Pages 固定导出。
 
-完整字体 WOFF2 使 PCK 从 14,543,232 降为 12,493,064 bytes（-14.1%），六张原生固定图与 v7.6 SHA-256 相同。暖纸启动页有真实进度／启动阶段／失败重试；修复启动后视口或 DPI 变化导致 UI 放大。实际浏览器关闭重开，v4 存档 790 bytes 与 SHA-256 完全相同，保留小记、小凳与 125 微光。24 组隔离 Godot、原生两尺寸各 85 项、打包 4 项、Vue 138 项及 build/release 通过。证据与边界见 [首载与重开](../godot-prototype/docs/STARTUP_AND_REOPEN.md)。本轮更新独立分支与 Pages 固定导出，发布回执随后补充。
+完整字体 WOFF2 使 PCK 从 14,543,232 降为 12,493,064 bytes（-14.1%），六张原生固定图与 v7.6 SHA-256 相同。暖纸启动页有真实进度／启动阶段／失败重试；修复启动后视口或 DPI 变化导致 UI 放大。实际浏览器关闭重开，v4 存档 790 bytes 与 SHA-256 完全相同，保留小记、小凳与 125 微光。24 组隔离 Godot、原生两尺寸各 85 项、打包 4 项、Vue 138 项及 build/release 通过。证据与边界见 [首载与重开](../godot-prototype/docs/STARTUP_AND_REOPEN.md)。本轮已更新独立分支与 Pages 固定导出。
+
+发布回执：Godot 导出 `4c1a0fa`、main 配置 `0c4f300`，[Actions 38687379474](https://github.com/ThySummer14/kuangye/actions/runs/38687379474) 成功。线上桌面／375px DPR 3 的启动、进屋、三光入口与夜间通过，15 个线上文件 HTTP 200／完整 SHA-256 与本地全部相同。[预览](https://thysummer14.github.io/kuangye/godot-lighting/)。实体手机和 OS IME 仍待验收。
 
 ## 下一步：一个具体动作
 

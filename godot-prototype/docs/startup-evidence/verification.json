@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-15",
+  "engine": "Godot 4.6.3 Compatibility",
+  "headless_groups": 24,
+  "headless_failed": 0,
+  "font_checks": 14,
+  "native_checks_per_viewport": 85,
+  "native_viewports": [
+    "1280x720",
+    "375x812"
+  ],
+  "package_tests": 4,
+  "vue_tests": 138,
+  "vue_build": "passed, 208 modules",
+  "release_assets": "passed, 24 etchings, 28 runtime packages, Privacy Manifest",
+  "web_sha256_checks": 14,
+  "physical_phone": false,
+  "os_ime": false,
+  "shell_component": "mock Engine progress/failure/retry/unsupported; full game separately verified"
+}

@@ -42,4 +42,14 @@ Chromium 桌面和 375×812 CSS px／DPR 3（1125×2436 canvas）实际进屋、
 
 当前没有可连接的实体手机。真机触控、OS IME、温升和持续帧时仍待验收；本轮没有把浏览器模拟视口或 macOS 原生窗口记为手机验收。下一步先补 WebKit 完整游戏的同路径与持久化回归；实体设备可用后再按原真机清单执行。
 
-线上发布与完整交付包回执在本轮发布后补充。
+## 发布回执
+
+导出提交 `4c1a0fa758e579e6bd83b8c4cf1c3df39b43b91d` 已正常推送长期分支；main 配置提交 `0c4f300bb787d31c739a3dbfda4a311bd76a90f7` 的 [Pages Actions 38687379474](https://github.com/ThySummer14/kuangye/actions/runs/38687379474) build／deploy 成功。CI 重新通过 Vue 138 项与 release 检查，并校验 14 项导出清单。
+
+公开地址的 1280×720／DPR 1 与 375×812／DPR 3 均实际启动、进屋、打开窗边选择并切换夜间，控制台零错误、无横向溢出。15 个线上文件完整 fetch 后以 Web Crypto SHA-256 与本地逐个比对，HTTP 200、字节数、哈希全部相同；不是只信任远端清单。见 [文件回执](startup-evidence/live-assets.json) 与 [部署回执](startup-evidence/deployment.json)。
+
+| 线上桌面日间 | 线上桌面夜间 |
+|---|---|
+| ![线上日间](startup-evidence/live-home-day-1280.png) | ![线上夜间](startup-evidence/live-home-night-1280.png) |
+
+本轮完整交付包为 `kuangye-godot-v7.7-complete-20261015.zip`，位于本地忽略的 `exports/`，包含源码、官方 Web 导出、启动模板与验收证据；用打包工具逐文件哈希与 ZIP CRC 核对。它不包含测试存档、浏览器 profile、缓存或凭证。

@@ -32,7 +32,7 @@ jobs:
       - name: Check out the independent Godot lighting export
         uses: actions/checkout@v4
         with:
-          ref: 3a841ab77ecd396cbed0ddf4ad941adf2a8ea94a
+          ref: 4c1a0fa758e579e6bd83b8c4cf1c3df39b43b91d
           path: .godot-lighting-source
           sparse-checkout: godot-prototype/web
       - name: Verify and stage Godot lighting preview

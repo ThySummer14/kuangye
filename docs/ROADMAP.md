@@ -6,6 +6,8 @@
 
 Godot 独立预览（2026-10-13）：长期分支的光影还原与研究归档已验收，Pages 流水线将固定提交 `3a841ab77ecd396cbed0ddf4ad941adf2a8ea94a` 的 Web 导出放在 `/godot-lighting/` 并校验 SHA-256，不合入 Godot 源码。[研究文档](https://github.com/ThySummer14/kuangye/blob/filisi/kuangye-original-godot-recovery-20261008/godot-prototype/docs/LIGHTING_STUDY.md)，[预览入口](https://thysummer14.github.io/kuangye/godot-lighting/)。23 组 Godot／两尺寸各 85 项／Vue 138 项与 build/release／打包 4 项／桌面和 375px DPR 3 浏览器通过，实体手机仍待验收。发布配置 `6a57380` 的 [Actions 38421458494](https://github.com/ThySummer14/kuangye/actions/runs/38421458494) build／deploy 成功；线上桌面／375px DPR 3 的进屋与窗边换光、15 个文件的 HTTP 200／完整 SHA-256 均通过。首载仍偏大，一次移动模拟 PCK 冷下载为 173 秒。
 
+Godot v7.7（2026-10-15，本地验收完成）：本轮 Pages 固定 `4c1a0fa758e579e6bd83b8c4cf1c3df39b43b91d`。完整字体 WOFF2 让 PCK 减少 14.1%，加入真实进度／启动状态／失败重试，修复 DPI 变化后的 UI 放大；实际浏览器关闭重开，小记、家具、125 微光与存档 SHA-256 保留。24 组隔离 Godot、两尺寸各 85 项、Vue 138 项及 build/release、打包 4 项通过。六张固定光影图与 v7.6 相同，[验收文档](https://github.com/ThySummer14/kuangye/blob/filisi/kuangye-original-godot-recovery-20261008/godot-prototype/docs/STARTUP_AND_REOPEN.md)。即将发布，实体手机及 OS IME 仍待验收；Godot 下一步补 WebKit 同路径与持久化回归，主线下一步不变。
+
 进行中：界面质感整理（第四十八切片）在分支 `cursor/ui-polish-d1d4` 等 Hal 审 PR，未合并、未发布 Pages；方向与改动见 RUNLOG 第四十八切片。
 
 前一切片：从地图回到最近暂放作品。按最后任务的真实暂放记录选择一件，节选成果并一击定位原件；暂放默认只读，明确接续才占任务名额，历史与成果保留。进行中的行动优先，空闲时原作品先于新推荐。122 项测试、最终构建／发布资源及 DEV／正式 × 1280／375px 四组流程通过，实际 JSON 下载恢复核对通过。详见 [地图暂放作品](MAP-WORK-RETURN.md)。

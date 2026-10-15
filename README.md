@@ -8,6 +8,8 @@
 
 独立 Godot 长期分支的 [光影预览](https://thysummer14.github.io/kuangye/godot-lighting/)：点小家，走到窗边选择日间／黄昏／夜间。[研究文档与对照证据](https://github.com/ThySummer14/kuangye/blob/filisi/kuangye-original-godot-recovery-20261008/godot-prototype/docs/LIGHTING_STUDY.md) 留在 Godot 分支，Pages 仅取固定提交的 Web 导出并校验 SHA-256。原型不读取主站存档，实体手机仍待验收。
 
+Godot v7.7 更新：PCK 体积减少 14.1%，加入真实下载／启动状态与失败重试，修复 DPI 变化后的 UI 放大。完整关闭浏览器后重开，原型小记、家具和微光字节一致；[首载与重开验收](https://github.com/ThySummer14/kuangye/blob/filisi/kuangye-original-godot-recovery-20261008/godot-prototype/docs/STARTUP_AND_REOPEN.md)。
+
 Android 可安装预览已接入同一套页面与本地存档：`npm run android:build` 生成 APK，安装、备份和验收说明见 [Android 预览](docs/ANDROID.md)。
 
 ## 可以做什么
